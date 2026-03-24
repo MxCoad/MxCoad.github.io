@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 4c</div>
+      <h1><a href="worm_index.html">Worm</a> | Moving the worm.</h1>
+      <p>Before we begin the code it is worth understanding the logic behind what we are doing.  As the worm moves downwards, these are the actions that need to happen:      
+      <table width="800" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td><ul>
+            <li>Change the head segment into a body segment:</li>
+          </ul></td>
+          <td><img src="screenshots/worm_head_down.png" width="32" height="32" alt="Worm head"></td>
+          <td>becomes</td>
+          <td><img src="screenshots/worm_body.png" width="32" height="32" alt="Worm body"></td>
+        </tr>
+        <tr>
+          <td><ul>
+            <li>Create a new head segment:</li>
+          </ul></td>
+          <td><img src="screenshots/grass.png" width="32" height="32" alt="Grass"></td>
+          <td>becomes</td>
+          <td><img src="screenshots/worm_head_down.png" width="32" height="32" alt="Worm head"></td>
+        </tr>
+        <tr>
+          <td><ul>
+            <li>Remove the tail:</li>
+          </ul></td>
+          <td><img src="screenshots/worm_tail_down.png" width="32" height="32" alt="Worm tail"></td>
+          <td>becomes</td>
+          <td><img src="screenshots/grass.png" width="32" height="32" alt="Grass"></td>
+        </tr>
+        <tr>
+          <td><ul>
+            <li>Create a new tail:</li>
+          </ul></td>
+          <td><img src="screenshots/worm_body.png" width="32" height="32" alt="Worm body"></td>
+          <td>becomes</td>
+          <td><img src="screenshots/worm_tail_down.png" width="32" height="32" alt="Worm tail"></td>
+        </tr>
+      </table>
+      </p>
+      <p>This is further complicated by the fact that depending on the direction, or new direction of the worm, different tiles will be required. The illustration above only describes a worm moving down the screen.      </p>
+      <ol>
+        <li>In the assets panel, double click, 'worm1.script'.</li>
+        <li>Create a new function to change the head segment into a body segment.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function change_head_into_body(self)
+	-- Get the tile value of the head
+	local head = self.segments[#self.segments]
+	local head_tile = tilemap.get_tile("/field#tilemap", "layer1", head.x, head.y)
+
+	-- Heading up, about to go left or heading right, about to go down
+	if (head_tile == self.base_sprite + 6 and self.direction.x == -1) or (head_tile == self.base_sprite + 5 and self.direction.y == -1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 13)
+	end
+	-- Heading up, about to go right or heading left, about to do down
+	if (head_tile == self.base_sprite + 6 and self.direction.x == 1) or (head_tile == self.base_sprite + 4 and self.direction.y == -1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 12)
+	end
+	-- Heading down, about to go left or heading right, about to go up
+	if (head_tile == self.base_sprite + 3 and self.direction.x == -1) or (head_tile == self.base_sprite + 5 and self.direction.y == 1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 2)
+	end
+	-- Heading down, about to go right or heading left, about to go up
+	if (head_tile == self.base_sprite + 3 and self.direction.x == 1) or (head_tile == self.base_sprite + 4 and self.direction.y == 1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 1)
+	end
+	-- Heading left or right, still going left or right
+	if (head_tile == self.base_sprite + 4 or head_tile == self.base_sprite + 5) and (self.direction.x == -1 or self.direction.x == 1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 7)
+	end
+	-- Heading up or down, still going up or down
+	if (head_tile == self.base_sprite + 3 or head_tile == self.base_sprite + 6) and (self.direction.y == -1 or self.direction.y == 1) then
+		tilemap.set_tile("/field#tilemap", "layer1", head.x, head.y, self.base_sprite + 14)
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The use of the hash symbol in self.segments[#self.segments] as a pointer to the last element of the segments table is a handy shortcut. This returns the x and y position of the head.</p>
+<p>head_tile = tilemap.get_tile(&quot;/field#tilemap&quot;, &quot;layer1&quot;, head.x, head.y) returns the tile number of the head in the tile source.</p>
+<p>The head tile is updated to be the correct body tile depending on the direction the head of the worm is facing. This is complex because if the worm was moving down and changes direction to move right, the body segment needs to become the sprite:<br>
+<img src="screenshots/worm_body_bottom_left.png" width="32" height="32" alt="Worm body bottom left sprite"><br>
+A different segment is required depending on the previous direction compared to the new direction.</p>
+<p>Note we are using a self.base_sprite attribute to hold the tile number for the first sprite for the worm in the tile source. This just makes the numbers easier when we have a second worm because we only need to change the base_sprite attribute instead of all the numbers in this function. This is a great example of where constants are really useful.</p>
+<p>&nbsp;</p>
+</div>
+      <ol start="3">
+        <li>Create a new function to make a new head.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function create_new_head(self)
+	-- Get the tile value of the head
+	local head = self.segments[#self.segments]
+	-- Set the new head position
+	local new_head = {x = head.x + self.direction.x, y = head.y + self.direction.y}
+
+	-- Handle wrapping around the screen
+	if new_head.x > 30 then
+		new_head.x = 1
+	elseif new_head.x < 1 then
+		new_head.x = 30
+	elseif new_head.y > 30 then
+		new_head.y = 1
+	elseif new_head.y < 1 then
+		new_head.y = 30
+	end
+
+	-- Only update if the worm is alive
+	if self.alive == true then
+		-- Save the new head position
+		table.insert(self.segments, new_head)
+		-- Set the head direction tile
+		if self.direction.x == -1 then
+			tilemap.set_tile("/field#tilemap", "layer1", new_head.x, new_head.y, self.base_sprite + 4)
+		end
+		if self.direction.x == 1 then
+			tilemap.set_tile("/field#tilemap", "layer1", new_head.x, new_head.y, self.base_sprite + 5)
+		end
+		if self.direction.y == -1 then
+			tilemap.set_tile("/field#tilemap", "layer1", new_head.x, new_head.y, self.base_sprite + 3)
+		end
+		if self.direction.y == 1 then
+			tilemap.set_tile("/field#tilemap", "layer1", new_head.x, new_head.y, self.base_sprite + 6)
+		end
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The new head position is calculated as the current head position plus or minus the direction in both x and y.</p>
+<p>If we don't enclose the playing area with walls we need to handle the possibility of the worm leaving the screen. It's up to you as the game developer what you want to happen, but wrapping around the screen will add to the enjoyment of the game. This is handled by checking whether the x or y position of the worm's head is 0 or 31 since we have a 30x30 tile playing area. If it is, the head is given a new position on the opposite side.</p>
+<p>We insert a new segment into the worm segments table.</p>
+<p>The tile map is updated with the new head sprite.</p>
+</div>
+      <ol start="4">
+        <li>Create a new function to remove the old tail.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function remove_tail(self)
+	local tail = table.remove(self.segments, 1)
+	tilemap.set_tile("/field#tilemap", "layer1", tail.x, tail.y, 15)
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The first element at the front of the queue is removed from the segments table.</p>
+<p>The tile is set to be grass.</p>
+</div>
+      <ol start="5">
+        <li>Create a new function to create a new tail.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function create_new_tail(self)
+	-- Set new tail to correct direction
+	local tail = self.segments[1]
+	local next_tail = self.segments[2]
+	-- Next segment is to the right
+	if (tail.x < next_tail.x and tail.y == next_tail.y) then
+		tilemap.set_tile("/field#tilemap", "layer1", tail.x, tail.y, self.base_sprite + 10)
+	end
+	-- Next segment is to the left
+	if (tail.x > next_tail.x and tail.y == next_tail.y) then
+		tilemap.set_tile("/field#tilemap", "layer1", tail.x, tail.y, self.base_sprite + 9)
+	end
+	-- Next segment is above
+	if (tail.x == next_tail.x and tail.y < next_tail.y) then
+		tilemap.set_tile("/field#tilemap", "layer1", tail.x, tail.y, self.base_sprite + 11)
+	end
+	-- Next segment is below
+	if (tail.x == next_tail.x and tail.y > next_tail.y) then
+		tilemap.set_tile("/field#tilemap", "layer1", tail.x, tail.y, self.base_sprite + 8)
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The tail segment and the body segment after the tail are examined.</p>
+<p>Depending on the direction of the next body segment in relation to the tail the appropriate tail image is displayed.</p>
+<p>The worm's body may be above, below, left or right from the tail so there are four possible tail images that could be displayed.</p>
+</div>
+      <ol start="6">
+        <li>Finally, we need to call the functions during the update method.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function update(self, dt)
+	self.timer = self.timer + dt
+	if self.timer >= 1 / self.speed then
+		self.timer = 0
+		if self.alive then
+			process_inputs(self)
+			change_head_into_body(self)
+			create_new_head(self)
+			remove_tail(self)
+			create_new_tail(self)
+		end
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>To ensure the worm doesn't move too quickly we have introduced a timer which adds the delta time on each update. Once the timer reaches  1 divided by the speed it is reset to 0.</p>
+<p>If the worm is alive, all the functions are called in sequence to update the worm.</p>
+</div>
+      <ol start="7">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should be able to select '1up' and see player 1's worm move. You should also be able to direct the worm using WSAD keys. It will ignore walls and itself at this stage.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The next stage is to introduce food that the worm can eat. <a href="worm_stage_05a.html">Stage 5a &gt;</a></p>
+<div class="debugging_header">Debugging</div>
+<div class="debugging">
+<p>If your code doesn't work and the worm doesn't move, consider the following potential issues:</p>
+        <ol>
+          <li>Have you copied all the functions you needed from the examples above? There might be a function it can't find for example:<br>
+            <br>
+          /main/worm1.script:101: attempt to call global 'process_inputs' (a nil value)          </li>
+          <li>Do you have duplicate functions? e.g. two function update(self, dt) methods? You may have copied the functions instead of over-writing them.</li>
+        </ol>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

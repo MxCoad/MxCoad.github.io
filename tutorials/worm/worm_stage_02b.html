@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 2b</div>
+      <h1><a href="worm_index.html">Worm</a> | Building the interface with graphics and buttons.</h1>
+      <ol>
+        <li>In the assets panel, right click the 'main' folder and select, 'New...', 'Gui'.</li>
+      </ol>
+      <p><img src="screenshots/assets_new_gui.png" width="433" height="489" alt="New GUI"></p>
+      <ol start="2">
+        <li>Name the Gui, 'title' to match the collection it will belong to and click, 'Create Gui'</li>
+        <li>In the outline panel, right click, 'Textures' and select, 'Add', 'Textures...'.</li>
+      </ol>
+      <p><img src="screenshots/outline_add_textures.png" width="499" height="343" alt="Add Textures"></p>
+      <p>Textures are graphics that will be used on our GUI.</p>
+      <ol start="4">
+        <li>Select, '/main/graphics.atlas' and click, 'OK'.      </li>
+        <li>In the outline panel, right click 'Nodes' and select, 'Add', 'Box'.</li>
+      </ol>
+      <p><img src="screenshots/outline_add_box.png" width="487" height="311" alt="Add box"></p>
+      <p>A node is an object on the Gui. A box is usually a button, but we can also use it for graphics such as titles.</p>
+      <ol start="6">
+        <li>Change the Id of the box to be, 'title'.</li>
+        <li>Change the 'Position' properties to be X: 480 and Y: 480.</li>
+        <li>Change the 'Texture' property to be, 'graphics/title'.</li>
+        <li>Repeat steps 5 to 8 to create four buttons as shown below. Move the buttons underneath the title using the editor tools and make sure the buttons have their 'Id' property set to:
+          <ul>
+            <li>1up, 2up, 3up and 4up.     </li>
+          </ul>
+        </li>
+      </ol>
+      <p><img src="screenshots/editor_title_gui.png" width="452" height="450" alt="Title Gui"></p>
+      <p><img src="screenshots/outline_gui_properties.png" width="337" height="707" alt="Gui outline and properties"></p>
+      <ol start="10">
+        <li>Attach the title.gui file to the title.collection file by creating a game object in that collection called, 'gui. Add the component file, 'title.gui'.<br>
+<a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the assets panel, in the 'main' folder, double click, 'title.collection'.</li>
+      <li>In the outline panel, right click, 'Collection' and select, 'Add Game Object'.</li>
+      <li>In the properties panel, change the 'Id' property to, 'gui'.</li>
+      <li>In the outline panel, right click, 'gui' and select, 'Add Component File'.</li>
+      <li>Select, '/main/title.gui' and click, 'OK'.</li>
+    </ul>
+</div>
+        </li>
+      </ol>
+      <ol start="11">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should see the interface you have just created.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The buttons don't do anything yet because we haven't scripted them. That's the next stage. <a href="worm_stage_02c.html">Stage 2c &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

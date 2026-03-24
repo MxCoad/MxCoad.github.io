@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 7</div>
+      <h1><a href="worm_index.html">Worm</a> | The second player.</h1>
+      <p>The game was designed from the outset to be a multiplayer game. We made design choices early in the process to make it easy to add a second, third and fourth player without changing too much of the code.</p>
+      <p>The steps are:</p>
+      <ul>
+        <li>Copy the worm1 script and change the attributes for player 2.</li>
+        <li>Create the second worm game object.</li>
+        <li>Add the additional key bindings.</li>
+        <li>Spawn the second player if 2up is pressed on the title screen.</li>
+      </ul>
+      <h2><strong>Copy the worm  script</strong> and change the attributes</h2>
+      <ol>
+        <li>In the assets panel in the 'main' folder, right click, 'worm1.script' and select, 'Copy'.</li>
+        <li>In the assets panel, right click 'main' and select, 'Paste'.</li>
+        <li>In the assets panel, right click, 'worm1_copy.script' and select, 'Rename'.</li>
+        <li>Rename the file, 'worm2'.</li>
+        <li>In the assets panel, double click, 'worm2.script'.</li>
+        <li>Delete the  function spawn_1up(self) including all its code.</li>
+        <li>Insert the new modified function:</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function spawn_2up(self)
+	self.segments = {
+		{x = 25, y = 5},
+		{x = 25, y = 6},
+		{x = 25, y = 7},
+		{x = 25, y = 8} }
+	-- Draw initial start position
+	tilemap.set_tile("/field#tilemap", "layer1", 25, 5, self.base_sprite + 11)	-- Tail
+	tilemap.set_tile("/field#tilemap", "layer1", 25, 6, self.base_sprite + 14)	-- Middle
+	tilemap.set_tile("/field#tilemap", "layer1", 25, 7, self.base_sprite + 14)	-- Middle
+	tilemap.set_tile("/field#tilemap", "layer1", 25, 8, self.base_sprite + 6)	-- Head
+	self.direction = {x = 0, y = 1}
+	self.alive = true
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The second player spawns in a different place with a different initial direction.</p>
+</div>
+      <ol start="8">
+        <li>In the init function, change the attribute self.base_sprite from 0 to 15. The second worm tiles start at 15+1.</li>
+        <li>Replace the on_message function with this code:</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function on_message(self, message_id, message, sender)
+	if message_id == hash("spawn_2up") then
+		spawn_2up(self)
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>References to spawn1_up have been changed to spawn2_up.</p>
+</div>
+      <ol start="10">
+        <li>Replace the on_input function with this code:</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function on_input(self, action_id, action)
+	if action_id == hash("p2_up") and action.pressed then
+		table.insert(self.input_queue, {x = 0, y = 1})
+	elseif action_id == hash("p2_down") and action.pressed then
+		table.insert(self.input_queue, {x = 0, y = -1})
+	elseif action_id == hash("p2_left") and action.pressed then
+		table.insert(self.input_queue, {x = -1, y = 0})
+	elseif action_id == hash("p2_right") and action.pressed then
+		table.insert(self.input_queue, {x = 1, y = 0})
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>References to p1 have been changed to p2.</p>
+</div>
+      <h2>Create the second worm game object</h2>
+      <ol start="11">
+        <li>In the assets panel, in the 'main' folder, double click, 'game.collection'.</li>
+        <li>In the outline panel, right click, 'Collection' and select, 'Add game object'.</li>
+        <li>In the properties panel, change the 'Id' property to, 'worm2'.</li>
+        <li>In the outline panel, right click, 'worm2' and select, 'Add Component File'.</li>
+        <li>Select, '/main/worm2.script'.</li>
+      </ol>
+      <h2>Input bindings</h2>
+      <ol start="16">
+        <li>In the assets panel, in the 'input' folder, double click, 'game.input_binding'.</li>
+        <li>Add key triggers for player 2 and make sure the action matches the changes you made in step 9.</li>
+      </ol>
+      <p><img src="screenshots/editor_input_bindings_2up.png" width="563" height="352" alt="Key triggers for second player"></p>
+      <h2><strong>Spawn the second player</strong></h2>
+      <ol start="18">
+        <li>In the assets panel, in the 'main' folder, double click, 'main.script'.</li>
+        <li>In the on_message function, above the comment, '-- Load the correct collection...', add the condition to spawn the second worm.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+		if self.worms_alive > 1 then
+			msg.post("game:/worm2#worm2", "spawn_2up")
+		end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the number of worms in the game is more than one then the second player's worm needs to be spawned. It sends a message to the new worm2.script.</p>
+</div>
+      <ol start="20">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should now have a two player game.<br>
+          <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The final polish is to remove the mouse from the screen when the game is playing. <a href="worm_stage_08.html">Stage 8 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

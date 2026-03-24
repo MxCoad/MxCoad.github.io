@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 3b</div>
+      <h1><a href="worm_index.html">Worm</a> | Creating a tile map.</h1>
+      <p>Now that we have the source for our tiles, we need to make the actual tile map for the game.</p>
+      <ol>
+      <li>In the assets panel, right click, 'main' and select, 'New...', 'Tile Map'.</li></ol>
+      <p><img src="screenshots/assets_new_tile_map.png" width="433" height="888" alt="New Tile Map"></p>
+      <ol start="2">
+        <li>Name the Tile Map, 'tilemap' and click, 'Create Tile Map'.</li></ol>
+      <p><img src="screenshots/new_tile_map.png" width="442" height="375" alt="Name the Tile Map"></p>
+      <ol start="3">
+        <li>In the properties panel, set the 'Tile Source' property to, '/main/spritesheet.tilesource'. You can use the three dots to select the file.</li>
+        <li>In the editor panel, zoom right out so that you can see all the individual squares of the tile map using your mouse wheel (or Alt-right mouse button, moving upwards if you don't have a wheel). You can hold the mouse wheel to reposition the canvas or alt-left mouse button). You will need to zoom out quite a lot.</li>
+      </ol>
+      <p><img src="screenshots/editor_tile_map1.png" width="536" height="457" alt="Blank Tile Map"></p>
+      <p>Notice the origin of the game world where the green and red lines intersect. Also note the cell numbers in the left corner of the editor panel. These will help you orientate when you are making a game world.</p>
+      <p>We set our game world to be 960x960 pixels in the game.project settings file. Each of the tiles in the Tile Source is 32x32 pixels. Therefore 960/32 = 30. The visible part of our game world is 30x30 tiles. It it important to do these calculations before you create your graphics and map to ensure your playing area is the size you expect it to be.</p>
+      <ol start="5">
+        <li>In the outline panel, select 'layer1'. Our game world can have multiple layers.</li>
+      </ol>
+      <p><img src="screenshots/outline_layer1.png" width="199" height="126" alt="Layer1"></p>
+      <p>Notice how the mouse pointer in the editor window is now a piece of the green worm.</p>
+      <ol start="6">
+        <li> Press the space bar to select a tile from the Tile Source. Select the tile that is just green grass.</li>
+        <li>Click cell 1,1 where the red and green line intersect. Notice how it changes to grass. Now paint the 30x30 grid in grass upwards from the red line and to the right of the green line.</li>
+      </ol>
+<div class="code_explained_header">Tile map tips</div>
+<div class="code_explained">
+<p>Make sure you have a layer selected to be able to lay tiles.</p>
+<p>Click a layer in the outline panel to select which layer to draw on. If no layer is selected you won't be able to lay tiles.</p>
+<p>Press [Space Bar] to toggle between the Tile Source and the Tile Map. Left click a tile to select it.</p>
+<p>Hold the left mouse button to lay continual tiles.</p>
+<p>To delete a tile press [Space Bar] to view the Tile Source. Select an area outside the tiles. Now lay this blank tile on the Tile Map.</p>
+<p>You can copy larger areas by first selecting them by holding down Shift and selecting the area to copy. Release Shift. Now use the left button to lay the larger area. Cancel the copy by holding Shift and clicking the left mouse button.</p>
+</div>
+      <p>Your editor panel should look like this:</p>
+      <p><img src="screenshots/editor_tile_map2.png" width="787" height="592" alt="Tile Map with grass"></p>
+      <p>You can make the game world more interesting by adding some wall tiles. We will code the worm to wrap around the playing area so there is no need to put wall tiles around the edge, but you may choose to. </p>
+      <ol start="8">
+        <li>Complete your Tile Map however you like. We have included lots of different wall types you can use, but remember that the worm needs space to spawn and move! There is no need to put food or snake tiles on the map. We will do this dynamically in code later.</li>
+      </ol>
+      <p><img src="screenshots/editor_tile_map3.png" width="460" height="459" alt="Tile Map complete"></p>
+      <p>Now we need to attach our Tile Map to a collection so that it renders on the correct game world.</p>
+      <ol start="9">
+        <li>In the assets panel, double click, 'game.collection'.</li>
+        <li>In the outline panel right click, 'Collection' and select, 'Add game object'.</li>
+        <li>In the properties panel change the 'Id' of the game object to, 'field'.</li>
+        <li>In the outline panel, right click, 'field' and select, 'Add component file'.</li>
+        <li>Add '/main/tilemap.tilemap'.</li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should be able to select '1up' and see the Tile Map.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The next stage is to create a worm. <a href="worm_stage_04a.html">Stage 4a &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

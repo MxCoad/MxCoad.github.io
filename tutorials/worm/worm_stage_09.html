@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 9</div>
+      <h1><a href="worm_index.html">Worm</a> | Adding some snap.</h1>
+      <p>The core mechanics of the game are now complete, but we can extend the development to embed what we have learned and create a better game. These extensions are presented in three levels of increasing difficulty we call, 'snap', 'crackle' and 'pop'. You are now on your own, but challenge yourself to see how far you can get using the stages in the tutorials for reference and other online sources.</p>
+      <ol>
+        <li>Add additional key bindings so that you can press 1 on the keyboard to start a 1 player game and 2 to start a two player game as an alternative to pressing the 1up and 2up buttons on the title screen.<br>
+          <br>
+          You learned about key bindings in the <a href="../pong/pong_stage_04.html">Pong
+        tutorial, stage 4</a>. You need to add the code for these to the 'title.gui_script' file.</li>
+        <li>When food is eaten in addition to spawning a new apple, there is a 1 in 6 chance of randomly dropping tile 78 onto the field. When a player collects it they increase their speed by 1. Make sure the power-up can only spawn on a grass tile.<br>
+          <br>
+          <img src="screenshots/speed_up.png" width="32" height="32" alt="Speed-up power up"><br>
+          <br>
+You learned about spawning items, collision detection with tiles and changing the worm in <a href="worm_stage_05a.html">stage 5. </a><br>
+<br>
+You learned about random numbers in the<a href="../pong/pong_stage_05c.html"> Pong tutorial, stage 5c</a>.<br>
+<br>
+Remember you will need to make changes to both worm scripts otherwise only one player can benefit
+from the power-up!<br>
+        </li>
+        <li>When food is eaten in addition to spawning a new apple, there is a 1 in 6 chance of randomly dropping tile 77 onto the field. When a player collects it they decrease their speed by 2 to a minimum of 0. Make sure the power-up can only spawn on a grass tile.<br>
+          <br>
+          <img src="screenshots/slow_down.png" width="32" height="32" alt="Slow-down power up"></li>
+      </ol>
+      <p>Now progress to the next set of challenges. <a href="worm_stage_10.html">Stage 10 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

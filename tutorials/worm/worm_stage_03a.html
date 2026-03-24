@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 3a</div>
+      <h1><a href="worm_index.html">Worm</a> | Creating a tile source.</h1>
+      <p>Many classic 2D games make use of tiles to create a map. These could be overhead views of terrain, or side-on views of platforms. More recent games started making use of 2.5D terrain where tiles are still used but they are viewed from a different perspective. Modern 3D games use a completely different approach.</p>
+      <p>Notice how 2D game worlds are created using a set of tiles:</p>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td align="center" valign="middle">Tile set</td>
+          <td align="center" valign="middle">Game world</td>
+        </tr>
+        <tr>
+          <td align="center" valign="middle"><img name="tileset" src="screenshots/tileset.png" width="423" height="499" alt="Tile set"></td>
+          <td align="center" valign="middle"><img src="screenshots/game_world.png" width="500" height="375" alt="Game world"></td>
+        </tr>
+      </table>
+      <p>In Defold, a Tile Source object holds the set of tiles and a Tile Map object is used to build the game world from those source tiles.</p>
+      <p>In the worm game, each segment of the worm is a tile. The grass, an apple and walls are also tiles. It is important that all the graphics in tiles are the same size, although you can use more than one tile to build bigger objects as illustrated above. Typically tiles are 16x16, 32x32 or 64x64 pixels.</p>
+      <p>In this game everything will be a tile to really illustrate their use. In future tutorials the tiles will be an interactive backdrop for other objects moving over the top of them.</p>
+      <ol>
+      <li>In the assets panel, right click, 'main' and select, 'New...', 'Tile Source'.</li></ol>
+      <p><img src="screenshots/assets_new_tile_source.png" width="449" height="947" alt="New Tile Source"></p>
+      <ol start="2">
+        <li>Name the Tile Source, 'spritesheet' and click, 'Create Tile Source'.</li></ol>
+      <p><img src="screenshots/new_tile_source.png" width="442" height="375" alt="Name the Tile Source"></p>
+      <ol start="3">
+        <li>In the properties panel, set the 'Image' property to, '/graphics/spritesheet.png'. You can use the three dots to select the file. If you haven't got the file you haven't unzipped the graphics correctly in stage 2a.</li>
+        <li>Press F on the keyboard to zoom out to see the tile set.</li>
+      </ol>
+      <p>You will notice that the tiles aren't cut up properly. That's because the default tile width and height is 16 pixels.</p>
+      <ol start="5">
+        <li>In the properties panel, change the 'Tile Width' and 'Tile Height' properties to 32.</li>
+      </ol>
+      <p><img src="screenshots/properties_tile_source.png" width="905" height="421" alt="Tile Source"></p>
+      <ol start="6">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>To prepare for this step a single image was created in a graphics application named 'spritesheet.png'. In the graphics application we combined lots of smaller images together, making sure each smaller image was exactly 32x32 pixels.      </p>
+      <p>The next step is to create a game world from our tile source. <a href="worm_stage_03b.html">Stage 3b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 1b</div>
+      <h1><a href="worm_index.html">Worm</a> | Writing a script for the controller.</h1>
+      <ol>
+        <li>In the assets panel, right click, 'main' and select, 'New...', 'Script'.</li>
+        <li>Name the script, 'main'.</li>
+        <li>Change the functions to handle the collection proxies.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.worms_alive = -1
+	self.delay = 0
+	-- Show the title screen when the game is loaded
+	msg.post("#title_proxy", "load")
+	self.current_collection = "#title_proxy"
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+	-- Show the collection once loaded into memory
+	if message_id == hash("proxy_loaded") then
+		msg.post(sender, "enable")
+		if self.worms_alive > 0 then
+			-- Insert code to spawn players here later
+			-- Insert code to spawn food here later
+		end
+
+		-- Load the correct collection when a message is received
+	elseif message_id == hash("show title screen") then
+		-- Title screen
+		msg.post(self.current_collection, "unload")
+		msg.post("#title_proxy", "load")
+		self.current_collection = "#title_proxy"
+
+	elseif message_id == hash("1up") then
+		-- 1 player
+		msg.post(self.current_collection, "unload")
+		msg.post("#game_proxy", "load")
+		self.current_collection = "#game_proxy"
+		self.worms_alive = 1
+
+	elseif message_id == hash("2up") then
+		-- 2 player
+		msg.post(self.current_collection, "unload")
+		msg.post("#game_proxy", "load")
+		self.current_collection = "#game_proxy"
+		self.worms_alive = 2
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The input focus is aquired. A number of worms alive attribute is set to -1. It can't be zero because that will be used for the game over condition later.</p>
+<p>The delay attribute will also be used later to introduce a pause in the code. For example before switching back to the title screen when the game is over.</p>
+<p>This was just a bit of thinking ahead to avoid too many awkward to follow instructions later!</p>
+<p>The script displays the title screen when the game loads.</p>
+<p>The  script sits in the background listening for messages from other scripts.</p>
+<p>If it receives a message, &quot;show title screen&quot;, it unloads the game screen collection and loads the title screen collection instead.</p>
+<p>If it receives a message, &quot;1up&quot; or &quot;2up&quot;  it unloads the title screen collection and loads the game screen collection. It also sets the number of worms alive to 1 or 2.</p>
+<p>This message is received  from buttons that we will make on the title screen interface. Once the game screen is loaded it then sends a message to the game screen script telling it to spawn each player.</p>
+<p>This is an illustration of how the message passing will work:</p>
+<p><img src="screenshots/message_passing.png" width="600" height="350" alt="Message passing illustration"></p>
+<p>You can only pass a message to a collection that has confirmed it has loaded. This makes it a little more complicated than simply sending a message to load the collection followed by a message to spawn the  worm or worms. We have to wait for confirmation that the collection loaded first.</p>
+</div>
+<ol start="4">
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  
+  <li>Attach the main.script file to the controller game object in main.collection.<br>
+    <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+    <br>
+    <div id="reveal1">
+      <ul>
+        <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+        <li>In the outline panel, right click, 'controller' and select, 'Add Component File'.</li>
+        <li>Select, '/main/main.script' and click, 'OK'.</li>
+        </ul>
+      </div>
+  </li>
+</ol>
+      <p>If you  run the game at this point you will only see a blank screen. The blank title screen. The next stage is to build a simple interface for our title screen so that the number of players can be selected. <a href="worm_stage_02a.html">Stage 2a &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

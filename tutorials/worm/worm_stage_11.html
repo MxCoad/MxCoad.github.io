@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 11</div>
+      <h1><a href="worm_index.html">Worm</a> | Adding some pop.</h1>
+      <p>The core mechanics of the game are now complete, but we can extend the development to embed what we have learned and create a better game. These extensions are presented in three levels of increasing difficulty we call, 'snap', 'crackle' and 'pop'. You are now on your own, but challenge yourself to see how far you can get using the stages in the tutorials for reference and other online sources.</p>
+      <ol>
+        <li>Add a power-up that shrinks the worm when it is collected.<br>
+          <br>
+          <img src="screenshots/shrink.png" width="32" height="32" alt="shrink power-up"><br>
+          <br>
+          The easiest way to achieve this is to call the, 'remove_tail' and 'create_new_tail' functions to remove a segment. If you put these in a for loop you could remove multiple sections. Be careful that the worm can never have less than 3 segments.<br>
+          <br>
+        </li>
+        <li>Add additional game worlds so that there is some variation in the maps that can be played. The game controller should either load a random level or the next one in sequence.<br>
+          <br>
+          You learned how to create different collections in <a href="worm_stage_01a.html">stage 1</a> and tile maps in <a href="worm_stage_03b.html">stage 3b.</a><br>
+          <br>
+          You can add some craziness by having different wall layouts, starting with food or power-ups in the level.<br>
+          <br>
+          Maybe the next level is automatically shown when only one worm is left alive so that the other players aren't sat watching a boss player for too long before getting back into the action!</li>
+        <li>Let you imagination go wild with your own features. Here are some suggestions:
+          <ul>
+            <li>Additional food items worth different numbers of points.<br>
+              <br>
+              <img src="screenshots/mushroom.png" width="32" height="32" alt="Mushroom"><br>
+            </li>
+            <li>Enemies that randomly spawn. Perhaps they even move around!<br>
+              <br>
+              <img src="screenshots/enemy.png" width="32" height="32" alt="Enemy"><br>
+            </li>
+            <li>A start next level power-up that appears after a given number of food items have been eaten.<br>
+              <br>
+              <img src="screenshots/star.png" width="32" height="32" alt="Star"><br>
+            </li>
+            <li>A hole allows the worm to disappear and reappear somewhere else on the field.<br>
+              <br>
+              <img src="screenshots/hole.png" width="32" height="32" alt="Hole"><br>
+              <br>
+              This is implemented in a similar way to the wrapping around the screen unless you want the worm to completely disappear!</li>
+            <li>Extra life power-ups that allow the player to respawn if they die.<br>
+              <br>
+              <img src="screenshots/heart.png" width="32" height="32" alt="Heart"><br>
+            </li>
+            <li>Removing the worm segments when the player dies so that a food item can't get trapped.</li>
+            <li>Achievements such as, &quot;5-streak&quot; for eating five pieces of food in a row. You could include some sound effects for these or even some voice acting!</li>
+            <li>Scores carry over so that multiple games can be played with cumulative scores. You may want to introduce a reset button on the title screen.</li>
+      <li>A &quot;hardpoint&quot; competition mode where food is not randomly spawned, but follows a deterministic spawning pattern.</li></ul></li></ol>
+      </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

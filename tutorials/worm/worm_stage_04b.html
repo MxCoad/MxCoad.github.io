@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 4b</div>
+      <h1><a href="worm_index.html">Worm</a> | Handling the inputs.</h1>
+<ol>
+        <li>In the assets panel, inside the 'input' folder, double click, 'game.input_binding'.</li>
+        <li>Set the key triggers as follows:</li>
+      </ol>
+<p><img src="screenshots/editor_input_bindings.png" width="553" height="246" alt="Input bindings"></p>
+<ol start="3">
+  <li>In the asset panel, double click, 'worm1.script'.</li>
+  <li>Update the on_input function to respond to the new key triggers.</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function on_input(self, action_id, action)
+	if action_id == hash("p1_up") and action.pressed then
+		table.insert(self.input_queue, {x = 0, y = 1})
+	elseif action_id == hash("p1_down") and action.pressed then
+		table.insert(self.input_queue, {x = 0, y = -1})
+	elseif action_id == hash("p1_left") and action.pressed then
+		table.insert(self.input_queue, {x = -1, y = 0})
+	elseif action_id == hash("p1_right") and action.pressed then
+		table.insert(self.input_queue, {x = 1, y = 0})
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Notice we have decided not to use pre-hashing again for this tutorial. This is just so we can focus on the important elements of this particular game, and as it happens this game isn't particularly demanding!</p>
+<p>The traditional snake game is different from many other games because every key press matters. A player is likely to want to make sharp turns and therefore press two keys in very quick succession. We must process these keys in the exact order they arrive and ensure none are missed. To achieve this, every time a key is pressed we'll add it to a queue and then process the data in the queue during the update function. This will give us more control than relying on the event handler at the expense of a little more complexity.</p>
+<p>If the player presses the W key, it adds a new element to the input_queue table with x = 0 and y = 1. This means move up since the x position does not change and the y position is a positive number.</p>
+<p>Similar actions are taken for S, A and D keys respectively.</p>
+</div>
+<ol start="5">
+  <li>Create a new function to process the inputs.</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function process_inputs(self)
+	-- Get the next direction from the input queue
+	local new_direction = table.remove(self.input_queue, 1)
+	-- If there is an input to process
+	if new_direction then
+		-- Only change the direction if it is allowed
+		if not (new_direction.x == -self.direction.x or new_direction.y == -self.direction.y) then
+			self.direction = new_direction
+		end
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>new_direction is a local variable that is the element popped from the front of the input queue at index 1.</p>
+<p>Lua tables are not zero-indexed by default. You can use index 0 if you want to, but that's not how the language handles the data structure.</p>
+<p>new_direction will contain a .x and .y property if there was an item to remove. Note that in Lua if there is no item in the queue table.remove does not generate a runtime  error. It simply returns nothing.</p>
+<p>Therefore we can use if new_direction to check the Boolean state of new_direction: it has values or it doesn't.</p>
+<p>If it is a new direction to process the direction the worm is travelling (stored in self.direction) is updated to be new_direction.</p>
+</div>
+<ol start="6">
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+</ol>
+<p>Nothing will happen yet because we haven't written the code to move the worm and change direction. The next stage is to move the worm. <a href="worm_stage_04c.html">Stage 4c &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

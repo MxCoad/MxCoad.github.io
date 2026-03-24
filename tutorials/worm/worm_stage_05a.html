@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 5a</div>
+      <h1><a href="worm_index.html">Worm</a> | Spawning fruit.</h1>
+      <p>When the game starts an apple will be randomly placed on the field for the worm to collect.</p>
+      <ol>
+  <li>In the assets panel, in the 'main' folder, double click, 'game.collection'.</li>
+  <li>In the outline panel, right click, 'Collection' and select, 'Add Game Object'.</li>
+  <li>In the properties panel, change the 'Id' property to, 'food'.</li>
+  <li>In the assets panel, right click, 'main' and select, 'New Script'.</li>
+  <li>Name the script, 'food' and click, 'Create Script'.</li>
+  <li>Update the on_message function to spawn a new piece of food.</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+function on_message(self, message_id, message, sender)
+	-- Spawn food when message received
+	if message_id == hash("spawn_food") then
+		local valid = false
+		-- Avoid spawning food on top of anything except grass
+		while valid == false do
+			local food = {x = math.random(3, 28), y = math.random(3, 28)}
+			-- Spawn food on grass tile
+			if tilemap.get_tile("/field#tilemap", "layer1",food.x, food.y) == 15 then
+				valid = true
+				tilemap.set_tile("/field#tilemap", "layer1", food.x, food.y, 45)
+			end
+		end
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The food object will react when it receives a &quot;spawn_food&quot; message.</p>
+<p>Using a while loop we can ensure the function only ends when a valid tile is found to place the food. We don't want it spawning on top of a wall or worm segment, only on grass.</p>
+<p>food is a local table (its use here is similar to a record structure) that has x and y properties set to random numbers. 3 and 28 ensure there is a small margin and food can't spawn at the edge of the playing field. You could use 1 and 30 if you wanted to.</p>
+<p>If the current tile at that location is grass (tile number 15 in the tile source) then the tile is changed to an apple tile and the loop is terminated.</p>
+</div>
+<p>Now we need to attach the script to the food game object.</p>
+<ol start="7">
+  <li>In the assets panel, in the 'main' folder, double click, 'game.collection'.</li>
+  <li>In the outline panel, right click, 'food' and select, 'Add Component File'.</li>
+  <li>Select, '/main/food.script'.</li>
+  </ol>
+<p>The food must be spawned when the worms are spawned.</p>
+<ol start="10">
+  <li>In the assets panel, in the 'main' folder, double click, 'main.script'.</li>
+  <li>In the on_message function, underneath the line of code, '-- Insert code to spawn food here later' add this extra line:</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+msg.post("game:/food#food","spawn_food")
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>This sends a &quot;spawn_food&quot; message to the game collection, food game object script.</p>
+<p>Understanding the Url structure for message passing is critical to avoiding run time errors in Defold developments. The Url of the script can be copied from it's properties. The name of the collection is a prefix to that. The syntax is:</p>
+<p>collection:/script_Url</p>
+<p>There is no need to add the collection name if the object is in the same collection as the code sending the message.</p>
+</div>
+<ol start="12">
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should be able to select '1up' and see the apple spawn.<br>
+    <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+</ol>
+      <p>The next stage is to add some collision detection for when the apple is eaten and spawn a new piece of food.  <a href="worm_stage_05b.html">Stage 5b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

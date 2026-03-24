@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 2c</div>
+      <h1><a href="worm_index.html">Worm</a> | Creating the Gui script.</h1>
+      <ol>
+        <li>In the assets panel, right click, 'main' and select, 'New...', 'Gui script'.</li></ol>
+      <p><img src="screenshots/assets_new_gui_script.png" width="461" height="514" alt="New Gui script"></p>
+      <ol start="2">
+        <li>Name the script, 'title' to match the other related components and click, 'Create Gui Script'.</li></ol>
+      <p><img src="screenshots/name_gui_script.png" width="442" height="375" alt="Name the Gui script"></p>
+      <ol start="3">
+        <li>In the assets panel, double click the file, 'title.gui_script'.</li>
+        <li>Change the functions to respond to clicking the buttons on the Gui.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_input(self, action_id, action)
+	if action.pressed and gui.pick_node(gui.get_node("1up"), action.x, action.y) then
+		msg.post("main:/controller", "1up")
+	elseif action.pressed and gui.pick_node(gui.get_node("2up"), action.x, action.y) then
+		msg.post("main:/controller", "2up")
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>When the Gui is shown it attains the input focus. When the Gui is closed it will release the input focus.</p>
+<p>When the left mouse button is pressed on top of the node  &quot;1up&quot;, send a message to the main.collection controller game object script with the string, &quot;1up&quot;.</p>
+<p>When the left mouse button is pressed on top of the node  &quot;2up&quot;, send a message to the main.collection controller game object script with the string, &quot;2up&quot;.</p>
+</div>
+<p>Remember we need to attach the Gui script to the Gui object for it to work. This is done in a slightly different way to other game objects because the name of the script file is a property of the Gui.</p>
+<ol start="5">
+  <li>In the assets panel, in the 'main' folder, double click, 'title.gui'.</li>
+  <li>In the properties panel, change the 'Script' property to, '/main/title.gui_script'. You can use the three dots to select this from a list.</li>
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should be able to click on either the 1up or 2up button and it will show an empty game screen.<br>
+    <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+</ol>
+      <p>That's the basic interface complete. Now we need to make a game. <a href="worm_stage_03a.html">Stage 3a &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

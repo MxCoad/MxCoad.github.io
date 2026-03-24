@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script> 
+<script src="../../js/reveal.js"></script>
+<div class="container">
+<div class="content">
+  <div class="banner"> <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+  <div class="navigation1">
+    <ul>
+      <li><a href="../../01-homepage.html">About</a></li>
+      <li><a href="../../02-tutorials.html">Tutorials</a></li>
+      <li><a href="../../03-helpsheets.html">Help</a></li>
+      <li><a href="../../04-assets.html">Assets</a></li>
+      <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+  </div>
+  <div class="text_panel_wrapper">
+    <div class="text_panel">
+      <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 2a</div>
+      <h1><a href="worm_index.html">Worm</a> | Changing the game properties and creating the atlas.</h1>
+      <p>The game can be played by up to four players simultaneously. For that reason we are going to make the playing area a square shape so that all the worms have an equal starting point at the four corners of the square.</p>
+      <ol>
+        <li>In the assets panel, double click, 'game.project'. This is where all the generic settings for the game are stored.</li>
+        <li>Scroll down until you find, 'Display'. Change the width and height to be 960 x 960.</li>
+      </ol>
+      <p><img src="screenshots/editor_display.png" width="345" height="155" alt="Display properties"></p>
+      <p>Before we create the interface we will need some graphics to use for the buttons and title.</p>
+      <ol start="3">
+        <li>In the assets panel, right click 'main' and select, 'New...', 'Atlas'.</li>
+        <li>Name the atlas, 'graphics' and click, 'Create Atlas'.</li>
+        <li>Download the graphics you need for the game by right clicking this zip file and saving the linked file: <a href="assets/graphics.zip">graphics.zip</a><br>
+          <br>
+        The file contains these assets:</li>
+        <table width="600" border="0">
+          <tr>
+            <td align="center" valign="middle">1up.png</td>
+            <td align="center" valign="middle">2up.png</td>
+            <td align="center" valign="middle">3up.png</td>
+            <td align="center" valign="middle">4up.png</td>
+          </tr>
+          <tr>
+            <td align="center" valign="middle"><img src="assets/1up.png" width="148" height="150" alt="1up"></td>
+            <td align="center" valign="middle"><img src="assets/2up.png" width="148" height="150" alt="2up"></td>
+            <td align="center" valign="middle"><img src="assets/3up.png" width="148" height="150" alt="3up"></td>
+            <td align="center" valign="middle"><img src="assets/4up.png" width="148" height="150" alt="4up"></td>
+          </tr>
+          <tr>
+            <td colspan="4" align="center" valign="middle">title.png</td>
+          </tr>
+          <tr>
+            <td colspan="4" align="center" valign="middle"><img src="assets/title.png" width="300" height="300" alt="title screen"></td>
+          </tr>
+          <tr>
+            <td colspan="4" align="center" valign="middle">spritesheet.png</td>
+          </tr>
+          <tr>
+            <td colspan="4" align="center" valign="middle"><img src="assets/spritesheet.png" width="480" height="160" alt="Spritesheet"></td>
+          </tr>
+        </table>
+       </ol>
+      <ol start="6">
+        <li>Unzip the graphics.zip file and move the  graphics folder  into the folder where you have saved your project. If you copied the files out of the zip file you will need to make sure you have a top level, 'graphics' folder.</li>
+        <li>In the outline panel of graphics.atlas, right click, 'Atlas' and select, 'Add Images...'</li>
+        <li>Select all the images <strong>except for spritesheet.png</strong> (that needs to be added to a Tile Source later) and click OK. You can select multiple items by holding CTRL.<br>
+          <br>
+          Remember you can zoom out by pressing F to see the assets:<br>
+          <img src="screenshots/editor_atlas.png" width="514" height="290" alt="Atlas"><br>
+        </li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      </ol>
+      <p>We are now ready to build the interface for the title screen. <a href="worm_stage_02b.html">Stage 2b &gt;</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer_text"> <img src="../../images/cnd.png" style="vertical-align: middle;"> <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span> </div>
+    <!-- end .content --></div>
+  <!-- end .container --></div>
+<div class="bottom_pad"></div>
+</body>
+</html>

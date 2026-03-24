@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 6a</div>
+      <h1><a href="worm_index.html">Worm</a> | Colliding with other game objects.</h1>
+      <p>The worm should die if it hits anything except food.</p>
+      <ol>
+  <li>In the assets panel, in the 'main' folder, double click, 'worm1.script'.</li>
+  <li>In the 'create_new_head' function, find the collision handling section. (See how useful comments in code are!)</li>
+  <li>After the line, 'msg.post(&quot;/food#food&quot;,&quot;spawn_food&quot;)' but before, 'end', add this new condition.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+	elseif new_head_tile ~=15 then
+		self.alive = false
+		tilemap.set_tile("/field#tilemap", "layer1", new_head.x, new_head.y, 60)
+		msg.post("main:/controller#main", "worm_died")
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the tile at the new head position is anything except grass (tile 15 in the tile source) the worm is no longer alive.</p>
+<p>The head is replaced with a skull and crossbones icon (tile 60) so the player can see where they died.</p>
+<p>A message is sent  to the game controller to say that a worm has died.</p>
+<p>Now that the worm is dead the remainder of the worm will be left in play as an object to be avoided by the other players.</p>
+</div>
+      <ol start="4">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should be able to select '1up' and collide with wall and worm segments.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The next stage is to reset the game after the worm has died.  <a href="worm_stage_06b.html">Stage 6b &gt;</a></p>
+<div class="debugging_header">Debugging</div>
+<div class="debugging">
+<p>Your collision handling section should look like this:</p>
+<div class="code_wrapper"><pre><code class="language-lua">
+	-- Collision handling
+	local new_head_tile = tilemap.get_tile("/field#tilemap", "layer1", new_head.x, new_head.y)
+	-- Eat food
+	if new_head_tile == 45 then
+		self.grow = true
+		msg.post("/food#food","spawn_food")
+	elseif new_head_tile ~=15 then
+		self.alive = false
+		msg.post("main:/controller#main", "worm_died")
+	end
+</code></pre></div><strong></strong>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

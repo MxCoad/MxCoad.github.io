@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 8</div>
+      <h1><a href="worm_index.html">Worm</a> | Hiding the mouse.</h1>
+      <p>It can be annoying when you are playing the game to see the mouse pointer on the screen. Unfortunately to click the 1up or 2up buttons it is necessary to have the mouse visible. On a touch-screen device we could use touch triggers, and in the extension activities we'll include additional key bindings to use the 1 and 2 keys as alternative inputs.</p>
+      <p>Defold doesn't have any native commands to hide or show the mouse pointer. Fortunately, it does support external libraries so we can include these in our development to extend the capabilities of Defold.</p>
+      <p>Libraries allow you to share code between projects and include routines other people have written.</p>
+      <p>This part of the tutorial assumes you can access Github. If permissions prevent you from doing this you will need to skip this stage.</p>
+      <ol>
+        <li>In the assets panel, double click, 'game.project'.</li>
+        <li>In the 'Project' section there is a place to add, 'Dependencies'. Click the + icon, delete the default text and enter, 'https://github.com/subsoap/defos/archive/master.zip'</li>
+      </ol>
+      <p><img src="screenshots/dependencies.png" width="606" height="308" alt="Dependencies"></p>
+      <ol start="3">
+        <li>On the menu bar, select, 'Project', 'Fetch Libraries'.</li>
+      </ol>
+      <p><img src="screenshots/fetch_libraries.png" width="235" height="359" alt="Fetch libraries"></p>
+      <p>You should now see defos as a library in the assets panel.</p>
+      <p><img src="screenshots/assets_defos.png" width="169" height="122" alt="Defos"></p>
+<ol start="4">
+        <li>In the assets panel, double click, 'main.script'.</li>
+        <li>In the on_message function, underneath the line, 'msg.post(&quot;game:/food#food&quot;,&quot;spawn_food&quot;)', enter a command to hide the mouse.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+			defos.set_cursor_visible(false)
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Uses a method set_cursor in the defos library.</p>
+</div>
+<p>We must remember to enable the mouse again when the title screen is shown!</p>
+<ol start="6">
+  <li>In the update function, underneath the line, 'self.current_collection = &quot;#title_proxy&quot;', enter a new line to enable the mouse.</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">
+			defos.set_cursor_visible(true)
+</code></pre></div>
+<ol start="7">
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. It should now hide the mouse pointer when the game is being played.<br>
+    <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+</ol>
+      <p>That's the core mechanics done but there is plenty more we can achieve to add some sparkle to the game. <a href="worm_stage_09.html">Stage 9 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

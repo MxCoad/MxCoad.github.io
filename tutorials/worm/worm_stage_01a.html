@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="worm_index.html">Worm</a> > Stage 1a</div>
+      <h1><a href="worm_index.html">Worm</a> | Building the skeletal structure of the game.      </h1>
+      <ol>
+        <li>Create a new empty project titled, 'Worm'.</li>
+        <li>You can delete the README.md file. Right click the file and choose 'Delete'.</li>
+      </ol>
+      <p>We are going to create a controller and two game worlds.</p>
+      <ul>
+        <li>main.collection -  the controller for the other collections. It is not  a game world that the player sees, but instead it will be a utility for other collections to use.</li>
+        <li>title.collection - this will be the title screen that the player sees first and will allow them to choose the number of players.</li>
+        <li>game.collection - this will be where the game is played, containing all the game objects.</li></ul>
+      <ol start="3">
+        <li>In the assets panel, right click, 'main' and select, 'New...','Collection'.</li>
+      </ol>
+      <p><img src="screenshots/assets_new_collection.png" width="436" height="199" alt="New collection"></p>
+      <ol start="4">
+        <li>Give the collection the name, 'title' and click, 'Create Collection'.</li>
+      </ol>
+      <p><img src="screenshots/name_collection.png" width="442" height="375" alt="Name the collection"></p>
+      <ol start="5">
+        <li>In the properties panel, change the name of the collection to be, 'title'.</li>
+        <li>Repeat steps 3 to 5 to create another  collection named, 'game'.<br>
+          Don't forget you will need to name  the file when it is created and change the name property.
+        </li>
+      </ol>
+      <p><img src="screenshots/assets_collections.png" width="216" height="271" alt="Collections"></p>
+      <ol start="7">
+        <li>In the assets panel, inside the 'main' folder, double click, 'main.collection'.</li>
+        <li>In the outline panel, right click, 'Collection' and select, 'Add Game Object'.</li>
+        <li>In the properties panel, change the 'Id' of the game object to be, 'controller'.</li>
+        <li>In the outline panel, right click, 'controller' and select, 'Add Component', 'Collection proxy'.</li>
+      </ol>
+      <p><img src="screenshots/outline_add_collection_proxy.png" width="547" height="363" alt="Add collection proxy"></p>
+      <ol start="11">
+        <li>In the properties panel, change the following properties:
+          <ul>
+            <li>Id: title_proxy</li>
+            <li>Collection: /main/title.collection (you can click the three dots and select this)</li></ul></li></ol>
+      <p><img src="screenshots/outline_properties_collection_proxy.png" width="448" height="356" alt="Proxy collection properties"></p>
+      <ol start="12">
+        <li>Repeat steps 9 to 11 to create a collection proxy for the game collection.
+          <ul>
+            <li> Set the 'Id' of the proxy to be, 'game_proxy'.</li>
+            <li>Set the  'Collection' property to be, '/main/game.collection'. Remember you can use the three dots to select the file.</li>
+          </ul>
+        </li>
+      </ol>
+      <p> Make sure you haven't put the title_proxy in the wrong place. They both belong to the controller object in main.collection.</p>
+      <p><img src="screenshots/outline_collection_poxies.png" width="201" height="160" alt="Collection proxies"></p>
+      <ol start="13">
+        <li> Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>We have created the empty game worlds that our controller will be able to enable and disable as we navigate through the menu and game screen.</p>
+      <p>Next we are going to create a script for main.collection that will handle the collection proxies. <a href="worm_stage_01b.html">Stage 1b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

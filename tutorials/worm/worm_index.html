@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="flyout_panel_large">
+    <h1>New components introduced</h1>
+	  <table class="icontable">
+	    <tr>
+	      <td><img src="../../images/defold_icons/icon_tile_source.png" width="20" height="20" alt="Collection"></td>
+	      <td>Tile source - how to use spritesheets instead of an atlas to store assets for building  2D maps.</td>
+	      </tr>
+	    <tr>
+	      <td><img src="../../images/defold_icons/icon_tile_map.png" width="20" height="20" alt="Collection proxy"></td>
+	      <td>Tilemap - how to build level data using a tile source and manipulate it as a 2D array.</td>
+	      </tr>
+	    <tr>
+	      <td><img src="../../images/defold_icons/icon_library.png" width="20" height="20" alt="Library"></td>
+	      <td>Library - how to include dependencies and libraries.</td>
+	      </tr>
+	    </table>
+      </div>
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > Worm</div>
+      <h1>Worm | Step-by-step tutorial</h1>
+      <p><img src="screenshots/screenshot.png" width="289" height="298" alt="Screenshot"></p>
+      <p>The classic game of 'Snake' with a two to four player twist. Can you eat the most fruit and be the last worm alive?</p>
+      <p>In this tutorial we introduce the concept of spritesheets as a memory efficient store of level data for games that require the player to navigate a 2D map or  static platforms. Learn how to store spritesheets in a tilesource and then create a game level using a tilemap from the tilesource. This tutorial assumes you already have a knowledge of  building games in Defold including input bindings, game objects and scripts. If not, you should attempt the previous tutorials first.</p>
+      <ul>
+        <li><a href="worm_stage_01a.html">Stage 1: building the skeletal structure of the game:
+          </a>
+          <ul>
+            <li><a href="worm_stage_01a.html">1a: creating the collections for the game;</a></li>
+            <li><a href="worm_stage_01b.html">1b: writing a script for the controller</a>.</li>
+          </ul>
+        </li>
+        <li><a href="../spotter/spotter_stage_02a.html">Stage 2: creating a GUI for the title screen:
+          </a>
+          <ul>
+            <li><a href="worm_stage_02a.html">2a: changing the game properties and creating the atlas;</a><a href="../spotter/spotter_stage_02a.html"></a></li>
+            <li><a href="worm_stage_02b.html">2b: building the interface with graphics and buttons;</a></li>
+            <li><a href="worm_stage_02c.html">2c: creating the Gui script.</a></li>
+          </ul>
+        </li>
+        <li><a href="worm_stage_03a.html">Stage 3:  creating the playing field:
+          </a>
+          <ul>
+            <li><a href="worm_stage_03a.html">3a: creating a tile source;</a></li>
+            <li><a href="worm_stage_03b.html">3b creating a tile map.</a></li>
+          </ul>
+        </li>
+        <li><a href="worm_stage_04a.html">Stage 4: adding a worm:
+          </a>
+          <ul>
+            <li><a href="worm_stage_04a.html">4a: spawning  player 1;</a></li>
+            <li><a href="worm_stage_04b.html">4b: handling the inputs;</a></li>
+            <li><a href="worm_stage_04c.html">4c moving the worm.</a></li>
+          </ul>
+        </li>
+        <li><a href="worm_stage_05a.html">Stage 5: eating food:
+          </a>
+          <ul>
+            <li><a href="worm_stage_05a.html">5a: spawning fruit;</a></li>
+            <li><a href="worm_stage_05b.html">5b: collision detection with fruit;</a></li>
+            <li><a href="worm_stage_05c.html">5c: growing the worm.</a></li>
+          </ul>
+        </li>
+        <li><a href="worm_stage_06a.html">Stage 6: collision detection with other objects:
+          </a>
+          <ul>
+            <li><a href="worm_stage_06a.html">6a: colliding with walls and worm segments;</a></li>
+            <li><a href="worm_stage_06b.html">6b: handling no worms left alive.</a></li>
+          </ul>
+        </li>
+        <li><a href="worm_stage_07.html">Stage 7: adding the second player.</a></li>
+        <li><a href="worm_stage_08.html">Stage 8: hiding the mouse.</a></li>
+        <li><a href="worm_stage_09.html">Stage 9: adding some 'snap'.</a></li>
+        <li><a href="worm_stage_10.html">Stage 10: adding some 'crackle'.</a></li>
+        <li><a href="worm_stage_11.html">Stage 11: adding some 'pop'.</a></li>
+      </ul>
+      <p>This tutorial has sufficient complexity to be a programming project for OCR A level Computer Science, and comfortably a group B project for AQA A level Computer Science.</p>
+      <h1>What you learned in this tutorial</h1>
+      <ol>
+        <li>A tile source holds equally sized bitmaps (tiles) that allow you to construct graphics for top-down levels and platform games easily.</li>
+        <li>A tile map uses the graphics in a tile source to construct a level either at design or run-time.</li>
+        <li>Each image in the tile source has a unique number that is applied to the tile map when a tile is placed. The tile map is a large 2D array storing the value of the tile placed in that position which you can manipulate using script code.</li>
+        <li>Higher-order data structures such as queues can be used to track objects that are made of many parts.</li>
+        <li>Libraries extend the functionality of a programming language by including code in your project that other people have written.</li>
+      </ol>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>
