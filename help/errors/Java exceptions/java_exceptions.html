@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+      <h1>Java exceptions</h1>
+      <p><img src="Java socket timeout.png" width="542" height="376" alt="Java socket timeout"></p>
+      <p>If you experience a Java socket timeout error it is probably because:</p>
+      <ul>
+        <li>Your version of the Java run-time is out of date. Try installing a new version: <a href="https://www.java.com/ES/download/" target="new">https://www.java.com/ES/download/</a></li>
+        <li>Your anti-virus/firewall settings are preventing your game running by generating false positives. This typically happens with real-time scanning.</li>
+        <li>Defold may need to be run in administrator mode. </li>
+      </ul>
+      <p>An example of a false positive firewall alert:</p>
+      <p><img src="firewall false positive.png" width="794" height="530" alt="Firewall false positive"></p>
+      <h1>Fixing the problem</h1>
+      <p>The fix below describes the process using McAfee, but equivalent options should be available in other software.</p>
+      <ol>
+        <li>Open the firewall software you are running and change the real-time scanning settings.<br>
+          <br>
+          In McAfee click, &quot;Secure&quot; [1] and &quot;Real-Time Scanning&quot; [2]
+          <br>
+        <img name="mcafee1" src="mcafee1.png" width="976" height="688" alt="McAfee screenshot 1"></li>
+        <li>Click &quot;Add file&quot; and add:
+          <ul>
+            <li><strong>Defold.exe</strong><br>
+            Located in C:\Program Files (x86)\Defold</li>
+            <li><strong>java.exe</strong><br>
+            Located in In the C:\Program Files (x86)\Defold\packages\jdk11.0.1\bin</li>
+            <li><strong>javaw.exe</strong><br>
+            Located in In the C:\Program Files (x86)\Defold\packages\jdk11.0.1\bin</li>
+            <li><strong>conhost.exe</strong><br>
+            Located in C:\Windows\System32</li>
+          </ul>
+        </li>
+        <img src="mcafee2.png" width="471" height="301" alt="McAfee screenshot 2">
+        <li>Run Defold.exe in administrator mode.</li>
+      </ol>
+      </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

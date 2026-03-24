@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../../01-homepage.html">home</a> > <a href="../../../03-helpsheets.html">help</a> > <a href="../how-to_index.html">how-to</a> &gt; interfaces part 3</div>
+      <h1>Building interfaces part 3: sending a message to the controller script</h1>
+      <p>When you want to switch to a different collection, all you need to do is use this single line of code, passing the relevant string that the controller script will be expecting.</p>
+      <div class="code_wrapper"><pre><code class="language-lua">msg.post("main:/controller","show_menu")</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>This line of code posts a message to the controller script.</p>
+<p> It assumes your controller collection is called 'main' and that the game object hosting the script has the Id, 'controller'.</p>
+</div>
+      <p>You can use this line of code in a number of ways. For example, if you wanted to return to the menu when escape is pressed, you would set up the key trigger action to be &quot;quit&quot; in game.input_binding and then in the on_input function of the game collection use the script:</p>
+      <div class="code_wrapper"><pre><code class="language-lua">	if action_id == hash("quit") then
+		msg.post("main:/controller","show_menu")
+	end</code></pre></div>
+      <p>You will also want to use GUI buttons to trigger these scripts.</p>
+      <p><a href="04_interfaces.html">Part 4: GUI objects and scripts &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

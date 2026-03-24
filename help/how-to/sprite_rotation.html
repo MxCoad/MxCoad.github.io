@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> > <a href="how-to_index.html">how-to</a></div>
+      <h1>Sprite rotation</h1>
+      <p>There are three ways to rotate a sprite in Defold:</p>
+      <ol>
+        <li>Use the command go.animate. If you put this command in the init function and use a loop parameter the object will rotate continuosly while alive. This is the best method with the lowest CPU and memory overhead. Of course you could use this code in the update function too.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">go.animate(".", "euler.z", go.PLAYBACK_LOOP_BACKWARD, 360, go.EASING_LINEAR, 60)</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>go.animate is the command to animate an object.</p>
+<p>&quot;.&quot; means the current object</p>
+<p>&quot;euler.z&quot; means rotate on the z axis. i.e. from the middle.  Leonhard Euler: famous mathematician, look up his rotation theorem!</p>
+<p>go.PLAYBACK_LOOP_BACKWARD means loop the animation continuously clockwise.</p>
+<p>360 is the angle of the rotation: 360 degress is a full circle.</p>
+<p>go.EASING_LINEAR means in one direction.</p>
+<p>60 is the number of seconds it takes to make the full rotation.</p>
+<p>Therefore this code rotates an object 360 degrees clockwise from the middle point, taking 60 seconds to make a complete rotation.</p>
+</div>
+      <ol start="2">
+        <li>Change the rotation angle of the sprite in each frame within the update function.<br>
+          This is a useful approach if you want full control of the animation in each frame, but it carries a larger overhead than using an animation method so should be avoided if the first suggested solution will work.</li>
+      </ol>
+            <div class="code_wrapper"><pre><code class="language-lua">local rotation = go.get_rotation()
+	go.set_rotation(rotation * vmath.quat_rotation_z(0.05 * dt))</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>get_rotation will return the quaternion rotation relative to any parent object. Use get_world_rotation to return the global world rotation.</p>
+<p>set_rotation sets the quaternion rotation. If we multiply the current angle by a number we can change the angle relative to the current position. Remember this should be multiplied by the delta time to ensure a consistent frame rate across different CPUs.</p>
+</div>
+      <ol start="3">
+        <li>Create a sequence of sprites for each frame of the rotation animation.  Import these sprites into an atlas as an animation group.<br>
+          This should only be considered if there is no viable alternative.  Sprites have a large overhead.  If you want perfect animation you would need 360 sprites: one for each angle of rotation!</li>
+      </ol>
+      <p><br>
+      </p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

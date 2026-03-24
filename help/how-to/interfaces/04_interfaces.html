@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../../01-homepage.html">home</a> > <a href="../../../03-helpsheets.html">help</a> > <a href="../how-to_index.html">how-to</a> &gt; interfaces part 4</div>
+      <h1>Building interfaces part 4: Building UI elements with GUI and GUI scripts</h1>
+      <p>Interfaces are built like this in Defold:</p>
+      <p><img src="UI_objects.png" width="1116" height="748" alt="GUI objects"></p>
+      <p>A GUI file holds the buttons and other interface elements for the user to interact with. A GUI file must be placed inside a game object like all other components.</p>
+      <p>The interface elements  appear on top of the canvas for the collection hosting the GUI. Therefore any background images etc. should be placed on a game object on the collection and not in the GUI.</p>
+      <ol>
+        <li>In the assets panel, create a new GUI file.</li>
+      </ol>
+      <p><img src="assets_new_gui.png" width="541" height="490" alt="New GUI"></p>
+      <p>It is a good idea to name your GUI file the same as the collection it is being used in so you don't get confused later about which components belong to which collections!</p>
+      <p>You will notice in the outline panel the GUI is made from a number of components, and in the properties we would set the GUI script file to use too.</p>
+      <p><img src="outline_gui.png" width="446" height="487" alt="GUI components"></p>
+      <ul>
+        <li>Nodes: these are buttons (boxes) and text elements mainly.</li>
+        <li>Textures: graphics you want to display on the buttons.</li>
+        <li>Fonts: any fonts to use if your buttons have vector text and are not images.</li>
+      </ul>
+      <p>First add in new textures or graphics elements you plan to use. If you want to use button shapes that are not simple boxes with text, you will need to create these as images. There are a number of button building websites you can use. Remember graphics must be stored in an atlas first. It is considerably easier to just make the text and shape of your buttons a graphic.</p>
+      <ol start="2">
+        <li>As with all components in Defold, simply right click a folder in the outline panel to bring up the context menu to add an element.</li>
+        <li>Create a button by right clicking, 'Nodes', 'Add', 'Box'.</li>
+        <li>In the properties panel you can set the 'Texture' property to be the image in the atlas you wish to use for the box.</li>
+        <li>Build your interface using as many nodes as you need.</li>
+      </ol>
+      <p>You need to create a GUI script to make the buttons work.</p>
+      <ol start="6">
+        <li>In the assets panel, right click and choose, 'New', 'GUI Script'. Again, name this appropriately.</li>
+      </ol>
+      <p>On face value it looks identical to a normal script with all the same functions. However, this script can refer to GUI components.</p>
+      <ol start="7">
+        <li>Change the  basic script to add interactions.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_input(self, action_id, action)
+	if action.pressed and gui.pick_node(gui.get_node("box1"), action.x, action.y) then
+		msg.post("main:/controller", "show_level1")
+	elseif action.pressed and gui.pick_node(gui.get_node("box2"), action.x, action.y) then
+		msg.post("main:/controller", "show_level2")
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>It is important that the GUI aquires the input focus and releases it when it is closed. This is achieved in the init and final functions. Remember only one interface can have the input focus at any one time.</p>
+<p>Note in the on_input function how we are able to refer to the Id of the box nodes on the GUI. In this example, when they are clicked by the mouse. We didn't need to set up any input bindings, key triggers or actions because there is already one set by default in the game.input_binding file:</p>
+<p><img src="input_bindings.png" width="604" height="77" alt="Input bindings"></p>
+<p>A message is passed back to the controller collection to load and enable the  collection.</p>
+</div>
+      <p>That's the basics of creating a simple user interface to change the collection being shown and to use GUI buttons.</p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

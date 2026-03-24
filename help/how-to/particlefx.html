@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> > <a href="how-to_index.html">how-to</a></div>
+      <h1>Particle FX rendering</h1>
+      <p>Particles are rendered on a different thread to game objects. This will cause them to render in front of other game objects. For most purposes this is what you would want, but if you are using Particle FX to create a star field for example, you will want the stars rendering behind the space ships.</p>
+      <p>To achieve this you need to change the material tag from 'particle' to 'tile' so that it is rendered with the other sprites instead.</p>
+      <ol>
+        <li>In the assets panel, find the 'builtins\materials' folder.</li>
+        <li>Right click, 'particlefx.material' and select, 'copy'. [CTRL-C]</li>
+        <li>In the assets panel, navigate to your 'main' folder or another folder you have created.</li>
+        <li>Right click and select, 'Paste'. [CTRL-V]</li>
+      </ol>
+      <p><strong>Note, you will not be able to save changes to the 'builtins' file which is why you need to take a copy of the material.</strong></p>
+      <ol start="5">
+        <li>Double click, 'particlefx.material' (you can rename this file to match the name of your game object, e.g. 'stars.material').</li>
+        <li>In the editor panel, change the, 'Tags' property from 'particle' to 'tile'.</li>
+        <li>In the assets panel find your .particlefx file that you want to apply this material to and double click it.</li>
+        <li>In the properties panel, change the 'Material' property to the new .material file  you have just created.</li></ol>
+      <p>The Particle FX object will now render in front of the game objects and you can use the Z property to change the layer.</p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

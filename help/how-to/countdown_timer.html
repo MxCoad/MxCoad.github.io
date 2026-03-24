@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> > <a href="how-to_index.html">how-to</a></div>
+      <h1>Countdown timer</h1>
+      <p>To create and display a simple countdown timer you could adapt this code.</p>
+      <p>This implementation assumes the object holding the text for the timer is on a Gui in a text node called, 'timer_text'. </p>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	self.timer = 10 -- seconds
+end
+
+function update(self, dt)
+	if self.timer > 0 then
+		self.timer = math.max(self.timer - dt, 0)
+		gui.set_text(gui.get_node("timer_text"), string.format("%.1f",tostring(self.timer)))
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>timer is an attribute that holds the current time on the timer in seconds.</p>
+<p>If the timer is greater than zero it retuns the greater value between the timer and the number zero. This ensures that -0 is not shown when the timer reaches zero.</p>
+<p>The timer is cast to a string. The Gui text node is set to a formatted string of the timer to one decimal place.</p>
+<p>% is the integer part of the timer. 1f means one decimal place. You can change this to 2f etc.</p>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

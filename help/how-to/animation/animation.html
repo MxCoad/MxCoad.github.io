@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../../01-homepage.html">home</a> > <a href="../../../03-helpsheets.html">help</a> > <a href="../how-to_index.html">how-to</a></div>
+      <h1>Animation</h1>
+      <p><img src="outline.png" align="right" width="525" height="604" alt="Outline &amp; properties">Create a new animation set in an atlas and add the images. Set the Id property of each animation set to something suitable that describes the animation to make the code readable. In this example we have five animation sets named: player_idle, player_left, player_right, player_up and player_down. Each animation set includes five images.</p>
+      <p>The properties for the animation set determine its behaviour:</p>
+      <ul>
+        <li> <strong>Id</strong> is the name of the animation you will refer to in the code.</li>
+        <li> <strong>Fps</strong> is how fast the animation plays. There is currently no way to change this in code.</li>
+        <li><strong>Flip Horizontal</strong> and <strong>Flip Vertical</strong> can be used to change the direction of the sprite being animated. This is useful if you want walking animations to be different for both left and right but only want to use one set of images.</li>
+        <li><strong>Playback</strong> controls the direction the animation is played. There are lots of different options here.</li>
+      </ul>
+      <p>In this example we will use different animations for moving up, down, left and right, plus an idle animation when the character is  not moving. When a key is pressed the character animates with the appropriate animation set. When no key is pressed the character defaults to the idle animation.</p>
+      <p><img src="up.gif" width="128" height="128" alt="Up"><img src="down.gif" width="128" height="128" alt="Down"><img src="left.gif" width="128" height="128" alt="Left"><img src="right.gif" width="128" height="128" alt="Right"><img src="idle.gif" width="128" height="128" alt="Idle"></p>
+      <p>The input bindings have been set in the game.input_binding file in the assets panel as follows:</p>
+      <p><img src="input_bindings.png" width="618" height="241" alt="Input bindings"></p>
+      <p>Script for the character:</p>
+      <div class="code_wrapper"><pre><code class="language-lua">local speed = 250
+
+-- Input bindings
+local move_left = hash("move_left")
+local move_right = hash("move_right")
+local move_up = hash("move_up")
+local move_down = hash("move_down")
+
+-- Animation sets
+local animation_idle = hash("player_idle")
+local animation_up = hash("player_up")
+local animation_down = hash("player_down")
+local animation_left = hash("player_left")
+local animation_right = hash("player_right")
+
+function init(self)
+		msg.post(".", "acquire_input_focus")
+		self.direction = vmath.vector3()
+		self.current_animation = nil
+end
+
+function update(self, dt)
+		-- handle diagonal movement
+		if vmath.length_sqr(self.direction) > 1 then
+			self.direction = vmath.normalize(self.direction)
+		end
+
+		-- update player position
+		local position = go.get_position()
+		go.set_position(position + self.direction * speed * dt)
+
+		-- animate the player
+		local animation = animation_idle
+		if self.direction.x > 0 then
+			animation = animation_right
+		elseif self.direction.x < 0 then
+			animation = animation_left
+		elseif self.direction.y > 0 then
+			animation = animation_up
+		elseif self.direction.y < 0 then
+			animation = animation_down
+		end
+		-- reset animation only if new direction started
+		if animation ~= self.current_animation then
+			msg.post("#sprite", "play_animation", { id = animation })
+			self.current_animation = animation
+		end
+
+		self.direction = vmath.vector3()
+end
+
+function on_input(self, action_id, action)
+	-- Set direction based on input
+	if action_id == move_down then
+		self.direction.y = -1
+	elseif action_id == move_up then
+		self.direction.y = 1
+	elseif action_id == move_left then
+		self.direction.x = -1
+	elseif action_id == move_right then
+		self.direction.x = 1
+	end
+end
+
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>speed is a variable that determines the speed of the character.</p>
+<p>It is generally considered to be good practice to pre-hash and store the integers in constants instead of using the hash command for every update and input. This would give you a performance increase as it requires additional computation to calculate the hash of a string. It is better to only calculate the hashing algorithm  once.</p>
+<p>move_left is a constant holding the hash of the input binding action move_left.</p>
+<p>animation_idle is a constant holding the hash of the animation Id player_idle.</p>
+<p>In the init function the script aquires the input focus. It sets the direction to be a vector3 and the current_animation to be nil. Initialising these variables will prevent the update function crashing on the first update before these values are set.</p>
+<p>When moving diagonally the length of the movement will be greater than 1. Normalising the vector will ensure that diagonal movement is the same distance as horizontal and vertical movement.</p>
+<p>The player's position is updated to be the current position plus the direction vector multipled by the speed and delta time to ensure a consistent movement speed between different processors.</p>
+<p>The animation variable is set according to the direction.</p>
+<p>The animation is changed if it is a different animation than the one currently playing. The critical line of code to change the animation is:<br>
+  msg.post(&quot;#sprite&quot;, &quot;play_animation&quot;, { id = animation })<br>
+  This assumes the sprite is called &quot;sprite&quot;.</p>
+<p>The direction is set as a vector3.</p>
+<p>When a key is pressed the direction is changed. Using increments of 1 keeps the code really simple. We can then multiply this value by the speed to determine the number of pixels to actually move.</p>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

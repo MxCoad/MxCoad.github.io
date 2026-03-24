@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> >  <a href="theory_index.html">theory</a></div>
+      <h1>What is hard-coding?</h1>
+      <p>A programmer can choose to put either constant (immediate addressing) or variable (relative addressing) values into a program. Constants cannot  be changed by code later in the program. This is known as &quot;hard-coding&quot;. The alternative is to use variables/attributes that can change. As a programmer you need to decide whether to hard-code aspects of your solution or not. It is often quicker to hard-code, but it has a lot less flexibility for adding features to your game later. Good programmers will use the computational thinking approach of, &quot;thinking ahead&quot; to decide which is most appropriate for the problem being solved.</p>
+      <p>For example, if you know your game will only ever be played on an 8x8 grid then it makes sense to hard-code these values and use constants. Remember it is especially important in games development to have the most optimised code to ensure high frame rates. Hard-coding will enable the compiler to create the most efficient and optimised code. However, if later you want different levels in the game to use different grid sizes, then it makes more sense to use a variable and assign it the number 8 instead.</p>
+      <p>An example from the Incoming tutorial:</p>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	-- set the random number seed and discard the first value
+	math.randomseed(os.time())
+	math.random()
+	self.spawn_rate = 90
+end
+
+function update(self, dt)
+	local spawn = math.random(1,self.spawn_rate)
+	if spawn == 1 then</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Here we used an attribute called spawn_rate and set it to the value 90. This means we can easily change this value later if we want to make the game easier or harder.</p>
+</div>
+<p>An alternative approach would be to hard-code the value 90 instead. However, this would mean we couldn't change it later.</p>
+<div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	-- set the random number seed and discard the first value
+	math.randomseed(os.time())
+	math.random()
+end
+
+function update(self, dt)
+	local spawn = math.random(1,90)
+	if spawn == 1 then</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Note, the value 90 has been &quot;hard coded&quot; into the program. Only the programmer can change this at design-time. It cannot be changed at run-time.</p>
+<p>This results in more efficient machine code because it does not require the attribute to be fetched from memory, but can only be used when the value can never change.</p>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

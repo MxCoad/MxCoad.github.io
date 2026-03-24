@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../../01-homepage.html">home</a> > <a href="../../../03-helpsheets.html">help</a> > <a href="../how-to_index.html">how-to</a> &gt; interfaces part 1</div>
+      <h1>Building interfaces part 1</h1>
+      <p>Games don't start playing the moment they are loaded. Instead, the user is presented with a screen  before initiating the start of the game. When the game is over the player is returned to this screen. </p>
+      <p><img src="title_screen.png" width="463" height="367" alt="Title screen"></p>
+      <p>More complex games present a menu interface allowing the player to adjust settings, choose levels etc.</p>
+      <p>In Defold, each screen, often called a &quot;game world&quot;  is a collection. By convention, the bootstrap collection, that is the one  loaded first, is called main.collection, although it can be changed in the .project file.</p>
+      <p>Typically for space invaders you would have a collection for the title screen and another collection for the screen on which the game is played.</p>
+      <p>In Defold, loading another collection is a four step handshake process.</p>
+      <p><img src="UI_message_passing.png" width="972" height="447" alt="Message passing"></p>
+      <p>The collections are not permanently stored in memory. Instead they are loaded when needed which makes the game more memory efficient.</p>
+      <p>As it is not a simple case of using a command to open another screen, it is better to use main.collection to  control the loading and unloading of all the other collections.</p>
+      <p><img src="UI_collections1.png" width="1036" height="549" alt="Collections"></p>
+      <p>If we were making Space Invaders, we would have main.collection as our bootstrap, and get it to load the menu collection in it's init function. When the player presses Enter, the menu collection script would send a message back to the main.collection script asking it to load the game collection and unload the menu.      </p>
+      <p><a href="02_interfaces.html">Part 2: how to build a controller collection and script &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

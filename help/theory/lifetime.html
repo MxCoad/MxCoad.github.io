@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> >  <a href="theory_index.html">theory</a></div>
+      <h1>What is an object lifetime?</h1>
+      <p>In object-oriented programming, all objects have a lifetime. They are created, used and then destroyed. This is strongly related to concepts of memory management and allows your program to use memory dynamically. In other words, using memory only when objects are created and relinquishing it when they are destroyed. Objects are created from the heap memory and returned to the heap where a process known as garbage collection recyles the memory for use by another process. When objects are alive, the program retains a reference or pointer to the object in memory. When the object is destroyed, the pointer is simply lost so there is no way of linking back to the object in memory.</p>
+      <p>An alternative approach to dynamic objects is to use static objects known as pooling instead. With pooling,  objects live for the entire time that a program is executing, and therefore the memory footprint is static. There will be a defined number of objects in the pool and these are simply recycled each time a new object is created and destroyed. Typically there will be a flag indicating whether the object is alive or not, or a list structure pointing to the next available object.</p>
+      <p>Pooling is often far more efficient for games development because no time is taken allocating and deallocating memory when objects are created and destroyed. This not only increases frame rates because more cycles can be  used for  game logic, but also means that performace dips are avoided because there can only ever be a finite number of objects on the screen at any one time. If there is an attempt to create an object and none are available in the pool, the spawning routine is simply dropped. There are enough enemies on the screen for the player to deal with already!</p>
+      <p> Defold uses pooling under the hood, but allows the programmer to use lifetimes as it is convenient and less time consuming to write code in this way. The lifetime of an object is handled by 3 core lifetime functions: init, update and final.</p>
+      <p>Init is a function handling the instantiation, or creation of the object. This is also known as a constructor or initialiser in object-oriented programming. Multiple instances of a game object are created by factories, and these pass a dictionary/table data type to the init function which can be used to initialise attributesof the object. Init is only called once.</p>
+      <p>Update is a function that is repeatedly called when the object is alive and this is where the game logic is executed. The functions on_input and on_message complement update by handling keyboard inputs and messages received by other objects independently of the update function.</p>
+      <p>Final is a function that is called when the game object is destroyed/deleted. This is also known as a deconstructor or finaliser in object-oriented programming. It is a good place to put code that should execute in the final moments of the game object's life. Final is only called once.</p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

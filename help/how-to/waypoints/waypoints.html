@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../../01-homepage.html">About</a></li>
+		<li><a href="../../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+      <h1>Enemy waypoint algorithms     </h1>
+      <p>It is common in games for enemy sprites to need to move.  The movement can often be achieved in 4 ways:</p>
+      <ol>
+        <li>Simple, predefined movement, e.g. move left and right to the edge of the screen/platform.</li>
+        <li>Moving towards another object.</li>
+        <li>Moving along a predefined path.</li>
+        <li>Using AI and Dijkstra/A* pathfinding algorithms.</li>
+      </ol>
+      <h2>Simple predefined movement</h2>
+      <p>This can be achieved with an approach like:</p>
+      <p class="code_panel">If enemy.x &lt; screen_width and enemy.x &gt; 0 then<br>
+        enemy.x += movement_speed<br>
+        else<br>
+        movement_speed = -movement_speed<br>
+        End If</p>
+      <p><span class="code_explained_code">Movement_speed</span> would be an integer variable representing the number of pixels to move the object.<br>
+        Using <span class="code_explained_code">movement_speed = -movement_speed</span> causes the object to change direction because negative value moves the object to the left, a positive value moves the object to the right. This is a common programming technique to turn a positive number negative, and a negative number positive.</p>
+      <p>When changing direction, the y position could also be changed resulting in an enemy movement like space invaders.</p>
+      <h2>Moving towards another object</h2>
+      <p><img src="waypoints1.png" width="400" height="261" alt="Moving towards another object"></p>
+      <p>This can be achieved with an approach like:</p>
+      <p class="code_panel">If enemy.x &gt; player.x then enemy.x -= movement_speed<br>
+        If enemy.x &lt; player.x then enemy.x += movement_speed<br>
+        If enemy.y &gt; player.y then enemy.y -= movement_speed<br>
+        If enemy.y &lt; player.y then enemy.y += movement_speed</p>
+      <p>The enemy will continually adjust its x and y position to become closer to the player x and y position.</p>
+      <h2>Moving along a predefined path</h2>
+      <p><img src="waypoints2.png" width="400" height="261" alt="Moving along a predefined path"></p>
+      <p>This can be achieved by storing each of the waypoints in two single dimensional arrays, or a two dimensional array. Each object would have it's own waypoint array.</p>
+      <p><img src="waypoints_indexing.png" width="500" height="307" alt="Waypoint array"></p>
+      <p>You can then use a variable to store which waypoint the object is moving towards (0-3). When this becomes 4, reset back to 0. Apply the 'movement towards another object' algorithm for the waypoint co-ordinates like this: </p>
+      <p class="code_panel">If enemy.x &gt; waypoint_x[number] then enemy.x -= movement_speed<br>
+        If enemy.x &lt; waypoint_x[number] then enemy.x += movement_speed <br>
+        If enemy.y &gt; waypoint_y[number] then enemy.y -= movement_speed<br>
+        If enemy.y &lt; enemy_waypoint_y[number] then enemy.y += movement_speed <br>
+        If enemy.x = enemy_waypoint_x[number] and enemy = waypoint[number].y then
+        waypoint += 1<br>
+        If waypoint &gt; 3 then waypoint = 0 </p>
+      <p>You could easily give the impression that an enemy is moving around a wall by ensuring the waypoints never cause the object to come into contact with the wall. No collision detection is necessary.</p>
+      <h2>Using AI and Dijkstra/A* pathfinding algorithms</h2>
+      <p>These algorithms are part of the A'level specification. Learn the theory of these first, and apply it to a situation illustrated below.</p>
+      <p><img src="waypoints3.png" width="207" height="231" alt="Pathfinding algorithms"></p>
+      <p>&nbsp;</p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

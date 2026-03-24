@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> >  <a href="theory_index.html">theory</a></div>
+      <h1>What is pre-hashing?</h1>
+      <p>To make the development easily readable, we give objects a descriptive 'Id' property. This is a string that is easy for humans to recognise such as, 'player'. However, to maximise performance, internally Defold is storing the object with an identifier that is an integer. A hashing algorithm is used to convert the string that is useful for humans into an integer that is useful for a computer.</p>
+      <p>A hashing algorithm  takes a set of alphnumeric characters and applies a mathematical formula to them to derive a number. A simple way of achieving this would be to convert each character in a string to it's ASCII value and add up all the numbers. However, this is a very simplistic approach.  Defold  uses the <a href="https://en.wikipedia.org/wiki/MurmurHash" target="new">64-bit MurmurHash2A algorithm</a>, modified to be <a href="https://en.wikipedia.org/wiki/Endianness" target="new">endian-neutral</a>.</p>
+      <p>In code, hash() is used every time we refer to an object. Since the update() or on_input() function of a script executes many times a second, it is calling this hashing algorithm many, many times, achieving the same output every time! To further maximise performance we could calculate the output of the hashing algorithm just once and store this in a variable instead. This is known as pre-hashing. In conditions in the code we then compare the variable rather than the hash of a string. It increases the memory footprint slightly while increasing the performance significantly.</p>
+      <p>An example without pre-hashing:</p>
+      <div class="code_wrapper"><pre><code class="language-lua">function on_input(self, action_id, action)
+	if action_id == hash("left") then
+		self.direction.x = -1
+	elseif action_id == hash("right") then
+		self.direction.x = 1
+	end
+end</code></pre></div>
+
+<p>An example with pre-hashing:</p>
+<div class="code_wrapper"><pre><code class="language-lua">local move_left = hash("left")
+local move_right = hash("right")
+
+function on_input(self, action_id, action)
+	if action_id == move_left then
+		self.direction.x = -1
+	elseif action_id == move_right then
+		self.direction.x = 1
+	end
+end</code></pre></div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

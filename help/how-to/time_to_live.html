@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> > <a href="how-to_index.html">how-to</a></div>
+      <h1>Time to live</h1>
+      <p>To give an object a finite life-span you could use the following code:</p>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+    self.t = 2 
+end
+
+function update(self, dt)
+    self.t = self.t - dt 
+    if self.t < 0 then
+        go.delete() 
+    end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>t is an attribute that holds the time left to live. This is initialised to 2 when the object is spawned.</p>
+<p>In each frame the time to live is reduced by the delta time to ensure consistent timing regardless of the number of elapsed clock cycles.</p>
+<p>Once the time to live is below zero the object is despawned.</p>
+<p>Note, it is important to delete objects you want to despawn so they are not taking up additional memory and silently running their update event. There are a maximum of 128 objects in a typical Defold game to ensure frame rates don't drop.</p>
+</div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

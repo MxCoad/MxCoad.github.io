@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../03-helpsheets.html">help</a> > <a href="errors_index.html">errors</a></div>
+      <h1>Code isn't executing</h1>
+      <p>Things to check if you have written a script but it doesn't appear to be executing any commands:</p>
+      <ul>
+        <li><strong>Have you added the script to the game object?</strong><br>
+        Remember the assets panel is just a file explorer.  You will need to attach a script from the assets panel to a game object in the outline panel for it to execute. In the outline panel, right click the game object and select, 'Add Component File'. Choose the script.</li>
+        <li><strong>Does your script respond to inputs?</strong><br>
+          Remember that the script needs to accept the input focus first.  Include this line of code in the init function:  
+        msg.post(&quot;.&quot;, &quot;acquire_input_focus&quot;)</li>
+      </ul>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>
