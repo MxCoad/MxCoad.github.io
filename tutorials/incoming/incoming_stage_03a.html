@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 3a</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Creating the game objects: earth</h1>
+      <ol>
+        <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+        <li>In the outline panel, right click, 'Collection' and select, 'Add game object'.</li>
+      </ol>
+      <p><img src="screenshots/outline_add_game_object.png" width="389" height="278" alt="Add game object"></p>
+      <ol start="3">
+        <li>In the properties panel, change the 'Id' of the game object to be, 'earth'.</li>
+        <li>In the properties panel, change the 'Position' attributes to be: X: 480, Y: 320. This will put the game object in the middle of the screen.</li>
+        <li>In the outline panel, right click the 'earth' game object and select, 'Add Component', 'Sprite'.</li></ol>
+      <p><img src="screenshots/outline_earth_add_sprite.png" width="533" height="557" alt="Add sprite"></p>
+      <ol start="6">
+        <li>In the properties panel, change the 'Image' property to, '/main/graphics.atlas' (use the three dots icon to make this easier).</li>
+        <li>In the properties panel, change the 'Default Animation' property to, 'earth'.</li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>If everything is working you should see the earth rotating in the middle of the screen. While we are working on the earth object, now is a good time to create the collision window so we can use messages later to know when a comet has hit the earth. <a href="incoming_stage_03b.html">Stage 3b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

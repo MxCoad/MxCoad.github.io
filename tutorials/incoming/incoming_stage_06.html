@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 6</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Writing the collision message handlers.</h1>
+      <ol>
+        <li>Open the 'comet.script' file.</li>
+        <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the assets panel, in the 'main' folder, double click 'comet.script'.</li>
+    </ul>
+</div>
+      <li>Change the on_message function to respond to the target collision object being hit by either the earth or player collision objects.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function on_message(self, message_id, message, sender)
+	if message_id == hash("contact_point_response") and message.other_id == hash("/earth") then
+		go.delete()
+	end
+	if message_id == hash("contact_point_response") and message.other_id == hash("/target") then
+		go.delete()
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If a message is received from the collision handler and the Id of the object sending the message is 'earth' then delete the game object (the comet).</p>
+<p>The action is also carried out for the 'player' object.</p>
+<p>This could be achieved in a single condition. However, thinking ahead we might want other actions to happen depending on what caused the collision. For example, if the comet had hit the planet we would want to penalise the player in some way. Perhaps by losing a life. If the comet is hit by the player target perhaps we want to increase the score. Since both conditions need to be checked anyway there is no overhead in using two IF statements here.</p>
+</div>
+      <p>Note you should delete game objects whenever you can to ensure you don't max-out the number available in the object pool. Another approach would be to reset the position of the comet so that it is immediately respawned when it is destroyed.</p>
+      <ol start="3">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run your game at this point. It should now despawn the comets.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>That's the core mechanics done but the game can be improved in many ways from this starting point. <a href="incoming_stage_07.html">Stage 7 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

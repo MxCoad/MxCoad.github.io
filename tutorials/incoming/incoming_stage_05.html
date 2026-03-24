@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 5</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Scripting the player target.</h1>
+      <p>When the player clicks the left mouse button the target should appear at that position on the screen and gradually fade out before being removed from the screen.</p>
+      <p>There are a few ways we could approach this. We could use a factory and spawn the player target when a key is pressed using a target spawner script. However, because we can only ever have one target on the screen at a time, an easier approach is simply to move the target off the viewable area of the screen when the fade animation ends and move it to a new position when the left mouse button is clicked.</p>
+      <p>Firstly we need to set a key binding for the mouse.</p>
+      <ol>
+        <li>In the assets panel, in the 'input' folder and double click the 'game.input_binding' file.</li>
+        <li>Set the 'Mouse Triggers' so that input, 'Button left' has an action of, 'target'.</li>
+      </ol>
+      <p>Now we need to write a script to handle the input.</p>
+      <ol start="3">
+        <li>Create a new script called, 'player.script'. Try to do this without help, but there is a guide below if you need it.</li>
+      <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the assets panel, right click, 'main.collection' and select, 'New', 'Script'.</li>
+      <li>Name the script 'player' and click 'Create Script'.</li>
+    </ul>
+</div>
+
+      <li>In the init function change the code to aquire the input focus.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+end</code></pre></div>
+      <ol start="5">
+        <li>Above the init function, write a new user-defined function that will be called when the target has faded out. This will  reset its position.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">local function complete()
+	pos = vmath.vector3(-100, -100, 0)
+	go.set_position(pos)
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>You can make your own methods for game objects by declaring local functions in addition to the built-in ones.</p>
+<p>pos is a vector3 position to a place that is off-screen so the player cannot see it.</p>
+</div>
+      <ol start="6">
+        <li>Change the on_input function to respond to the mouse being clicked.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function on_input(self, action_id, action)
+	if action_id == hash("target") and action.pressed then
+		go.set("#sprite", "tint.w", 1)
+		pos = vmath.vector3(action.x, action.y, 0)
+		go.set_position(pos)
+		go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_INOUTSINE, 0.5,0, function() complete() end)
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the action_id is 'target' (that we set in the key bindings) and the action is that the mouse button has been pressed then...</p>
+<p>The sprite's 'tint.w' property is set to 1. This means that it is fully visible. The 'tint.w' property can have a value beteen 0 and 1 that states how transparent it is.</p>
+<p>The position is then set to match the position of the mouse. This is stored in action.x and action.y.</p>
+<p>The animate command is then used to animate the sprite over half a second to fade out (go.EASING_INOUTSINE).</p>
+<p>When the animation is complete, the following code is executed: function() complete() end. This essentially calls the 'complete' function we have just written. It's much neater to call a function rather than write all the code in this part of the command.</p>
+</div>
+      <ol start="7">
+        <li>Don't forget we now need to attach the script to the target game object. See if you can remember how to do this, and check with the guide below.</li>
+      <a href="javascript:toggleLayer('reveal2');">Step-by-step guide</a>
+<br>
+<div id="reveal2">
+    <ul>
+      <li>In the assets panel in the 'main' folder, double click, 'main.collection'.</li>
+      <li>In the outline panel, right click 'target' and select, 'Add Component File'.</li>
+      <li>Select '/player.script' and click 'OK'.</li>
+    </ul>
+</div>  
+      </ol>
+      <ol start="8">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run your game at this point. It should now respond to the left mouse being clicked.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>We can now finish the core mechanics of the game by adding the collision handling routine. <a href="incoming_stage_06.html">Stage 6 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

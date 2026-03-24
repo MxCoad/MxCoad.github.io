@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 4</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Creating an comet spawner.</h1>
+      <p>Although Lua is not a truly object-oriented language, it is not difficult to see how the principles of OOP are applied to Defold developments:</p>
+      <ul>
+        <li>Defold developments use game objects. These are like classes.</li>
+        <li>Game objects have properties and encapsulated variables using the 'self' structure. These are  like attributes.</li>
+        <li>Scripts have functions for initialising, handling inputs and updating. These are like methods.</li>
+        <li>Game objects are self contained and use message passing to interact with each other. That is like a class interface.</li>
+      </ul>
+      <p>In our game we want multiple comets, but we don't want to make hundreds of game objects that are all the same. Instead we use a factory component to build new instances of a comet game object when needed. Another feature of an object-oriented approach.</p>
+      <ol>
+        <li>In the assets panel, inside the 'main' folder, double click 'main.collection'.</li>
+        <li>In the outline panel, add a new game object to the collection with the Id, 'comet_spawner'.</li>
+        <li>In the outline panel, right click 'comet_spawner' and select, 'Add component', 'Factory'.</li></ol>
+      <p><img src="screenshots/outline_comet_spawner_factory.png" width="583" height="418" alt="Add new factory"></p>
+      <ol start="4">
+        <li>We'll leave the Id as 'factory' because that describes accurately what the object is. In the properties panel, set the 'Prototype' property to, '/main/comet.go'. It's easier to use the three dots icon to do this.</li>
+      </ol>
+      <p>The prototype is the game object that will be created by the factory. A factory can only create one type of object, so you must use a different factory for every type of object you want to spawn. It is worth knowing that there is a maximum number of objects that can be on-screen at any one time which is set in the game.project file.</p>
+      <p>If you have some familiarity with games development, you will know that 'pooling' is a technique used to limit the number of objects spawned. A pool of objects is created in advance. An object is only spawned if one is available in the pool. When an object dies it is returned to the available pool. This prevents more objects spawning than the computer can reasonably handle without seriously affecting the fps. Defold does automatic pooling under the hood. This is abstracted from you, so it is detrimental to add additional pooling algorithms of your own.</p>
+      <p>That's the factory ready to manufacture comet objects! We now need a script to get it working.</p>
+      <ol start="5">
+        <li>In the assets panel, right click the 'main' folder, and select, 'New', 'Script'.</li></ol>
+      <p><img src="screenshots/assets_new_script.png" width="444" height="759" alt="New script"></p>
+      <ol start="6">
+        <li>Name the script, 'comet_spawner' and click, 'Create Script'.</li>
+        <li>In the init function, change the code to initialise the random number generator.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	-- set the random number seed and discard the first value
+	math.randomseed(os.time())
+	math.random()
+	self.spawn_rate = 90
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>A new random number sequence is established. The first value is discarded.</p>
+<p>An attribute called spawn_rate is initialised to 90. This will be used to set a 1 in 90 chance that a comet will spawn. We could make the game harder by decreasing this number, and easier by increasing the number. We are putting this value into a variable instead of &quot;<a href="../../help/theory/hard_coding.html" target="new">hard coding</a>&quot;, so that we could change it in the code later if we want to introduce a variable difficulty to the game.</p>
+</div>
+      <ol start="8">
+        <li>In the update function, change the code to randomly spawn a comet, setting it's starting position.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	local spawn = math.random(1,self.spawn_rate)
+	if spawn == 1 then
+		local start_pos = math.random(1,4)
+		local x = 0
+		local y = 0
+		if start_pos == 1 then
+			-- Spawn to the left of the screen
+			x = -10
+			y = math.random(0,640)
+		end
+		if start_pos == 2 then
+			-- Spawn to the right of the screen
+			x = 960
+			y = math.random(0,640)
+		end
+		if start_pos == 3 then
+			-- Spawn at the top of the screen
+			x = math.random(0,960)
+			y = 660
+		end
+		if start_pos == 4 then
+			-- Spawn at the bottom of the screen
+			x = math.random(0,960)
+			y = -10
+		end
+		local pos = vmath.vector3(x,y,0)
+		factory.create("/comet_spawner#factory",pos)
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>A random number is generated. If the number is a 1 (you could use any value here up to the spawn rate) then we continue the spawn code. This ensures comets spawn randomly, but not too frequently.</p>
+<p>start_pos becomes a random number between 1 and 4. This is the starting position of the comet, either at the top, bottom, left or right of the screen. Note how comments are used to good effect here to make it obvious what is happening.</p>
+<p>x and y local variables are used to store the starting position in pixels.</p>
+<p>These are then converted into a vector data type and the factory is called to create the object at that position.</p>
+<p>Note how we use the Url of the factory when calling it: '/comet_spawner#factory'. You can find these Urls in the properties of the object you want to refer to.</p>
+</div>
+<p>We now need to attach the script to the comet spawner object. This is the step that is often forgotten and why the code won't work!</p>
+<ol start="9">
+  <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+  <li>In the outline panel, right click, 'comet_spawner' and select, 'Add Component File'.</li>
+  <li>Select, '/main/comet_spawner.script' and click, 'OK'.</li>
+</ol>
+      <p>That's the comet spawner complete. Now we need to tell the comet game object to move in each frame.</p>
+      <ol start="12">
+        <li>In the assets panel, right click the 'main' folder, and select, 'New', 'Script'.</li>
+        <li>Name the script, 'comet' and click, 'Create Script'.</li>
+        <li>Change the init function to move the comet object as an animation when it is spawned.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	local towards_earth = vmath.vector3(480,320,0)
+	go.animate(".", "position", go.PLAYBACK_ONCE_FORWARD, towards_earth, go.EASING_LINEAR, 2)
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>towards_earth is a local varibale that holds a vector to the middle of the earth. We set the earth to be in the middle of the screen so a vector towards it would be at 480,320.</p>
+<p>We use the animate command to cause the comet to move towards the vector.</p>
+<p>In the pong tutorial we did this ourselves by manually changing the x and y position of the ball in the update function. In this tutorial we show you a different approach. Generally if you want fine control over movement, change the position in the update function yourself. If you want to set a trajectory and effectively &quot;fire and forget&quot;, then use the animate command.</p>
+<p>The animate command is incredibly powerful. You can use it to fade objects in and out and many other effects. The parameters are:</p>
+<ul>
+  <li> the  Url of the object to apply the animation to. &quot;.&quot; means the current object.</li>
+  <li>property to animate - &quot;position&quot; is what we are changing - the position of the comet on the screen.</li>
+  <li>playback mode - go.PLAYBACK_ONCE_FORWARD - we only want the object to reach the earth.</li>
+  <li>target - towards_earth - the vector to the target position.</li>
+  <li>easing - go.EASING_LINEAR - how the animation changes over time. Linear is a default as we don't want anything to change except the position.</li>
+  <li>time - 2 means we want it to take 2 seconds to complete the animation. In other words, it should reach earth in two seconds. We hard-coded this. We could pass a variable from the factory instead, but we'll keep it simple here!</li>
+  <li>delay - how long to wait in seconds before the animation starts. We are using the default 0.</li>
+  <li>complete function -  code to execute when the animation is complete.</li></ul>
+</div>
+<p>Now we need to attach the script to the comet game object.</p>
+<ol start="15">
+  <li>In the assets panel, double click, 'comet.go'</li>
+  <li>In the outline panel, right click, 'Game Object' and select, 'Add Component File'.</li>
+  <li>Select '/main/comet.script'</li>
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run your game at this point. It should now spawn comets.</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+      <p>The comets don't despawn yet because we haven't written any colliision handling code, but you can see how factories and animations work. We could code this next, but instead we'll come back to it later and  work on the player interaction instead. <a href="incoming_stage_05.html">Stage 5 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

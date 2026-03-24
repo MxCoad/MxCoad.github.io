@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 2</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Creating the atlas.</h1>
+      <p>Remember that Defold needs to store graphics in a memory efficient way by converting png and other file formats into a native binary format. You do this by creating an atlas and importing the images into it.</p>
+      <p>The atlas also allows you to create flipbook animations very easily by grouping sprites into an animation set and setting a frames per second attribute. You can have more control over this with code.</p>
+      <ol>
+        <li>In the assets panel, inside the 'main' folder, find 'main.collection'. Right click this file and select, 'New...', 'Atlas'.</li></ol>
+      <p><img src="screenshots/assets_new_atlas.png" width="520" height="520" alt="New atlas"></p>
+      <ol start="2">
+        <li>Name the atlas, 'graphics', and click, 'Create Atlas'.</li>
+        <li>In the outline panel, right click 'Atlas' and select, 'Add Animation Group'.</li></ol>
+      <p><img src="screenshots/outline_atlas_add_animation_group.png" width="367" height="308" alt="Add animation group"></p>
+      <ol start="4">
+        <li>In the properties panel, change the Id to 'comet' and set the Fps to 10.</li>
+      </ol>
+      <p><img src="screenshots/properties_atlas_comet.png" width="378" height="426" alt="Comet properties"></p>
+      <p>The frames per second (Fps) is how fast the animation will be played. Ten frames every second will give a nice motion to the comet without it being too much. It would take six seconds for the comet to make one full rotation. At the moment there is no way to change this in code, so if you wanted comets spinning at different speeds you would need to make different animation sets for that. There are more complicated ways, but it's not worth it! Exposing the Fps property is in the Defold developers backlog!</p>
+      <ol start="5">
+        <li>Add the images to the animation set by right clicking 'comet' and selecting, 'Add Images...'.</li></ol>
+      <p><img src="screenshots/outline_atlas_add_images.png" width="384" height="307" alt="Add images"></p>
+      <ol start="6">
+        <li>Add all the images for the comet by selecting the first one (/graphics/comet/comet01.png), holding down shift and selecting the last one (/graphics/comet/comet16.png). Be careful not to include the earth images too!</li>
+        <li>You should now see the image filenames in the outline panel. If you press 'F' that will zoom out the editor window and you should see the sprites too.</li></ol>
+      <p><img src="screenshots/editor_images.png" width="1286" height="496" alt="Animation set"></p>
+      <p>You can preview the animation by selecting the comet animation in the outline panel and pressing [space] or View... Play from the menu bar. <br>
+        <br>
+      It's worth noting that if we simply wanted to rotate the sprite, we could do this by rotating the game object for the sprite in a script. You would not need an animation set. However, our comet rotates in 3D and has a slight wobble which is a more interesting effect.</p>
+      <ol start="8">
+        <li>Now repeat this process from step 3 to add the animation set for the earth graphics. Call the animation set, 'earth' and remember to set the Fps property to 10. There are forty images to add to the earth set.</li>
+      </ol>
+      <p>If you have followed the steps correctly, your editor and outline panel should look like this:</p>
+      <p><img src="screenshots/editor_images2.png" width="1093" height="486" alt="Editor and outline panel"></p>
+      <p>(We have collapsed the comet and earth animation sets in the outline view here.)</p>
+      <ol start="9">
+        <li>Finally, we need to add an image that we are going to use as a firing target. In the outline panel, right click the 'Atlas' and select, 'Add Images...' This time it is not an animation set, just a static sprite.</li>
+      </ol>
+      <p><img src="screenshots/outline_atlas_add_images2.png" width="410" height="305" alt="Add images"></p>
+      <ol start="10">
+        <li>Scroll down and find '/graphics/target.png' and click, 'OK'.</li>
+      </ol>
+      <p>All the graphics we are using in this tutorial are now in the atlas and ready to be applied to game objects. <a href="incoming_stage_03a.html">Stage 3a &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

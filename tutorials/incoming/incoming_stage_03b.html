@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="incoming_index.html">Incoming</a> > Stage 3b</div>
+      <h1><a href="incoming_index.html">Incoming</a> | Creating the game objects: earth's collision object</h1>
+      <ol>
+        <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+        <li>In the outline panel,	inside the 'Collection', right click, the 'earth' game object and select, 'Add Component', 'Collision Object'.</li>
+        <li>In the properties panel, set the 'Type' property to, 'Kinematic' - we don't want comets bouncing off the earth!</li>
+      </ol>
+      <p><img src="screenshots/outline_earth_collision_object.png" width="529" height="390" alt="Collision object"></p>
+      <ol start="4">
+        <li>In the outline panel, right click, 'collisionobject' and select, 'Add Shape', 'Sphere'.<br>
+          Remember to press F and use the mouse wheel to zoom out so you can see the sphere.</li></ol>
+      <p><img src="screenshots/outline_earth_add_shape.png" width="531" height="392" alt="Add sphere"></p>
+      <ol start="5">
+        <li>Click in the editor panel, and using the resize object tool drag the blue/orange handle to create a suitable  impact zone. Be careful with this stage that you are changing the sphere and not the game object itself.<br>
+          <img src="screenshots/editor_object_controls.png" width="307" height="137" alt="Editor tools"><br>
+        The game will have the best feel if this sphere is not as big as the earth itself. You want the comets to impact on the earth, not the edge of the sprite. This is about right:<br>
+        <img src="screenshots/editor_earth_sphere.png" width="269" height="258" alt="Earth's collision sphere"><br>
+        </li>
+      </ol>
+        <p>That's the earth object complete.  There is no code for the earth object because we don't actually want the earth to do anything except animate. When comets collide with the earth they will disappear, so the code for that should be on the comet object. Let's start making the comets. <a href="incoming_stage_03c.html">Stage 3c &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>
