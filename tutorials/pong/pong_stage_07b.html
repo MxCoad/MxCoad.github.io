@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 7b</div>
+      <h1><a href="pong_index.html">Pong</a> | Handling the ball hitting a paddle. </h1>
+      <p>When two collision objects hit each other they send a message. These messages are received by the on_message function as parameters. Every game object has an on_message listener, and therefore we could put our collision response code either behind the paddle or the ball. If we put the code behind the paddle we will need to duplicte it for each paddle and also pass another message to the ball telling it to change direction since the ball's position is an encapsulated attribute. i.e. only the ball can change it's own position. Therefore it feels more logical to put the code behind the ball instead. After all, this is where the other code to change the ball direction is anyway.</p>
+      <p>When deciding where to put the collision response code, usually you will want to put it behind the object that has to take some action.</p>
+      <ol>
+        <li>In the assets panel, double click the ball.script file. In the on_message function, add the code to bounce the ball off the paddle.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function on_message(self, message_id, message, sender)
+	if message_id == hash("contact_point_response") then
+		-- Move ball out of the paddle
+		go.set_position(go.get_position() + message.normal * message.distance)
+		-- Calculate bounce angle
+		local pos = go.get_position()
+		local paddle = go.get_position(message.other_id)
+		local paddle_intersect = paddle.y - pos.y
+		local bounce_vector = paddle_intersect * 1.3
+		-- Set new direction
+		self.direction.y = -math.sin(bounce_vector)
+		self.direction.x = -self.direction.x
+		-- Normalise direction to ensure constant speed
+		self.direction = vmath.normalize(self.direction)
+		sound.play("#bounce")
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>on_message has four parameters:</p>
+<ul>
+  <li><strong>self</strong> -  an array of attributes belonging to the ball object.</li>
+  <li><strong>message_id</strong> - a hashed string identifying the message broadcast. contact_point_response is a default message.</li>
+  <li><strong>message</strong> - a table of additional parameters about the object collided with. In this case the paddle.</li>
+  <li><strong>sender</strong> - the id of the other object collided with.</li>
+  </ul>
+<p>First we check if we have received a message by listening for it. Remember strings are hashed to speed up the condition checking for the ALU. contact_point_response is a global message that provides contact point data.</p>
+<p>Once two objects have collided they will be slightly inside each other. This needs to be resolved by moving the ball outside of the paddle.</p>
+<p>To change the direction of the ball we could simply use the line of code self.direction.x = -self.direction.x</p>
+<p>However this makes the trajectory of the ball too predictable. To add a little finesse to the game we want to modify the trajectory of the ball  depending on where it hits the paddle.</p>
+<p>To do this we find out where the ball has hit the paddle by comparing the y position of both objects and  multiplying this number by a constant.  Through trial and error a constant of 1.3 feels about right. If the ball hits near the middle of the paddle the result will be a smaller number than if it hit towards the edge of the paddle.</p>
+<p>We then use a little trigonometry to set the correct vector, reverse the x direction of the ball to send it back to our opponent and normalise the final vector to ensure a constant speed regardless of the trajectory.</p>
+</div>
+<ol start="2">
+  
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run your program. The ball should bounce off the paddles. There will be an issue if the ball hits the top or bottom of a paddle but we'll ignore that for now!</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+<p>We can now move on to keeping score. <a href="pong_stage_08a.html">Stage 8a &gt;</a></p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

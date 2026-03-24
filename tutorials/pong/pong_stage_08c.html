@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 8c</div>
+      <h1><a href="pong_index.html">Pong</a> | Updating the score.</h1>
+      <p>The score game object needs to respond when it receives a message to update the score.</p>
+      <ol>
+        <li>In the assets panel, right click the main folder (or any file inside it) and select, 'New...', 'Script'.</li>
+      </ol>
+      <p><img src="screenshots/assets_score_script.png" width="526" height="760" alt="Score script"></p>
+      <ol start="2">
+        <li>Name the script, 'score', and click, 'Create Script'.</li>
+      </ol>
+      <p><img src="screenshots/dialog_name_score_script.png" width="442" height="375" alt="Name score script"></p>
+      <ol start="3">
+        <li>In the init function of the score script, initialise the two variables to hold the scores for each player.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	self.player1_score = 0
+	self.player2_score = 0
+end</code></pre></div>
+<ol start="4">
+        <li>In the on_message function, add the code to respond to the messages that the score object can receive.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function on_message(self, message_id, message, sender)
+	if message_id == hash("player1_scored") then
+		self.player1_score = self.player1_score + 1
+		label.set_text("#label", self.player1_score .. " : " .. self.player2_score)
+	end
+	if message_id == hash("player2_scored") then
+		self.player2_score = self.player2_score + 1
+		label.set_text("#label", self.player1_score .. " : " .. self.player2_score)
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the score object receives a message that player1 has scored it increments the player1_score variable before updating the text in the label. Note 'label' is the id of the label object. We prefix this with a # symbol.</p>
+<p>two dots (..) is a concatenator operator in Lua. This joins variables and strings together. The player1_score variable is concatenated with a colon and the player2_score.</p>
+</div>
+<ol start="5">
+  <li>Finally it is important to remember to attach this script file to the score game object. In the assets panel, double click, 'main.collection'.</li>
+  <li>In the outline panel, right click, 'score' and select, 'Add Component File'.</li>
+  </ol>
+<p><img src="screenshots/outline_score_add_component_file.png" width="382" height="409" alt="Add score script"></p>
+<ol start="7">
+  <li>Choose, '/main/score.script' and click 'OK'.</li>
+  </ol>
+<p><img src="screenshots/dialog_select_score_script.png" width="502" height="632" alt="Choose score script"></p>
+<ol start="8">
+  
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run your game at this point. It should now keep the score.</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+<p>Our game logic is now finished, but it would be nice to add some sound effects. <a href="pong_stage_09a.html">Stage 9a &gt;</a></p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

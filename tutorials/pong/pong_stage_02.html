@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 2</div>
+      <h1><a href="pong_index.html">Pong</a> | Importing graphics into the game.</h1>
+      <p>Before you begin to code the game you will need some images for the game, called sprites.</p>
+      <ol>
+        <li>Using Windows Explorer, find your Pong project folder and create a new folder called 'graphics'.</li>
+      </ol>
+      <p><img name="save_graphics" src="screenshots/file_explorer_save_graphics.png" width="713" height="294" alt="Creating a folder to save sprites into"></p>
+      <ol start="2">
+        <li>Inside the graphics folder, download and save these sprites.<br>
+          Right click each image below
+          and choose, 'Save image as...'<br>
+          <br>
+          <table width="600" border="0">
+            <tr>
+              <td align="center" valign="middle">player1.png</td>
+              <td align="center" valign="middle">player2.png</td>
+              <td align="center" valign="middle">ball.png</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle"><img src="assets/player1.png" width="34" height="100" alt="player1"></td>
+              <td align="center" valign="middle"><img src="assets/player2.png" width="34" height="100" alt="player2"></td>
+              <td align="center" valign="middle"><img src="assets/ball.png" width="30" height="30" alt="ball"></td>
+            </tr>
+          </table>
+        </li>
+      </ol>
+      <p><img name="graphics_folder" src="screenshots/file_explorer_graphics_folder.png" width="737" height="206" alt="Graphics folder"></p>
+      <p>      Go back to Defold and you should see the new folder and files in the assets panel. Note, there is no way to import graphics into Defold using the IDE. You have to do this in Windows.</p>
+      <p><img src="screenshots/assets_graphics.png" width="151" height="286" alt="Graphics in the assets panel"></p>
+      <p>Just saving files into a folder does not add them into your game. We need to create an atlas to store all our in-game graphics. An atlas is just a memory efficient repository for the binary graphics. It would be extremely inefficient if you had to load the graphics each time you needed to display them, or work with them in their native png file format. An atlas organises all the binary graphics data in memory to maximise the efficiency for Defold. Combining smaller images into an atlas is especially important on mobile devices where memory and processing power is more limited. More efficient use of memory means higher frame rates!</p>
+      <ol start="3">
+        <li>In the assets panel, right click the 'main' folder and choose, 'New...' 'Atlas'.</li>
+      </ol>
+      <p><img src="screenshots/assets_new_atlas.png" width="461" height="378" alt="New atlas"></p>
+      <ol start="4">
+        <li>Give the atlas a name. It doesn't really matter what you call it. Since all our graphics will be stored in one atlas, we'll name it, 'graphics'. Click 'Create Atlas'.<br>
+        Notice the atlas is now in the outline panel.  It is part of our game, but it doesn't contain any sprites yet.</li>
+        <li>In the outline pabel, right click the 'Atlas'  object and choose, 'Add Images...'.</li>
+      </ol>
+      <p><img src="screenshots/outline_atlas_add_images.png" width="374" height="357" alt="Add images to the atlas"></p>
+      <ol start="6">
+        <li>Select all the images from the graphics folder and click OK. You can click the first image, hold shift and click the last image to add them all at the same time. You can also add them one-by-one by repeating  step 5 if you didn't read this far!</li>
+      </ol>
+      <p><img src="screenshots/outline_atlas_choose_images.png" width="514" height="220" alt="Choose images"></p>
+      <p>We now have graphics in memory for our game. You can press the F key to automatically zoom the editor panel to see them in the atlas.</p>
+      <ol start="7">
+<li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>We now have the graphics we intend to use in the game stored in a CPU and memory efficient way. The png format that is useful for editing the image is now in a new raw binary form in memory that requires no decompression. The next stage is to create game objects that will use these graphics. <a href="pong_stage_03a.html">Stage 3a &gt;</a></p>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

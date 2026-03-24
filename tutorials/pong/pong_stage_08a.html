@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 8a</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating a font and label to display the score.</h1>
+      <p>Putting text on the screen requires a font and a game object to hold a label.      </p>
+      <ol>
+        <li>Using the assets panel, right click, 'main.collection' and choose, 'New', 'Font'.</li>
+      </ol>
+      <p><img src="screenshots/assets_new_font.png" width="578" height="488" alt="New font"></p>
+      <ol>
+        <li>Name the new font, 'score' and click, 'Create Font'. If you want different sized text for different components of your game, each will need to be its own font file, so it makes sense to name this font what we intend to use it for to aid maintainability.</li>
+      </ol>
+      <p><img src="screenshots/font_name.png" width="442" height="375" alt="Font name"></p>
+      <p>Defold reads font data from files in TrueType, OpenType and BMFont formats, and stores the characters as either a bitmap or a vector (called a distance field). This is set in the 'Output Format' property. Just like graphics, writing text to the screen is computationally expensive, so it is important for Defold to store font data in a memory efficient way.</p>
+      <p>If we are using a static font size, it is better to use a bitmap format. If the font needs to scale during the game it is better to use a distance field to avoid loss of quality. Distance fields  need to be calculated when they are rendered. Surprisingly it is therefore better to use a bitmap when you can because it is more efficient for the graphics card. Remember games development is about seeking those small performance gains to maximise a frame rate.</p>
+      <p>The default size for the system font is 14 point. This will be a little too small in our game, so we are going to increase this to 28.</p>
+      <ol start="2">
+        <li>In the properties panel, change the 'Size' property to 28.</li>
+      </ol>
+      <p>Defold effectively recreates the bitmaps it needs for each character when you do this.</p>
+      <p><img src="screenshots/font_size.png" width="319" height="214" alt="Font size"></p>
+      <ol start="3">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>In the assets panel, double click 'main.collection'.</li>
+        <li>In the outline panel right click 'Collection' and choose, 'Add Game Object'.</li>
+        <li>In the properties panel, change the Id of the object to be, 'score'.</li>
+        <li>Set the X position property to be 480. Set the Y position property to be 600.</li>
+        <li>In the outline panel. right click the score game object and select, 'Add Component', 'Label'.</li>
+      </ol>
+      <p><img src="screenshots/outline_collection_add_label.png" width="581" height="529" alt="Add label"></p>
+      <ol start="9">
+        <li>In the properties panel change the 'Text' property to be '0 : 0'.</li>
+        <li>In the properties panel, change the 'Font' property to be &quot;/main/score.font&quot;</li>
+      </ol>
+      <p><img src="screenshots/properties_score_label.png" width="379" height="704" alt="Set text and font"></p>
+      <ol start="11">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program at this point and you should see the score at the top of the screen.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>The next stage is to get the ball to send a message to the score game object when a goal is scored. <a href="pong_stage_08b.html">Stage 8b &gt;</a></p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

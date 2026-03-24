@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 9b</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating sound objects.</h1>
+      <p>There are many approaches we could take to playing the sounds in the game. We could create a sound game object and then pass messages to it from the other objects when a sound is to be played. However, since all sounds are triggered by the ball, either when it bounces or when a goal is scored it is easier to put the sound triggers with the ball object.</p>
+      <ol>
+        <li>In the assets panel, double click 'main.collection' in the 'main' folder.</li>
+        <li>In the outline panel, right click the ball game object and select, 'Add Component', 'Sound'.</li>
+      </ol>
+      <p><img src="screenshots/outline_add_sound.png" width="633" height="497" alt="Adding a sound object"></p>
+      <ol start="3">
+        <li>In the properties panel, change the 'Id' property of the sound to, 'bounce'. This is the identifier we will use later in the code to trigger this sound object.</li>
+      </ol>
+      <p><img src="screenshots/properties_sound_id.png" width="359" height="146" alt="Setting the Id of the sound"></p>
+      <ol start="4">
+        <li>In the properties panel, change the 'Sound' property by clicking the three dots (...). From the dialog box, choose, '/sounds/bounce.wav' and click 'OK'.</li>
+      </ol>
+      <p><img src="screenshots/dialog_select_sound.png" width="502" height="632" alt="Select sound"></p>
+      <ol start="5">
+        <li>Now repeat the steps to add a second sound to the ball object for the goal sound. Set the 'Id' of this sound object to be, 'goal'.</li>
+      </ol>
+      <p>Once this is complete, the outline panel should look like this for the ball game object:</p>
+      <p><img src="screenshots/outline_sounds_done.png" width="222" height="325" alt="Sounds embedded"></p>
+      <ol start="6">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>Now the sounds are set up the next step is to trigger them in the code. <a href="pong_stage_09c.html">Stage 9c &gt;</a></p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

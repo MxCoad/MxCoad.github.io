@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 6b</div>
+      <h1><a href="pong_index.html">Pong</a> | Handling the ball leaving the screen. </h1>
+      <p>If the ball hits the top or bottom of the screen we need to change it's y direction. We can achieve this quite easily by using y = -y as described in stage 5 when we spawned the ball.</p>
+      <ol>
+        <li>In the assets panel, double click the ball.script file. In the update function, add the additional code to include checking if the paddle is about to leave the screen.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	-- move the ball in it's current direction at a speed in pixels per second
+	local pos = go.get_position()
+	pos = pos + self.direction * self.speed * dt
+	go.set_position(pos)
+	
+	-- check if the ball has hit the top or bottom of the screen
+	if pos.y < 15 or pos.y > 625 then
+		self.direction.y = -self.direction.y
+	end
+
+	-- check if a goal has been scored
+	if pos.x < -15 then
+		spawn_ball(self)
+	end
+	if pos.x > 975 then
+		spawn_ball(self)
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>pos holds the vector3 position of the ball. We can access an element of this associative array by using a key (x, y, z etc.)</p>
+<p>If the y position of the ball is less than 15 pixels or greater than 625 we know it has left the screen. This is because the game screen is 0-640 pixels tall. (Set in the game.project file). Since the position of all game objects is measured from their centre and the ball is 30x30 pixels, at -15 it is off the screen.</p>
+<p>If the ball has left the screen we simply need to reverse it's direction.</p>
+<p>A similar action is taken if the ball has left the left edge of the screen (x &lt; -15) or the right edge of the screen (x &gt; 975). The difference being we want to call the function to respawn the ball in this situation.</p></div>
+<div class="code_explained_header">Application of computational thinking</div>
+<div class="code_explained">
+<p>Note we have used two if statements instead of one when detecting a goal. (We could use if pos.x &lt;- 15 or pos.x &gt; 975). This is because we are using a computational method of &quot;thinking ahead&quot;. We know that if the ball leaves the screen to the left we increase player 2's score, and from the right, player 1's score. Therefore we will need different actions later depending on who scored the goal. Therefore, it makes sense to use two seperate conditions here, ready for this code later.</p>
+<p>We also used &quot;thinking ahead&quot; when we created a function to spawn the ball. We knew we'd need it here too.</p>
+</div>
+<ol start="2">
+  
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run your program. The ball should bounce off the top and bottom of the screen and respawn if a goal is scored.</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+<p>We now need to either write the scoring feature or the paddle bouncing. It doesn't really matter which we choose. Let's do the paddle bounce next. <a href="pong_stage_07a.html">Stage 7a &gt;</a>.</p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 6a</div>
+      <h1><a href="pong_index.html">Pong</a> | Handling the paddles leaving the screen. </h1>
+      <p>There are two ways of handling collision events with Defold. We could check the positions of objects in code and then change their attributes to modify their behaviour. Alternatively we could create what are known as collision objects that send messages to an object when they are hit.</p>
+      <p>The collision object approach would require us to create some game objects for invisible walls at the edge of the screen (game objects with no sprites): one at the top, one at the bottom, one at the left goal and one at the right goal. When an object hits one of these walls a message would be sent to it which we can check in the on_message function.</p>
+      <p>With pure code we won't need to create any additional objects, and instead we write the new game logic in the update function where the objects move.</p>
+      <p>With the paddles and the movement of the ball around the arena we will use pure code, and to bounce the ball off the paddle we will use collision objects. It is entirely your choice how you approach this in your game. Generally collision objects will be easier as your game becomes more complex, but for simply checking the x and y position of an object it will be quicker to develop just using code. We'll use both methods in this game so that you can appreciate the different approaches.</p>
+      <ol>
+        <li>In the assets panel, double click the player1.script file. In the update function, change the code to include checking if the paddle is about to leave the screen before setting it's new position.</li>
+      </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	local pos = go.get_position() 
+	pos.y = pos.y + self.move_distance * dt
+
+	-- Prevent the paddle leaving the screen
+	if pos.y<50 then
+		pos.y = 50
+	end
+	if pos.y>590 then
+		pos.y = 590
+	end
+	--
+		
+	go.set_position(pos) 
+	self.move_distance = 0
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Firstly, notice we are using comments to identify the new section of code. It makes it easier for you to see where the changes to this function are, and therefore it would make it easier for other people reading your code too!</p>
+<p>The origin (0,0 position) of the screen is in the bottom left corner. The x and y position of an object has an origin at the centre of the object. The height of the screen is 640 pixels (set in the game.project file). The height of the paddle is 100 pixels (you can check this in the atlas).</p>
+<p>Therefore, if the paddle's y position is less than 50 it will be off the bottom of the screen (0 + paddle height/2). If the paddle's y position is more than 590 it will be off the top of the screen (640 - paddle height/2).</p>
+<p>Six simple lines of code is easier than using collision objects here.</p>
+</div>
+<ol start="2">
+  <li>Now apply the same change to the player 2 script.<br>
+    Note you can open scripts by double clicking them either in the assets panel or the outline panel.  Either way it just opens the script file in the editor.</li>
+  
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run your program. The paddles for both players should no longer leave the screen. However, the ball still flies away!</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+<p>The next stage is to  get the ball bouncing. <a href="pong_stage_06b.html">Stage 6b &gt;</a></p>
+
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

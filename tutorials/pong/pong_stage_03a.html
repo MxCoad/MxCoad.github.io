@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 3a</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the game objects: player 1.</h1>
+      <p>Games are made from objects. Those objects have sprites (graphics), scripts (code), collision objects (event triggers) and other interesting  things.</p>
+      <p>Now that we have our sprites ready in the atlas, we can create the objects in our game and apply the sprites to them.</p>
+      <ol>
+        <li>In the assets panel (on the left), drop down the &quot;main&quot; folder to see the files if you need to, and double click 'main.collection'. You should now see &quot;Collection&quot; in the Outline panel on the right.</li>
+      </ol>
+      <p> This will ensure you are adding the game objects into the main collection. As your games become bigger and more complex you may have more than one collection to help organise different elements of the game better. However, Pong is such a simple game we can put all our objects in one place.</p>
+      <ol start="2">
+        <li>In the outline panel, right click, 'Collection' and choose, 'Add Game Object'. Note the keyboard shortcut for this is just pressing the letter A.</li>
+      </ol>
+      <p><img src="screenshots/outline_collection_add_game_object_player1.png" width="409" height="323" alt="Add game object"></p>
+      <p>A new game object (go) has been added to the game but at this stage it has no sprite and no code. Notice a properties panel appears underneath the outline panel. This is where attributes for the game object  can be 'hard-coded' into the game, but also  changed in the code later.</p>
+      <ol start="3">
+        <li>In the properties panel, change the 'Id' property from 'go' to 'player1'. It just makes your project more readable later if we name the objects properly. Rather confusingly, in the code we still refer to  objects as 'go' (game object) because we reference a library they are all stored in.</li>
+      </ol>
+      <p>You will notice another property called, 'Url' will change automatically. This is used later to pass messages between different game objects such as, 'I've collided with the ball' to cause code to run when events happen. Message passing is a common object-oriented programming technique.</p>
+      <ol start="4">
+        <li>In the outline panel, right click the 'player1' game object and choose, 'Add Component', 'Sprite'.</li>
+      </ol>
+      <p><img src="screenshots/outline_game_object_sprite_player1.png" width="531" height="556" alt="Game object add sprite"></p>
+      <p>There is no need to change the Id of this because 'sprite' accurately describes what it is. Notice a hierarchy is starting to develop in the outline panel. The collection has a player1 game object which has a sprite component. When you write-up the design of your project you can plan this hierarchy in advance of actually doing it in Defold.</p>
+      <p>We now need to attach the graphic in our atlas to this sprite component.</p>
+      <ol start="5">
+        <li>Scroll down in the Properties panel if you need to, in order to see the 'Image' property.<br>
+          Click the three dots: ...
+        and choose /main/graphics.atlas from the pop-up box.</li>
+      </ol>
+      <p><img src="screenshots/properties_sprite_atlas_select.png" alt="Select altas library for sprite" width="962" height="808"></p>
+      <ol start="6">
+        <li>Set the 'Default animation' property to player1.</li>
+      </ol>
+      <p><img src="screenshots/properties_player1_default_animation.png" width="332" height="213" alt="Select animation for sprite"></p>
+      <p>It is possible to define many sprites as an animation sequence in the atlas, but in this tutorial we are just using static sprites.      </p>
+      <p>You can press 'F' on the keyboad to zoom out to see the sprite now attached to the player1 object. You can also zoom in and out by holding CTRL and using the mouse wheel if you have one.</p>
+      <p>What you are seeing in the editor panel in the middle of the screen is the position of the player1 object in the game world. Our game world only has one screen called, 'main.collection'. Note the centre of the object is at position 0,0 where the green and red lines intersect. To the left of the green line and underneath the red line is off the screen.  You can run the program by pressing F5 and you will see the player1 object peeking out of the bottom left corner of the screen as shown in the editor.</p>
+      <p>We need to move the paddle to its correct starting position.</p>
+      <ol start="7">
+        <li>Click the player1 game object in the outline panel (make sure it is the object you are selecting and not the sprite).<br>
+In the properties panel set the X property to: 40 and the Y property to: 320.</li>
+        
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>That's the first player added to our game. The next stage is to add player 2. <a href="pong_stage_03b.html">Stage 3b &gt;</a></p>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

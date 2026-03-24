@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 5c</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the script for moving the ball.</h1>
+      <ol>
+        <li>In the assets panel, right click the folder 'main' and choose 'New...', 'Script'. Name the script, 'ball'.</li>
+        <li>Add code to the init function to spawn the ball.</li></ol>
+        <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	-- set the random number seed and discard the first value
+	math.randomseed(os.time())
+	math.random()
+	-- store the original position of the ball so we can reset it after a goal
+	self.respawn_position = go.get_position()
+	-- spawn the ball
+	self.speed = 500
+	spawn_ball(self)
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Random numbers in computer systems are  deterministic sequences generated from a number called a seed. To ensure we get a different set of random numbers every time we run the game, we use the randomseed function. The seed we give it wil be the time as a 10 digit number. os.time returns this value.</p>
+<p>Random number generation is a very interesting topic worth reading about. It creates a range of problems. One  problem in Lua's implementation is the random function  returning the same first number in a sequence. Therefore we discard the first number by calling the random function once before actually using it to return values we do want. If you omit this step the ball will always start travelling in the same direction even though you thought you'd set it to be random!</p>
+<p>The function get_position returns the x, y, and z position of a game object. Note that although we named our object 'ball', in code we still refer to is as 'go' (game object). We want to remember where our object spawned so we can reset it to this position after a goal is scored. We keep this  in an attribute called respawn_position. Note that this attribute needs the three values: x, y and z. However, a variable can only store one value at a time. The attribute is actually an array of these three values. These special arrays are called vector3's in Defold.</p>
+<p>The speed we want the ball to be moving at is set to 500. We use a variable here so that we could change it later if we wanted to. Perhaps every time the paddle hits the ball.</p>
+<p>We then want to call a user-defined function to spawn the ball.</p>
+</div>
+<p>The ball needs to be spawned at the start of the game and also every time a goal is scored. We could duplicate the code in these two places in our script, but it would make more sense to create a reusable program component so that we have only one copy of code to spawn the ball. Generally in programming, if you find yourself repeating sections of code you probably need either a loop or a function instead to make a more maintainable, shorter and scalable program.</p>
+<ol start="3">
+  <li>Create a new function called spawn_ball underneath the init function.</li>
+  </ol>
+        <div class="code_wrapper"><pre><code class="language-lua">function spawn_ball(self)
+	go.set_position(self.respawn_position)
+	-- set an initial random direction of travel using a vector
+	local x = math.random(1,3)
+	local y = math.random(1,3)
+	local x_direction = math.random(1,2)
+	local y_direction = math.random(1,2)
+	if x_direction == 1 then
+		x = -x
+	end
+	if y_direction == 1 then
+		y = -y
+	end
+	self.direction = vmath.normalize(vmath.vector3(x,y, 0))
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>Since this code will be used every time we want to spawn the ball we set the position of the ball to be the respawn position. The first time the game is run the ball is already at this position, but it's not an issue.</p>
+<p>A random number is used to assign two local variables  for the ball's next x and y position. 1 to 3 ensures a small range of values relative to the current position. We  avoid the  value zero which would result in the ball standing still.</p>
+<p>We want to randomise whether the ball is going to travel left or right, up or down when it spawns to make the game a little fairer. To do this we generate a random number between 1 and 2 and swap the direction if it is a 1.</p>
+<p>x = -x is a really neat way of turning a positive number negative, or a negative number positive and we'll use this again later to make the ball bounce.</p>
+</div>
+<div class="code_explained_header">About vectors</div>
+<div class="code_explained">
+<p>Assuming the random number generator resulted in x being 3 and y being 2, we can see how this is a vector from the current ball position. </p>
+<p><img src="screenshots/vectors.png" width="300" height="278" alt="Vectors"></p>
+<p>However, we really want this to be a number between 0 and 1 so that we can multiply it by a speed variable later. Therefore we normalise the vector to result in x being 0.83 and y being 0.55. That's the same trajectory as you can see illustrated. This new vector is stored in an attribute called direction.</p>
+<p>Vectors are used a lot in games programming to determine the motion paths of objects.</p>
+</div>
+<ol start="4">
+  <li>Add code to the update function to move the ball every frame.</li>
+</ol>
+<div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	-- move the ball in it's current direction at a speed in pixels per second
+	local pos = go.get_position()
+	pos = pos + self.direction * self.speed * dt
+	go.set_position(pos)
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>get_position returns the x, y and z position of the ball into a vector3 called pos. We add the direction vector to the current position, multiplying by the speed.</p>
+<p>Remember we need to use delta time (dt) to ensure a consistent experience between the different speeds of CPUs and graphics cards.</p>
+<p>Finally we set the new x and y position of the ball using set_position, passing it our vector.</p>
+</div>
+<ol start="5">
+  <li>Now we need to attach the script to the ball object. In the assets panel, in the 'main' folder, double click 'main.collection'.</li>
+  <li>In the outline panel, right click ball and choose, 'Add Component File'. Choose the /main/ball script.</li>
+  </ol>
+<p><img src="screenshots/outline_ball_add_component.png" width="439" height="336" alt="Add ball component"></p>
+<ol start="7">
+  
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+  <li>Run the code at this point. If it is working, the ball should move and then disappear off-screen.</li>
+  <img src="../../images/run.png" width="75" height="79" alt="Run">
+</ol>
+<p>We haven't written any code to handle colliding with the edge of the screen or a paddle yet. Returning to the paddle script. <a href="pong_stage_06a.html">Stage 6a &gt;</a></p>
+      <div class="debugging_header">Debugging</div>
+      <div class="debugging">
+        <p>If your code doesn't work and the ball doesn't move, consider the following potential issues:</p>
+        <ol>
+          <li>Did you put the code into the correct function?<br>
+          We changed init and update, not final.</li>
+          <li>Do you have just one init and update function in your script? Did you leave the boilerplate code in there too!</li>
+          <li>Did you  add the script to the ball game object as a new component file?<br>
+            The script must be attached to the game object to work.
+          </li>
+          <li>Are you still running a previous version of the game without reloading?<br>
+            Check the windows you have open.</li></ol>
+      </div>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

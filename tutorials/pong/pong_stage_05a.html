@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 5a</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the player 1 script for moving the paddle.</h1>
+      <p>Setting the key binding just tells Defold which keys you are going to use and names an action for them. To get the inputs working we need to write some code, called a script in Defold.</p>
+      <ol>
+        <li>In the assets panel, right click the folder 'main' and choose 'New...', 'Script'.</li>
+      </ol>
+      <p><img src="screenshots/assets_new_script.png" width="570" height="760" alt="New script"></p>
+      <ol start="2">
+        <li>Name the script, 'player1' and click 'Create Script'.</li>
+      </ol>
+      <p><img src="screenshots/script_filename.png" width="442" height="375" alt="Script filename"></p>
+      <ol start="2">
+        <li>Defold will create a file called 'player1.script' inside the 'main' folder and add some boilerplate code. This just saves you time  entering  the <a href="../../help/theory/lifetime.html" target="new">lifetime functions</a> that all game objects have.
+          Remember that the assets panel is just a file explorer. What you have done in this step is simply create a file inside a folder and put some text into it.  You could have done this using Windows Notepad if you really wanted to.  The script is not attached to our game yet.</li>
+        <li>Before we go any further it is worth exploring what each of the lifetime functions are for:        </li>
+        <ul>
+          <li><strong>int()</strong> - Any code that you want to run immediately when the object is spawned goes here. This function is used for initialising object properties and variables.</li>
+          <li><strong>final()</strong> - Any code that you want to execute before the object is removed from the game goes here. For example, when it is despawned.</li>
+          <li><strong>update()</strong> - This is the main game loop for this object. Code in this function executes repeatedly as fast as the processor can manage. This function is where code to move the object goes.</li>
+          <li><strong>on_message()</strong> - Object properties, variables and functions are encapsulated. In object oriented programming each object interacts with another by sending messgages to it. This function is where we write code to respond to messages the object receives when events  happen in the game. For example when the object collides with another.</li>
+          <li><strong>on_input()</strong> - This is where we write code to respond to the player inputs.</li>
+          <li><strong>on_reload()</strong> - Used for debugging purposes. Defold features &quot;live updates&quot;. You don't need to stop the game running and recompile the code every time you want to change it. Instead you can keep the game running  and simply reload it after you have made a change to the code. This is often quicker. Code in this function will execute when the game is reloaded. A handy place to change an object's variable at run-time and see its impact immediately.</li>
+        </ul>
+        <li>Add code to the  init function to initialise the player1 object when it spawns.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.move_distance = 0
+	self.paddle_speed = 500 
+end</code></pre></div>
+      <div class="code_explained_header">What does this code do?</div>
+      <div class="code_explained">
+        <p>A message is sent to the current script messager to tell it that inputs are processed by this script.</p>
+        <p>A move_distance attribute is assigned to 0. This is how far the paddle will move in this frame.</p>
+        <p> The paddle_speed attribute is assigned to 500.  This is the speed the paddle can move. We use an attribute for paddle speed so that we can change it in code later if we want to. For example, a power-up may enable our paddle to move more quickly or our opponents paddle to move more slowly. To make this happen we can just change the paddle_speed attribute.<br>
+        </p>
+      </div>
+        <div class="code_explained_header">What is  self?</div>
+      	<div class="code_explained">
+          <p>self is an array of attributes belonging to this object. In addition to  properties such as X and Y  that we set in a previous step, it can also have encapsulated attributes. We want these to be available in the function, so they are passed in as a parameter. This is a special kind of  array called an associative array or dictionary. Instead of retrieving elements by an index, we can retrieve them by an attribute name called a key.</p>
+      	</div>
+      <ol start="5">
+        <li>Add code to the on_input function to set the distance to move the paddle if W or S are pressed.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function on_input(self, action_id, action)
+	if action_id == hash("player1_up") then
+		self.move_distance = self.paddle_speed
+	end
+	if action_id == hash("player1_down") then
+		self.move_distance = -self.paddle_speed
+	end
+end</code></pre></div>
+      <div class="code_explained_header">What does this code do?</div>
+      <div class="code_explained">The on_input function takes 3 parameters:
+      <ul>
+        <li><strong>self</strong> - the attributes of the object.</li>
+        <li><strong>action_id</strong> - the hashed name of the action set up in the input bindings.</li>
+        <li><strong>action</strong> - a list of useful data about the action such as whether the input was pressed, released, mouse position etc.</li>
+        </ul>
+      <p>If the action_id is player1_up (we set this in the previous stage) then it assigns the move_distance  to be the paddle_speed. Positive for going up the screen and negative for going down the screen. </p>
+      </div>
+      <div class="code_explained_header">What is hash for?</div>
+      <div class="code_explained">
+        <p>hash() is used quite a lot in Defold. It's a hashing function. It converts a string of characters into a single 64 bit  integer. Comparing integers in IF statements is much quicker for the CPU than comparing characters in a string. It's one of those little performance boosts to maximise frame rate by reducing CPU cycles needed. When we set the keyboard bindings in the previous step, the action label we entered as a string was converted to an integer by Defold using a hashing function. This has been abstracted to us as a programmer. Therefore when we want to refer to this action we need to hash the label first.</p>
+      </div>
+      <ol start="6">
+        <li>Add code to the update function to move the paddle.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	local pos = go.get_position() 
+	pos.y = pos.y + self.move_distance * dt
+	go.set_position(pos) 
+	self.move_distance = 0
+end</code></pre></div>
+      <div class="code_explained_header">What does this code do?</div>
+      <div class="code_explained"><p>The update function takes two parameters:</p>
+      <ul>
+        <li><strong>self</strong> - the attributes of the object.</li>
+        <li><strong>dt</strong> - the delta time.</li>
+      </ul>
+      <p>Local variables are declared with the keyword, 'local'. pos is a variable that holds the vector of the game object (player1) retrieved using the get_position() method.</p>
+      <p>The y position is changed to the current position plus move_distance multipled by the delta time.</p>
+      <p>The new position of the game object is set using the set_position() method.</p>
+      </div>
+      <div class="code_explained_header">What is delta time?</div>
+      <div class="code_explained"><p>Code executes at different speeds on different processors. This means that if we set the move_distance to be 10 pixels, then on one processor it might do this 30 times a second (moving 300 pixels), and on a faster processor 60 times a second (moving 600 pixels). The game will be too slow on older computers and unplayable on newer computers! To get around this problem we always multiply movement distances by delta time. That is the elapsed time between the previous frame and the current frame. This ensures a consistent game speed irrespective of the processor capability. Your game will run just the same at home or school.</p></div>
+      <p>Your code editor should now look like this:</p>
+      <p><img src="screenshots/script_stage5.png" width="467" height="687" alt="Completed script"></p>
+      <p>Finally we need to attach this code to our player1 game object. Remember at the moment all we have done is put text in a file. We could have done all this in Notepad, but the IDE makes it easier with boilerplate code, syntax checking, colouring and indenting.</p>
+      <ol start="7">
+        <li>Save your project at this stage by pressing CTRL-S or choosing 'File', 'Save All'.</li>
+        <li>In the assets panel, in the 'main' folder, double click 'main.collection'. You should  see the game canvas in the editor panel in the middle of the screen.</li>
+        <li>In the outline panel, right click the player1 game object and choose, 'Add Component File'.</li>
+        </p>
+        <img src="screenshots/outline_player1_add_component.png" width="339" height="362" alt="New component file">
+      </ol>
+      <ol start="10">
+        <li>Choose /main/player1.script and click OK.</li>
+        
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>If everything is working you should be able to use W and S to move player 1's paddle up and down. It will leave the screen if you go too far because we haven't stopped this happening yet in the script. </p>
+      <p>Now that the script is  attached to the player1 object we can repeat the process for player 2. <a href="pong_stage_05b.html">Stage 5b &gt;</a></p>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

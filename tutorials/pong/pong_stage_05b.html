@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 5b</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the player 1 script for moving the paddle.</h1>
+      <p>Now that player 1's paddle is moving we can repeat the process for player 2.  We could use a single script to control both players. With all  programs there are multiple ways to create a solution. Some are more elegant, some are more efficient, but sometimes they are just different. To introduce you to the concept of game objects we have decided to have a different script for each player even though it will pretty much contain the same code.</p>
+      <p>This time you have less support. Follow the steps below to get the paddle moving for player 2. Refer back to the previous step if you need more help.</p>
+      <ol>
+        <li>In the assets panel, right click the folder 'main' and choose 'New...', 'Script'. Name the script, 'player2'.</li>
+        <li>Add code to the  init function to initialise the player2 object when it spawns.</li>
+        <li>Add code to the on_input function to set the distance to move the paddle if up or down cursor keys are pressed.</li>
+        <li>Add code to the update function to move the paddle.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.move_distance = 0
+	self.paddle_speed = 500 
+end
+
+function update(self, dt)
+	local pos = go.get_position() 
+	pos.y = pos.y + self.move_distance * dt
+	go.set_position(pos) 
+	self.move_distance = 0
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("player2_up") then
+		self.move_distance = self.paddle_speed
+	end
+	if action_id == hash("player2_down") then
+		self.move_distance = -self.paddle_speed
+	end
+end</code></pre></div>
+      <ol>
+        <li>Save your project at this stage by pressing CTRL-S or choosing 'File', 'Save All'.</li>
+        <li>In the assets panel, in the 'main' folder, double click 'main.collection'. You should  see the game canvas in the editor panel in the middle of the screen.</li>
+        <li>In the outline panel, right click the player2 game object and add this script as a new component file.</li>
+        
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar.</li>
+        <img src="../../images/run.png" width="75" height="79" alt="Run">
+      </ol>
+      <p>If everything is working you should be able to use the cursor keys to move player 2's paddle up and down. It will leave the screen if you go too far because we haven't stopped this happening yet in the script. Now we can get the ball rolling! <a href="pong_stage_05c.html">Stage 5c &gt;</a></p>
+      <div class="debugging_header">Debugging</div>
+      <div class="debugging">
+        <p>If your code doesn't work and you can't move the paddle, consider the following potential issues:</p>
+        <ol>
+          <li>Have you copied the code exactly without any spelling mistakes? The compiler won't always generate a syntax error if you mis-spelt a command. E.g. go.get_postion is missing an 'i' but it would cause the ball not to move.</li>
+          <li>Did you set the key bindings <a href="pong_stage_04.html">described in stage 4</a> for player 2 and name the actions the same as the strings in the lines if action_id == hash(&quot;player2_up&quot;)?</li>
+          <li>Did you copy and paste the code from player1 and forget to change the hash from player1 to player2 and player2 in the on_input function?</li>
+          <li>Did you  add the script to the player2 game object as a new component file?<br>
+            The script must be attached to the game object to work.
+          </li>
+          <li>Are you still running a previous version of the game without reloading?<br>
+            Check the windows you have open.
+          </li>
+        </ol>
+        </div>
+      </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

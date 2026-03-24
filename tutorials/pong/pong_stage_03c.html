@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body><div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 3c</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the game objects: the ball.</h1>
+      <p>We can now add the ball to the game.      </p>
+      <ol>
+        <li>In the outline panel, right click, 'Collection' and choose, 'Add Game Object'. Note the keyboard shortcut for this is just pressing the letter A.</li>
+      </ol>
+      <p><img src="screenshots/outline_collection_add_game_object_ball.png" width="456" height="283" alt="Add game object"></p>
+      <ol>
+        <li value="2">In the properties panel, change the 'Id' property from 'go' to 'ball'.      </li>
+      </ol>
+      <ol start="3">
+        <li>In the outline panel, right click the 'ball' game object and choose, 'Add Component', 'Sprite'.</li>
+      </ol>
+      <p><img src="screenshots/outline_game_object_sprite_ball.png" width="565" height="554" alt="Game object add sprite"></p>
+      <p>There is no need to change the Id of this because 'sprite' accurately describes what it is.      </p>
+      <ol start="4">
+        <li>In the properties panel, change the image property by clicking the three dots and choosing: /main/graphics.atlas      </li>
+      </ol>
+      <ol start="5">
+        <li>Set the 'Default animation' property to ball.</li>
+      </ol>
+      <p><img src="screenshots/properties_ball_default_animation.png" width="326" height="340" alt="Select animation for sprite"></p>
+      <p>We need to move the ball to its starting position.</p>
+<ol start="6">
+        <li>Click ball game object in the outline panel (make sure it is the object you are selecting and not the sprite).<br>
+        In the properties panel set the X property to: 480 and the Y property to: 320.</li>
+        
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+<p>Your editor panel should now look like this:</p>
+<p><img src="screenshots/ide_editor.png" width="1135" height="727" alt="Editor panel"> </p>
+<p>The objects are now in the game in their starting positions on the canvas. The next stage is to tell the game what our input keys will be to move the paddles. <a href="pong_stage_04.html">Stage 4 &gt;</a></p>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

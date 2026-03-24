@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+        <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="pong_index.html">Pong</a> > Stage 7a</div>
+      <h1><a href="pong_index.html">Pong</a> | Creating the collision objects.</h1>
+      <p>To make the ball bounce off the paddle we're going to create a collision object attached to the paddle, and a collision object attached to the ball. When two collision objects hit each other, it triggers a message that can be listened to in the on_message function of an object. This is a common object-oriented technique to ensure encapsulation of attributes; one object should not be able to interfere with the properties of another.</p>
+      <p>Collision objects are extremely powerful in Defold. It uses Box2D and Bullet 3D physics engines built into the IDE, which are industry standards. In Pong we'll keep it really simple, but full simulations of Newtonian physics are possible with very little code.</p>
+      <ol>
+        <li>In the assets panel, double click the main.collection file. In the outline panel, right click the ball object and choose, 'Add Component', 'Collision Object'.</li>
+      </ol>
+      <p><img src="screenshots/outline_ball_collision_object_add_component.png" width="541" height="385" alt="Add collision object"><br>
+      </p>
+      <ol start="2">
+        <li>You will notice a number of properties for the collision object. It can do many things! Change the type property to, 'Kinematic'.</li>
+      </ol>
+      <p><img src="screenshots/properties_ball_kinematic.png" width="336" height="190" alt="Kinematic property"></p>
+      <p><img src="screenshots/throwacrow.gif" width="480" height="266" alt="Throw a crow dynamic physics" align="right">Consider a game such as Angry Birds where birds are slingshot into support beams. The beams fall into each other in a believable way when hit. It would be a real challenge to program the physics. Today, games programmers use libraries to achieve this. There is little point reinventing the wheel! By setting the type property to dynamic in Defold, the engine solves all collisions and applies resulting forces. Dynamic objects are good for objects that should behave realistically but you cannot directly manipulate the position and orientation of a dynamic object. The only way to affect them is indirectly, by applying forces.</p>
+      <p>Kinematic objects react to collisions with other  objects, but the physics engine does not perform any automatic simulation. The job of resolving collisions, or ignoring them, is left to you. Kinematic objects are used for player or script controlled objects that require fine grained control of the physical reactions, like a player character.</p>
+      <p>Collision objects require a shape that defines what is called a 'hit box'. The area in which a collision is detected. There are three options in Defold: box, capsule or sphere. A box is great for objects that are roughly square or rectangular in shape, capsules are great for cylindrical shapes, and spheres are ideal for objects that are primarily circular. However, capsules can only be used with 3D not 2D physics.</p>
+      <p>Since our ball is a circle shape, it makes sense to use a sphere. Later we will use a box for the paddles.  The type of hit box you choose will determine how accurate your collision detection is. Whilst you could use what is known as 'pixel perfect' collision detection where objects must collide exactly, this is not very performant and therefore games will often use approximate shapes for detecting collisions instead to maximise the game speed and frame rate. Ever been in a situation in a game where you feel you shouldn't really have died? That's hit boxes!</p>
+      <ol start="3">
+        <li>In the outline panel, right click the collisionobject for the ball and choose, 'Add shape', 'Sphere'.</li>
+      </ol>
+      <p><img src="screenshots/outline_ball_collisionobject_add_shape.png" width="522" height="415" alt="Add shape"></p>
+      <ol start="4">
+        <li>A circle will appear in the editor panel over the top of the ball. Remember you can zoom in  by clicking  on an object and pressing F, or zoom out by clicking anywhere on the canvas and pressing F. Have a quick go at this to become familiar with it, because it is useful to zoom in to objects to set their hit boxes, and zoom out to see the whole game screen.</li>
+      </ol>
+      <p>You should notice that there are some object controls to the left of the outline panel. By default  'move object' is selected, enabling you to move an object on the canvas. </p>
+      <p><img src="screenshots/editor_object_controls.png" width="538" height="190" alt="Object controls"></p>
+      <p>Because the collision object sphere is not the same size as the ball, we need to use the resize tool to make it bigger. However, be careful here, because you might accidently resize the ball itself and not the collision sphere!</p>
+      <ol start="5">
+        <li>In the outline panel, click the Sphere object and then click the resize object control.</li>
+        <li>Hold the left mouse button over the top of the  yellow or orange square and drag the sphere out to match the shape of the ball.</li>
+      </ol>
+      <p><img src="screenshots/editor_ball_resize_sphere.png" width="227" height="226" alt="Resize sphere"></p>
+      <ol start="7">
+        <li>Save the objects at this stage by pressing CTRL-S, or File... Save all.</li>
+        <li>You now need to repeat this process for each of the player paddle game objects, using a box instead of a sphere. Go ahead and do this on your own.</li>
+      </ol>
+      <p>Summary of the steps to take for each player:</p>
+      <ul>
+        <li>In the outline panel, right click the player1 or player2 game object and select, 'Add component', 'Collision Object'.</li>
+        <li>In the properties panel, change the physics type to 'Kinematic'.</li>
+        <li>In the outline panel, right click the collisionobject and choose, 'Add Shape', 'Box'.</li>
+        <li>In the editor click the resize control.</li>
+        <li>Zoom in by pressing F. You may need to zoom out just a little to see the complete paddle. You can do this with the mouse wheel.</li>
+        <li>In the outline panel, click the box (otherwise you are resizing the paddle and not the hit box).</li>
+        <li>In the editor use the handles (small squares) to resize the box to fit the paddle. You don't need a perfect match, just as close as possible.</li>
+      </ul>
+      <ol start="9">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li></ol>
+      <p>Nothing has actually changed with our scripts at this stage so if you run the program you won't notice any difference. We are now ready to capture the messages being sent and react to the collision. <a href="pong_stage_07b.html">Stage 7b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>
