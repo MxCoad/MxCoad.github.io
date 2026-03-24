@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 1</div>
+      <h1><a href="landers_index.html">Landers</a> | Getting started.</h1>
+      <ol>
+        <li>Create a new empty project titled, 'Landers'.</li>
+        <li>You can delete the README.md file. Right click the file and choose 'Delete'.</li>
+        <li>Download the graphics you need for the game by right clicking this zip file and saving the linked file: <a href="assets/graphics.zip">graphics.zip</a><br>
+          <br>
+          The file contains these assets:<br>
+          <br>
+          <table width="600" border="0">
+            <tr>
+              <td align="center" valign="middle">alienxx.png<br>
+                8 animation frames</td>
+              <td align="center" valign="middle">missilexx.png<br>
+                7 animation frames</td>
+              <td align="center" valign="middle">ship_xx.png<br>
+              6 animation frames</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle"><img src="assets/alien1.png" width="56" height="44" alt="Alien"></td>
+              <td align="center" valign="middle"><img src="assets/missile7.png" width="6" height="15" alt="Missile"></td>
+              <td align="center" valign="middle"><img src="assets/ship_forward1.png" width="39" height="43" alt="Ship"></td>
+            </tr>
+          </table>
+        </li>
+      </ol>
+      <ol start="4">
+        <li>Unzip the graphics.zip file and move the  graphics folder  into the folder where you have saved your project. If you copied the files out of the zip file you will need to make sure you have a top level, 'graphics' folder.</li>
+        <li>Go back to Defold and you should see the new folder and files in the assets panel.</li>
+      </ol>
+      <p><img src="screenshots/assets_graphics.png" width="189" height="291" alt="Assets"></p>
+      <p>If your assets panel does not look like this you have copied the graphics folder into the wrong place! Note, we are now structuring our files into folders to make the development more maintainable. We could also do this for other game components too.</p>
+      <p><strong>In this tutorial try to be more independent and see if you can remember how to achieve the steps required without needing step-by-step instructions. If you get stuck you can click, 'Step-by-step guide' to see more guidance.</strong></p>
+      <ol start="6">
+        <li>Inside the 'main' folder, create a new  atlas named 'graphics'.<br>
+        <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the assets panel, right click, 'main'.</li>
+      <li>Select 'New', 'Atlas'.<br>
+        <img src="screenshots/assets_new_atlas.png" width="442" height="322" alt="New atlas"> </li>
+        <li>Change the 'Name' to 'graphics' and click 'Create Atlas'.</li>
+    </ul>
+</div>
+        </li>
+        <li>Using the outline panel, create an animation group inside the atlas for the alien. Give it the property  Id, 'alien' and use all the  images in the graphics/alien folder. Set the Fps to 8.</li>
+        <a href="javascript:toggleLayer('reveal2');">Step-by-step guide</a>
+<br>
+<div id="reveal2">
+    <ul>
+      <li>In the outline panel, right click, 'Atlas'.</li>
+      <li>Select 'Add Animation Group'.<br>
+        <img src="screenshots/outline_atlas_add_animation_group.png" width="405" height="278" alt="New atlas"> </li>
+        <li>In the properties panel, change the 'Id' to 'alien' and the Fps to 8.</li>
+        <li>In the outline panel, right click 'alien' and select, 'Add Images...'<br>
+          <img src="screenshots/outline_alien_add_images.png" width="394" height="309" alt="Add images">        </li>
+        <li>Select all the alien images by clicking the first alien1.png file in the list (not particle_blob), hold down shift on the keyboard and select the last file in the list, alien9.png. Click OK.<br>
+          <img src="screenshots/outline_alien_add_images_files.png" width="472" height="441" alt="Image files"><br>
+        </li>
+        <li>Remember you can press F on the keyboard to zoom out the editor window and use the mouse wheel.</li>
+        <li>To see the animation, in the outline panel click 'alien' and press the space bar.</li>
+    </ul>
+</div>
+        <li>Using the outline panel, create an animation group inside the atlas for the player missile. Give it the property  Id, 'missile' and use all the  images in the graphics/missile folder. Set the Fps to 20.</li>
+        <li>Using the outline panel, create three different animation groups for each of the player controlled ship states. Each animation group has two images with an Fps of 8. Set the  'Id' property of each animation to be:
+          <ul>
+            <li>bank_left</li>
+            <li>forward</li>
+            <li>bank_right</li>
+		  </ul>
+        <li>When you have finished, your atlas should look like this:<br>
+          <img src="screenshots/outline_atlas_complete.png" width="458" height="819" alt="Atlas"><br>
+          Be careful to observe that each of the images is in the correct animation group!<br>
+          <br>
+          If you preview the bank_left, bank_right animations they may appear slightly off by a few pixels in the preview.  Don't worry about that, it's just how the preview is rendering.  They will look fine in the game.
+        </li>
+        <img src="screenshots/editor_atlas.png" width="243" height="242" alt="Editor panel">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>We can now write the script to control the player ship. <a href="landers_stage_02a.html">Stage 2a &gt;</a>    </p>
+    </div>
+    
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

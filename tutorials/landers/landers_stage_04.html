@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 4</div>
+      <h1><a href="landers_index.html">Landers</a> | Moving the invaders.</h1>
+      <ol>
+        <li>In the assets panel, in the 'main' folder, double click, 'swarm.script'.</li>
+        <li>Change the update function to move the invaders.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function update(self, dt)
+	-- move invaders left and right
+	local move_down = false
+	for key,invader in ipairs(self.swarm_table) do
+		local pos = go.get_position(invader)
+		pos.x = (pos.x + self.direction * self.speed * dt)
+		go.set_position(pos, invader)
+
+		-- should invaders move down?
+		if pos.x >890 or pos.x < 60 then
+			move_down = true
+		end
+	end
+
+	-- move all invaders down if one had hit the edge of the screen
+	if move_down == true then
+		self.direction =-self.direction
+		for key,invader in ipairs(self.swarm_table) do
+			local pos = go.get_position(invader)
+			pos.y = pos.y - 20
+			go.set_position(pos, invader)
+		end
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>A local Boolean flag variable called move_down is set to false. The assumption is that the invaders will not move down the screen in this frame.</p>
+<p>We then iterate over the swarm_table. Remember this is an associative array,  and therefore all the elements of the array are stored as a key and value pair. In this case the key is the index in the array, and the invader is the Id of the invader we stored when it was spawned.</p>
+<p>When an invader is destroyed both the game object and the Id in the spawn_table are removed. It is interesting to know this is how the space invaders got faster in the original game. It was actually a consequence of not having to iterate over so many objects. Therefore less processing was required and more frames per second could be achieved!</p>
+<p>We get the position of the invader in a local variable called pos and change it depending on the speed, direction and delta time.</p>
+<p>If the invader is about to move off the screen we set the move_down  flag to be true.</p>
+<p>If the move_down variable is true we iterate back through the objects changing their y position. Reducing it by 20 pixels. This has been <a href="../../help/theory/hard_coding.html" target="new">hard-coded</a> because it is unlikely we will change this value. Using hard-coding here again gives us a performance boost because the ALU can use immediate addressing rather than fetching the value from the cache. If the invaders jump too much it would feel odd, so it is better to spawn them nearer the player, speed them up or make them fire more frequently to increase the difficulty.</p>
+<p>Note we didn't change the y position of the invader during the first nested loop, instead opting for a second nested loop instead. Although this is computationally very expensive, having a time complexity of 2xO(n<sup>2</sup>), because we need to move all the invaders, we need to start from the first one again anyway.</p>
+</div>
+      <ol start="3">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. You should see the invaders moving on the screen. They will continue to move off the bottom of the screen because we haven't coded a game ending script.<br>
+          <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The next stage is to fire at the invaders. <a href="landers_stage_05.html">Stage 5 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

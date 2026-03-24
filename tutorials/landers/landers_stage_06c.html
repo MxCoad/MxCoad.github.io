@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 6c</div>
+      <h1><a href="landers_index.html">Landers</a> | Writing the script to destroy the invader and play the explosion.</h1>
+      <p>We need two scripts to destroy the invader. The first will be the invader responding to the collision with the missile. Since it is controlled by the swarm object it will need to send a message to the swarm to say it has been hit. The second script for the swarm object will respond to receiving the message and update its swarm table.</p>
+      <ol>
+        <li>In the assets panel, right click the 'main' folder, and select, 'New...', 'Script'.</li>
+        <li>Name the script, 'invader'.</li>
+        <li>Change the on_message function to respond to being hit.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function on_message(self, message_id, message, sender)
+	if message_id == hash("collision_response") then
+		msg.post("/swarm", "hit", { object_id = go.get_id() })
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the invader receives a message from the collision handler it posts a message to the swarm game object to say it has been &quot;hit&quot;. We could have used any string value here providing we are consistent.</p>
+<p>We can  retrieve the Id of the current invader using go.get_id(). This is passed as an argument with the message.</p>
+</div>
+<p>Now we need to attach the script and the particle effect we created to the invader.</p>
+<ol start="4">
+  <li>In the assets panel, in the 'main' folder, double click, 'invader.go'.</li>
+  <li>In the outline panel, right click, 'Game Object' and select, 'Add Component File'.</li>
+  <li>Select '/main/invader.script'.</li>
+  <li>In the outline panel, right click, 'Game Object' and select, 'Add Component File'.</li>
+  <li>Select '/main/explosion.particlefx'.</li>
+  <li>In the assets panel, in the 'main' folder, double click, 'swarm.script'.</li>
+  <li>Change the on_message function to respond to an invader in the swarm being hit.</li>
+  </ol>
+<div class="code_wrapper"><pre><code class="language-lua">function on_message(self, message_id, message, sender)
+	if message_id == hash("hit") then
+		local alien_hit = message.object_id
+		for key,invader in ipairs(self.swarm_table) do
+			if alien_hit == invader then
+				particlefx.play(invader)
+				table.remove(self.swarm_table,key)
+				go.delete(alien_hit)
+				self.speed = self.speed + 10
+			end
+		end
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>If the message received is &quot;hit&quot; then an invader has been hit and we need to remove the correct one.</p>
+<p>alien_hit is a local variable that holds the Id of the object that sent the message. It might seem odd that we aren't just using the sender parameter here. Unfortunately that isn't quite the Id we stored in the table:</p>
+<ul>
+  <li>Id in the table: /instancex</li>
+  <li>Id of the sender: main:/instancex#invader</li>
+</ul>
+<p>We could use some string manipulation to extract the instance but that is a lot of effort when we can pass the Id as a parameter in the message.</p>
+<p>We iterate over the invaders in the swarm_table. If the invader is the one that was hit the particle effect is played. The invader  Id is removed from the table and the game object deleted.</p>
+<p>Because the explosion.particleFX file is a component of the invader game object, it is played at the location the invader was on the screen.</p>
+<p>Finally, we increase the speed of the invaders by 10. A lower number makes the game easier. A higher number makes the game harder. If we were thinking ahead we might use a variable instead of <a href="../../help/theory/hard_coding.html">hard-coding</a> a constant here.</p>
+</div>
+      <ol start="11">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. The invaders should disappear in an explosion when they are shot.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>That's the core mechanics done but the game can be improved in many ways from this starting point. <a href="landers_stage_07.html">Stage 7 &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

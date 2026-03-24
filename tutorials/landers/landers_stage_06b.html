@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 6b</div>
+      <h1><a href="landers_index.html">Landers</a> | Setting up the collision objects.</h1>
+      <ol>
+        <li>In the assets panel, in the 'main' folder, double click, 'invader.go'.</li>
+        <li>In the outline panel, right click, 'Game Object' and select, 'Add Component', 'Collision Object'.</li>
+        <li>In the properties panel, set the 'Type' property to 'Kinematic'.</li>
+        <li>In the outline panel, right click, 'collisionobject' and select, 'Add Shape', 'Box'.</li>
+        <li>In the outline panel, click, 'Box'.</li>
+        <li>In the editor panel, use the resize editor tools to extend the box to roughly match the shape of the invader. You will find the green arrow and handles on the box when using the move object tool useful for moving and shaping the box.</li>
+      </ol>
+      <p><img src="screenshots/editor_object_controls.png" width="307" height="137" alt="Editor tools"></p>
+      <p>Aim for this:</p>
+      <p><img src="screenshots/editor_invader_box.png" width="427" height="345" alt="Invader hit box"></p>
+      <ol start="7">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+        <li>In the outline panel, find the missile game object.</li>
+        <li>In the assets panel, inside the 'main' folder, double click, 'main.collection'.</li>
+        <li>Repeat the process on this page from step 2 for creating a collision object box for the missile. Don't skip step 3 accidentally!</li>
+      </ol>
+      <p>Aim for this:</p>
+      <p><img src="screenshots/editor_missile_box.png" width="140" height="317" alt="Missile hit box"></p>
+      <ol start="11">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. The missile should disappear when it hits an invader.<br>
+        <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The last part of the collision handling is to destroy the invader and play the explosion. <a href="landers_stage_06c.html">Stage 6c &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

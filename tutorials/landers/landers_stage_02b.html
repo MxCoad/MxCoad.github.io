@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 2b</div>
+      <h1><a href="landers_index.html">Landers</a> | Creating the player ship game object.</h1>
+      <ol>
+        <li>In the assets panel, inside the 'main' folder, double click the 'main.collection' file.</li>
+        <li>In the outline panel, create a new game object with the 'Id' property set to 'player1', and the X and Y position to be 50, 50.<br>
+          <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the outline panel, right click 'Collection' and select, 'Add Game Object'.<br>
+        <img src="screenshots/outline_add_game_object.png" width="396" height="282" alt="Add game object"><br>
+      </li>
+      <li>In the properties panel, change the 'Id' property to, 'player1'.</li>
+      <li>Set the 'position' properties for X and Y to both be 50.<br>
+        <img src="screenshots/properties_player1.png" width="459" height="220" alt="Player1 properties"></li>
+    </ul>
+</div>
+        </li>
+        <li>Create a sprite component for player1 with the default animation set to 'forward'.<br>
+          <a href="javascript:toggleLayer('reveal2');">Step-by-step guide</a></li>
+        <div id="reveal2">
+            <ul>
+              <li>In the outline panel, right click the 'player1' game object and select, 'Add Component', 'Sprite'.<br>
+              <img src="screenshots/outline_player1_add_sprite.png" width="530" height="563" alt="Add sprite"></li>
+              <li>In the properties panel, set the 'Image' property to be, '/main/graphics.atlas'.</li>
+              <li>In the properties panel, set the 'Default Animation' property to be, 'forward'.</li></ul></div></li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>          Run your game at this point. You should see the player ship animating at the bottom of the screen.<br>
+          <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>The ship doesn't move yet because we haven't written the handling script. <a href="landers_stage_02c.html">Stage 2c &gt;</a></p>
+      </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

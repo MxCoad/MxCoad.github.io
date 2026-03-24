@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="landers_index.html">Landers</a> > Stage 9</div>
+      <h1><a href="landers_index.html">Landers</a> | Adding some pop.</h1>
+      <p>The core mechanics of the game are now complete, but we can extend the development to embed what we have learned and create a better game. These extensions are presented in three levels of increasing difficulty we call, 'snap', 'crackle' and 'pop'. You are now on your own, but none of these extensions require you to learn anything new that was not introduced in this or previous tutorials. Challenge yourself to see how far you can get using the stages in the tutorials for reference.</p>
+      <ol>
+        <li>The invaders can fire back. Any invader in the bottom row can randomly fire downwards. The player loses a life if they are hit by an invader missile.<br>
+          <br>
+          You can determine if an invader is in the bottom row by storing the y position of an invader in a variable in the swarm update function. Iterate back over the invaders and any that have this y position can then spawn an invader missile.<br>
+          <br>
+        You learned how to iterate over invaders  in <a href="landers_stage_04.html">stage 4</a>.  You learned how to use a factory to spawn multiple instances of a game object in <a href="../incoming/incoming_stage_04.html">Incoming stage 4</a>. There is no need to put the invader missiles in a table because they behave completely independently. You learned about collision objects in <a href="landers_stage_06b.html">stage 6b</a>. You learned how to despawn missiles in <a href="landers_stage_06c.html">stage 6c</a>.<br>
+        <br>
+        Alternatively, if you want a real challenge then any invader that is in the bottom row of its column can fire, not just those on the bottom row. To achieve this you don't want to remove the invaders from the swarm_table when they are shot, just assign them to &quot;dead&quot; instead. You can then use a loop to check all the invaders beneath and if they are all dead the invader must be on the bottom row of its column. Determining the number of the invader beneath is achieved by adding the number that started  in the row.</li>
+        <li>The game should reset if the player loses all their lives or is hit by an invader.    </li>
+      </ol>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>
