@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="spotter_index.html">Spotter</a> > Stage 1b</div>
+      <h1><a href="spotter_index.html">Spotter</a> | Writing a script for the controller.</h1>
+      <ol>
+        <li>In the assets panel, right click, 'main' and select, 'New...', 'Script'.</li>
+        <li>Name the script, 'main'.</li>
+        <li>Change the functions to handle the collection proxies.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+	-- show the title screen when the game is loaded
+	msg.post("#title_proxy", "load")
+	self.current_collection = "#title_proxy"
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+	-- show the collection once loaded into memory
+	if message_id == hash("proxy_loaded") then
+		msg.post(sender, "enable")
+
+		-- load the correct collection when a message is received
+	elseif message_id == hash("show title screen") then
+		-- title screen
+		msg.post(self.current_collection, "unload")
+		msg.post("#title_proxy", "load")
+		self.current_collection = "#title_proxy"
+
+	elseif message_id == hash("show level 1") then
+		-- level 1
+		msg.post(self.current_collection, "unload")
+		msg.post("#level1_proxy", "load")
+		self.current_collection = "#level1_proxy"
+
+	elseif message_id == hash("show level 2") then
+		-- level 2
+		msg.post(self.current_collection, "unload")
+		msg.post("#level2_proxy", "load")
+		self.current_collection = "#level2_proxy"
+	end
+end</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>When main.collection starts it aquires the input focus, loads the title screen and sets the currently open collection to be '#title_proxy'. This matches the 'Id' property of the collection proxy we made in the previous stage. '#' simply means the current game object. We could have used the full Url of the proxy:  '/controller#title_proxy'.</p>
+<p>When the script is unloaded it will release the input focus.</p>
+<p>When this script receives a message from another collection script it responds.</p>
+<p>If the message received was, &quot;proxy loaded&quot;, that means the collection that was requested is now in memory and ready. Therefore we send a message back to the sender script of the loaded collection to say it can be enabled and shown to the player.</p>
+<p>Later, in the other collection scripts we will send a message to this script telling it which game world to show next. In this script we repond to the message received.</p>
+<p>For example, if the message was &quot;show level 1&quot; then we post a message to unload the currently visible collection and load the level 1 collection instead. We always refer to the proxy object and not the actual collection itself since at this stage it is not loaded in memory.</p>
+<p>We set an attribute called 'current_collection' to be the proxy we sent the message to. This enables us to use this in each condition with the command, msg.post(self.current_collection, &quot;unload&quot;) Thinking ahead, it  makes handling more complex navigation much easier with the code.</p>
+<p>Note in this example we have not used <a href="../../help/theory/pre-hashing.html">pre-hashing</a>. While it does improve performace, the collections are only loaded infrequently compared to the code executing in the update and on_message in other collections. Therefore, to keep this code easy to read we have decided not to use pre-hashing. Often in programming there is a balance to strike between easy to read, maintainable code, memory usage and code execution. It is acceptable to use different techniques depending on the situation at hand.</p>
+</div>
+      <ol start="4">
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        
+        <li>Attach the main.script file to the controller game object in main.collection.<br>
+        <a href="javascript:toggleLayer('reveal1');">Step-by-step guide</a>
+<br>
+<div id="reveal1">
+    <ul>
+      <li>In the assets panel, in the 'main' folder, double click, 'main.collection'.</li>
+      <li>In the outline panel, right click, 'controller' and select, 'Add Component File'.</li>
+      <li>Select, '/main/main.script' and click, 'OK'.</li>
+    </ul>
+</div>
+        </li>
+      </ol>
+      <p>If you were to run the game at this point you will see a blank screen and it feels like not much was achieved! What actually happened was that main.collection was loaded. The init function of main.script executed. It loaded title.collection and rendered it on the screen. In other words, what you are now looking at is the title screen for the game. However, because both collections are just black screens at the moment, it looked like nothing happened! The next stage is to build a simple interface for our title screen so that the player can choose a level to play. <a href="spotter_stage_02a.html">Stage 2a &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

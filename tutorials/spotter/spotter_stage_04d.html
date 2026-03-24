@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="spotter_index.html">Spotter</a> > Stage 4d</div>
+      <h1><a href="spotter_index.html">Spotter</a> | Putting the player interaction into level 1.</h1>
+      <p>The player will need a game object on the level to capture the input. We will call this, &quot;player_input&quot;. It can be confusing to understand the difference between the target object and the player_input object. This is what is happening:</p>
+      <p>The picture, the target, the difference and the player_input are all game objects. Target (a reusable component) does not belong to the level, but the other objects do. Although the player_input game object needs to be in a level, it's script exists in the assets and therefore is also a reusable component between the levels. Clearly the differences will be in different places in other levels so they must be part of the level.</p>
+      <p><img src="screenshots/explanation1.png" width="812" height="349" alt="Explanation 1"></p>
+      <p>The player will click somewhere on the screen. The 'player_input' object captures this, although it does not have a sprite itself.</p>
+      <p><img src="screenshots/explanation2.png" width="689" height="345" alt="Explanation 2"></p>
+      <p>This causes the target factory to spawn a new target at the mouse position.</p>
+      <p><img src="screenshots/explanation3.png" width="796" height="344" alt="Explanation 3"></p>
+      <p>The spawned target collision object and the difference collision object will cause a collision which is picked up by the target script.</p>
+      <p><img src="screenshots/explanation4.png" width="689" height="345" alt="Explanation 4"></p>
+      <p>The collision handling script changes the sprite of the target to a tick.</p>
+      <p><img src="screenshots/explanation5.png" width="689" height="344" alt="Explanation 5"></p>
+      <p>The difference is disabled preventing another collision from being triggered.</p>
+      <p><img src="screenshots/explanation6.png" width="689" height="345" alt="Explanation 6"></p>
+      <p>The final step is therefore to create a player_input game object on the level, attach the player_input script and the factory to it.</p>
+      <ol>
+        <li>In the assets panel, in the 'main' folder, double click 'level1.collection'.</li>
+        <li>In the outline panel, right click, 'Collection' and select, 'Add Game Object'.</li>
+        <li>In the properties panel, change the 'Id' property to 'player_input'.</li>
+        <li>In the outline panel, right click, 'player_input' and select, 'Add Component File'.</li>
+        <li>Select, '/main/player_input.script' and click, 'OK'.</li>
+        <li>In the outline panel, right click, 'player_input' and select, 'Add Component File'.</li>
+        <li>Select, '/main/target.factory' and click 'OK'.</li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+        <li>Run the program by pressing F5 or choosing, 'Debug', 'Start / Attach' from the menu bar. Choose level 1. If you click where the difference is next to the sun a tick will appear. If you click anywhere else a cross will appear. You can press Escape to return to the title screen.<br>
+          <img src="../../images/run.png" width="75" height="79" alt="Run"></li>
+      </ol>
+      <p>That's the core mechanics done but we need to add more differences and the second level. <a href="spotter_stage_05.html">Stage 5 &gt;</a>    </p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

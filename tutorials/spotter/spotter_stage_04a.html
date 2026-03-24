@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="spotter_index.html">Spotter</a> > Stage 4a</div>
+      <h1><a href="spotter_index.html">Spotter</a> | Creating a player target object and spawner.</h1>
+      <p>When the player clicks on the picture, an object will be spawned at that location. By default it will be a picture of a cross to indicate the player was incorrect. If that object causes a collision with a difference object, it will change the picture shown to a tick. To spawn objects at run-time we need a factory, but first we need to create the object to be spawned. This will be known as the &quot;target&quot;.</p>
+      <ol>
+        <li>In the assets panel, right click 'main' and select, 'New...', 'Game Object'.</li>
+        <li>Give it the name, 'target' and click, 'Create Game Object'.</li>
+      </ol>
+      <p>We are not creating this object in a collection because it doesn't belong to any particular level, we want to be able to spawn these objects on any level. Thinking ahead here allows us to create a reusable program component.</p>
+      <ol start="3">
+        <li>In the outline panel, right click, 'Game Object' and select, 'Add Component', 'Sprite'.</li>
+        <li>In the properties panel, change the 'Image' property to be, '/main/graphics.atlas'.</li>
+        <li>In the properties panel, change the 'Default Animation' property to, 'cross'.<br>
+          Remember you can press F to zoom out.
+        </li>
+        <li>In the outline panel, right click, 'Game Object' and select, 'Add Component', 'Collision Object'.</li>
+        <li>In the properties panel change the 'Type' property to 'Kinematic'.</li>
+        <li>In the outline panel, right click, 'collisionobject' and select, 'Add Shape, 'Sphere'.</li>
+        <li>In the editor panel, use the object controls  to move and size the sphere to match the size and shape of the red circle.<br>
+          The diameter property will be about 67.
+        </li>
+      </ol>
+      <p>When you have finished your editor and outline panel should look like this:</p>
+      <p><img src="screenshots/editor_target.png" width="1167" height="483" alt="Target"></p>
+      <p>We now need a factory to spawn our target.</p>
+      <ol start="10">
+        <li>In the assets panel, right click the  'main' folder and select, 'New...', 'Factory'.</li>
+        <li>Name the factory, 'target' and click, 'Create Factory'.</li>
+      </ol>
+      <p>Again, thinking ahead,  we are creating this factory outside of the collections so that we can easily use it in all the level collections.</p>
+      <ol start="12">
+        <li>In the properties panel, set the 'Prototype' property to, '/main/target.go'.</li>
+        
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>The next stage is to write the script that will cause the target to change to a tick if it is spawned on top of a difference. <a href="spotter_stage_04b.html">Stage 4b &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

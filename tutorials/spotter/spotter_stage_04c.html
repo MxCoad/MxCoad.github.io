@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script>
+<script src="../../js/reveal.js"></script>
+<div class="container">
+  <div class="content">
+  	<div class="banner">
+    <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+    <div class="navigation1">
+    <ul>
+      	<li><a href="../../01-homepage.html">About</a></li>
+		<li><a href="../../02-tutorials.html">Tutorials</a></li>
+        <li><a href="../../03-helpsheets.html">Help</a></li>
+        <li><a href="../../04-assets.html">Assets</a></li>
+        <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+    </div>
+	<div class="text_panel_wrapper">
+    <div class="text_panel">
+    <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="spotter_index.html">Spotter</a> > Stage 4c</div>
+      <h1><a href="spotter_index.html">Spotter</a> | Writing the script to handle the player clicking the mouse somewhere on the picture.</h1>
+      <ol>
+        <li>In the assets panel, right click, 'main' and select, 'New...', 'Script'.</li>
+        <li>Name the script, 'player_input'.</li>
+        <li>Change the script to handle the player clicking the mouse.</li>
+      </ol>
+      <div class="code_wrapper"><pre><code class="language-lua">function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function on_input(self, action_id, action)
+	-- handle mouse click
+	if action_id == hash("touch") and action.pressed then
+		local pos = vmath.vector3(action.x, action.y, 0)
+		
+		-- new cross placed.  Collision objects resolve difference found
+		factory.create("/player_input#target",pos)
+	end
+
+	-- player presses escape
+	if action_id == hash("quit") then
+		msg.post("main:/controller","show title screen")
+	end
+end
+</code></pre></div>
+<div class="code_explained_header">What does this code do?</div>
+<div class="code_explained">
+<p>The input focus is aquired by the script.</p>
+<p>If the player presses the left mouse button the position of the mouse is stored in a local variable called 'pos'. The 'action'  parameter holds these x and y attributes. We convert this to a vector3 so we can use it to place a target at that position.</p>
+<p>The factory (which we will attach to a player_input object in a moment) creates a new target at the mouse position.</p>
+<p>While we are here, we will build in an option for the player to  press the escape key to quit the level. In the real game we might not need this, but it is a good opportunity to demonstrate how we could close the level1 collection and return to the title collection using the controller we built.</p>
+</div>
+<p>We need to set an input  binding for Escape to work.</p>
+<ol start="4">
+  <li>In the assets panel, in the 'input' folder, double click, 'game.input_binding'.</li>
+  <li>Set the following key trigger:</li>
+  </ol>
+<p><img src="screenshots/input_bindings_quit.png" width="620" height="167" alt="Input bindings"></p>
+<ol start="6">
+  <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+</ol>
+      <p>Now we need to put the player_input into the level.       <a href="spotter_stage_04d.html">Stage 4d &gt;</a></p>
+    </div>
+	</div>
+    <div class="footer">
+    <div class="footer_text">
+    <img src="../../images/cnd.png" style="vertical-align: middle;">
+    <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span>
+    </div>
+  <!-- end .content --></div>
+  <!-- end .container --></div>
+  <div class="bottom_pad"></div>
+</body>
+</html>

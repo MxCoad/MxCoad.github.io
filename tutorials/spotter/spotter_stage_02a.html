@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<title>2D games development projects</title>
+<link href="../../css/stylesheet.css" rel="stylesheet" type="text/css">
+<link href="../../css/prism.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<script src="../../js/prism.js"></script> 
+<script src="../../js/reveal.js"></script>
+<div class="container">
+<div class="content">
+  <div class="banner"> <img src="../../images/defold.png" width="160" height="40" alt="Defold"><br>
+    Tutorials for 2D games projects</div>
+  <div class="navigation1">
+    <ul>
+      <li><a href="../../01-homepage.html">About</a></li>
+      <li><a href="../../02-tutorials.html">Tutorials</a></li>
+      <li><a href="../../03-helpsheets.html">Help</a></li>
+      <li><a href="../../04-assets.html">Assets</a></li>
+      <li><a href="https://www.defold.com" target="new">Defold.com</a></li>
+    </ul>
+  </div>
+  <div class="text_panel_wrapper">
+    <div class="text_panel">
+      <div class="breadcrumb">You are here: <a href="../../01-homepage.html">home</a> > <a href="../../02-tutorials.html">tutorials</a> > <a href="spotter_index.html">Spotter</a> > Stage 2a</div>
+      <h1><a href="spotter_index.html">Spotter</a> | Changing the game properties and creating the atlas.</h1>
+      <p>Before we create the interface we will need some graphics to use for the buttons and title. You could use shapes, text and font objects in Defold too, but it will look much better if we use pictures we made in a graphics program instead.</p>
+      <p>When we set up the atlas we might as well take the opportunity to include the pictures we will also use for the actual spot the difference game later too. Those images are larger than the default resolution we have been working with in previous tutorials so we are going to change that first.</p>
+      <ol>
+        <li>In the assets panel, double click, 'game.project'. This is where all the generic settings for the game are stored.</li>
+        <li>Scroll down until you find, 'Display'. Change the width and height to be 1280 x 640. This will affect all the collections.</li>
+      </ol>
+      <p><img src="screenshots/editor_display.png" width="307" height="153" alt="Display properties"></p>
+      <ol start="3">
+        <li>In the assets panel, right click 'main' and select, 'New...', 'Atlas'.</li>
+        <li>Name the atlas, 'graphics' and click, 'Create Atlas'.</li>
+        <li>Download the graphics you need for the game by right clicking this zip file and saving the linked file: <a href="assets/graphics.zip">graphics.zip</a><br>
+          <br>
+          The file contains these assets:<br>
+          <br>
+          <table width="600" border="0">
+            <tr>
+              <td align="center" valign="middle">button_level1.png</td>
+              <td align="center" valign="middle">button_level2.png</td>
+              <td align="center" valign="middle">cross.png</td>
+              <td align="center" valign="middle">house.png</td>
+              <td align="center" valign="middle">train.png</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle"><img src="assets/button_level1.png" width="148" height="150" alt="button_level1.png"></td>
+              <td align="center" valign="middle"><img src="assets/button_level2.png" width="148" height="150" alt="button_level2.png"></td>
+              <td align="center" valign="middle"><img src="assets/cross.png" width="68" height="68" alt="cross.png"></td>
+              <td align="center" valign="middle"><a href="assets/house.png"><img src="assets/thm_house.png" width="200" height="100" alt="house.png"></a></td>
+              <td align="center" valign="middle"><img src="assets/thm_train.png" width="200" height="100" alt="train.png"></td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle">tick.png</td>
+              <td colspan="4" align="center" valign="middle">title.png</td>
+            </tr>
+            <tr>
+              <td align="center" valign="middle"><img src="assets/tick.png" width="68" height="68" alt="tick.png"></td>
+              <td colspan="4" align="center" valign="middle"><img src="assets/title.png" width="467" height="108" alt="title.png"></td>
+            </tr>
+          </table>
+        </li>
+      </ol>
+      <ol start="6">
+        <li>Unzip the graphics.zip file and move the  graphics folder  into the folder where you have saved your project. If you copied the files out of the zip file you will need to make sure you have a top level, 'graphics' folder.</li>
+        <li>In the outline panel of graphics.atlas, right click, 'Atlas' and select, 'Add Images...'</li>
+        <li>Select all the images (you can hold shift to select the first and last image) and click, 'OK'. Remember you can press F to zoom out in the editor window to see the graphics you have just added to the atlas.</li>
+        <li>Save the changes by pressing CTRL-S or 'File', 'Save All'.</li>
+      </ol>
+      <p>We are now ready to build the interface for the title screen. <a href="spotter_stage_02b.html">Stage 2b &gt;</a></p>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer_text"> <img src="../../images/cnd.png" style="vertical-align: middle;"> <span style="vertical-align: middle;">Craig'n'Dave | Version 1.3</span> </div>
+    <!-- end .content --></div>
+  <!-- end .container --></div>
+<div class="bottom_pad"></div>
+</body>
+</html>
