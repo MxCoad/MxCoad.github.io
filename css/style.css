@@ -1,0 +1,695 @@
+/* ================================================
+   GREENTHREAD - STYLESHEET
+   ================================================
+   
+   This file controls how the website looks.
+   All three HTML pages link to this one file,
+   so any change you make here affects every page.
+
+   HOW TO CUSTOMISE:
+   - To change colours, look for the colour values (e.g. #2d6a4f)
+     and replace them with your own colour hex codes.
+   - To change fonts, look for font-family and replace the value.
+   - To change spacing, look for padding and margin values.
+
+   You can use this website to pick colours:
+   https://htmlcolorcodes.com/
+
+*/
+
+
+/* ================================================
+   GENERAL / BASE STYLES
+   These styles apply to the whole website.
+   Change the font-family and base colours here.
+================================================ */
+
+/* This removes default spacing from everything */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* This sets the default look for the whole page */
+body {
+  font-family: Arial, sans-serif;   /* Change this to any font you like */
+  font-size: 16px;
+  color: #222222;                   /* Default text colour */
+  background-color: #ffffff;        /* Page background colour */
+  line-height: 1.6;                 /* Space between lines of text */
+}
+
+/* Headings */
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: 1rem;
+}
+
+/* Links */
+a {
+  color: #2d6a4f;                   /* Change this to your brand colour */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Removes default bullet points from lists */
+ul {
+  list-style: none;
+}
+
+
+/* ================================================
+   BUTTONS
+   The .button class is used on links and buttons
+   throughout the website.
+   Change the background-color to your brand colour.
+================================================ */
+
+.button {
+  display: inline-block;
+  background-color: #2d6a4f;        /* Button background colour */
+  color: #ffffff;                   /* Button text colour */
+  padding: 12px 24px;
+  border: 2px solid #2d6a4f;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button:hover {
+  background-color: #1b4332;        /* Darker colour on hover */
+  border-color: #1b4332;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+/* An outline version of the button */
+.button-outline {
+  background-color: transparent;
+  color: #2d6a4f;
+}
+
+.button-outline:hover {
+  background-color: #2d6a4f;
+  color: #ffffff;
+}
+
+
+/* ================================================
+   NAVIGATION BAR
+   The bar that runs across the top of every page.
+   Change background-color to your brand colour.
+================================================ */
+
+nav {
+  background-color: #1b4332;        /* Navbar background colour */
+  color: #ffffff;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;                 /* Stays at the top when you scroll */
+  top: 0;
+  z-index: 100;
+}
+
+/* Brand name in the navbar */
+.nav-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: #cccccc;                   /* Colour of nav links */
+  font-size: 0.95rem;
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* The active link shows which page you are on */
+.nav-links a.active {
+  color: #ffffff;
+  font-weight: bold;
+  border-bottom: 2px solid #ffffff;
+}
+
+/* ---- Hamburger menu (mobile) ----
+   The hamburger button is hidden on large screens.
+   On small screens, the nav links are hidden until
+   the user taps the hamburger button.
+*/
+.hamburger {
+  display: none;                    /* Hidden on desktop */
+  background: none;
+  border: none;
+  color: #ffffff;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+/* On mobile screens (less than 700px wide) */
+@media (max-width: 700px) {
+
+  .hamburger {
+    display: block;                 /* Show the hamburger button */
+  }
+
+  .nav-links {
+    display: none;                  /* Hide the links by default */
+    flex-direction: column;
+    gap: 1rem;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background-color: #1b4332;
+    padding: 1rem 2rem;
+  }
+
+  .nav-links.open {
+    display: flex;                  /* Show links when menu is open */
+  }
+}
+
+
+/* ================================================
+   HERO SECTION
+   The big banner on the home page.
+   Change the background-color and text colour.
+================================================ */
+
+.hero {
+  background-color: #d8f3dc;        /* Light green background */
+  color: #1b4332;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.hero h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+}
+
+
+/* ================================================
+   PAGE HEADING
+   Used on shop.html and contact.html as the
+   banner at the top of those pages.
+================================================ */
+
+.page-heading {
+  background-color: #52b788;        /* Medium green */
+  color: #ffffff;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.page-heading p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+}
+
+
+/* ================================================
+   ABOUT SECTION (home page)
+================================================ */
+
+.about {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+
+/* ================================================
+   FEATURES SECTION (home page)
+   Three boxes in a row.
+================================================ */
+
+.features {
+  background-color: #f0faf4;        /* Very light green background */
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.features-grid {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;                  /* Wraps to next line on small screens */
+  margin-top: 2rem;
+}
+
+.feature-box {
+  background-color: #ffffff;
+  border: 1px solid #d8f3dc;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 280px;
+  text-align: center;
+}
+
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+
+/* ================================================
+   PRODUCTS SECTION
+   Used on both home page and shop page.
+================================================ */
+
+.products {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.products-grid {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.product-card {
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 250px;
+  text-align: center;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Shadow on hover */
+}
+
+/* Product image placeholder */
+.product-image {
+  background-color: #f0faf4;
+  height: 180px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+/* When you add a real image, style it like this: */
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.price {
+  color: #2d6a4f;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+
+/* ================================================
+   FILTER BUTTONS (shop page)
+================================================ */
+
+.filters {
+  text-align: center;
+  padding: 2rem 20px 0 20px;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background-color: #ffffff;
+  color: #2d6a4f;
+  border: 2px solid #2d6a4f;
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background-color: #2d6a4f;
+  color: #ffffff;
+}
+
+
+/* ================================================
+   SHOPPING CART (shop page)
+   Hidden by default - shown when user adds an item.
+================================================ */
+
+.cart {
+  display: none;                    /* JavaScript shows this when an item is added */
+  background-color: #f0faf4;
+  border: 2px solid #2d6a4f;
+  border-radius: 8px;
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+.cart h2 {
+  margin-bottom: 1rem;
+}
+
+.cart ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.cart li {
+  margin-bottom: 0.5rem;
+}
+
+.cart .button {
+  margin-right: 1rem;
+  margin-top: 1rem;
+}
+
+
+/* ================================================
+   IMAGE GALLERY (shop page)
+================================================ */
+
+.gallery {
+  background-color: #f0faf4;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.gallery p {
+  color: #555555;
+  margin-bottom: 2rem;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* 3 columns */
+  gap: 1rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Placeholder boxes - replace with <img> tags */
+.gallery-placeholder {
+  background-color: #d8f3dc;
+  height: 200px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #555555;
+}
+
+.gallery-placeholder p {
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+/* Gallery image style (when you add real photos) */
+.gallery-grid img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* On small screens: 2 columns */
+@media (max-width: 700px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+
+/* ================================================
+   TESTIMONIALS (home page)
+================================================ */
+
+.testimonials {
+  padding: 60px 20px;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.testimonials-grid {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.testimonial-box {
+  background-color: #f0faf4;
+  border-left: 4px solid #2d6a4f;   /* Green stripe on the left */
+  border-radius: 4px;
+  padding: 1.5rem;
+  width: 280px;
+  text-align: left;
+}
+
+.quote {
+  font-style: italic;
+  color: #444444;
+  margin-bottom: 0.75rem;
+}
+
+.customer-name {
+  font-weight: bold;
+  color: #2d6a4f;
+  margin-bottom: 0;
+}
+
+
+/* ================================================
+   CONTACT PAGE
+   Two-column layout: details on the left, form on the right.
+================================================ */
+
+.contact-layout {
+  display: flex;
+  gap: 3rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 20px;
+  flex-wrap: wrap;                  /* Stacks on small screens */
+}
+
+/* Left column */
+.contact-details {
+  flex: 1;
+  min-width: 250px;
+}
+
+.contact-details h2 {
+  margin-bottom: 1.5rem;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.contact-item strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.contact-item p {
+  color: #555555;
+  margin-bottom: 0;
+}
+
+.social-links {
+  margin-top: 1rem;
+}
+
+.social-links div {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.social-links a {
+  color: #2d6a4f;
+}
+
+
+/* Right column: form */
+.contact-form-wrap {
+  flex: 2;
+  min-width: 300px;
+}
+
+.contact-form-wrap h2 {
+  margin-bottom: 1.5rem;
+}
+
+
+/* ================================================
+   FORM STYLES
+   Used on the contact page form.
+================================================ */
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+  color: #444444;
+}
+
+/* Text inputs, email, phone, select */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: Arial, sans-serif;   /* Match body font */
+}
+
+/* Highlight the field when clicked */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.2);
+}
+
+/* Two-column row for first/last name */
+.form-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+/* Checkbox row */
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: auto;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.checkbox-group label {
+  font-weight: normal;
+  font-size: 0.9rem;
+}
+
+/* Make form-row stack on small screens */
+@media (max-width: 700px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
+
+
+/* ================================================
+   FOOTER
+   Appears at the bottom of every page.
+   Change background-color to match your brand.
+================================================ */
+
+footer {
+  background-color: #1b4332;        /* Same as navbar */
+  color: #cccccc;
+  text-align: center;
+  padding: 2rem 20px;
+}
+
+footer ul {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+footer a {
+  color: #cccccc;
+  font-size: 0.9rem;
+}
+
+footer a:hover {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+footer p {
+  margin-bottom: 0;
+}
