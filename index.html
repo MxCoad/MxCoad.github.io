@@ -1,3 +1,218 @@
-<html>
-	<meta http-equiv="refresh" content="0; url=01-homepage.html" />
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenThread - Home</title>
+
+  <!-- =============================================
+       LINK TO YOUR CSS FILE
+       This connects the stylesheet to this page
+  ============================================= -->
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+
+  <!-- =============================================
+       NAVIGATION BAR
+       This appears at the top of every page.
+       The <nav> tag tells the browser this is a menu.
+       Change the brand name and links to match your brand.
+  ============================================= -->
+  <nav>
+    <div class="nav-brand">GreenThread</div>
+
+    <!-- Hamburger button - shown on mobile screens only -->
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+      &#9776; <!-- This is the ☰ symbol -->
+    </button>
+
+    <!-- Navigation links -->
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- =============================================
+       HERO SECTION
+       This is the big banner at the top of your home page.
+       Change the heading, paragraph, and button text to suit your brand.
+  ============================================= -->
+  <section class="hero">
+    <h1>Sustainable Clothing for Everyone</h1>
+    <p>Look good, feel good, do good. Our clothes are made from 100% organic materials.</p>
+    <a href="shop.html" class="button">Shop Now</a>
+  </section>
+
+
+  <!-- =============================================
+       ABOUT SECTION
+       Tell your visitors who you are and what you stand for.
+       Change the text below to describe your brand.
+  ============================================= -->
+  <section class="about">
+    <h2>About Us</h2>
+    <p>
+      GreenThread was started in 2024 by a group of friends who were fed up with fast fashion.
+      We make clothes that are built to last, using only organic cotton and recycled materials.
+    </p>
+    <p>
+      Every order is shipped in plastic-free packaging, and 5% of every sale goes to
+      environmental charities.
+    </p>
+  </section>
+
+
+  <!-- =============================================
+       FEATURES SECTION
+       Three boxes showing your brand's key selling points.
+       Change the icons (emojis), headings, and text below.
+  ============================================= -->
+  <section class="features">
+    <h2>Why Choose Us?</h2>
+
+    <div class="features-grid">
+
+      <!-- Feature 1 - change the emoji, heading, and text -->
+      <div class="feature-box">
+        <div class="feature-icon">🌱</div>
+        <h3>Organic Materials</h3>
+        <p>All our clothes are made from 100% certified organic cotton. No harmful chemicals.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-box">
+        <div class="feature-icon">♻️</div>
+        <h3>Recycled Packaging</h3>
+        <p>We use zero plastic in our packaging. Everything is compostable or recycled.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-box">
+        <div class="feature-icon">🤝</div>
+        <h3>Ethical Production</h3>
+        <p>Our factories pay fair wages and follow safe working conditions.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       FEATURED PRODUCTS
+       Show a few of your best products on the home page.
+       Each product card has: an image placeholder, name, price, and a button.
+       Add as many cards as you like.
+  ============================================= -->
+  <section class="products">
+    <h2>Featured Products</h2>
+
+    <div class="products-grid">
+
+      <!-- Product Card 1 -->
+      <!-- To add a real image: replace the <div class="product-image"> with <img src="your-image.jpg" alt="description"> -->
+      <div class="product-card">
+        <div class="product-image">
+          <!-- Replace this placeholder with an <img> tag when you have photos -->
+          <span>🧥</span>
+        </div>
+        <h3>Organic Hoodie</h3>
+        <p class="price">£45.00</p>
+        <a href="shop.html" class="button">View Product</a>
+      </div>
+
+      <!-- Product Card 2 -->
+      <div class="product-card">
+        <div class="product-image">
+          <span>👕</span>
+        </div>
+        <h3>Classic T-Shirt</h3>
+        <p class="price">£22.00</p>
+        <a href="shop.html" class="button">View Product</a>
+      </div>
+
+      <!-- Product Card 3 -->
+      <div class="product-card">
+        <div class="product-image">
+          <span>👖</span>
+        </div>
+        <h3>Relaxed Trousers</h3>
+        <p class="price">£55.00</p>
+        <a href="shop.html" class="button">View Product</a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       TESTIMONIALS
+       Quotes from happy customers.
+       Change the quote text and customer names below.
+  ============================================= -->
+  <section class="testimonials">
+    <h2>What Our Customers Say</h2>
+
+    <div class="testimonials-grid">
+
+      <!-- Testimonial 1 -->
+      <div class="testimonial-box">
+        <p class="quote">"The hoodie is so soft and comfortable. I love knowing it's made ethically."</p>
+        <p class="customer-name">- Amara J., London</p>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="testimonial-box">
+        <p class="quote">"Great quality and fast delivery. Will definitely order again!"</p>
+        <p class="customer-name">- Marcus T., Manchester</p>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="testimonial-box">
+        <p class="quote">"Finally a brand that looks good AND does the right thing."</p>
+        <p class="customer-name">- Priya S., Bristol</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       FOOTER
+       Appears at the bottom of every page.
+       Change the brand name and links as needed.
+  ============================================= -->
+  <footer>
+    <p>&copy; 2025 GreenThread. All rights reserved.</p>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT
+       This small script makes the hamburger menu
+       open and close on mobile screens.
+       You do not need to change this.
+  ============================================= -->
+  <script>
+    function toggleMenu() {
+      var links = document.getElementById("navLinks");
+      if (links.classList.contains("open")) {
+        links.classList.remove("open");
+      } else {
+        links.classList.add("open");
+      }
+    }
+  </script>
+
+</body>
 </html>

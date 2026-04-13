@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenThread - Contact</title>
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+
+  <!-- NAVIGATION BAR - same on every page -->
+  <nav>
+    <div class="nav-brand">GreenThread</div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+      &#9776;
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html" class="active">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- PAGE HEADING -->
+  <section class="page-heading">
+    <h1>Contact Us</h1>
+    <p>Got a question? We'd love to hear from you.</p>
+  </section>
+
+
+  <!-- =============================================
+       CONTACT LAYOUT
+       Two columns: contact details on the left, form on the right.
+       On small screens these stack on top of each other.
+       Change the details on the left to match your brand.
+  ============================================= -->
+  <section class="contact-layout">
+
+    <!-- LEFT COLUMN: Contact details -->
+    <!-- Change these details to match your own brand -->
+    <div class="contact-details">
+      <h2>Get in Touch</h2>
+
+      <div class="contact-item">
+        <span class="contact-icon">📧</span>
+        <div>
+          <strong>Email</strong>
+          <p>hello@greenthread.co.uk</p>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span class="contact-icon">📞</span>
+        <div>
+          <strong>Phone</strong>
+          <p>+44 (0)20 7000 0000</p>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span class="contact-icon">📍</span>
+        <div>
+          <strong>Address</strong>
+          <p>123 Green Street<br>London, EC1A 1BB</p>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <span class="contact-icon">🕐</span>
+        <div>
+          <strong>Opening Hours</strong>
+          <p>Mon–Fri: 9am–6pm<br>Saturday: 10am–4pm</p>
+        </div>
+      </div>
+
+      <!-- Social media links - change the # to your real profile URLs -->
+      <div class="social-links">
+        <strong>Follow Us</strong>
+        <div>
+          <a href="#" aria-label="Instagram">📸 Instagram</a>
+          <a href="#" aria-label="TikTok">🎵 TikTok</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- RIGHT COLUMN: Contact form -->
+    <!-- =============================================
+         CONTACT FORM
+         This form collects information from the user.
+         Each input has:
+           - a <label> so users know what to type
+           - an <input> or <select> or <textarea> for the actual field
+           - required means the field must be filled in
+         
+         The form does not actually send an email - in a real website
+         you would need a server or a service like Formspree to do that.
+    ============================================= -->
+    <div class="contact-form-wrap">
+      <h2>Request More Information</h2>
+
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+
+        <!-- Name fields - two columns on desktop -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" placeholder="e.g. Jordan" required>
+          </div>
+          <div class="form-group">
+            <label for="lastName">Last Name *</label>
+            <input type="text" id="lastName" name="lastName" placeholder="e.g. Smith" required>
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <!-- Phone - not required -->
+        <div class="form-group">
+          <label for="phone">Phone Number (optional)</label>
+          <input type="tel" id="phone" name="phone" placeholder="+44 7000 000000">
+        </div>
+
+        <!-- Dropdown selector -->
+        <div class="form-group">
+          <label for="enquiry">Type of Enquiry *</label>
+          <select id="enquiry" name="enquiry" required>
+            <option value="">-- Please select --</option>
+            <option value="product">Product Information</option>
+            <option value="order">Order Query</option>
+            <option value="wholesale">Wholesale / Bulk Orders</option>
+            <option value="press">Press and Media</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <!-- Message box -->
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" name="message" rows="5" placeholder="Type your message here..." required></textarea>
+        </div>
+
+        <!-- Checkbox - must be ticked before submitting -->
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="consent" name="consent" required>
+          <label for="consent">
+            I agree to the <a href="#">Privacy Policy</a> and consent to being contacted. *
+          </label>
+        </div>
+
+        <!-- Submit button -->
+        <button type="submit" class="button">Send Message</button>
+
+        <!-- This message is hidden until the form is submitted -->
+        <p id="successMessage" style="display: none; color: green; margin-top: 1rem;">
+          ✅ Thank you! Your message has been sent. We will be in touch soon.
+        </p>
+
+      </form>
+    </div>
+
+  </section>
+
+
+  <!-- FOOTER - same on every page -->
+  <footer>
+    <p>&copy; 2025 GreenThread. All rights reserved.</p>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </footer>
+
+
+  <!-- JAVASCRIPT FOR THIS PAGE -->
+  <script>
+
+    // --- HAMBURGER MENU ---
+    function toggleMenu() {
+      var links = document.getElementById("navLinks");
+      if (links.classList.contains("open")) {
+        links.classList.remove("open");
+      } else {
+        links.classList.add("open");
+      }
+    }
+
+    // --- FORM SUBMISSION ---
+    // This runs when the user clicks "Send Message"
+    // It checks the form is valid, then shows a success message.
+    // In a real website you would also send the data to a server here.
+    function handleSubmit(event) {
+
+      // Stop the page from reloading (default form behaviour)
+      event.preventDefault();
+
+      // Check all required fields are filled in
+      var form = document.getElementById("contactForm");
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // Hide the form and show the success message
+      form.style.display = "none";
+      document.getElementById("successMessage").style.display = "block";
+    }
+
+  </script>
+
+</body>
+</html>

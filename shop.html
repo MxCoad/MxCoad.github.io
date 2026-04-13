@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenThread - Shop</title>
+  <link rel="stylesheet" href="CSS/style.css">
+</head>
+
+<body>
+
+  <!-- NAVIGATION BAR - same on every page -->
+  <nav>
+    <div class="nav-brand">GreenThread</div>
+
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
+      &#9776;
+    </button>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html" class="active">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- =============================================
+       PAGE HEADING
+       Simple banner at the top of the shop page.
+       Change the heading and paragraph text.
+  ============================================= -->
+  <section class="page-heading">
+    <h1>Our Collection</h1>
+    <p>Sustainable clothing for everyday life.</p>
+  </section>
+
+
+  <!-- =============================================
+       FILTER BUTTONS
+       These buttons let users filter products by category.
+       The JavaScript below shows/hides products based on the
+       data-category attribute on each product card.
+       Add more categories if you need them.
+  ============================================= -->
+  <section class="filters">
+    <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+    <button class="filter-btn" onclick="filterProducts('tops')">Tops</button>
+    <button class="filter-btn" onclick="filterProducts('bottoms')">Bottoms</button>
+    <button class="filter-btn" onclick="filterProducts('outerwear')">Outerwear</button>
+  </section>
+
+
+  <!-- =============================================
+       PRODUCT GRID
+       All your products go inside this section.
+       Each product card needs:
+         - data-category="..." (must match a filter button)
+         - An image (or placeholder)
+         - A name, price, and Add to Cart button
+       
+       To add a new product: copy one product-card block and change the details.
+  ============================================= -->
+  <section class="products">
+    <div class="products-grid" id="productGrid">
+
+      <!-- PRODUCT 1 -->
+      <div class="product-card" data-category="outerwear">
+        <div class="product-image">
+          <!-- Replace with: <img src="hoodie.jpg" alt="Organic Hoodie"> -->
+          <span>🧥</span>
+        </div>
+        <h3>Organic Hoodie</h3>
+        <p class="price">£45.00</p>
+        <button class="button" onclick="addToCart('Organic Hoodie', 45)">Add to Cart</button>
+      </div>
+
+      <!-- PRODUCT 2 -->
+      <div class="product-card" data-category="tops">
+        <div class="product-image">
+          <span>👕</span>
+        </div>
+        <h3>Classic T-Shirt</h3>
+        <p class="price">£22.00</p>
+        <button class="button" onclick="addToCart('Classic T-Shirt', 22)">Add to Cart</button>
+      </div>
+
+      <!-- PRODUCT 3 -->
+      <div class="product-card" data-category="bottoms">
+        <div class="product-image">
+          <span>👖</span>
+        </div>
+        <h3>Relaxed Trousers</h3>
+        <p class="price">£55.00</p>
+        <button class="button" onclick="addToCart('Relaxed Trousers', 55)">Add to Cart</button>
+      </div>
+
+      <!-- PRODUCT 4 -->
+      <div class="product-card" data-category="outerwear">
+        <div class="product-image">
+          <span>🥼</span>
+        </div>
+        <h3>Linen Jacket</h3>
+        <p class="price">£80.00</p>
+        <button class="button" onclick="addToCart('Linen Jacket', 80)">Add to Cart</button>
+      </div>
+
+      <!-- PRODUCT 5 -->
+      <div class="product-card" data-category="tops">
+        <div class="product-image">
+          <span>🎽</span>
+        </div>
+        <h3>Ribbed Vest</h3>
+        <p class="price">£18.00</p>
+        <button class="button" onclick="addToCart('Ribbed Vest', 18)">Add to Cart</button>
+      </div>
+
+      <!-- PRODUCT 6 -->
+      <div class="product-card" data-category="bottoms">
+        <div class="product-image">
+          <span>🩳</span>
+        </div>
+        <h3>Cargo Shorts</h3>
+        <p class="price">£35.00</p>
+        <button class="button" onclick="addToCart('Cargo Shorts', 35)">Add to Cart</button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       SHOPPING CART
+       This section shows the items the user has added.
+       It is hidden until the user adds something.
+       The JavaScript below handles all the cart logic.
+  ============================================= -->
+  <section class="cart" id="cartSection">
+    <h2>Your Cart</h2>
+    <ul id="cartList">
+      <!-- Cart items are added here by JavaScript -->
+    </ul>
+    <p><strong>Total: £<span id="cartTotal">0.00</span></strong></p>
+    <button class="button" onclick="checkout()">Checkout</button>
+    <button class="button button-outline" onclick="clearCart()">Clear Cart</button>
+  </section>
+
+
+  <!-- =============================================
+       IMAGE GALLERY / LOOKBOOK
+       A grid of images showing your brand in action.
+       Replace the placeholder divs with real <img> tags
+       when you have photos.
+       
+       Example: <img src="lookbook1.jpg" alt="Model wearing our hoodie">
+  ============================================= -->
+  <section class="gallery">
+    <h2>Lookbook</h2>
+    <p>See how our customers style GreenThread.</p>
+
+    <div class="gallery-grid">
+
+      <!-- Replace each gallery-placeholder with an <img> tag -->
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+      <div class="gallery-placeholder">
+        <span>📸</span>
+        <p>Add your photo here</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- FOOTER - same on every page -->
+  <footer>
+    <p>&copy; 2025 GreenThread. All rights reserved.</p>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT FOR THIS PAGE
+       Three things happen here:
+       1. Hamburger menu open/close
+       2. Product filter buttons
+       3. Shopping cart (add, remove, total)
+  ============================================= -->
+  <script>
+
+    // --- 1. HAMBURGER MENU ---
+    function toggleMenu() {
+      var links = document.getElementById("navLinks");
+      if (links.classList.contains("open")) {
+        links.classList.remove("open");
+      } else {
+        links.classList.add("open");
+      }
+    }
+
+
+    // --- 2. PRODUCT FILTER ---
+    // When a filter button is clicked, this shows only the matching products.
+    function filterProducts(category) {
+
+      // Update which button looks active
+      var buttons = document.querySelectorAll(".filter-btn");
+      buttons.forEach(function(btn) {
+        btn.classList.remove("active");
+      });
+      event.target.classList.add("active");
+
+      // Show or hide each product card
+      var cards = document.querySelectorAll(".product-card");
+      cards.forEach(function(card) {
+        if (category === "all" || card.getAttribute("data-category") === category) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
+
+    // --- 3. SHOPPING CART ---
+
+    // cart is an array that stores the items the user has added
+    var cart = [];
+
+    // addToCart is called when the user clicks "Add to Cart"
+    function addToCart(name, price) {
+
+      // Check if this item is already in the cart
+      var existing = null;
+      for (var i = 0; i < cart.length; i++) {
+        if (cart[i].name === name) {
+          existing = cart[i];
+        }
+      }
+
+      if (existing) {
+        // Item already in cart - increase the quantity
+        existing.qty = existing.qty + 1;
+      } else {
+        // New item - add it to the cart array
+        cart.push({ name: name, price: price, qty: 1 });
+      }
+
+      updateCart();
+      alert(name + " added to your cart!");
+    }
+
+    // updateCart rebuilds the cart list on screen
+    function updateCart() {
+
+      // Show the cart section
+      document.getElementById("cartSection").style.display = "block";
+
+      // Clear the current list
+      var list = document.getElementById("cartList");
+      list.innerHTML = "";
+
+      // Add each item to the list
+      var total = 0;
+      for (var i = 0; i < cart.length; i++) {
+        var item = cart[i];
+        var li = document.createElement("li");
+        li.textContent = item.name + " x" + item.qty + " — £" + (item.price * item.qty).toFixed(2);
+        list.appendChild(li);
+        total = total + (item.price * item.qty);
+      }
+
+      // Update the total price
+      document.getElementById("cartTotal").textContent = total.toFixed(2);
+    }
+
+    // clearCart empties the cart
+    function clearCart() {
+      cart = [];
+      document.getElementById("cartSection").style.display = "none";
+      document.getElementById("cartList").innerHTML = "";
+      document.getElementById("cartTotal").textContent = "0.00";
+    }
+
+    // checkout shows a simple message
+    function checkout() {
+      alert("Thank you for your order! In a real website, this would go to a payment page.");
+      clearCart();
+    }
+
+  </script>
+
+</body>
+</html>
