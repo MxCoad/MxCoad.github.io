@@ -1,218 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GreenThread - Home</title>
-
-  <!-- =============================================
-       LINK TO YOUR CSS FILE
-       This connects the stylesheet to this page
-  ============================================= -->
-  <link rel="stylesheet" href="css/style.css">
-</head>
-
-<body>
-
-  <!-- =============================================
-       NAVIGATION BAR
-       This appears at the top of every page.
-       The <nav> tag tells the browser this is a menu.
-       Change the brand name and links to match your brand.
-  ============================================= -->
-  <nav>
-    <div class="nav-brand">GreenThread</div>
-
-    <!-- Hamburger button - shown on mobile screens only -->
-    <button class="hamburger" onclick="toggleMenu()" aria-label="Open menu">
-      &#9776; <!-- This is the ☰ symbol -->
-    </button>
-
-    <!-- Navigation links -->
-    <ul class="nav-links" id="navLinks">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="shop.html">Shop</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-  </nav>
-
-
-  <!-- =============================================
-       HERO SECTION
-       This is the big banner at the top of your home page.
-       Change the heading, paragraph, and button text to suit your brand.
-  ============================================= -->
-  <section class="hero">
-    <h1>Sustainable Clothing for Everyone</h1>
-    <p>Look good, feel good, do good. Our clothes are made from 100% organic materials.</p>
-    <a href="shop.html" class="button">Shop Now</a>
-  </section>
-
-
-  <!-- =============================================
-       ABOUT SECTION
-       Tell your visitors who you are and what you stand for.
-       Change the text below to describe your brand.
-  ============================================= -->
-  <section class="about">
-    <h2>About Us</h2>
-    <p>
-      GreenThread was started in 2024 by a group of friends who were fed up with fast fashion.
-      We make clothes that are built to last, using only organic cotton and recycled materials.
-    </p>
-    <p>
-      Every order is shipped in plastic-free packaging, and 5% of every sale goes to
-      environmental charities.
-    </p>
-  </section>
-
-
-  <!-- =============================================
-       FEATURES SECTION
-       Three boxes showing your brand's key selling points.
-       Change the icons (emojis), headings, and text below.
-  ============================================= -->
-  <section class="features">
-    <h2>Why Choose Us?</h2>
-
-    <div class="features-grid">
-
-      <!-- Feature 1 - change the emoji, heading, and text -->
-      <div class="feature-box">
-        <div class="feature-icon">🌱</div>
-        <h3>Organic Materials</h3>
-        <p>All our clothes are made from 100% certified organic cotton. No harmful chemicals.</p>
-      </div>
-
-      <!-- Feature 2 -->
-      <div class="feature-box">
-        <div class="feature-icon">♻️</div>
-        <h3>Recycled Packaging</h3>
-        <p>We use zero plastic in our packaging. Everything is compostable or recycled.</p>
-      </div>
-
-      <!-- Feature 3 -->
-      <div class="feature-box">
-        <div class="feature-icon">🤝</div>
-        <h3>Ethical Production</h3>
-        <p>Our factories pay fair wages and follow safe working conditions.</p>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- =============================================
-       FEATURED PRODUCTS
-       Show a few of your best products on the home page.
-       Each product card has: an image placeholder, name, price, and a button.
-       Add as many cards as you like.
-  ============================================= -->
-  <section class="products">
-    <h2>Featured Products</h2>
-
-    <div class="products-grid">
-
-      <!-- Product Card 1 -->
-      <!-- To add a real image: replace the <div class="product-image"> with <img src="your-image.jpg" alt="description"> -->
-      <div class="product-card">
-        <div class="product-image">
-          <!-- Replace this placeholder with an <img> tag when you have photos -->
-          <span>🧥</span>
-        </div>
-        <h3>Organic Hoodie</h3>
-        <p class="price">£45.00</p>
-        <a href="shop.html" class="button">View Product</a>
-      </div>
-
-      <!-- Product Card 2 -->
-      <div class="product-card">
-        <div class="product-image">
-          <span>👕</span>
-        </div>
-        <h3>Classic T-Shirt</h3>
-        <p class="price">£22.00</p>
-        <a href="shop.html" class="button">View Product</a>
-      </div>
-
-      <!-- Product Card 3 -->
-      <div class="product-card">
-        <div class="product-image">
-          <span>👖</span>
-        </div>
-        <h3>Relaxed Trousers</h3>
-        <p class="price">£55.00</p>
-        <a href="shop.html" class="button">View Product</a>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- =============================================
-       TESTIMONIALS
-       Quotes from happy customers.
-       Change the quote text and customer names below.
-  ============================================= -->
-  <section class="testimonials">
-    <h2>What Our Customers Say</h2>
-
-    <div class="testimonials-grid">
-
-      <!-- Testimonial 1 -->
-      <div class="testimonial-box">
-        <p class="quote">"The hoodie is so soft and comfortable. I love knowing it's made ethically."</p>
-        <p class="customer-name">- Amara J., London</p>
-      </div>
-
-      <!-- Testimonial 2 -->
-      <div class="testimonial-box">
-        <p class="quote">"Great quality and fast delivery. Will definitely order again!"</p>
-        <p class="customer-name">- Marcus T., Manchester</p>
-      </div>
-
-      <!-- Testimonial 3 -->
-      <div class="testimonial-box">
-        <p class="quote">"Finally a brand that looks good AND does the right thing."</p>
-        <p class="customer-name">- Priya S., Bristol</p>
-      </div>
-
-    </div>
-  </section>
-
-
-  <!-- =============================================
-       FOOTER
-       Appears at the bottom of every page.
-       Change the brand name and links as needed.
-  ============================================= -->
-  <footer>
-    <p>&copy; 2025 GreenThread. All rights reserved.</p>
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="shop.html">Shop</a></li>
-      <li><a href="contact.html">Contact</a></li>
-    </ul>
-  </footer>
-
-
-  <!-- =============================================
-       JAVASCRIPT
-       This small script makes the hamburger menu
-       open and close on mobile screens.
-       You do not need to change this.
-  ============================================= -->
-  <script>
-    function toggleMenu() {
-      var links = document.getElementById("navLinks");
-      if (links.classList.contains("open")) {
-        links.classList.remove("open");
-      } else {
-        links.classList.add("open");
-      }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mx. Coad — CS Resources</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0f14;
+      --surface: #13161d;
+      --border: #1e2330;
+      --border-hover: #2e3550;
+      --text: #cdd6f4;
+      --muted: #6c7398;
+      --accent-1: #89b4fa;
+      --accent-2: #a6e3a1;
+      --accent-3: #f38ba8;
+      --accent-4: #fab387;
+      --glow-1: rgba(137,180,250,0.12);
+      --glow-2: rgba(166,227,161,0.10);
     }
-  </script>
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Grid background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(137,180,250,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(137,180,250,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 80px 24px 100px;
+    }
+
+    /* ── Header ── */
+    header {
+      margin-bottom: 64px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-1);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--accent-1);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    h1 span {
+      color: var(--accent-1);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.65;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      display: block;
+      text-decoration: none;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 28px 24px;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; --card-accent: var(--accent-1); --card-glow: var(--glow-1); }
+    .card:nth-child(2) { animation-delay: 0.3s; --card-accent: var(--accent-2); --card-glow: var(--glow-2); }
+    .card:nth-child(3) { animation-delay: 0.4s; --card-accent: var(--accent-4); }
+    .card:nth-child(4) { animation-delay: 0.5s; --card-accent: var(--accent-3); }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--card-accent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, var(--card-glow, transparent) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+    }
+
+    .card:hover::before { opacity: 1; }
+    .card:hover::after  { opacity: 1; }
+
+    .card-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--card-accent);
+      background: color-mix(in srgb, var(--card-accent) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--card-accent) 25%, transparent);
+      padding: 3px 9px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 18px;
+    }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-url {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      color: color-mix(in srgb, var(--muted) 70%, transparent);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    .card-arrow {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover .card-arrow {
+      background: var(--card-accent);
+      border-color: var(--card-accent);
+      transform: rotate(45deg);
+    }
+
+    .card-arrow svg {
+      width: 12px;
+      height: 12px;
+      fill: none;
+      stroke: var(--muted);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.2s;
+    }
+
+    .card:hover .card-arrow svg { stroke: #000; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 72px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      animation: fadeUp 0.6s 0.5s ease both;
+    }
+
+    .footer-left {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .footer-left span { color: var(--accent-1); }
+
+    .footer-school {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <header>
+      <p class="eyebrow">Graveney School · Computer Science</p>
+      <h1>Mx. Coad's<br><span>Resource Hub</span></h1>
+      <p class="subtitle">A collection of websites and tools built for students across KS3, GCSE, and A-Level. Click a card to open the site.</p>
+    </header>
+
+    <p class="section-label">// student sites</p>
+
+    <div class="cards">
+
+      <a class="card" href="https://mxcoad.github.io/01-homepage.html" target="_blank" rel="noopener">
+        <span class="card-tag">A-Level</span>
+        <h2 class="card-title">Learning Defold</h2>
+        <p class="card-desc">A guided resource for getting started with the Defold game engine — covering projects, concepts, and examples.</p>
+        <div class="card-footer">
+          <span class="card-url">https://mxcoad.github.io/01-homepage.html</span>
+          <span class="card-arrow">
+            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="https://mxcoad.github.io/shophomepage.html" target="_blank" rel="noopener">
+        <span class="card-tag">BTEC IT</span>
+        <h2 class="card-title">BTEC Example Website</h2>
+        <p class="card-desc">An example site produced for BTEC IT students — demonstrating good web design practice and content structure.</p>
+        <div class="card-footer">
+          <span class="card-url">https://mxcoad.github.io/shophomepage.html</span>
+          <span class="card-arrow">
+            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
+          </span>
+        </div>
+      </a>
+
+    </div>
+
+    <footer>
+      <p class="footer-left">
+        <span>©</span> <script>document.write(new Date().getFullYear())</script> · Mx. Coad
+      </p>
+      <p class="footer-school">Graveney School · Computer Science Department</p>
+    </footer>
+
+  </div>
 </body>
 </html>
