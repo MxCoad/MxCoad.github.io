@@ -268,6 +268,89 @@
       color: var(--muted);
     }
 
+    /* ── Countdown section ── */
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 56px;
+    }
+ 
+    .cd-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 18px 18px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+ 
+    .cd-card:nth-child(1) { animation-delay: 0.2s; --cd-accent: var(--accent-3); }
+    .cd-card:nth-child(2) { animation-delay: 0.28s; --cd-accent: var(--accent-4); }
+    .cd-card:nth-child(3) { animation-delay: 0.36s; --cd-accent: var(--accent-1); }
+    .cd-card:nth-child(4) { animation-delay: 0.44s; --cd-accent: var(--accent-2); }
+ 
+    .cd-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--cd-accent);
+    }
+ 
+    .cd-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cd-accent);
+      margin-bottom: 12px;
+      display: block;
+    }
+ 
+    .cd-days {
+      font-family: 'Syne', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 4px;
+      letter-spacing: -0.03em;
+    }
+ 
+    .cd-days.urgent { color: var(--cd-accent); }
+ 
+    .cd-unit {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+ 
+    .cd-date {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+ 
+    .cd-bar-track {
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-top: 14px;
+      overflow: hidden;
+    }
+ 
+    .cd-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: var(--cd-accent);
+      transition: width 1s ease;
+    }
+    
+
     /* ── Animations ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(18px); }
@@ -283,6 +366,13 @@
       <h1>Mx. Coad's<br><span>Resource Hub</span></h1>
       <p class="subtitle">A collection of websites and tools built for students across KS3, GCSE, and A-Level. Click a card to open the site.</p>
     </header>
+
+    
+    <p class="section-label">// exam countdowns</p>
+ 
+    <div class="countdown-grid" id="countdown-grid">
+      <!-- filled by JS -->
+    </div>
 
     <p class="section-label">// student sites</p>
 
@@ -335,5 +425,54 @@ Built by a teacher, for teachers, with practical tools for assignments, tracking
     </footer>
 
   </div>
+    <script>
+    const exams = [
+      { label: 'GCSE',     date: '2026-05-13', color: 'var(--accent-3)' },
+      { label: 'AS Level', date: '2026-05-12', color: 'var(--accent-4)' },
+      { label: 'A-Level',  date: '2026-06-10', color: 'var(--accent-1)' },
+      { label: 'BTEC',     date: '2026-05-15', color: 'var(--accent-2)' },
+    ];
+ 
+    function daysUntil(dateStr) {
+      const now  = new Date();
+      now.setHours(0, 0, 0, 0);
+      const target = new Date(dateStr);
+      target.setHours(0, 0, 0, 0);
+      return Math.round((target - now) / 86400000);
+    }
+ 
+    function formatDate(dateStr) {
+      return new Date(dateStr).toLocaleDateString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric'
+      });
+    }
+ 
+    // Max days span for progress bar: days from today to furthest exam
+    const maxDays = Math.max(...exams.map(e => Math.max(daysUntil(e.date), 0)));
+ 
+    const grid = document.getElementById('countdown-grid');
+ 
+    exams.forEach(exam => {
+      const days = daysUntil(exam.date);
+      const isUrgent = days <= 14 && days >= 0;
+      const isPast   = days < 0;
+ 
+      const pct = isPast ? 100 : maxDays > 0 ? Math.round((1 - days / maxDays) * 100) : 100;
+ 
+      const label  = isPast ? 'Complete' : days === 0 ? 'Today!' : `${days}`;
+      const unit   = isPast ? '' : days === 0 ? '' : days === 1 ? 'day to go' : 'days to go';
+ 
+      const card = document.createElement('div');
+      card.className = 'cd-card';
+      card.innerHTML = `
+        <span class="cd-label">${exam.label}</span>
+        <div class="cd-days${isUrgent ? ' urgent' : ''}">${label}</div>
+        <div class="cd-unit">${unit}</div>
+        <div class="cd-date">${formatDate(exam.date)}</div>
+        <div class="cd-bar-track"><div class="cd-bar-fill" style="width:${pct}%"></div></div>
+      `;
+      grid.appendChild(card);
+    });
+  </script>
 </body>
 </html>
