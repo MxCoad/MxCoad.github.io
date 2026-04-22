@@ -1,0 +1,86 @@
+<svg width="400" height="160" viewBox="0 0 400 160" role="img" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- 
+    GREENTHREAD LOGO
+    ================
+    This SVG file can be used anywhere on your website like this:
+      <img src="logo.svg" alt="GreenThread logo">
+    
+    Or to use it inside your navbar instead of plain text, replace:
+      <div class="nav-brand">GreenThread</div>
+    with:
+      <img src="logo.svg" alt="GreenThread" height="50">
+
+    HOW TO CUSTOMISE:
+    - Change the colours by replacing the hex values below
+    - The main dark green is:  #1b4332
+    - The medium green is:     #2d6a4f
+    - The light green is:      #d8f3dc
+    - The teal accent is:      #52b788
+    - To resize it on your page, just change the height= attribute
+      in the <img> tag - the width will adjust automatically
+  -->
+
+  <title>GreenThread logo</title>
+  <desc>A circular leaf icon in green beside the text GreenThread</desc>
+
+  <!-- ========================
+       LEAF ICON
+       The icon sits on the left.
+       It is built from:
+         - A light green circle background
+         - A dark green leaf shape
+         - A stem line
+         - Vein lines inside the leaf
+         - A small thread arc
+  ======================== -->
+  <g transform="translate(8, 8)">
+
+    <!-- Circle background -->
+    <circle cx="72" cy="72" r="68" fill="#d8f3dc" stroke="#2d6a4f" stroke-width="3"/>
+
+    <!-- Leaf -->
+    <path d="M72 22 C102 38, 116 64, 72 122 C28 64, 42 38, 72 22Z"
+          fill="#2d6a4f"/>
+
+    <!-- Stem -->
+    <line x1="72" y1="122" x2="72" y2="138"
+          stroke="#2d6a4f" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Centre vein -->
+    <line x1="72" y1="34" x2="72" y2="120"
+          stroke="#d8f3dc" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Left vein -->
+    <line x1="72" y1="62" x2="52" y2="80"
+          stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Right vein -->
+    <line x1="72" y1="62" x2="92" y2="80"
+          stroke="#d8f3dc" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Thread arc (represents clothing / thread) -->
+    <path d="M52 88 Q72 75, 92 88"
+          fill="none" stroke="#d8f3dc" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  </g>
+
+  <!-- ========================
+       BRAND NAME TEXT
+       "Green" is dark green, "Thread" is medium green.
+       To change the font, replace "Arial, sans-serif" below.
+       To change text colour, replace the fill values.
+  ======================== -->
+  <text x="162" y="88"
+        font-family="Arial, sans-serif"
+        font-size="44"
+        font-weight="bold"
+        fill="#1b4332">Green</text>
+
+  <text x="162" y="135"
+        font-family="Arial, sans-serif"
+        font-size="44"
+        font-weight="bold"
+        fill="#52b788">Thread</text>
+
+</svg>
