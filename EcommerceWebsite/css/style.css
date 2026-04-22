@@ -693,3 +693,13 @@ footer a:hover {
 footer p {
   margin-bottom: 0;
 }
+
+/* ================================================
+   Logo
+   This is to make sure that the logo changes from the centre
+   not the top left corner
+================================================ */
+#logo {
+  transform-origin: center;
+  display: block;
+}
