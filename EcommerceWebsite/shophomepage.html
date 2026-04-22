@@ -204,6 +204,32 @@
        You do not need to change this.
   ============================================= -->
   <script>
+
+    // Step 1: Get the logo element
+const logo = document.getElementById("logo");
+
+// Step 2: Create a variable to track the angle
+let angle = 0;
+
+// Step 3: Define the animation function
+function animate() {
+  // Step 4: Calculate scaling factor using sine function
+  const scale = 1 + 0.2 * Math.sin(angle);
+
+  // Step 5: Apply the scaling transform to the logo
+  logo.style.transform = `scale(${scale})`;
+
+  // Step 6: Update angle for next frame
+  angle += 0.05;
+
+  // Step 7: Request next animation frame to keep looping
+  requestAnimationFrame(animate);
+}
+
+// Step 8: Start the animation
+animate();
+
+    
     function toggleMenu() {
       var links = document.getElementById("navLinks");
       if (links.classList.contains("open")) {
