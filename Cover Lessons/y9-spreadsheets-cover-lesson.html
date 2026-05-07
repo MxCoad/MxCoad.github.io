@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year 9 Spreadsheets — Cover Lesson</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --bronze: #b45309;
+    --bronze-bg: #fef3c7;
+    --silver: #475569;
+    --silver-bg: #f1f5f9;
+    --gold: #b45309;
+    --gold-bg: #fef9c3;
+    --green: #15803d;
+    --green-bg: #dcfce7;
+    --border: #e2e8f0;
+    --muted: #64748b;
+    --page: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #f8fafc;
+    padding: 24px 16px;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    background: var(--page);
+    border-radius: 8px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: white;
+    padding: 28px 36px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: white;
+  }
+
+  .header h1 span {
+    color: #60a5fa;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.8;
+  }
+
+  .header-meta strong {
+    color: white;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ── BODY ── */
+  .body {
+    padding: 32px 36px;
+  }
+
+  /* ── SCENARIO CARD ── */
+  .scenario {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+  }
+
+  .scenario-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .scenario p {
+    font-size: 13px;
+    color: #1e3a5f;
+    line-height: 1.65;
+  }
+
+  /* ── INSTRUCTIONS BOX ── */
+  .instructions {
+    background: var(--silver-bg);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .instructions-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .instructions ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .instructions ul li {
+    padding: 2px 0;
+    padding-left: 14px;
+    position: relative;
+    font-size: 12.5px;
+    color: #334155;
+  }
+
+  .instructions ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+  }
+
+  /* ── DATA TABLE ── */
+  .data-section {
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  thead th {
+    background: var(--ink);
+    color: white;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    font-weight: 500;
+  }
+
+  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:hover { background: var(--accent-light); }
+
+  tbody td {
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  tbody td:first-child {
+    font-weight: 500;
+  }
+
+  /* ── TASK CARDS ── */
+  .tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .task-card {
+    border-radius: 8px;
+    border: 1.5px solid;
+    overflow: hidden;
+  }
+
+  .task-card.bronze {
+    border-color: #d97706;
+  }
+  .task-card.silver {
+    border-color: #94a3b8;
+  }
+  .task-card.gold {
+    border-color: #ca8a04;
+  }
+  .task-card.extension {
+    border-color: var(--green);
+  }
+
+  .task-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  .task-card.bronze .task-header { background: #fef3c7; }
+  .task-card.silver .task-header { background: #f1f5f9; }
+  .task-card.gold .task-header { background: #fef9c3; }
+  .task-card.extension .task-header { background: var(--green-bg); }
+
+  .task-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .task-card.bronze .task-badge { background: #d97706; color: white; }
+  .task-card.silver .task-badge { background: #64748b; color: white; }
+  .task-card.gold .task-badge { background: #ca8a04; color: white; }
+  .task-card.extension .task-badge { background: var(--green); color: white; }
+
+  .task-title {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .task-body {
+    padding: 14px 16px;
+    background: white;
+  }
+
+  .task-body ol {
+    padding-left: 18px;
+  }
+
+  .task-body ol li {
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #1e293b;
+  }
+
+  .task-body ol li:last-child {
+    margin-bottom: 0;
+  }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11.5px;
+    color: #c026d3;
+  }
+
+  .formula-box {
+    background: #0f172a;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 10px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 11.5px;
+    color: #86efac;
+    line-height: 1.8;
+  }
+
+  .formula-box .comment {
+    color: #64748b;
+  }
+
+  /* ── HELP BOX ── */
+  .help-box {
+    background: #fffbeb;
+    border: 1.5px solid #fcd34d;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+
+  .help-box h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #92400e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .help-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .help-item {
+    background: white;
+    border-radius: 5px;
+    padding: 8px 12px;
+    border: 1px solid #fcd34d;
+  }
+
+  .help-item .formula-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .help-item p {
+    font-size: 11px;
+    color: #78350f;
+    line-height: 1.5;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+  }
+
+  .footer p {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .done-checklist {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .done-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .done-item .box {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--muted);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* ── PRINT STYLES ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; border-radius: 0; max-width: 100%; }
+    .task-card, .help-box, .scenario { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="header-badge">Graveney School — Computer Science</div>
+      <h1>Spreadsheets <span>Challenge Sheet</span></h1>
+    </div>
+    <div class="header-meta">
+      <strong>Year 9 — Independent Cover Work</strong>
+      Name: ___________________________<br>
+      Class: ___________________________<br>
+      Date: ____________________________
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- SCENARIO -->
+    <div class="scenario">
+      <div class="scenario-label">📋 Your Mission</div>
+      <p>You have been hired as a junior data analyst for <strong>Velocity FC</strong>, a rising football club. The manager wants a professional spreadsheet to track player performance across the season. Your job is to build the spreadsheet from scratch, apply formulas, create charts, and present the data clearly. Work through the tasks below in order — Bronze first, then Silver, Gold, and Extension if you finish early.</p>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div class="instructions">
+      <div class="instructions-icon">💡</div>
+      <div>
+        <ul>
+          <li>Open a <strong>new blank spreadsheet</strong> in Google Sheets or Microsoft Excel.</li>
+          <li>Save your file as: <strong>Velocity_FC_[YourName]</strong></li>
+          <li>Work through Bronze → Silver → Gold in order. Extension is a bonus challenge.</li>
+          <li>If you are stuck, check the <strong>Formula Help Card</strong> at the bottom of this sheet.</li>
+          <li>You <strong>do not need to ask for help</strong> — all the information you need is on this sheet.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DATA TABLE -->
+    <div class="data-section">
+      <div class="section-title">Step 1 — Enter this data starting at cell A1</div>
+      <table>
+        <thead>
+          <tr>
+            <th>A — Player Name</th>
+            <th>B — Position</th>
+            <th>C — Goals</th>
+            <th>D — Assists</th>
+            <th>E — Games Played</th>
+            <th>F — Yellow Cards</th>
+            <th>G — Red Cards</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Marcus Shaw</td><td>Forward</td><td>18</td><td>7</td><td>30</td><td>3</td><td>0</td></tr>
+          <tr><td>Jordan Patel</td><td>Midfielder</td><td>9</td><td>14</td><td>28</td><td>5</td><td>1</td></tr>
+          <tr><td>Callum Reece</td><td>Defender</td><td>2</td><td>3</td><td>32</td><td>8</td><td>0</td></tr>
+          <tr><td>Theo Okafor</td><td>Forward</td><td>15</td><td>5</td><td>29</td><td>2</td><td>0</td></tr>
+          <tr><td>Sam Delgado</td><td>Goalkeeper</td><td>0</td><td>1</td><td>33</td><td>1</td><td>0</td></tr>
+          <tr><td>Aiden Frost</td><td>Midfielder</td><td>6</td><td>11</td><td>27</td><td>6</td><td>2</td></tr>
+          <tr><td>Reuben King</td><td>Defender</td><td>3</td><td>2</td><td>31</td><td>9</td><td>1</td></tr>
+          <tr><td>Ollie Mensah</td><td>Forward</td><td>12</td><td>8</td><td>26</td><td>4</td><td>0</td></tr>
+          <tr><td>Jake Nwosu</td><td>Midfielder</td><td>5</td><td>9</td><td>30</td><td>3</td><td>0</td></tr>
+          <tr><td>Finn Larsson</td><td>Defender</td><td>1</td><td>4</td><td>34</td><td>7</td><td>0</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TASKS -->
+    <div class="section-title">Step 2 — Complete the Tasks</div>
+
+    <div class="tasks">
+
+      <!-- BRONZE -->
+      <div class="task-card bronze">
+        <div class="task-header">
+          <span class="task-badge">🥉 Bronze</span>
+          <span class="task-title">Data Entry &amp; Formatting</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>Type in all the data from the table above. Row 1 should be the <strong>header row</strong> with the column titles. Data starts from Row 2.</li>
+            <li>Make the header row <strong>bold</strong> and give it a <strong>dark background colour</strong> with <strong>white text</strong>.</li>
+            <li>Set all columns to an appropriate width so no text is cut off (you can double-click the column border to auto-fit).</li>
+            <li>Add a thick border around the entire data table.</li>
+            <li>In cell <strong>I1</strong>, type the label <strong>Goals per Game</strong>. In <strong>I2</strong>, write a formula to calculate Goals ÷ Games Played for the first player. Copy the formula down for all 10 players. <strong>Round your answers to 2 decimal places.</strong></li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- SILVER -->
+      <div class="task-card silver">
+        <div class="task-header">
+          <span class="task-badge">🥈 Silver</span>
+          <span class="task-title">Formulas &amp; Summary Statistics</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>Below your data (leave one blank row as a gap), create a <strong>Summary Statistics</strong> section. Label it clearly in bold.</li>
+            <li>Use the correct formulas to calculate and label each of the following:
+              <div class="formula-box">
+                Total Goals scored by all players<br>
+                Average Goals per player<br>
+                Highest number of Goals (any single player)<br>
+                Lowest number of Goals (any single player)<br>
+                Total Yellow Cards issued<br>
+                Total Red Cards issued
+              </div>
+            </li>
+            <li>In a new column <strong>H</strong>, add the header <strong>Contribution Score</strong>. For each player, calculate their score using this formula:
+              <div class="formula-box">
+                <span class="comment">// Goals × 3 + Assists × 2 − Yellow Cards − Red Cards × 3</span>
+              </div>
+            </li>
+            <li>Sort the table by <strong>Contribution Score</strong> from highest to lowest so the best player is at the top.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- GOLD -->
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-badge">🥇 Gold</span>
+          <span class="task-title">IF Statements, Conditional Formatting &amp; Charts</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>In a new column <strong>J</strong>, add the header <strong>Status</strong>. Use an <code>IF</code> formula so that:
+              <div class="formula-box">
+                If Contribution Score ≥ 30 → display "Star Player"<br>
+                Otherwise → display "Squad Player"
+              </div>
+            </li>
+            <li>Apply <strong>conditional formatting</strong> to the Status column:
+              <ul style="margin-top:6px; padding-left:18px; list-style:disc;">
+                <li style="margin-bottom:4px; font-size:12.5px;">Cells showing "Star Player" → <strong>green background</strong></li>
+                <li style="font-size:12.5px;">Cells showing "Squad Player" → <strong>yellow background</strong></li>
+              </ul>
+            </li>
+            <li>Create a <strong>bar chart</strong> showing each player's <strong>Contribution Score</strong>. Give the chart a title, label the axes, and make sure it is easy to read.</li>
+            <li>Also apply conditional formatting to the <strong>Red Cards</strong> column — cells with a value greater than 0 should be highlighted in <strong>red</strong>.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- EXTENSION -->
+      <div class="task-card extension">
+        <div class="task-header">
+          <span class="task-badge">⭐ Extension</span>
+          <span class="task-title">Advanced Challenge — Finished Early?</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>Create a <strong>second sheet</strong> in the same file. Name it <strong>Position Analysis</strong>.</li>
+            <li>On this new sheet, use <code>COUNTIF</code> to count how many players play in each position (Forward, Midfielder, Defender, Goalkeeper).</li>
+            <li>Use <code>SUMIF</code> to calculate the total goals scored by each position group.</li>
+            <li>Create a <strong>pie chart</strong> on this sheet showing the proportion of total goals scored by each position.</li>
+            <li><strong>Stretch:</strong> On the original sheet, add a new column <strong>Disciplinary Rating</strong>. Use a <strong>nested IF</strong> to rate each player:
+              <div class="formula-box">
+                0 cards total → "Excellent"<br>
+                1–3 cards total → "Acceptable"<br>
+                4+ cards total → "Poor"
+              </div>
+              <em style="font-size:11px; color:#374151;">(Hint: total cards = Yellow Cards + Red Cards)</em>
+            </li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HELP CARD -->
+    <div class="help-box">
+      <h3>🔑 Formula Help Card — All the formulas you might need</h3>
+      <div class="help-grid">
+        <div class="help-item">
+          <div class="formula-name">=SUM(C2:C11)</div>
+          <p>Adds up all values in a range of cells.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=AVERAGE(C2:C11)</div>
+          <p>Calculates the mean average of a range.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=MAX(C2:C11)</div>
+          <p>Finds the largest value in a range.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=MIN(C2:C11)</div>
+          <p>Finds the smallest value in a range.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=ROUND(C2/E2, 2)</div>
+          <p>Divides C2 by E2 and rounds the result to 2 decimal places.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=IF(H2>=30,"Star Player","Squad Player")</div>
+          <p>Displays one thing if the condition is true, another if false.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=COUNTIF(B2:B11,"Forward")</div>
+          <p>Counts how many cells in a range match a specific value.</p>
+        </div>
+        <div class="help-item">
+          <div class="formula-name">=SUMIF(B2:B11,"Forward",C2:C11)</div>
+          <p>Adds up values in one column only where another column matches.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end body -->
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Velocity FC — Year 9 Spreadsheets Cover Lesson &nbsp;|&nbsp; Graveney School</p>
+    <div class="done-checklist">
+      <div class="done-item"><div class="box"></div> Bronze</div>
+      <div class="done-item"><div class="box"></div> Silver</div>
+      <div class="done-item"><div class="box"></div> Gold</div>
+      <div class="done-item"><div class="box"></div> Extension</div>
+    </div>
+  </div>
+
+</div><!-- end page -->
+
+</body>
+</html>
