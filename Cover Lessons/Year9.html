@@ -174,136 +174,99 @@ header {
   opacity: 0.4;
 }
 
-    /* ── Cards grid ── */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 18px;
-    }
+/* ── CARDS GRID ── */
+.cards {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
 
-    .card {
-      display: block;
-      text-decoration: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px 28px 24px;
-      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-      position: relative;
-      overflow: hidden;
-      animation: fadeUp 0.6s ease both;
-    }
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
 
-    .card:nth-child(1) { animation-delay: 0.2s; --card-accent: var(--accent-1); --card-glow: var(--glow-1); }
-    .card:nth-child(2) { animation-delay: 0.3s; --card-accent: var(--accent-2); --card-glow: var(--glow-2); }
-    .card:nth-child(3) { animation-delay: 0.4s; --card-accent: var(--accent-4); }
-    .card:nth-child(4) { animation-delay: 0.5s; --card-accent: var(--accent-3); }
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
 
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--card-accent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
+.card.s1:hover { border-color: rgba(59,130,246,0.5); }
+.card.s2:hover { border-color: rgba(245,158,11,0.5); }
 
-    .card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at top left, var(--card-glow, transparent) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
+.card-accent {
+  height: 4px;
+  width: 100%;
+}
+.card.s1 .card-accent { background: var(--s1); }
+.card.s2 .card-accent { background: var(--s2); }
 
-    .card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-    }
+.card-body { padding: 28px 28px 24px; }
 
-    .card:hover::before { opacity: 1; }
-    .card:hover::after  { opacity: 1; }
+.session-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 0.85;
+  opacity: 0.07;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  user-select: none;
+}
 
-    .card-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--card-accent);
-      background: color-mix(in srgb, var(--card-accent) 12%, transparent);
-      border: 1px solid color-mix(in srgb, var(--card-accent) 25%, transparent);
-      padding: 3px 9px;
-      border-radius: 4px;
-      display: inline-block;
-      margin-bottom: 18px;
-    }
+.card.s1 .session-num { color: var(--s1); opacity: 0.12; }
+.card.s2 .session-num { color: var(--s2); opacity: 0.12; }
 
-    .card-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 10px;
-      line-height: 1.2;
-    }
+.session-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
 
-    .card-desc {
-      font-size: 0.875rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 22px;
-    }
+.card.s1 .session-badge {
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59,130,246,0.25);
+}
+.card.s2 .session-badge {
+  background: rgba(245,158,11,0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245,158,11,0.25);
+}
 
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+.card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
 
-    .card-url {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: color-mix(in srgb, var(--muted) 70%, transparent);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 220px;
-    }
-
-    .card-arrow {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s, transform 0.2s;
-    }
-
-    .card:hover .card-arrow {
-      background: var(--card-accent);
-      border-color: var(--card-accent);
-      transform: rotate(45deg);
-    }
-
-    .card-arrow svg {
-      width: 12px;
-      height: 12px;
-      fill: none;
-      stroke: var(--muted);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.2s;
-    }
-
-    .card:hover .card-arrow svg { stroke: #000; }
+.card-desc {
+  font-size: 13px;
+  color: rgba(240,253,244,0.5);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
 
 .skills {
   display: flex;
@@ -323,7 +286,14 @@ header {
   letter-spacing: 0.02em;
 }
 
-
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+}
 
 .tasks-count {
   font-size: 12px;
@@ -569,34 +539,74 @@ footer {
 </div>
 
 <!-- CARDS -->
+<div class="cards">
 
-
-  <div class="cards">
-
-      <a class="card" href="https://mxcoad.github.io/Cover Lessons/y9-spreadsheets-cover-lesson.html" target="_blank" rel="noopener">
-        <span class="card-tag">Year 9</span>
-        <h2 class="card-title">Player<br>Performance<br>Tracker</h2>
-        <p class="card-desc">Build a professional stats dashboard for the Velocity FC squad using real match data.
-        Analyse who your best performers are using formulas and charts.</p>
-        <div class="skills">
-          <span class="skill-tag">Formatting</span>
-          <span class="skill-tag">SUM / AVERAGE</span>
-          <span class="skill-tag">MAX / MIN</span>
-          <span class="skill-tag">ROUND</span>
-          <span class="skill-tag">IF statements</span>
-          <span class="skill-tag">Cond. formatting</span>
-          <span class="skill-tag">Bar chart</span>
-          <span class="skill-tag">COUNTIF / SUMIF</span>
-        </div>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/Cover Lessons/y9-spreadsheets-cover-lesson.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>
-
+  <!-- SESSION 1 -->
+  <div class="card s1" onclick="openLesson('y9-spreadsheets-cover-lesson.html', 1, 'Player Performance Tracker')">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="session-num">1</div>
+      <div class="session-badge">Session 1</div>
+      <h2 class="card-title">Player<br>Performance<br>Tracker</h2>
+      <p class="card-desc">
+        Build a professional stats dashboard for the Velocity FC squad using real match data.
+        Analyse who your best performers are using formulas and charts.
+      </p>
+      <div class="skills">
+        <span class="skill-tag">Formatting</span>
+        <span class="skill-tag">SUM / AVERAGE</span>
+        <span class="skill-tag">MAX / MIN</span>
+        <span class="skill-tag">ROUND</span>
+        <span class="skill-tag">IF statements</span>
+        <span class="skill-tag">Cond. formatting</span>
+        <span class="skill-tag">Bar chart</span>
+        <span class="skill-tag">COUNTIF / SUMIF</span>
+      </div>
     </div>
+    <div class="card-footer">
+      <span class="tasks-count"><strong>4 tiers</strong> — Bronze → Extension</span>
+      <button class="open-btn">
+        Open
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SESSION 2 -->
+  <div class="card s2" onclick="openLesson('y9-spreadsheets-cover-lesson-2.html', 2, 'Match Results Tracker')">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="session-num">2</div>
+      <div class="session-badge">Session 2</div>
+      <h2 class="card-title">Match<br>Results<br>Tracker</h2>
+      <p class="card-desc">
+        Record Velocity FC's season results, calculate points automatically, and visualise the
+        team's form with a cumulative points chart.
+      </p>
+      <div class="skills">
+        <span class="skill-tag">Nested IF</span>
+        <span class="skill-tag">Absolute refs <strong>$</strong></span>
+        <span class="skill-tag">Running totals</span>
+        <span class="skill-tag">COUNTIF</span>
+        <span class="skill-tag">Line chart</span>
+        <span class="skill-tag">COUNTIFS <span class="new-ribbon">new</span></span>
+        <span class="skill-tag">Cross-sheet refs <span class="new-ribbon">new</span></span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="tasks-count"><strong>4 tiers</strong> — Bronze → Extension</span>
+      <button class="open-btn">
+        Open
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
 
 <!-- FOOTER -->
 <footer>
