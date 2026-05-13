@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity FC — Year 9 Spreadsheets</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ── RESET & BASE ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pitch:   #081409;
+  --surface: #0f2114;
+  --card:    #122718;
+  --line:    rgba(255,255,255,0.055);
+  --green:   #22c55e;
+  --green-d: #16a34a;
+  --amber:   #f59e0b;
+  --amber-d: #d97706;
+  --white:   #f0fdf4;
+  --muted:   #6b7280;
+  --border:  rgba(255,255,255,0.08);
+  --s1:      #3b82f6;
+  --s2:      #f59e0b;
+}
+
+html, body {
+  min-height: 100vh;
+  font-family: 'Outfit', sans-serif;
+  background: var(--pitch);
+  color: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── PITCH LINES BACKGROUND ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.03) 79px,
+      rgba(255,255,255,0.03) 80px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.03) 79px,
+      rgba(255,255,255,0.03) 80px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative;
+  z-index: 1;
+  padding: 48px 40px 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.club-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.crest {
+  width: 52px;
+  height: 52px;
+  background: var(--green);
+  border-radius: 50% 50% 42% 42% / 50% 50% 40% 40%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--pitch);
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+}
+
+.club-info {}
+.club-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  color: var(--green);
+  line-height: 1;
+}
+.club-sub {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 8vw, 86px);
+  letter-spacing: 0.03em;
+  line-height: 0.92;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+
+.hero-title span {
+  color: var(--green);
+  display: block;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: rgba(240,253,244,0.6);
+  max-width: 520px;
+  line-height: 1.65;
+  font-weight: 300;
+  margin-bottom: 48px;
+}
+
+/* ── JOURNEY STRIP ── */
+.journey {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.journey-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.journey-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--s1);
+  flex-shrink: 0;
+}
+
+.journey-dot.s2 { background: var(--s2); }
+
+.journey-label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(240,253,244,0.5);
+  font-weight: 500;
+}
+
+.journey-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--s1), var(--s2));
+  margin: 0 16px;
+  opacity: 0.4;
+}
+
+/* ── CARDS GRID ── */
+.cards {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 40px 64px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.card.s1:hover { border-color: rgba(59,130,246,0.5); }
+.card.s2:hover { border-color: rgba(245,158,11,0.5); }
+
+.card-accent {
+  height: 4px;
+  width: 100%;
+}
+.card.s1 .card-accent { background: var(--s1); }
+.card.s2 .card-accent { background: var(--s2); }
+
+.card-body { padding: 28px 28px 24px; }
+
+.session-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 0.85;
+  opacity: 0.07;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.card.s1 .session-num { color: var(--s1); opacity: 0.12; }
+.card.s2 .session-num { color: var(--s2); opacity: 0.12; }
+
+.session-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+
+.card.s1 .session-badge {
+  background: rgba(59,130,246,0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(59,130,246,0.25);
+}
+.card.s2 .session-badge {
+  background: rgba(245,158,11,0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245,158,11,0.25);
+}
+
+.card-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: rgba(240,253,244,0.5);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  font-weight: 300;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.skill-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.06);
+  color: rgba(240,253,244,0.65);
+  border: 1px solid rgba(255,255,255,0.08);
+  letter-spacing: 0.02em;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+}
+
+.tasks-count {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.tasks-count strong {
+  color: rgba(240,253,244,0.7);
+  font-weight: 500;
+}
+
+.open-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.open-btn:hover { opacity: 0.85; transform: scale(1.02); }
+.open-btn:active { transform: scale(0.98); }
+
+.card.s1 .open-btn { background: var(--s1); color: white; }
+.card.s2 .open-btn { background: var(--s2); color: var(--pitch); }
+
+.open-btn svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* ── NEW SKILL RIBBON ── */
+.new-ribbon {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(34,197,94,0.15);
+  color: var(--green);
+  border: 1px solid rgba(34,197,94,0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--line);
+  padding: 20px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-left {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.footer-left strong { color: rgba(240,253,244,0.5); font-weight: 500; }
+
+.footer-right {
+  font-size: 11px;
+  color: rgba(240,253,244,0.2);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── OVERLAY ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(8,20,9,0.85);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  backdrop-filter: blur(4px);
+}
+
+.overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.overlay-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  max-width: 860px;
+  height: 100vh;
+  background: #f8fafc;
+  border-left: 1px solid rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 101;
+  box-shadow: -12px 0 48px rgba(0,0,0,0.3);
+}
+
+.overlay.open .overlay-panel {
+  transform: translateX(0);
+}
+
+.overlay-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: #1a1a2e;
+  flex-shrink: 0;
+}
+
+.overlay-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.overlay-session-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.overlay-session-badge.s1 {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+.overlay-session-badge.s2 {
+  background: rgba(245,158,11,0.2);
+  color: #fcd34d;
+}
+
+.overlay-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(240,253,244,0.85);
+}
+
+.close-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(240,253,244,0.7);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.close-btn:hover { background: rgba(255,255,255,0.14); }
+.close-btn svg { width: 14px; height: 14px; }
+
+#lesson-frame {
+  flex: 1;
+  border: none;
+  background: white;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+  header, footer { padding-left: 20px; padding-right: 20px; }
+  .cards { grid-template-columns: 1fr; padding-left: 20px; padding-right: 20px; }
+  .journey { padding: 0 20px; }
+  .overlay-panel { max-width: 100%; }
+  .hero-title { font-size: 48px; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.club-row  { animation: fadeUp 0.5s ease both; }
+.hero-title { animation: fadeUp 0.5s 0.1s ease both; }
+.hero-desc  { animation: fadeUp 0.5s 0.2s ease both; }
+.journey    { animation: fadeUp 0.5s 0.25s ease both; }
+.card:nth-child(1) { animation: fadeUp 0.5s 0.3s ease both; }
+.card:nth-child(2) { animation: fadeUp 0.5s 0.4s ease both; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="club-row">
+    <div class="crest">VFC</div>
+    <div class="club-info">
+      <div class="club-name">Velocity FC</div>
+      <div class="club-sub">Graveney School — Year 9 Computer Science</div>
+    </div>
+  </div>
+
+  <h1 class="hero-title">
+    Spreadsheets
+    <span>Unit</span>
+  </h1>
+
+  <p class="hero-desc">
+    Two independent sessions building a complete data analysis suite for Velocity FC.
+    Open a session below, work through the tasks in order, and tick off each challenge as you go.
+  </p>
+</header>
+
+<!-- JOURNEY STRIP -->
+<div class="journey">
+  <div class="journey-step">
+    <div class="journey-dot"></div>
+    <span class="journey-label">Session 1 — Player Stats</span>
+  </div>
+  <div class="journey-line"></div>
+  <div class="journey-step">
+    <div class="journey-dot s2"></div>
+    <span class="journey-label">Session 2 — Match Results</span>
+  </div>
+</div>
+
+<!-- CARDS -->
+<div class="cards">
+
+  <!-- SESSION 1 -->
+  <div class="card s1" onclick="openLesson('y9-spreadsheets-cover-lesson.html', 1, 'Player Performance Tracker')">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="session-num">1</div>
+      <div class="session-badge">Session 1</div>
+      <h2 class="card-title">Player<br>Performance<br>Tracker</h2>
+      <p class="card-desc">
+        Build a professional stats dashboard for the Velocity FC squad using real match data.
+        Analyse who your best performers are using formulas and charts.
+      </p>
+      <div class="skills">
+        <span class="skill-tag">Formatting</span>
+        <span class="skill-tag">SUM / AVERAGE</span>
+        <span class="skill-tag">MAX / MIN</span>
+        <span class="skill-tag">ROUND</span>
+        <span class="skill-tag">IF statements</span>
+        <span class="skill-tag">Cond. formatting</span>
+        <span class="skill-tag">Bar chart</span>
+        <span class="skill-tag">COUNTIF / SUMIF</span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="tasks-count"><strong>4 tiers</strong> — Bronze → Extension</span>
+      <button class="open-btn">
+        Open
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- SESSION 2 -->
+  <div class="card s2" onclick="openLesson('y9-spreadsheets-cover-lesson-2.html', 2, 'Match Results Tracker')">
+    <div class="card-accent"></div>
+    <div class="card-body">
+      <div class="session-num">2</div>
+      <div class="session-badge">Session 2</div>
+      <h2 class="card-title">Match<br>Results<br>Tracker</h2>
+      <p class="card-desc">
+        Record Velocity FC's season results, calculate points automatically, and visualise the
+        team's form with a cumulative points chart.
+      </p>
+      <div class="skills">
+        <span class="skill-tag">Nested IF</span>
+        <span class="skill-tag">Absolute refs <strong>$</strong></span>
+        <span class="skill-tag">Running totals</span>
+        <span class="skill-tag">COUNTIF</span>
+        <span class="skill-tag">Line chart</span>
+        <span class="skill-tag">COUNTIFS <span class="new-ribbon">new</span></span>
+        <span class="skill-tag">Cross-sheet refs <span class="new-ribbon">new</span></span>
+      </div>
+    </div>
+    <div class="card-footer">
+      <span class="tasks-count"><strong>4 tiers</strong> — Bronze → Extension</span>
+      <button class="open-btn">
+        Open
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8h10M9 4l4 4-4 4"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <strong>Graveney School</strong> — Computer Science Department
+  </div>
+  <div class="footer-right">Year 9 · Spreadsheets Unit</div>
+</footer>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="overlay-panel" id="overlay-panel">
+    <div class="overlay-bar">
+      <div class="overlay-bar-left">
+        <span class="overlay-session-badge" id="overlay-badge"></span>
+        <span class="overlay-title" id="overlay-title"></span>
+      </div>
+      <button class="close-btn" onclick="closeLesson()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M3 3l10 10M13 3L3 13"/>
+        </svg>
+        Back to hub
+      </button>
+    </div>
+    <iframe id="lesson-frame" title="Lesson content"></iframe>
+  </div>
+</div>
+
+<script>
+  function openLesson(file, session, title) {
+    const overlay = document.getElementById('overlay');
+    const badge   = document.getElementById('overlay-badge');
+    const label   = document.getElementById('overlay-title');
+    const frame   = document.getElementById('lesson-frame');
+
+    badge.textContent = 'Session ' + session;
+    badge.className   = 'overlay-session-badge s' + session;
+    label.textContent = title;
+    frame.src         = file;
+
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLesson() {
+    const overlay = document.getElementById('overlay');
+    const frame   = document.getElementById('lesson-frame');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { frame.src = ''; }, 300);
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeLesson();
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLesson();
+  });
+</script>
+
+</body>
+</html>
