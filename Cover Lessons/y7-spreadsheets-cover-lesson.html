@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Year 7 Spreadsheets — Paws & Claws Animal Rescue</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1a1a2e;
+            --accent: #16a34a;
+            --accent-light: #dcfce7;
+            --border: #e2e8f0;
+            --muted: #64748b;
+            --page: #ffffff;
+            --alt: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--ink);
+            background: #f8fafc;
+            padding: 24px 16px;
+        }
+
+        .page {
+            max-width: 820px;
+            margin: 0 auto;
+            background: var(--page);
+            border-radius: 8px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        /* ── HEADER ── */
+        .header {
+            background: var(--ink);
+            color: white;
+            padding: 28px 36px 24px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            align-items: start;
+        }
+
+        .header-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 26px;
+            font-weight: 400;
+            line-height: 1.2;
+            color: white;
+        }
+
+        .header h1 span {
+            color: #86efac;
+        }
+
+        .header-meta {
+            text-align: right;
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.9;
+        }
+
+        .header-meta strong {
+            color: white;
+            font-size: 12px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        /* ── BODY ── */
+        .body {
+            padding: 30px 36px;
+        }
+
+        /* ── SCENARIO ── */
+        .scenario {
+            background: var(--accent-light);
+            border-left: 4px solid var(--accent);
+            border-radius: 0 6px 6px 0;
+            padding: 18px 20px;
+            margin-bottom: 22px;
+        }
+
+        .scenario-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .scenario p {
+            font-size: 14px;
+            color: #14532d;
+            line-height: 1.65;
+        }
+
+        /* ── INSTRUCTIONS ── */
+        .instructions {
+            background: var(--alt);
+            border-radius: 6px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .instructions-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instructions ul li {
+            padding: 3px 0 3px 16px;
+            position: relative;
+            font-size: 13.5px;
+            color: #334155;
+        }
+
+        .instructions ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 12px;
+        }
+
+        /* ── SECTION TITLE ── */
+        .section-title {
+            font-family: 'DM Mono', monospace;
+            font-size: 10.5px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ── DATA TABLE ── */
+        .data-section {
+            margin-bottom: 28px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead th {
+            background: var(--ink);
+            color: white;
+            padding: 9px 12px;
+            text-align: left;
+            font-size: 11.5px;
+            letter-spacing: 0.04em;
+            font-weight: 500;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: var(--accent-light);
+        }
+
+        tbody td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody td:first-child {
+            font-weight: 600;
+            color: #15803d;
+        }
+
+        .emoji-col {
+            font-size: 18px;
+            text-align: center !important;
+        }
+
+        /* ── TASK CARDS ── */
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .task-card {
+            border-radius: 8px;
+            border: 1.5px solid;
+            overflow: hidden;
+        }
+
+        .task-card.bronze {
+            border-color: #d97706;
+        }
+
+        .task-card.silver {
+            border-color: #94a3b8;
+        }
+
+        .task-card.gold {
+            border-color: #ca8a04;
+        }
+
+        .task-card.ext {
+            border-color: #16a34a;
+        }
+
+        .task-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 18px;
+        }
+
+        .task-card.bronze .task-header {
+            background: #fef3c7;
+        }
+
+        .task-card.silver .task-header {
+            background: #f1f5f9;
+        }
+
+        .task-card.gold .task-header {
+            background: #fef9c3;
+        }
+
+        .task-card.ext .task-header {
+            background: #dcfce7;
+        }
+
+        .task-badge {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .task-card.bronze .task-badge {
+            background: #d97706;
+            color: white;
+        }
+
+        .task-card.silver .task-badge {
+            background: #64748b;
+            color: white;
+        }
+
+        .task-card.gold .task-badge {
+            background: #ca8a04;
+            color: white;
+        }
+
+        .task-card.ext .task-badge {
+            background: #16a34a;
+            color: white;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--ink);
+        }
+
+        .task-body {
+            padding: 18px 20px;
+            background: white;
+        }
+
+        /* Step lists — larger and clearer for lower ability */
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            display: flex;
+            gap: 14px;
+            margin-bottom: 14px;
+            align-items: flex-start;
+            font-size: 13.5px;
+            color: #1e293b;
+            line-height: 1.65;
+        }
+
+        .step-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-num {
+            background: var(--ink);
+            color: white;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .task-card.bronze .step-num {
+            background: #d97706;
+        }
+
+        .task-card.silver .step-num {
+            background: #64748b;
+        }
+
+        .task-card.gold .step-num {
+            background: #ca8a04;
+        }
+
+        .task-card.ext .step-num {
+            background: #16a34a;
+        }
+
+        /* ── FORMULA DISPLAY ── */
+        .formula-reveal {
+            background: #0f172a;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 10px 0 4px;
+        }
+
+        .formula-reveal .formula-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: #64748b;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .formula-reveal .formula-text {
+            font-family: 'DM Mono', monospace;
+            font-size: 15px;
+            color: #86efac;
+            letter-spacing: 0.02em;
+        }
+
+        .formula-reveal .formula-explain {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        /* ── CHECKPOINT BOX ── */
+        .checkpoint {
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .checkpoint-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .checkpoint p {
+            font-size: 12.5px;
+            color: #1e40af;
+            line-height: 1.55;
+        }
+
+        /* ── HOW TO BOX ── */
+        .howto {
+            background: #fff7ed;
+            border: 1.5px solid #fed7aa;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 10px 0;
+        }
+
+        .howto-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #c2410c;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .howto p {
+            font-size: 12.5px;
+            color: #7c2d12;
+            line-height: 1.6;
+        }
+
+        .howto ol {
+            padding-left: 18px;
+        }
+
+        .howto ol li {
+            font-size: 12.5px;
+            color: #7c2d12;
+            margin-bottom: 3px;
+            line-height: 1.55;
+        }
+
+        code {
+            font-family: 'DM Mono', monospace;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-size: 12.5px;
+            color: #c026d3;
+        }
+
+        /* ── HELP CARD ── */
+        .help-box {
+            background: #fffbeb;
+            border: 1.5px solid #fcd34d;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+        }
+
+        .help-box h3 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #92400e;
+        }
+
+        .help-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .help-item {
+            background: white;
+            border-radius: 5px;
+            padding: 10px 14px;
+            border: 1px solid #fcd34d;
+        }
+
+        .help-item .fn {
+            font-family: 'DM Mono', monospace;
+            font-size: 12px;
+            color: #16a34a;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .help-item p {
+            font-size: 12px;
+            color: #78350f;
+            line-height: 1.5;
+        }
+
+        /* ── FOOTER ── */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+        }
+
+        .footer p {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .done-checklist {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .done-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .done-item .box {
+            width: 14px;
+            height: 14px;
+            border: 1.5px solid var(--muted);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .task-card,
+            .help-box,
+            .checkpoint {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- HEADER -->
+        <div class="header">
+            <div>
+                <div class="header-badge">Graveney School — Computer Science</div>
+                <h1>Spreadsheets: <span>Paws &amp; Claws</span><br>Animal Rescue</h1>
+            </div>
+
+        </div>
+
+        <div class="body">
+
+            <!-- SCENARIO -->
+            <div class="scenario">
+                <div class="scenario-label">🐾 Your Mission</div>
+                <p>Paws &amp; Claws Animal Rescue looks after animals until they find a new home. The rescue centre
+                    needs a spreadsheet to keep track of all the animals currently staying there. Your job is to build
+                    that spreadsheet from scratch. Work through Bronze first, then Silver, Gold, and Extension if you
+                    finish early.</p>
+            </div>
+
+            <!-- INSTRUCTIONS -->
+            <div class="instructions">
+                <div class="instructions-icon">💡</div>
+                <div>
+                    <ul>
+                        <li>Open a <strong>new blank spreadsheet</strong> in Google Sheets.</li>
+                        <li>Name your file as: <strong>PawsAndClaws_[YourName]</strong></li>
+                        <li>Read each step carefully <strong>before </strong>you do it — every step is explained fully.
+                        </li>
+                        <li>The <strong>Formula Help Card</strong> at the bottom has every formula you will need.</li>
+                        <li>You do not need to ask for help — everything is on this sheet.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- DATA TABLE -->
+            <div class="data-section">
+                <div class="section-title">Step 1 — Type in this data. Row 1 is your header row. Data starts in Row 2.
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>A — Animal Name</th>
+                            <th>B — Type</th>
+                            <th>C — Age (years)</th>
+                            <th>D — Weight (kg)</th>
+                            <th>E — Days at Shelter</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="emoji-col">🐶</td>
+                            <td>Biscuit</td>
+                            <td>Dog</td>
+                            <td>3</td>
+                            <td>12</td>
+                            <td>14</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐱</td>
+                            <td>Mochi</td>
+                            <td>Cat</td>
+                            <td>1</td>
+                            <td>4</td>
+                            <td>7</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐰</td>
+                            <td>Hazel</td>
+                            <td>Rabbit</td>
+                            <td>2</td>
+                            <td>2</td>
+                            <td>21</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐶</td>
+                            <td>Storm</td>
+                            <td>Dog</td>
+                            <td>5</td>
+                            <td>28</td>
+                            <td>5</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐱</td>
+                            <td>Pebble</td>
+                            <td>Cat</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>30</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐹</td>
+                            <td>Zigzag</td>
+                            <td>Hamster</td>
+                            <td>1</td>
+                            <td>0.1</td>
+                            <td>12</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐱</td>
+                            <td>Noodle</td>
+                            <td>Cat</td>
+                            <td>2</td>
+                            <td>4</td>
+                            <td>3</td>
+                        </tr>
+                        <tr>
+                            <td class="emoji-col">🐶</td>
+                            <td>Pepper</td>
+                            <td>Dog</td>
+                            <td>6</td>
+                            <td>18</td>
+                            <td>9</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:12px; color:var(--muted); margin-top:8px;">
+                    ℹ️ Do <strong>not</strong> type the emoji column — it is just to help you here. Your spreadsheet
+                    should have columns A to E only.
+                </p>
+            </div>
+
+            <!-- TASKS -->
+            <div class="section-title">Step 2 — Complete the tasks below</div>
+            <div class="tasks">
+
+                <!-- BRONZE -->
+                <div class="task-card bronze">
+                    <div class="task-header">
+                        <span class="task-badge">🥉 Bronze</span>
+                        <span class="task-title">Make your spreadsheet look professional</span>
+                    </div>
+                    <div class="task-body">
+                        <ul class="step-list">
+                            <li>
+                                <span class="step-num">1</span>
+                                <div>
+                                    <strong>Make the header row stand out.</strong> Click on row number
+                                    <strong>1</strong> on the left side to select the whole row. Then:
+                                    <div class="howto">
+                                        <div class="howto-label">How to do this</div>
+                                        <ol>
+                                            <li>Click the <strong>Bold</strong> button (the B in the toolbar) to make
+                                                the text bold.</li>
+                                            <li>Click the <strong>Fill colour</strong> button (the paint bucket 🪣) and
+                                                choose a dark colour.</li>
+                                            <li>Click the <strong>Font colour</strong> button (the A with colour under
+                                                it) and choose <strong>white</strong>.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">2</span>
+                                <div>
+                                    <strong>Make the columns wider</strong> so the text is not cut off. Hover your mouse
+                                    over the line between two column letters at the top (e.g. between A and B) until you
+                                    see a double arrow ↔, then <strong>double-click</strong> to auto-fit. Do this for
+                                    all five columns.
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">3</span>
+                                <div>
+                                    <strong>Centre the data</strong> in columns C, D, and E. Click and drag to select
+                                    <strong>C1 to E9</strong>, then click the <strong>Centre align</strong> button in
+                                    the toolbar (the lines that look centred).
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">4</span>
+                                <div>
+                                    <strong>Add a border</strong> around your whole table. Select cells <strong>A1 to
+                                        E9</strong>, click the <strong>Borders</strong> button in the toolbar, and
+                                    choose <strong>"All borders"</strong>.
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="checkpoint">
+                            <span class="checkpoint-icon">✅</span>
+                            <p><strong>Check your work:</strong> Your header row should have a dark background with
+                                white bold text. All columns should be wide enough to read. There should be a border
+                                around every cell.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SILVER -->
+                <div class="task-card silver">
+                    <div class="task-header">
+                        <span class="task-badge">🥈 Silver</span>
+                        <span class="task-title">Use formulas to find out information</span>
+                    </div>
+                    <div class="task-body">
+                        <ul class="step-list">
+                            <li>
+                                <span class="step-num">1</span>
+                                <div>
+                                    Leave row 10 blank as a gap. In cell <strong>A11</strong>, type the label:
+                                    <code>Total days (all animals)</code>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">2</span>
+                                <div>
+                                    Click on cell <strong>B11</strong>. You are going to type a formula to add up all
+                                    the Days at Shelter values. Type <strong>exactly</strong> this:
+                                    <div class="formula-reveal">
+                                        <div class="formula-label">Type this formula in cell B11</div>
+                                        <div class="formula-text">=SUM(E2:E9)</div>
+                                        <div class="formula-explain">This tells the spreadsheet: add up everything in
+                                            column E, from row 2 to row 9. The answer should be <strong>101</strong>.
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">3</span>
+                                <div>
+                                    In cell <strong>A12</strong>, type: <code>Longest stay (days)</code><br>
+                                    In cell <strong>B12</strong>, type this formula to find the animal who has been
+                                    there the longest:
+                                    <div class="formula-reveal">
+                                        <div class="formula-label">Type this formula in cell B12</div>
+                                        <div class="formula-text">=MAX(E2:E9)</div>
+                                        <div class="formula-explain">MAX finds the biggest number in the range. The
+                                            answer should be <strong>30</strong> — that is Pebble the cat!</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">4</span>
+                                <div>
+                                    In cell <strong>A13</strong>, type: <code>Shortest stay (days)</code><br>
+                                    In cell <strong>B13</strong>, type a formula to find the animal who arrived most
+                                    recently:
+                                    <div class="formula-reveal">
+                                        <div class="formula-label">Type this formula in cell B13</div>
+                                        <div class="formula-text">=MIN(E2:E9)</div>
+                                        <div class="formula-explain">MIN finds the smallest number. The answer should be
+                                            <strong>3</strong> — that is Noodle the cat!
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">5</span>
+                                <div>Make the labels in column A (cells A11–A13) <strong>bold</strong> so they stand
+                                    out.</div>
+                            </li>
+                        </ul>
+                        <div class="checkpoint">
+                            <span class="checkpoint-icon">✅</span>
+                            <p><strong>Check your work:</strong> B11 = 101, B12 = 30, B13 = 3. If you got different
+                                numbers, check you typed the formula exactly as shown — make sure you used a colon ( : )
+                                not a dash.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GOLD -->
+                <div class="task-card gold">
+                    <div class="task-header">
+                        <span class="task-badge">🥇 Gold</span>
+                        <span class="task-title">Create a chart to show the data visually</span>
+                    </div>
+                    <div class="task-body">
+                        <ul class="step-list">
+                            <li>
+                                <span class="step-num">1</span>
+                                <div>
+                                    You are going to make a <strong>bar chart</strong> showing how many days each animal
+                                    has been at the shelter. First, select the animal names: click on
+                                    <strong>A1</strong>, hold <strong>Ctrl</strong>, then click on <strong>E1</strong>.
+                                    Now drag to select <strong>A1:A9</strong> and
+                                    <strong>E1:E9</strong> together.
+                                    <div class="howto">
+                                        <div class="howto-label">Easier method</div>
+                                        <ol>
+                                            <li>Click cell <strong>A1</strong> and drag to <strong>A9</strong> to select
+                                                the names column.</li>
+                                            <li>Hold <strong>Ctrl</strong> and click <strong>E1</strong>,
+                                                then drag to <strong>E9</strong> to also
+                                                select the days column.</li>
+                                            <li>Both columns should now be highlighted.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">2</span>
+                                <div>
+                                    <strong>Insert a chart.</strong>
+                                    <div class="howto">
+                                        <div class="howto-label">In Google Sheets</div>
+                                        <p>Click <strong>Insert</strong> in the menu → <strong>Chart</strong>. In the
+                                            chart editor on the right, make sure the chart type is set to <strong>Bar
+                                                chart</strong>.</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">3</span>
+                                <div>
+                                    <strong>Add a title to your chart.</strong> Click on the chart title (it may say
+                                    "Days at Shelter" already) and change it to: <strong>How Long Has Each Animal Been
+                                        Waiting?</strong>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">4</span>
+                                <div>
+                                    <strong>Move your chart</strong> so it sits neatly below your summary statistics
+                                    (below row 14). Click and drag the chart to position it there.
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="checkpoint">
+                            <span class="checkpoint-icon">✅</span>
+                            <p><strong>Check your work:</strong> Your chart should show 8 bars — one for each animal.
+                                The longest bar should belong to Pebble (30 days) and the shortest to Noodle (3 days).
+                                The chart should have a title.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EXTENSION -->
+                <div class="task-card ext">
+                    <div class="task-header">
+                        <span class="task-badge">⭐ Extension</span>
+                        <span class="task-title">Finished early? Try these bonus tasks!</span>
+                    </div>
+                    <div class="task-body">
+                        <ul class="step-list">
+                            <li>
+                                <span class="step-num">1</span>
+                                <div>
+                                    In cell <strong>A14</strong>, type: <code>Average age (years)</code><br>
+                                    In cell <strong>B14</strong>, use this formula to find the average age of all the
+                                    animals:
+                                    <div class="formula-reveal">
+                                        <div class="formula-label">Type this formula in cell B14</div>
+                                        <div class="formula-text">=AVERAGE(C2:C9)</div>
+                                        <div class="formula-explain">AVERAGE adds all the numbers up and divides by how
+                                            many there are. What is the average age? Does the answer surprise you?</div>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">2</span>
+                                <div>
+                                    <strong>Add a new column F.</strong> In cell <strong>F1</strong>, type the header:
+                                    <code>Needs Urgent Home?</code><br>
+                                    In cell <strong>F2</strong>, type this formula. It will write "YES ⚠️" for any
+                                    animal that has been waiting more than 15 days, and "No" for animals that arrived
+                                    recently:
+                                    <div class="formula-reveal">
+                                        <div class="formula-label">Type this formula in cell F2</div>
+                                        <div class="formula-text">=IF(E2&gt;15,"YES ⚠️","No")</div>
+                                        <div class="formula-explain">IF checks a condition. If the animal has been there
+                                            MORE than 15 days, it writes YES ⚠️. Otherwise it writes No.</div>
+                                    </div>
+                                    Once you have typed it in F2, click on F2 and copy the formula down to
+                                    <strong>F9</strong> by dragging the small blue square in the bottom-right corner of
+                                    the cell downwards.
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-num">3</span>
+                                <div>
+                                    <strong>Highlight the urgent animals.</strong> Select cells <strong>F2:F9</strong>.
+                                    Use conditional formatting to make any cell that says "YES ⚠️" turn
+                                    <strong>red</strong>. (Format → Conditional formatting → Text contains → YES)
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- HELP CARD -->
+            <div class="help-box">
+                <h3>🔑 Formula Help Card — Every formula you need is here</h3>
+                <div class="help-grid">
+                    <div class="help-item">
+                        <div class="fn">=SUM(E2:E9)</div>
+                        <p>Adds up all the numbers in a range of cells. Change E2:E9 to whichever cells you want to add.
+                        </p>
+                    </div>
+                    <div class="help-item">
+                        <div class="fn">=MAX(E2:E9)</div>
+                        <p>Finds the biggest (highest) number in a range. Useful for finding the longest stay.</p>
+                    </div>
+                    <div class="help-item">
+                        <div class="fn">=MIN(E2:E9)</div>
+                        <p>Finds the smallest (lowest) number in a range. Useful for finding the shortest stay.</p>
+                    </div>
+                    <div class="help-item">
+                        <div class="fn">=AVERAGE(C2:C9)</div>
+                        <p>Finds the mean average. Adds all the numbers together then divides by how many there are.</p>
+                    </div>
+                    <div class="help-item">
+                        <div class="fn">=IF(E2&gt;15,"YES ⚠️","No")</div>
+                        <p>Checks if something is true. If it is, writes the first answer. If not, writes the second
+                            answer.</p>
+                    </div>
+                    <div class="help-item">
+                        <div class="fn">Common mistakes</div>
+                        <p>Always start a formula with <strong>=</strong><br>
+                            Use a <strong>colon :</strong> between cell references, not a dash<br>
+                            Do not put spaces inside the formula</p>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- end body -->
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>Paws &amp; Claws Animal Rescue — Year 7 Spreadsheets &nbsp;|&nbsp; Graveney School</p>
+            <div class="done-checklist">
+                <div class="done-item">
+                    <div class="box"></div> Bronze
+                </div>
+                <div class="done-item">
+                    <div class="box"></div> Silver
+                </div>
+                <div class="done-item">
+                    <div class="box"></div> Gold
+                </div>
+                <div class="done-item">
+                    <div class="box"></div> Extension
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
