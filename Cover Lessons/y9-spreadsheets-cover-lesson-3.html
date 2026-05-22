@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year 9 Spreadsheets — VLOOKUP &amp; HLOOKUP</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --accent: #7c3aed;
+    --accent-light: #ede9fe;
+    --border: #e2e8f0;
+    --muted: #64748b;
+    --page: #ffffff;
+    --alt: #f8fafc;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: #f8fafc;
+    padding: 24px 16px;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    background: var(--page);
+    border-radius: 8px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--ink);
+    color: white;
+    padding: 28px 36px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+  .header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 6px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: white;
+  }
+  .header h1 span { color: #c4b5fd; }
+  .header-meta {
+    text-align: right;
+    font-size: 11px;
+    color: #94a3b8;
+    line-height: 1.8;
+  }
+  .header-meta strong {
+    color: white;
+    font-size: 12px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .body { padding: 32px 36px; }
+
+  /* ── BACKGROUND / EXPLAINER ── */
+  .explainer {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+  }
+  .explainer-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .explainer p {
+    font-size: 13px;
+    color: #3b0764;
+    line-height: 1.65;
+    margin-bottom: 8px;
+  }
+  .explainer p:last-child { margin-bottom: 0; }
+  .lookup-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .lookup-box {
+    background: white;
+    border-radius: 5px;
+    padding: 10px 14px;
+    border: 1px solid #ddd6fe;
+  }
+  .lookup-box .fn {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 3px;
+  }
+  .lookup-box p { font-size: 12px; color: #4c1d95; line-height: 1.5; }
+
+  /* ── INSTRUCTIONS ── */
+  .instructions {
+    background: var(--alt);
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .instructions-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .instructions ul { list-style: none; padding: 0; }
+  .instructions ul li {
+    padding: 2px 0 2px 14px;
+    position: relative;
+    font-size: 12.5px;
+    color: #334155;
+  }
+  .instructions ul li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── DATA TABLES ── */
+  .data-section { margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'DM Mono', monospace; }
+  thead th {
+    background: var(--ink);
+    color: white;
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  tbody tr:nth-child(even) { background: var(--alt); }
+  tbody tr:hover { background: var(--accent-light); }
+  tbody td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+  tbody td:first-child { font-weight: 500; }
+
+  /* ── TASK CARDS ── */
+  .tasks { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
+  .task-card { border-radius: 8px; border: 1.5px solid; overflow: hidden; }
+  .task-card.bronze { border-color: #d97706; }
+  .task-card.silver { border-color: #94a3b8; }
+  .task-card.gold   { border-color: #ca8a04; }
+  .task-card.ext    { border-color: var(--accent); }
+
+  .task-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; }
+  .task-card.bronze .task-header { background: #fef3c7; }
+  .task-card.silver .task-header { background: #f1f5f9; }
+  .task-card.gold   .task-header { background: #fef9c3; }
+  .task-card.ext    .task-header { background: var(--accent-light); }
+
+  .task-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .task-card.bronze .task-badge { background: #d97706; color: white; }
+  .task-card.silver .task-badge { background: #64748b; color: white; }
+  .task-card.gold   .task-badge { background: #ca8a04; color: white; }
+  .task-card.ext    .task-badge { background: var(--accent); color: white; }
+
+  .task-title { font-weight: 600; font-size: 13px; color: var(--ink); }
+
+  .task-body { padding: 14px 16px; background: white; }
+  .task-body ol { padding-left: 18px; }
+  .task-body ol li {
+    margin-bottom: 7px;
+    font-size: 12.5px;
+    line-height: 1.65;
+    color: #1e293b;
+  }
+  .task-body ol li:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: 11.5px;
+    color: #c026d3;
+  }
+
+  /* ── SYNTAX BOX ── */
+  .syntax-box {
+    background: #0f172a;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.9;
+    color: #c4b5fd;
+  }
+  .syntax-box .fn-name { color: #86efac; font-size: 13px; }
+  .syntax-box .comment { color: #475569; }
+
+  /* ── TIP BOX ── */
+  .tip {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 12px;
+    color: #78350f;
+    line-height: 1.55;
+  }
+  .tip strong { color: #92400e; }
+
+  /* ── HELP CARD ── */
+  .help-box {
+    background: #fffbeb;
+    border: 1.5px solid #fcd34d;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+  }
+  .help-box h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #92400e; }
+  .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .help-item {
+    background: white;
+    border-radius: 5px;
+    padding: 8px 12px;
+    border: 1px solid #fcd34d;
+  }
+  .help-item .fn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .help-item p { font-size: 11px; color: #78350f; line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 16px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+  }
+  .footer p { font-size: 11px; color: var(--muted); }
+  .done-checklist { display: flex; gap: 12px; flex-wrap: wrap; }
+  .done-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+  .done-item .box { width: 14px; height: 14px; border: 1.5px solid var(--muted); border-radius: 2px; flex-shrink: 0; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; border-radius: 0; }
+    .task-card, .help-box, .explainer { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="header-badge">Graveney School — Computer Science</div>
+      <h1>Spreadsheets: <span>VLOOKUP</span><br>&amp; <span>HLOOKUP</span></h1>
+    </div>
+    <div class="header-meta">
+      <strong>Year 9 — Independent Cover Work</strong>
+      Name: ___________________________<br>
+      Class: ___________________________<br>
+      Date: ____________________________
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- BACKGROUND -->
+    <div class="explainer">
+      <div class="explainer-label">📖 Background — What are lookup functions?</div>
+      <p>Lookup functions let you search for a value in a table and automatically return related data. For example, if you type a student ID, a lookup function can find and display that student's name from a list.</p>
+      <div class="lookup-pair">
+        <div class="lookup-box">
+          <div class="fn">VLOOKUP</div>
+          <p>Searches <strong>down</strong> a column (vertical). Use when your data is arranged in rows.</p>
+        </div>
+        <div class="lookup-box">
+          <div class="fn">HLOOKUP</div>
+          <p>Searches <strong>across</strong> a row (horizontal). Use when your data is arranged in columns.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <div class="instructions">
+      <div class="instructions-icon">💡</div>
+      <div>
+        <ul>
+          <li>Open <strong>Google Sheets</strong> (sheets.google.com) and sign in with your school Google account.</li>
+          <li>Create a <strong>new blank spreadsheet</strong> and save it as: <strong>Lookups_[YourName]</strong></li>
+          <li>Work through Bronze → Silver → Gold in order. Extension tasks are for early finishers.</li>
+          <li>The <strong>Formula Help Card</strong> at the bottom has the full syntax for both functions.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TASK 1 DATA -->
+    <div class="data-section">
+      <div class="section-title">Bronze — Step 1: Enter this data exactly, starting from cell A1</div>
+      <table>
+        <thead>
+          <tr>
+            <th>A — StudentID</th>
+            <th>B — Name</th>
+            <th>C — Subject</th>
+            <th>D — Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>101</td><td>Amara</td><td>Maths</td><td>7</td></tr>
+          <tr><td>102</td><td>Ben</td><td>Science</td><td>5</td></tr>
+          <tr><td>103</td><td>Chloe</td><td>English</td><td>8</td></tr>
+          <tr><td>104</td><td>Devlin</td><td>Maths</td><td>6</td></tr>
+          <tr><td>105</td><td>Elif</td><td>Science</td><td>9</td></tr>
+        </tbody>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <strong>Tip:</strong> Your headers go in row 1. Student data starts from row 2. Check your spelling — it matters for lookups!
+      </div>
+    </div>
+
+    <!-- TASKS -->
+    <div class="section-title">Tasks — Work through these in order</div>
+    <div class="tasks">
+
+      <!-- BRONZE -->
+      <div class="task-card bronze">
+        <div class="task-header">
+          <span class="task-badge">🥉 Bronze</span>
+          <span class="task-title">Task 2 — VLOOKUP: Find a Student's Name</span>
+        </div>
+        <div class="task-body">
+          <p style="font-size:12.5px; color:#334155; margin-bottom:10px;">The VLOOKUP syntax is:</p>
+          <div class="syntax-box">
+            <span class="fn-name">=VLOOKUP(search_key, range, column_index, is_sorted)</span><br>
+            <span class="comment">search_key   → what you are looking for</span><br>
+            <span class="comment">range        → the table to search (e.g. A1:D6)</span><br>
+            <span class="comment">column_index → which column to return (1 = first, 2 = second...)</span><br>
+            <span class="comment">is_sorted    → always use FALSE for exact matches</span>
+          </div>
+          <ol>
+            <li>Click on cell <strong>F1</strong> and type the label: <code>Search ID</code></li>
+            <li>In cell <strong>F2</strong>, type a student ID: <code>103</code></li>
+            <li>Click on cell <strong>G1</strong> and type the label: <code>Name Found</code></li>
+            <li>In cell <strong>G2</strong>, enter this formula:
+              <div class="syntax-box">=VLOOKUP(F2, A1:D6, 2, FALSE)</div>
+              Press Enter. You should see the name <strong>Chloe</strong> appear.
+            </li>
+            <li>Change the value in <strong>F2</strong> to <code>101</code> — what name appears now?</li>
+          </ol>
+          <div class="tip">
+            <strong>Tip — Why column 2?</strong> We want to return the Name column, which is the 2nd column in our range A1:D6. Try changing 2 to 3 or 4 — what do you get?
+          </div>
+        </div>
+      </div>
+
+      <!-- SILVER -->
+      <div class="task-card silver">
+        <div class="task-header">
+          <span class="task-badge">🥈 Silver</span>
+          <span class="task-title">Task 3 — VLOOKUP: Look Up a Student's Grade</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li>In cell <strong>H1</strong>, add the label: <code>Grade Found</code></li>
+            <li>In cell <strong>H2</strong>, write a VLOOKUP formula yourself that looks up the same ID (from F2) and returns the <strong>Grade</strong> column. Do not copy the formula from Task 2 — write your own version.</li>
+            <li>Test it with a few different IDs to make sure it works correctly.</li>
+          </ol>
+          <div class="tip">
+            <strong>Hint:</strong> Grade is in column 4 of your range. Count across: A = 1, B = 2, C = 3, D = 4.
+          </div>
+        </div>
+      </div>
+
+      <!-- GOLD -->
+      <div class="task-card gold">
+        <div class="task-header">
+          <span class="task-badge">🥇 Gold</span>
+          <span class="task-title">Task 4 — HLOOKUP: Search Across a Row</span>
+        </div>
+        <div class="task-body">
+          <p style="font-size:12.5px; color:#334155; margin-bottom:10px;">HLOOKUP works across rows instead of down columns. First, set up this new table starting at cell <strong>A9</strong>:</p>
+
+          <table style="margin-bottom:12px;">
+            <thead>
+              <tr><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Month</td><td>Jan</td><td>Feb</td><td>Mar</td><td>Apr</td></tr>
+              <tr><td>Sales</td><td>1200</td><td>850</td><td>1540</td><td>920</td></tr>
+              <tr><td>Returns</td><td>30</td><td>12</td><td>45</td><td>18</td></tr>
+            </tbody>
+          </table>
+
+          <p style="font-size:12.5px; color:#334155; margin-bottom:8px;">The HLOOKUP syntax is:</p>
+          <div class="syntax-box">
+            <span class="fn-name">=HLOOKUP(search_key, range, row_index, is_sorted)</span><br>
+            <span class="comment">search_key → the column header you are searching for</span><br>
+            <span class="comment">range      → the horizontal table (e.g. A9:E11)</span><br>
+            <span class="comment">row_index  → which row to return (1 = first row, 2 = second...)</span><br>
+            <span class="comment">is_sorted  → use FALSE for exact matches</span>
+          </div>
+
+          <ol>
+            <li>In cell <strong>A13</strong> type: <code>Month search</code></li>
+            <li>In cell <strong>B13</strong> type: <code>Mar</code></li>
+            <li>In cell <strong>A14</strong> type: <code>Sales result</code></li>
+            <li>In cell <strong>B14</strong> enter:
+              <div class="syntax-box">=HLOOKUP(B13, A9:E11, 2, FALSE)</div>
+              You should see <strong>1540</strong> — the sales figure for March.
+            </li>
+            <li>Change <strong>B13</strong> to <code>Jan</code> or <code>Apr</code> and observe the result.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- EXTENSION -->
+      <div class="task-card ext">
+        <div class="task-header">
+          <span class="task-badge">⭐ Extension</span>
+          <span class="task-title">Finished Early? Work through these in order</span>
+        </div>
+        <div class="task-body">
+          <ol>
+            <li><strong>Ext 1 —</strong> Write an HLOOKUP formula that returns the <em>Returns</em> (row 3) for February. What is the answer?</li>
+            <li><strong>Ext 2 —</strong> Add two more students to your original table (IDs 106 and 107, with your own data). Test that your VLOOKUP formulas still work correctly with the new entries. <em>Hint: you will need to extend your range from A1:D6 to A1:D8.</em></li>
+            <li><strong>Ext 3 —</strong> What happens if you search for an ID that does not exist in your table? Try entering <code>999</code> in F2. Research the <strong>IFERROR</strong> function and wrap your VLOOKUP so it displays <code>Not found</code> instead of an error:
+              <div class="syntax-box">=IFERROR(VLOOKUP(F2, A1:D8, 2, FALSE), "Not found")</div>
+            </li>
+            <li><strong>Ext 4 —</strong> Think of a real-world situation where VLOOKUP or HLOOKUP would be useful. Write two sentences in a nearby cell explaining your idea.</li>
+          </ol>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- HELP CARD -->
+    <div class="help-box">
+      <h3>🔑 Formula Help Card</h3>
+      <div class="help-grid">
+        <div class="help-item">
+          <div class="fn">=VLOOKUP(F2, A1:D6, 2, FALSE)</div>
+          <p>Searches down column A of the range for the value in F2, then returns the value from column 2 of that row.</p>
+        </div>
+        <div class="help-item">
+          <div class="fn">=HLOOKUP(B13, A9:E11, 2, FALSE)</div>
+          <p>Searches across row 1 of the range for the value in B13, then returns the value from row 2 of that column.</p>
+        </div>
+        <div class="help-item">
+          <div class="fn">column_index / row_index</div>
+          <p>Count from the start of your range, not from column A. If your range starts at B1, then B = 1, C = 2, and so on.</p>
+        </div>
+        <div class="help-item">
+          <div class="fn">=IFERROR(formula, "Not found")</div>
+          <p>Wraps any formula. If the formula produces an error, it displays your chosen message instead.</p>
+        </div>
+        <div class="help-item">
+          <div class="fn">Always use FALSE</div>
+          <p>The last argument controls matching. FALSE = exact match (almost always what you want). TRUE = approximate match (only for sorted data).</p>
+        </div>
+        <div class="help-item">
+          <div class="fn">VLOOKUP vs HLOOKUP</div>
+          <p>VLOOKUP: your lookup values are in a <strong>column</strong> (vertical). HLOOKUP: your lookup values are in a <strong>row</strong> (horizontal).</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>VLOOKUP &amp; HLOOKUP — Year 9 Spreadsheets Cover Lesson 3 &nbsp;|&nbsp; Graveney School</p>
+    <div class="done-checklist">
+      <div class="done-item"><div class="box"></div> Bronze</div>
+      <div class="done-item"><div class="box"></div> Silver</div>
+      <div class="done-item"><div class="box"></div> Gold</div>
+      <div class="done-item"><div class="box"></div> Extension</div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
