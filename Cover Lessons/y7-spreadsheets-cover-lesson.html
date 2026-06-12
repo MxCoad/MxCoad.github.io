@@ -565,10 +565,40 @@
                 break-inside: avoid;
             }
         }
-    </style>
+.site-home-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #1e293b;
+    padding: 10px 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .site-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+  .site-home-link:hover,
+  .site-home-link:focus {
+    background: rgba(255, 255, 255, 0.15);
+  }
+</style>
 </head>
-
 <body>
+
+<nav class="site-home-nav">
+  <a href="https://mxcoad.github.io/" class="site-home-link">
+    <span aria-hidden="true">←</span> Home
+  </a>
+</nav>
 
     <div class="page">
 

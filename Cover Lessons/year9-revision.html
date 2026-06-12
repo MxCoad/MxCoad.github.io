@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Year 9 Computing — Revision Session</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f4f1ea;
+    --panel:#fffdf8;
+    --ink:#1f2430;
+    --muted:#6b7280;
+    --line:#e4ddd0;
+    --cyber:#2563c9;
+    --data:#1f9d6b;
+    --python:#e08a1e;
+    --sheet:#8b5cf6;
+    --good:#1f9d6b;
+    --bad:#d64545;
+    --good-bg:#e7f6ee;
+    --bad-bg:#fbe9e9;
+    --shadow:0 2px 0 rgba(31,36,48,.08), 0 10px 30px rgba(31,36,48,.06);
+    --accent:var(--cyber);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(37,99,201,.06), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(139,92,246,.06), transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Hanken Grotesk',system-ui,sans-serif;
+    font-size:17px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:28px 20px 80px}
+
+  /* Header */
+  header.top{
+    background:var(--panel);
+    border:1.5px solid var(--line);
+    border-radius:20px;
+    padding:26px 28px;
+    box-shadow:var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:6px;
+    background:linear-gradient(90deg,var(--cyber),var(--data),var(--python),var(--sheet));
+  }
+  .eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2.1rem;line-height:1.05;margin:.3rem 0 .2rem;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0}
+
+  /* How-to box */
+  .howto{
+    margin-top:18px;background:#fff;border:1.5px dashed var(--line);
+    border-radius:14px;padding:16px 18px;
+  }
+  .howto h2{font-family:'Bricolage Grotesque',sans-serif;font-size:1.02rem;margin:0 0 6px}
+  .howto ol{margin:0;padding-left:20px}
+  .howto li{margin:3px 0}
+
+  /* Teacher note */
+  details.teacher{
+    margin-top:14px;background:#fff8ec;border:1.5px solid #f0e2c5;border-radius:12px;padding:4px 16px;
+  }
+  details.teacher summary{cursor:pointer;font-weight:700;padding:10px 0;list-style:none;font-size:.95rem}
+  details.teacher summary::-webkit-details-marker{display:none}
+  details.teacher summary::before{content:"📋 ";}
+  details.teacher p{margin:6px 0 14px;font-size:.95rem;color:#5b5238}
+
+  /* Tabs */
+  nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0;position:sticky;top:0;z-index:5;
+    background:linear-gradient(180deg,var(--bg) 70%,transparent);padding:10px 0 12px}
+  .tab{
+    border:1.5px solid var(--line);background:var(--panel);color:var(--ink);
+    border-radius:999px;padding:9px 16px;font:inherit;font-weight:600;font-size:.92rem;
+    cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px;
+  }
+  .tab .dot{width:9px;height:9px;border-radius:50%;background:var(--c)}
+  .tab[data-k="cyber"]{--c:var(--cyber)} .tab[data-k="data"]{--c:var(--data)}
+  .tab[data-k="python"]{--c:var(--python)} .tab[data-k="sheet"]{--c:var(--sheet)}
+  .tab:hover{transform:translateY(-1px)}
+  .tab.active{background:var(--c);border-color:var(--c);color:#fff}
+  .tab.active .dot{background:#fff}
+
+  /* Section */
+  section.topic{display:none;animation:fade .25s ease}
+  section.topic.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .topic-head{display:flex;align-items:center;gap:12px;margin:22px 0 4px}
+  .topic-head .icon{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:1.3rem;background:var(--accent);color:#fff;flex:none}
+  .topic-head h2{font-family:'Bricolage Grotesque',sans-serif;font-size:1.5rem;margin:0;letter-spacing:-.01em}
+  .topic-head .count{margin-left:auto;font-size:.85rem;color:var(--muted);background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:600}
+
+  .card{background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:20px 22px;margin:16px 0;box-shadow:var(--shadow)}
+
+  /* Recap */
+  .recap{border-left:5px solid var(--accent)}
+  .recap h3{font-family:'Bricolage Grotesque',sans-serif;margin:0 0 10px;font-size:1.1rem}
+  .recap p{margin:8px 0}
+  .terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:8px}
+  .term{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+  .term b{color:var(--accent)}
+  .recap code, .q code, .reveal code{font-family:'JetBrains Mono',monospace;background:#eef0f4;padding:2px 6px;border-radius:5px;font-size:.86em}
+  pre{font-family:'JetBrains Mono',monospace;background:#22272e;color:#e6edf3;padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:.9rem;line-height:1.5;margin:10px 0}
+  pre .cm{color:#8b98a5}
+
+  /* Questions */
+  .q{margin:16px 0;padding-top:4px}
+  .q .qnum{font-weight:800;color:var(--accent);font-family:'Bricolage Grotesque',sans-serif}
+  .q .qtext{font-weight:600;margin:2px 0 12px;display:block}
+  .opts{display:grid;gap:9px}
+  .opt{
+    text-align:left;border:1.5px solid var(--line);background:#fff;border-radius:11px;
+    padding:11px 14px;font:inherit;cursor:pointer;transition:.12s;display:flex;gap:10px;align-items:flex-start;
+  }
+  .opt:hover:not(.locked){border-color:var(--accent);background:#fbfaf6}
+  .opt .mark{font-weight:800;flex:none;width:22px;height:22px;border:1.5px solid var(--line);border-radius:6px;display:grid;place-items:center;font-size:.8rem;color:var(--muted)}
+  .opt.correct{background:var(--good-bg);border-color:var(--good)}
+  .opt.correct .mark{background:var(--good);border-color:var(--good);color:#fff}
+  .opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+  .opt.wrong .mark{background:var(--bad);border-color:var(--bad);color:#fff}
+  .opt.locked{cursor:default}
+  .explain{margin-top:10px;font-size:.92rem;background:#fff;border:1.5px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:9px 13px;display:none}
+  .explain.show{display:block}
+  .explain b{color:var(--accent)}
+
+  /* Reveal-answer questions */
+  .reveal-btn{margin-top:10px;border:1.5px solid var(--accent);background:#fff;color:var(--accent);font:inherit;font-weight:700;border-radius:9px;padding:8px 16px;cursor:pointer}
+  .reveal-btn:hover{background:var(--accent);color:#fff}
+  .reveal{display:none;margin-top:10px;background:var(--good-bg);border:1.5px solid var(--good);border-radius:9px;padding:11px 14px;font-size:.95rem}
+  .reveal.show{display:block}
+  .reveal b{color:var(--good)}
+
+  /* Apply / extension */
+  .apply{background:#fff;border:1.5px solid var(--line);border-top:5px solid var(--accent);border-radius:14px;padding:16px 18px;margin:16px 0}
+  .apply h3{font-family:'Bricolage Grotesque',sans-serif;margin:0 0 6px;font-size:1.05rem}
+  .apply .badge{display:inline-block;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:4px}
+
+  .scorebar{position:sticky;bottom:14px;margin-top:24px;background:var(--ink);color:#fff;border-radius:14px;
+    padding:13px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-weight:600}
+  .scorebar .big{font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem}
+  .scorebar button{margin-left:auto;border:1.5px solid rgba(255,255,255,.3);background:transparent;color:#fff;font:inherit;font-weight:600;border-radius:8px;padding:7px 14px;cursor:pointer}
+  .scorebar button:hover{background:rgba(255,255,255,.12)}
+
+  footer{text-align:center;color:var(--muted);font-size:.82rem;margin-top:30px}
+
+  @media print{
+    nav.tabs,.scorebar,.reveal-btn,.howto,.teacher{display:none!important}
+    section.topic{display:block!important;page-break-after:always}
+    .explain,.reveal{display:block!important}
+    body{background:#fff}
+    .card,.apply{box-shadow:none}
+  }
+.site-home-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: #1e293b;
+    padding: 10px 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  .site-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+  }
+  .site-home-link:hover,
+  .site-home-link:focus {
+    background: rgba(255, 255, 255, 0.15);
+  }
+</style>
+</head>
+<body>
+
+<nav class="site-home-nav">
+  <a href="https://mxcoad.github.io/" class="site-home-link">
+    <span aria-hidden="true">←</span> Home
+  </a>
+</nav>
+<div class="wrap">
+
+  <header class="top">
+    <div class="eyebrow">Year 9 Computing · Cover Lesson</div>
+    <h1>End-of-Year Revision Session</h1>
+    <p class="sub">Cybersecurity &amp; Networks · Databases · Python · Spreadsheets</p>
+
+    <div class="howto">
+      <h2>How to use this — read first</h2>
+      <ol>
+        <li>Work through <b>each of the four topics</b> using the tabs above. You don't need to ask anyone for help.</li>
+        <li>For the multiple-choice questions, <b>click the answer you think is right</b> — it'll turn green if correct, red if wrong, and explain why.</li>
+        <li>For the <b>written questions</b>, write your answer in your book <i>first</i>, then press <b>"Reveal answer"</b> to mark yourself.</li>
+        <li>Complete the <b>"Apply it" task</b> for each topic in your exercise book.</li>
+        <li>Finished early? Do the <b>Challenge</b> at the end. Be honest with your marking — it only helps you!</li>
+      </ol>
+    </div>
+
+
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-k="cyber"><span class="dot"></span>🔐 Cyber &amp; Networks</button>
+    <button class="tab" data-k="data"><span class="dot"></span>🗄️ Databases</button>
+    <button class="tab" data-k="python"><span class="dot"></span>🐍 Python</button>
+    <button class="tab" data-k="sheet"><span class="dot"></span>📊 Spreadsheets</button>
+  </nav>
+
+  <main id="main"></main>
+
+  <div class="scorebar">
+    <span class="big" id="scoreNum">0</span>
+    <span>out of <span id="scoreTotal">0</span> correct</span>
+    <button onclick="resetAll()">↺ Start again</button>
+  </div>
+
+  <footer>Year 9 Computing revision · self-marking practice · tick off each topic as you finish.</footer>
+</div>
+
+<script>
+/* ---------- CONTENT ---------- */
+const TOPICS = {
+  cyber: {
+    title:"Cybersecurity &amp; Computer Networks", icon:"🔐", color:"var(--cyber)",
+    recap:`
+      <h3>Quick recap</h3>
+      <p>A <b>network</b> is two or more devices connected to share data and resources.</p>
+      <div class="terms">
+        <div class="term"><b>LAN</b> — Local Area Network. Small area, one site (school, home).</div>
+        <div class="term"><b>WAN</b> — Wide Area Network. Large area; the internet is the biggest WAN.</div>
+        <div class="term"><b>Router</b> — directs data between networks / to the internet.</div>
+        <div class="term"><b>Switch</b> — connects devices inside one network.</div>
+        <div class="term"><b>Malware</b> — malicious software: viruses, worms, trojans, spyware, ransomware.</div>
+        <div class="term"><b>Phishing</b> — fake messages tricking you into giving away information.</div>
+        <div class="term"><b>Firewall</b> — filters traffic in/out of a network using rules.</div>
+        <div class="term"><b>Encryption</b> — scrambling data so only the right person can read it.</div>
+      </div>
+      <p style="margin-top:12px"><b>Stay safe:</b> strong unique passwords, two-factor authentication (2FA), keep software updated, don't click suspicious links, use <code>HTTPS</code> sites.</p>
+    `,
+    mcq:[
+      {q:"What does <b>LAN</b> stand for?",o:["Large Area Network","Local Area Network","Linked Access Node","Local Array Network"],a:1,e:"A LAN connects devices over a <b>small area</b>, like a single school or home."},
+      {q:"Which device directs data between different networks and connects you to the internet?",o:["Switch","Router","NIC","Hub"],a:1,e:"A <b>router</b> routes data between networks, including out to the internet."},
+      {q:"A type of malware that locks your files and demands money is called…",o:["Spyware","Ransomware","Adware","Trojan"],a:1,e:"<b>Ransomware</b> encrypts your files and demands a ransom to unlock them."},
+      {q:"<b>Phishing</b> is best described as…",o:["Fake messages tricking people into revealing personal information","Flooding a server with traffic","Trying thousands of passwords automatically","Physically stealing a laptop"],a:0,e:"Phishing uses <b>deception</b> — often fake emails or texts — to steal information."},
+      {q:"What does <code>HTTPS</code> give you that <code>HTTP</code> does not?",o:["Faster downloads","Encryption between your browser and the website","More images","Free wifi"],a:1,e:"The <b>S</b> means secure — your data is <b>encrypted</b> in transit."},
+      {q:"Which of these is the <b>strongest</b> password?",o:["password123","Tiddles","7$kP!2qWz@9","12345678"],a:2,e:"Long, with a mix of upper/lower case, numbers and symbols, and not guessable."},
+      {q:"<b>Two-factor authentication (2FA)</b> means…",o:["Using two passwords","Logging in twice","A second proof of ID (e.g. a code to your phone) as well as your password","Having two accounts"],a:2,e:"A <b>second factor</b> in addition to your password makes accounts much harder to break into."},
+      {q:"A <b>firewall's</b> main job is to…",o:["Scan files for viruses","Monitor and control traffic going in/out of a network","Back up your work","Make the internet faster"],a:1,e:"A firewall <b>filters network traffic</b> based on a set of rules."}
+    ],
+    written:[
+      {q:"Explain the difference between a <b>LAN</b> and a <b>WAN</b>.",a:"A <b>LAN (Local Area Network)</b> covers a small area on a single site (e.g. a school). A <b>WAN (Wide Area Network)</b> spans a large geographical area and often connects several LANs together — the internet is the largest WAN."},
+      {q:"Name <b>three</b> things you could do to keep your online accounts safe.",a:"Any three of: use strong, unique passwords; turn on two-factor authentication (2FA); keep software/apps updated; don't click suspicious links or open unknown attachments; never share your password; only enter details on <code>HTTPS</code> sites."}
+    ],
+    apply:{t:"Stay-Safe Poster", d:"In your book, design a poster titled <b>“5 Rules for Staying Safe Online.”</b> For each rule, write one sentence explaining <i>why</i> it matters."},
+  },
+
+  data: {
+    title:"Databases", icon:"🗄️", color:"var(--data)",
+    recap:`
+      <h3>Quick recap</h3>
+      <p>A <b>database</b> stores organised data so it can be searched, sorted and updated easily.</p>
+      <div class="terms">
+        <div class="term"><b>Field</b> — one piece of data (a column), e.g. <code>Surname</code>.</div>
+        <div class="term"><b>Record</b> — all the data about one item (a row).</div>
+        <div class="term"><b>Table</b> — a set of records of the same type.</div>
+        <div class="term"><b>Primary key</b> — a field that is <i>unique</i> for every record.</div>
+        <div class="term"><b>Query</b> — a search that finds records matching set criteria.</div>
+        <div class="term"><b>Validation</b> — checks that data entered is sensible / correctly formatted.</div>
+      </div>
+      <p style="margin-top:12px"><b>Common data types:</b> Text, Integer (whole number), Real/Decimal, Boolean (True/False), Date/Time.</p>
+      <p>A <b>flat-file</b> database is a single table. A <b>relational</b> database uses several linked tables to reduce duplication.</p>
+    `,
+    mcq:[
+      {q:"In a database, a row containing all the data about one person or item is a…",o:["Field","Record","Table","Query"],a:1,e:"A <b>record</b> = one row = all the data about a single entity."},
+      {q:"A field that uniquely identifies every record is the…",o:["Foreign key","Primary key","Master field","Index"],a:1,e:"A <b>primary key</b> must be unique for every record (e.g. a student ID)."},
+      {q:"Which data type is best for a student's <b>date of birth</b>?",o:["Text","Integer","Date/Time","Boolean"],a:2,e:"<b>Date/Time</b> stores dates correctly and lets you calculate with them."},
+      {q:"Which data type best stores whether a book is currently on loan (yes/no)?",o:["Text","Boolean","Integer","Date"],a:1,e:"<b>Boolean</b> stores True/False (Yes/No) values."},
+      {q:"A <b>flat-file</b> database is…",o:["Stored on a flat disk","A single table of data","A database with no data","A 3D model"],a:1,e:"It's a <b>single table</b>. Relational databases use multiple linked tables."},
+      {q:"To search a database for records that match certain criteria, you use a…",o:["Form","Report","Query","Macro"],a:2,e:"A <b>query</b> filters and finds records that match conditions you set."},
+      {q:"<b>Validation</b> is used to…",o:["Make data look attractive","Check entered data is sensible and in the right format","Delete old records","Sort the records"],a:1,e:"Validation enforces rules, e.g. an age must be between 0 and 120."}
+    ],
+    written:[
+      {q:"A field stores a UK <b>mobile phone number</b>. Suggest a suitable <b>data type</b> and one <b>validation</b> check.",a:"<b>Data type:</b> Text — because the number starts with a 0 and is never used in calculations. <b>Validation:</b> a length check (must be 11 characters), or a format/presence check."},
+      {q:"Give <b>one advantage</b> of a relational database over a flat-file database.",a:"It reduces <b>data duplication (redundancy)</b>, which saves space, makes updating easier and reduces errors — because data is split across linked tables instead of repeated."}
+    ],
+    apply:{t:"Design a Table", d:"In your book, design a table for a <b>Pet Adoption Centre</b>. Include at least <b>5 fields</b>, state the <b>data type</b> for each, and underline which field is the <b>primary key</b>."},
+  },
+
+  python: {
+    title:"Python Programming", icon:"🐍", color:"var(--python)",
+    recap:`
+      <h3>Quick recap</h3>
+      <div class="terms">
+        <div class="term"><b>Variable</b> — a named store for a value: <code>score = 0</code></div>
+        <div class="term"><b>input()</b> — gets text from the user (always a string!).</div>
+        <div class="term"><b>Casting</b> — <code>int()</code> / <code>str()</code> changes the data type.</div>
+        <div class="term"><b>Selection</b> — <code>if / elif / else</code> makes decisions.</div>
+        <div class="term"><b>Iteration</b> — loops: <code>for</code> (set number) and <code>while</code> (condition).</div>
+        <div class="term"><b>List</b> — a collection: <code>fruits = ["apple","pear"]</code></div>
+      </div>
+      <p style="margin-top:12px"><b>Watch out:</b> <code>=</code> assigns a value, but <code>==</code> compares two values. Indentation matters!</p>
+      <p>Get a whole number from the user: <code>age = int(input("Age: "))</code></p>
+    `,
+    mcq:[
+      {q:"What does <code>print(3 + 4 * 2)</code> output?",o:["14","11","24","10"],a:1,e:"Multiplication happens first: 4 × 2 = 8, then + 3 = <b>11</b>."},
+      {q:"Which line gets the user's age and stores it as a <b>number</b>?",o:['age = input("Age: ")','age = int(input("Age: "))','age = str(input("Age: "))','int(age) = input("Age: ")'],a:1,e:"<code>input()</code> returns a string, so wrap it in <code>int()</code> to convert it."},
+      {q:"What is the output?<pre>x = 5\nif x &gt; 10:\n    print(\"Big\")\nelif x &gt; 3:\n    print(\"Medium\")\nelse:\n    print(\"Small\")</pre>",o:["Big","Medium","Small","Nothing"],a:1,e:"5 is not &gt; 10, but it <i>is</i> &gt; 3, so the <code>elif</code> runs: <b>Medium</b>."},
+      {q:"How many times does this print <code>Hi</code>?<pre>for i in range(4):\n    print(\"Hi\")</pre>",o:["3","4","5","0"],a:1,e:"<code>range(4)</code> gives 0,1,2,3 — that's <b>4</b> times."},
+      {q:"Which operator means <b>“is equal to”</b> inside a condition?",o:["=","==","=:","equals"],a:1,e:"<code>=</code> <i>assigns</i> a value; <code>==</code> <i>compares</i> two values."},
+      {q:"What does this output?<pre>word = \"Computer\"\nprint(word[0])</pre>",o:["Computer","C","0","r"],a:1,e:"Index <code>[0]</code> is the <b>first</b> character: <b>C</b>."},
+      {q:"How do you add <code>\"apple\"</code> to a list called <code>fruits</code>?",o:['fruits.add("apple")','fruits.append("apple")','fruits + "apple"','fruits.push("apple")'],a:1,e:"<code>.append()</code> adds an item to the end of a list."},
+      {q:"Spot the error:<pre>print(\"Enter name\")\nname = input()\nprint(\"Hello, + name)</pre>",o:["Missing a colon","Line 3 — the closing quotation mark is in the wrong place","input() needs a number","name is spelled wrong"],a:1,e:"It should be <code>print(\"Hello, \" + name)</code> — close the string before joining the variable."}
+    ],
+    written:[
+      {q:"<b>Trace</b> this code. What is printed?<pre>total = 0\nfor n in [2, 4, 6]:\n    total = total + n\nprint(total)</pre>",a:"<b>12</b> — the loop adds 2, then 4, then 6 to total (0 → 2 → 6 → 12)."},
+      {q:"<b>Trace</b> this code. What is printed (and how many lines)?<pre>count = 0\nwhile count &lt; 3:\n    print(count)\n    count = count + 1</pre>",a:"It prints <b>0</b>, then <b>1</b>, then <b>2</b> — each on its own line (3 lines). When count reaches 3 the condition is False and the loop stops."}
+    ],
+    apply:{t:"Write a Program", d:"In your book, write a program that asks the user for <b>two numbers</b> and prints their <b>total</b>. <b>Extension:</b> make it also say whether the total is <b>odd or even</b> (hint: use <code>% 2</code>)."},
+  },
+
+  sheet: {
+    title:"Spreadsheets", icon:"📊", color:"var(--sheet)",
+    recap:`
+      <h3>Quick recap</h3>
+      <p>Every <b>formula</b> starts with <code>=</code>. A <b>cell reference</b> like <code>B2</code> means column B, row 2.</p>
+      <div class="terms">
+        <div class="term"><b>=SUM(B2:B10)</b> — adds a range of cells.</div>
+        <div class="term"><b>=AVERAGE(...)</b> — the mean. <b>=MAX / =MIN</b> — highest / lowest.</div>
+        <div class="term"><b>=COUNT(...)</b> — counts cells containing numbers.</div>
+        <div class="term"><b>=IF(test,"yes","no")</b> — makes a decision.</div>
+        <div class="term"><b>Relative ref</b> — <code>B2</code> changes when copied down.</div>
+        <div class="term"><b>Absolute ref</b> — <code>$B$2</code> stays fixed when copied.</div>
+      </div>
+      <p style="margin-top:12px"><b>VLOOKUP</b> looks up a value in a table and returns matching data from the same row.</p>
+    `,
+    mcq:[
+      {q:"Every formula in a spreadsheet must start with…",o:["A letter","=","#","A number"],a:1,e:"The <code>=</code> sign tells the spreadsheet it's a formula, not text."},
+      {q:"Which formula adds the values in cells <b>B2 to B10</b>?",o:["=ADD(B2:B10)","=SUM(B2:B10)","=TOTAL(B2:B10)","=B2+B10"],a:1,e:"<code>=SUM(B2:B10)</code> adds the whole range. <code>=B2+B10</code> would only add two cells."},
+      {q:"<code>=AVERAGE(C1:C5)</code> calculates the…",o:["Largest value","Mean of those cells","Number of cells","Smallest value"],a:1,e:"AVERAGE gives the <b>mean</b> of the range."},
+      {q:"What does <code>$A$1</code> mean in a formula?",o:["A guess","An absolute reference that won't change when copied","An error","A currency value"],a:1,e:"The <code>$</code> signs <b>lock</b> the column and row so they stay fixed when copied."},
+      {q:"Which function counts how many cells in a range contain <b>numbers</b>?",o:["=SUM","=COUNT","=TOTAL","=ADD"],a:1,e:"<code>=COUNT</code> counts the cells that contain numeric values."},
+      {q:"<code>=IF(A1&gt;=40,\"Pass\",\"Fail\")</code> shows <b>“Pass”</b> when…",o:["A1 is exactly 40 only","A1 is 40 or more","A1 is less than 40","A1 is text"],a:1,e:"<code>&gt;=</code> means <b>greater than or equal to</b>, so 40 and above pass."},
+      {q:"<b>VLOOKUP</b> is used to…",o:["Add up a column","Look up a value in a table and return matching data","Create a chart","Count empty cells"],a:1,e:"VLOOKUP searches the first column of a table and returns a value from the same row."},
+      {q:"You copy <code>=B2*$D$1</code> from cell C2 <b>down</b> to C3. What does C3 contain?",o:["=B2*$D$1","=B3*$D$1","=B3*$D$2","=B2*$D$2"],a:1,e:"<code>B2</code> is relative so it becomes <code>B3</code>; <code>$D$1</code> is absolute so it stays the same."}
+    ],
+    written:[
+      {q:"When would you use an <b>absolute reference</b> (<code>$</code>)? Give an example.",a:"When a formula must always point to the <b>same cell</b> even when copied — for example, a fixed VAT rate, exchange rate or price stored in one cell that every row needs to multiply by."},
+      {q:"Name a <b>chart type</b> suitable for showing how a total is split into categories, and one suited to showing a trend over time.",a:"<b>Pie chart</b> for parts of a whole (categories of a total); <b>line graph</b> for a trend over time."}
+    ],
+    apply:{t:"Build the Formulas", d:"Test scores are in cells <b>B2:B20</b>. In your book, write the formula to find: (1) the <b>total</b>, (2) the <b>average</b>, (3) the <b>highest</b> score, and (4) the <b>lowest</b> score."},
+  }
+};
+
+const EXTENSION = `
+  <div class="apply" style="border-top-color:var(--ink)">
+    <span class="badge" style="color:var(--ink)">⭐ Finished everything? Challenge</span>
+    <h3>Mixed Challenge</h3>
+    <p style="margin:8px 0"><b>1.</b> A school stores student data in a relational database and sends reports home over the internet. Explain <b>one security risk</b> and <b>one way</b> to reduce it.</p>
+    <p style="margin:8px 0"><b>2.</b> Write Python (in your book) that asks for 3 test scores and prints the average, then prints <code>"Pass"</code> if the average is 40 or more.</p>
+    <p style="margin:8px 0"><b>3.</b> In a spreadsheet, scores are in <code>B2:B20</code>. Write a formula using <b>IF</b> in C2 that shows <code>"Distinction"</code> if the score is 70+, otherwise <code>"Merit"</code>. Then explain how you'd copy it down for every student.</p>
+  </div>
+`;
+
+/* ---------- BUILD ---------- */
+const main = document.getElementById('main');
+let totalQ = 0;
+const answered = {};   // id -> bool correct
+
+function esc(s){return s;}
+
+function buildTopic(key){
+  const t = TOPICS[key];
+  const sec = document.createElement('section');
+  sec.className = 'topic' + (key==='cyber'?' show':'');
+  sec.dataset.k = key;
+  sec.style.setProperty('--accent', t.color);
+
+  let html = `
+    <div class="topic-head">
+      <div class="icon">${t.icon}</div>
+      <h2>${t.title}</h2>
+      <span class="count" id="count-${key}"></span>
+    </div>
+    <div class="card recap">${t.recap}</div>
+  `;
+
+  // MCQs
+  t.mcq.forEach((m,i)=>{
+    const id = key+'-m'+i; totalQ++;
+    html += `<div class="card q" data-id="${id}">
+      <span class="qtext"><span class="qnum">Q${i+1}.</span> ${m.q}</span>
+      <div class="opts">`;
+    m.o.forEach((opt,oi)=>{
+      const letter = String.fromCharCode(65+oi);
+      html += `<button class="opt" onclick="pick('${id}',${oi},${m.a},this)">
+        <span class="mark">${letter}</span><span>${opt}</span></button>`;
+    });
+    html += `</div><div class="explain"><b>Why:</b> ${m.e}</div></div>`;
+  });
+
+  // Written / reveal
+  t.written.forEach((w,i)=>{
+    const id = key+'-w'+i;
+    const n = t.mcq.length + i + 1;
+    html += `<div class="card q">
+      <span class="qtext"><span class="qnum">Q${n}.</span> ${w.q}</span>
+      <button class="reveal-btn" onclick="reveal('${id}',this)">Reveal answer</button>
+      <div class="reveal" id="rev-${id}"><b>Answer:</b> ${w.a}</div>
+    </div>`;
+  });
+
+  // Apply
+  html += `<div class="apply">
+    <span class="badge">✍️ Apply it — in your book</span>
+    <h3>${t.apply.t}</h3>
+    <p>${t.apply.d}</p>
+  </div>`;
+
+  // Extension on the last tab
+  if(key==='sheet') html += EXTENSION;
+
+  sec.innerHTML = html;
+  main.appendChild(sec);
+}
+
+['cyber','data','python','sheet'].forEach(buildTopic);
+document.getElementById('scoreTotal').textContent = totalQ;
+updateCounts();
+
+/* ---------- INTERACTION ---------- */
+function pick(id, chosen, correct, btn){
+  if(answered.hasOwnProperty(id)) return; // lock after first attempt
+  const card = btn.closest('.q');
+  const opts = card.querySelectorAll('.opt');
+  opts.forEach((o,i)=>{
+    o.classList.add('locked');
+    if(i===correct) o.classList.add('correct');
+  });
+  if(chosen!==correct) btn.classList.add('wrong');
+  card.querySelector('.explain').classList.add('show');
+  answered[id] = (chosen===correct);
+  updateScore();
+  updateCounts();
+}
+
+function reveal(id, btn){
+  document.getElementById('rev-'+id).classList.add('show');
+  btn.style.display='none';
+}
+
+function updateScore(){
+  const correct = Object.values(answered).filter(Boolean).length;
+  document.getElementById('scoreNum').textContent = correct;
+}
+
+function updateCounts(){
+  ['cyber','data','python','sheet'].forEach(k=>{
+    const total = TOPICS[k].mcq.length;
+    const done = Object.keys(answered).filter(i=>i.startsWith(k+'-m')).length;
+    const right = Object.keys(answered).filter(i=>i.startsWith(k+'-m')&&answered[i]).length;
+    const el = document.getElementById('count-'+k);
+    if(el) el.textContent = done? `${right}/${total} correct` : `${total} questions`;
+  });
+}
+
+/* Tabs */
+document.getElementById('tabs').addEventListener('click', e=>{
+  const tab = e.target.closest('.tab'); if(!tab) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  const k = tab.dataset.k;
+  document.querySelectorAll('.topic').forEach(s=>s.classList.toggle('show', s.dataset.k===k));
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+function resetAll(){
+  for(const k in answered) delete answered[k];
+  document.querySelectorAll('.opt').forEach(o=>{o.classList.remove('locked','correct','wrong')});
+  document.querySelectorAll('.explain').forEach(e=>e.classList.remove('show'));
+  document.querySelectorAll('.reveal').forEach(r=>r.classList.remove('show'));
+  document.querySelectorAll('.reveal-btn').forEach(b=>b.style.display='inline-block');
+  updateScore(); updateCounts();
+  document.querySelector('.tab[data-k="cyber"]').click();
+}
+</script>
+</body>
+</html>
