@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revision Console — OCR GCSE Computer Science</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1F6; --surface:#FFFFFF; --surface-2:#F7F9FC;
+    --ink:#161B2E; --ink-soft:#525A72; --line:#DCE2EC;
+    --brand:#3B5BFF;
+    --sound:#F26B5B; --net:#0FA39C; --store:#7B61FF;
+    --good:#138A4B; --good-bg:#E7F7EE; --good-line:#A9E3C2;
+    --bad:#D4374B; --bad-bg:#FCEBED; --bad-line:#F3BDC6;
+    --r:14px; --r-sm:9px;
+    --shadow:0 1px 2px rgba(22,27,46,.05), 0 8px 24px -16px rgba(22,27,46,.25);
+    --topic:var(--brand);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:84px}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; line-height:1.15; margin:0}
+  .mono{font-family:'JetBrains Mono',monospace}
+  p{margin:0 0 .8em}
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+
+  /* ---------- top nav ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50; background:rgba(238,241,246,.86);
+    backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+  }
+  .topbar-in{max-width:920px; margin:0 auto; padding:11px 22px;
+    display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .brand{display:flex; align-items:center; gap:9px; font-family:'Space Grotesk';
+    font-weight:700; font-size:15px; letter-spacing:-.01em; margin-right:auto}
+  .brand svg{display:block}
+  .navpills{display:flex; gap:6px; flex-wrap:wrap}
+  .navpills a{
+    font-size:12.5px; font-weight:600; text-decoration:none; color:var(--ink-soft);
+    padding:6px 11px; border-radius:99px; border:1px solid transparent;
+    display:flex; align-items:center; gap:7px; transition:.15s;
+  }
+  .navpills a .dot{width:8px; height:8px; border-radius:50%; background:currentColor; flex:none}
+  .navpills a:hover{background:var(--surface); color:var(--ink)}
+  .navpills a.active{background:var(--surface); color:var(--ink); border-color:var(--line)}
+  .navpills a[data-t="1"]{--c:var(--sound)} .navpills a[data-t="2"]{--c:var(--net)} .navpills a[data-t="3"]{--c:var(--store)}
+  .navpills a .dot{background:var(--c)}
+  .progmini{display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--ink-soft)}
+  .progmini .track{width:64px; height:6px; border-radius:99px; background:var(--line); overflow:hidden}
+  .progmini .fill{height:100%; width:0; background:var(--brand); border-radius:99px; transition:width .4s ease}
+
+  /* ---------- hero ---------- */
+  .hero{padding:46px 0 30px}
+  .eyebrow{font-family:'JetBrains Mono'; font-size:12px; font-weight:500; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--brand); margin-bottom:14px}
+  .hero h1{font-size:clamp(30px,6vw,46px); font-weight:700; letter-spacing:-.02em; max-width:16ch}
+  .hero h1 em{font-style:normal; color:var(--brand)}
+  .hero .lead{font-size:17px; color:var(--ink-soft); max-width:54ch; margin-top:16px}
+  .wave{margin:26px 0 4px}
+
+  .howto{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:26px;
+  }
+  .howto .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    padding:16px 18px; box-shadow:var(--shadow)}
+  .howto h4{font-size:14px; margin-bottom:6px; display:flex; align-items:center; gap:8px}
+  .howto p{font-size:13.5px; color:var(--ink-soft); margin:0}
+  .howto .ic{width:26px; height:26px; border-radius:7px; display:grid; place-items:center; flex:none}
+  @media(max-width:620px){.howto{grid-template-columns:1fr} .topbar .brand span.full{display:none}}
+
+  /* ---------- sections ---------- */
+  section.topic{padding:40px 0; border-top:1px solid var(--line)}
+  section.topic[data-t="1"]{--topic:var(--sound)}
+  section.topic[data-t="2"]{--topic:var(--net)}
+  section.topic[data-t="3"]{--topic:var(--store)}
+  .sec-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:8px}
+  .sec-num{font-family:'Space Grotesk'; font-weight:700; font-size:13px; color:#fff;
+    background:var(--topic); width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex:none; margin-top:3px}
+  .sec-head h2{font-size:clamp(23px,4vw,30px); letter-spacing:-.02em}
+  .sec-head .tag{font-family:'JetBrains Mono'; font-size:11.5px; color:var(--ink-soft);
+    border:1px solid var(--line); padding:2px 8px; border-radius:99px; margin-top:7px; display:inline-block; background:var(--surface)}
+
+  .block-label{font-family:'JetBrains Mono'; font-size:11.5px; font-weight:500; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--topic); margin:30px 0 12px; display:flex; align-items:center; gap:9px}
+  .block-label::before{content:""; width:18px; height:2px; background:var(--topic); border-radius:2px}
+
+  /* recap cards */
+  .recap{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media(max-width:620px){.recap{grid-template-columns:1fr}}
+  .recap.tri{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:720px){.recap.tri{grid-template-columns:1fr}}
+  .rc{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow)}
+  .rc h4{font-size:16px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
+  .rc h4 .chip{font-family:'JetBrains Mono'; font-size:10.5px; font-weight:700; color:var(--topic);
+    background:color-mix(in srgb, var(--topic) 12%, white); padding:3px 7px; border-radius:6px}
+  .rc ul{margin:0; padding-left:0; list-style:none}
+  .rc li{font-size:13.7px; color:var(--ink-soft); padding:5px 0 5px 22px; position:relative; border-top:1px solid var(--surface-2)}
+  .rc li:first-child{border-top:none}
+  .rc li::before{content:""; position:absolute; left:4px; top:12px; width:7px; height:7px; border-radius:2px;
+    background:var(--topic); opacity:.55}
+  .rc li b{color:var(--ink); font-weight:600}
+  .formula{font-family:'JetBrains Mono'; font-size:12.5px; background:var(--ink); color:#fff;
+    padding:9px 12px; border-radius:8px; margin-top:10px; display:block; overflow-x:auto; white-space:nowrap}
+  .formula .v{color:#9DB2FF}
+
+  /* generic activity panel */
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+    padding:22px; box-shadow:var(--shadow)}
+  .panel.dark{background:var(--ink); border-color:#222a45; color:#E8ECF6}
+
+  /* sampling visualiser */
+  .viz-grid{display:grid; grid-template-columns:1fr 230px; gap:22px; align-items:center}
+  @media(max-width:680px){.viz-grid{grid-template-columns:1fr}}
+  #sampleCanvas{width:100%; height:230px; display:block; border-radius:10px; background:#0E1430}
+  .viz-controls label{display:block; font-size:12.5px; font-weight:600; color:#C3CCE6; margin:0 0 6px}
+  .viz-controls .row{margin-bottom:18px}
+  .viz-controls .val{font-family:'JetBrains Mono'; color:#fff; float:right; font-weight:700}
+  input[type=range]{width:100%; accent-color:var(--sound); cursor:pointer}
+  .viz-controls[data-acc] input[type=range]{accent-color:var(--topic)}
+  .viz-readout{font-family:'JetBrains Mono'; font-size:12px; color:#9DB2FF; margin-top:6px;
+    border-top:1px solid #2a335a; padding-top:14px}
+  .viz-readout b{color:#fff}
+
+  /* calculator */
+  .calc-tabs{display:flex; gap:8px; margin-bottom:16px}
+  .calc-tabs button{font-family:'Inter'; font-size:13px; font-weight:600; padding:8px 15px;
+    border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink-soft); cursor:pointer; transition:.15s}
+  .calc-tabs button.on{background:var(--topic); color:#fff; border-color:var(--topic)}
+  .calc-inputs{display:flex; gap:14px; flex-wrap:wrap}
+  .field{flex:1; min-width:120px}
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
+  .field input{width:100%; font-family:'JetBrains Mono'; font-size:14px; padding:9px 11px;
+    border:1px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink)}
+  .field input:focus{outline:2px solid var(--topic); outline-offset:1px; border-color:transparent}
+  .calc-out{margin-top:16px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
+  .calc-out .step{font-family:'JetBrains Mono'; font-size:13px; color:var(--ink-soft); padding:3px 0}
+  .calc-out .step b{color:var(--ink)}
+  .calc-out .big{font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:var(--topic); margin-top:6px}
+
+  .btn{font-family:'Inter'; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:8px;
+    border:1px solid var(--topic); background:var(--topic); color:#fff; cursor:pointer; transition:.15s}
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ghost{background:transparent; color:var(--topic)}
+  .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+
+  /* MCQ */
+  .quiz{display:grid; gap:14px}
+  .q{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow)}
+  .q .qtext{font-weight:600; font-size:15px; margin-bottom:13px}
+  .q .qtext .num{font-family:'JetBrains Mono'; color:var(--topic); font-size:13px; margin-right:7px}
+  .opts{display:grid; gap:8px}
+  .opt{text-align:left; font-family:'Inter'; font-size:14px; padding:11px 13px; border-radius:9px;
+    border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer; transition:.12s;
+    display:flex; align-items:center; gap:10px}
+  .opt:hover:not(:disabled){border-color:var(--topic); background:#fff}
+  .opt:focus-visible{outline:2px solid var(--topic); outline-offset:1px}
+  .opt .mk{width:20px; height:20px; border-radius:50%; border:2px solid var(--line); flex:none; display:grid; place-items:center;
+    font-size:12px; font-weight:700; color:#fff}
+  .opt:disabled{cursor:default}
+  .opt.correct{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
+  .opt.correct .mk{background:var(--good); border-color:var(--good)}
+  .opt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .opt.wrong .mk{background:var(--bad); border-color:var(--bad)}
+  .qfb{font-size:13px; margin-top:12px; padding:11px 13px; border-radius:9px; display:none; line-height:1.5}
+  .qfb.show{display:block}
+  .qfb.ok{background:var(--good-bg); color:#0a5e33; border:1px solid var(--good-line)}
+  .qfb.no{background:var(--bad-bg); color:#8a1827; border:1px solid var(--bad-line)}
+  .qfb b{font-weight:700}
+
+  /* benefit picker */
+  .picker{display:grid; gap:10px}
+  .pick{text-align:left; font-size:14px; padding:13px 15px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface-2); color:var(--ink); cursor:pointer; display:flex; gap:11px; align-items:flex-start; transition:.12s}
+  .pick:hover:not(.locked){border-color:var(--topic)}
+  .pick .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);flex:none;margin-top:1px;display:grid;place-items:center;color:#fff;font-size:13px}
+  .pick.good{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
+  .pick.good .box{background:var(--good); border-color:var(--good)}
+  .pick.bad{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .pick.bad .box{background:var(--bad); border-color:var(--bad)}
+  .pick.locked{cursor:default}
+  .picker-msg{margin-top:14px; font-size:13.5px; font-weight:600; color:var(--ink-soft)}
+
+  /* storage comparison table */
+  .ctable{width:100%; border-collapse:collapse; font-size:13.3px; background:var(--surface); border-radius:var(--r); overflow:hidden;
+    border:1px solid var(--line); box-shadow:var(--shadow)}
+  .ctable th,.ctable td{padding:11px 13px; text-align:left; border-bottom:1px solid var(--line)}
+  .ctable thead th{background:var(--surface-2); font-family:'Space Grotesk'; font-size:13px}
+  .ctable thead th .ico{display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px}
+  .ctable tbody th{font-weight:600; color:var(--ink); background:var(--surface-2); width:130px; font-family:'Inter'}
+  .ctable td{color:var(--ink-soft)}
+  .ctable tr:last-child td,.ctable tr:last-child th{border-bottom:none}
+  .ct-wrap{overflow-x:auto}
+
+  /* scenario picker */
+  .scenario{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow); margin-bottom:14px}
+  .scenario .s-q{font-size:14.5px; margin-bottom:13px}
+  .scenario .s-q .scn{font-family:'JetBrains Mono'; font-size:11px; color:var(--topic); display:block; margin-bottom:5px}
+  .sopts{display:flex; gap:8px; flex-wrap:wrap}
+  .sopt{font-size:13.5px; font-weight:600; padding:9px 15px; border-radius:8px; border:1px solid var(--line);
+    background:var(--surface-2); cursor:pointer; color:var(--ink); transition:.12s}
+  .sopt:hover:not(:disabled){border-color:var(--topic)}
+  .sopt.correct{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
+  .sopt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .sfb{font-size:13px; margin-top:12px; display:none; color:var(--ink-soft); line-height:1.5;
+    border-left:3px solid var(--topic); padding-left:12px}
+  .sfb.show{display:block}
+  .sfb b{color:var(--ink)}
+
+  /* exam reveal */
+  .exam{background:var(--surface); border:1px dashed var(--ink-soft); border-radius:var(--r); padding:19px 20px}
+  .exam .marks{font-family:'JetBrains Mono'; font-size:11.5px; font-weight:700; color:var(--topic); float:right}
+  .exam .eq{font-weight:600; font-size:15px; max-width:60ch}
+  .ms{display:none; margin-top:15px; padding-top:15px; border-top:1px solid var(--line)}
+  .ms.show{display:block}
+  .ms h5{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 8px}
+  .ms ul{margin:0; padding-left:18px}
+  .ms li{font-size:13.5px; color:var(--ink-soft); padding:3px 0}
+  .ms li b{color:var(--ink)}
+
+  /* teacher checkpoint */
+  .checkpoint{background:linear-gradient(180deg,#fff, var(--surface-2)); border:1px solid var(--line);
+    border-left:4px solid var(--brand); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow); margin-top:14px}
+  .checkpoint h4{font-size:15px; display:flex; align-items:center; gap:10px; margin-bottom:9px}
+  .checkpoint h4 .pin{font-family:'JetBrains Mono'; font-size:10px; font-weight:700; letter-spacing:.06em;
+    background:var(--brand); color:#fff; padding:4px 8px; border-radius:6px; text-transform:uppercase}
+  .checkpoint p{font-size:13.7px; color:var(--ink-soft); margin:0 0 .5em}
+  .checkpoint ul{margin:6px 0 0; padding-left:18px}
+  .checkpoint li{font-size:13.5px; color:var(--ink-soft); padding:2px 0}
+
+  footer{padding:34px 0 50px; border-top:1px solid var(--line); margin-top:30px}
+  footer p{font-size:12.5px; color:var(--ink-soft); text-align:center; margin:0}
+
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);border:0}
+</style>
+</head>
+<body>
+
+<!-- ================= TOP NAV ================= -->
+<header class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="1" y="1" width="20" height="20" rx="5" fill="#3B5BFF"/>
+        <path d="M4 13 L7 13 L8.5 7 L11 15 L12.5 9 L14 13 L18 13" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="full">Revision Console</span>
+    </div>
+    <nav class="navpills" aria-label="Topics">
+      <a href="#t1" data-t="1"><span class="dot"></span>Images &amp; Sound</a>
+      <a href="#t2" data-t="2"><span class="dot"></span>Protocol Layers</a>
+      <a href="#t3" data-t="3"><span class="dot"></span>Storage</a>
+    </nav>
+    <div class="progmini" title="Activities completed">
+      <span id="progLabel">0 / 0</span>
+      <div class="track"><div class="fill" id="progFill"></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<div class="wrap">
+  <section class="hero">
+    <div class="eyebrow">OCR GCSE J277 · End-of-year revision</div>
+    <h1>Revise three tricky topics — <em>at your own pace.</em></h1>
+    <p class="lead">Work down the page on your own. For each topic: read the recap, play with the activity, then test yourself. The questions mark themselves, so you'll know straight away what to go back over.</p>
+
+    <div class="wave" aria-hidden="true">
+      <svg width="100%" height="42" viewBox="0 0 600 42" preserveAspectRatio="none">
+        <path d="M0 21 Q 25 -8 50 21 T 100 21 T 150 21 T 200 21 T 250 21 T 300 21 T 350 21 T 400 21 T 450 21 T 500 21 T 550 21 T 600 21" stroke="#C3CCE6" stroke-width="1.5" fill="none"/>
+        <g fill="#3B5BFF">
+          <rect x="24" y="6" width="2.4" height="30"/><rect x="74" y="6" width="2.4" height="30"/>
+          <rect x="124" y="6" width="2.4" height="30"/><rect x="174" y="6" width="2.4" height="30"/>
+          <rect x="224" y="6" width="2.4" height="30"/><rect x="274" y="6" width="2.4" height="30"/>
+          <rect x="324" y="6" width="2.4" height="30"/><rect x="374" y="6" width="2.4" height="30"/>
+          <rect x="424" y="6" width="2.4" height="30"/><rect x="474" y="6" width="2.4" height="30"/>
+          <rect x="524" y="6" width="2.4" height="30"/><rect x="574" y="6" width="2.4" height="30"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="howto">
+      <div class="card">
+        <h4><span class="ic" style="background:#E7ECFF;color:#3B5BFF">▶</span>How to use this</h4>
+        <p>Go top to bottom. Tap an answer to check it instantly — green means correct, red means look again. Use the calculators and sliders to <em>see</em> how the maths works.</p>
+      </div>
+      <div class="card">
+        <h4><span class="ic" style="background:#EDEAFF;color:#3B5BFF">✋</span>Ask your teacher</h4>
+        <p>Each topic ends with a <b>Teacher checkpoint</b> — the stretch ideas and exam-marking points worth talking through together as a class.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= TOPIC 1: IMAGES & SOUND ================= -->
+<section class="topic" data-t="1" id="t1">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">01</div>
+      <div>
+        <h2>Images &amp; Sound — Sampling</h2>
+        <span class="tag">J277 · 1.2.4 Data representation</span>
+      </div>
+    </div>
+
+    <div class="block-label">Recap</div>
+    <div class="recap">
+      <div class="rc">
+        <h4><span class="chip">IMAGES</span>How images are stored</h4>
+        <ul>
+          <li>Images are a grid of <b>pixels</b>. <b>Resolution</b> = width × height (how many pixels).</li>
+          <li><b>Colour depth</b> (bit depth) = bits used per pixel. <b>n</b> bits → <b>2ⁿ</b> colours.</li>
+          <li>More pixels or more colours = <b>better quality but bigger file</b>.</li>
+          <li><b>Metadata</b> = data about the image (dimensions, colour depth, date, location…).</li>
+        </ul>
+        <span class="formula">file size (bits) = <span class="v">width</span> × <span class="v">height</span> × <span class="v">colour depth</span></span>
+      </div>
+      <div class="rc">
+        <h4><span class="chip">SOUND</span>How sound is sampled</h4>
+        <ul>
+          <li>Sound is <b>analogue</b> — it must be converted to digital by <b>sampling</b>.</li>
+          <li><b>Sampling</b> = measuring the wave's amplitude at regular intervals.</li>
+          <li><b>Sample rate</b> = samples per second, measured in <b>Hertz (Hz)</b>.</li>
+          <li><b>Bit depth</b> = bits stored per sample. Higher rate/depth = closer to the original, bigger file.</li>
+        </ul>
+        <span class="formula">file size (bits) = <span class="v">rate</span> × <span class="v">bit depth</span> × <span class="v">seconds</span></span>
+      </div>
+    </div>
+
+    <div class="block-label">Activity · See sampling happen</div>
+    <div class="panel dark">
+      <div class="viz-grid">
+        <div>
+          <canvas id="sampleCanvas" width="560" height="230" aria-label="Sampling visualiser showing an analogue wave and its digital approximation"></canvas>
+        </div>
+        <div class="viz-controls" data-acc>
+          <div class="row">
+            <label>Sample rate <span class="val" id="srVal">16</span></label>
+            <input type="range" id="srSlider" min="4" max="48" step="2" value="16">
+          </div>
+          <div class="row">
+            <label>Bit depth <span class="val" id="bdVal">3</span></label>
+            <input type="range" id="bdSlider" min="1" max="5" step="1" value="3">
+          </div>
+          <div class="viz-readout">
+            <div>levels = 2<sup id="bdExp">3</sup> = <b id="levelsOut">8</b></div>
+            <div style="margin-top:6px">Drag both up → the orange steps hug the wave more closely. That's <b>higher quality</b> — and a <b>bigger file</b>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-label">Activity · Work out a file size</div>
+    <div class="panel">
+      <div class="calc-tabs" role="tablist">
+        <button class="on" data-calc="img" role="tab">🖼 Image</button>
+        <button data-calc="snd" role="tab">🔊 Sound</button>
+      </div>
+      <div class="calc-inputs" id="calcInputs"></div>
+      <div class="calc-out" id="calcOut" aria-live="polite"></div>
+    </div>
+
+    <div class="block-label">Check yourself</div>
+    <div class="quiz" data-quiz="1"></div>
+
+    <div class="block-label">Exam-style question</div>
+    <div class="exam">
+      <span class="marks">[3 marks]</span>
+      <div class="eq">Describe how an analogue sound wave is converted into a digital file that a computer can store.</div>
+      <button class="btn ghost" style="margin-top:14px" data-reveal>Show mark scheme</button>
+      <div class="ms">
+        <h5>Award 1 mark each, max 3</h5>
+        <ul>
+          <li>The <b>amplitude</b> of the sound wave is measured…</li>
+          <li>…at <b>regular intervals</b> (this is sampling) / measured many times per second.</li>
+          <li>Each measurement is <b>converted to a binary value</b> and stored.</li>
+          <li>(Also accept: a higher <b>sample rate / bit depth</b> gives a more accurate recording.)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <h4><span class="pin">Teacher checkpoint</span>Talk these through</h4>
+      <ul>
+        <li><b>KB or KiB?</b> Decide as a class whether to divide bytes by 1000 or 1024 — and which your exam board's mark scheme expects.</li>
+        <li><b>Stereo:</b> the sound formula above is for one channel. What changes for stereo? (× 2 channels.)</li>
+        <li><b>Stretch:</b> why can't we just sample infinitely often? (Diminishing returns vs file size; human hearing limit ~20 kHz.)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIC 2: PROTOCOL LAYERS ================= -->
+<section class="topic" data-t="2" id="t2">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">02</div>
+      <div>
+        <h2>The Need for Layers in Protocols</h2>
+        <span class="tag">J277 · 1.3.1 Networks &amp; protocols</span>
+      </div>
+    </div>
+
+    <div class="block-label">Recap</div>
+    <div class="recap">
+      <div class="rc">
+        <h4><span class="chip">WHAT</span>What a protocol &amp; a layer are</h4>
+        <ul>
+          <li>A <b>protocol</b> is a set of <b>rules</b> for how devices communicate.</li>
+          <li>Network communication is split into <b>layers</b>, each with one specific job.</li>
+          <li>A layer only needs to talk to the layer directly above and below it.</li>
+          <li>Together the layers form a <b>stack</b> that gets a message from one device to another.</li>
+        </ul>
+      </div>
+      <div class="rc">
+        <h4><span class="chip">WHY</span>Why we bother with layers</h4>
+        <ul>
+          <li><b>Self-contained:</b> one layer can be changed without breaking the others.</li>
+          <li><b>Manageable:</b> a big problem is broken into smaller, simpler parts.</li>
+          <li><b>Standards:</b> different manufacturers' hardware/software can work together.</li>
+          <li><b>Easier to fix:</b> faults can be traced to a single layer.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block-label">Activity · Spot the real benefits</div>
+    <div class="panel">
+      <p style="font-size:13.7px;color:var(--ink-soft);margin-top:0">Click every statement that is a <b>genuine reason</b> for using layers. There are <b>four</b> correct ones hidden among the distractors.</p>
+      <div class="picker" id="benefitPicker"></div>
+      <div class="picker-msg" id="pickerMsg">Found 0 of 4.</div>
+    </div>
+
+    <div class="block-label">Check yourself</div>
+    <div class="quiz" data-quiz="2"></div>
+
+    <div class="block-label">Exam-style question</div>
+    <div class="exam">
+      <span class="marks">[2 marks]</span>
+      <div class="eq">State <b>two</b> reasons why network protocols are organised into layers.</div>
+      <button class="btn ghost" style="margin-top:14px" data-reveal>Show mark scheme</button>
+      <div class="ms">
+        <h5>Any two, 1 mark each</h5>
+        <ul>
+          <li>Breaks a complex task into <b>smaller, manageable</b> parts.</li>
+          <li>Each layer is <b>self-contained</b> / can be changed without affecting other layers.</li>
+          <li>Sets a <b>common standard</b> so equipment from different makers is <b>compatible</b>.</li>
+          <li>Makes faults <b>easier to find and fix</b> (you can isolate one layer).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <h4><span class="pin">Teacher checkpoint</span>Talk these through</h4>
+      <ul>
+        <li><b>The analogy:</b> compare layers to a postal system — the writer doesn't care how the van drives; the driver doesn't read the letter. Each layer trusts the next.</li>
+        <li><b>Stretch:</b> name the TCP/IP layers (Application, Transport, Internet, Link) and one protocol in each. Not required for every mark, but it lifts a top answer.</li>
+        <li><b>Common mistake:</b> "layers make it faster" is <i>not</i> a marked benefit — push students to use the right vocabulary.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TOPIC 3: STORAGE ================= -->
+<section class="topic" data-t="3" id="t3">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-num">03</div>
+      <div>
+        <h2>Differences Between Storage Devices</h2>
+        <span class="tag">J277 · 1.2.3 Secondary storage</span>
+      </div>
+    </div>
+
+    <div class="block-label">Recap · The three types</div>
+    <div class="recap tri">
+      <div class="rc">
+        <h4><span class="chip">MAGNETIC</span>HDD, tape</h4>
+        <ul>
+          <li>Uses <b>spinning platters</b> &amp; moving read/write heads.</li>
+          <li>✔ Huge capacity, <b>cheap</b> per GB.</li>
+          <li>✘ Slower; moving parts can <b>break if dropped</b>.</li>
+          <li>Best for: <b>servers, backups</b>, lots of cheap storage.</li>
+        </ul>
+      </div>
+      <div class="rc">
+        <h4><span class="chip">OPTICAL</span>CD, DVD, Blu-ray</h4>
+        <ul>
+          <li>A laser reads <b>pits &amp; lands</b> on a disc.</li>
+          <li>✔ Very cheap, light, <b>portable</b>.</li>
+          <li>✘ Low capacity, slow, <b>scratches</b> easily.</li>
+          <li>Best for: <b>distributing</b> films/software cheaply.</li>
+        </ul>
+      </div>
+      <div class="rc">
+        <h4><span class="chip">SOLID&nbsp;STATE</span>SSD, USB, SD</h4>
+        <ul>
+          <li>Flash memory — <b>no moving parts</b>.</li>
+          <li>✔ <b>Fast</b>, durable, silent, low power.</li>
+          <li>✘ <b>Dearest</b> per GB; limited write cycles.</li>
+          <li>Best for: <b>laptops, phones, cameras</b>, anything portable.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="block-label">Compare them side by side</div>
+    <div class="ct-wrap">
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th>Characteristic</th>
+            <th><span class="ico" style="background:#F26B5B"></span>Magnetic</th>
+            <th><span class="ico" style="background:#0FA39C"></span>Optical</th>
+            <th><span class="ico" style="background:#7B61FF"></span>Solid&nbsp;state</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>Capacity</th><td>Very high</td><td>Low</td><td>Medium–high</td></tr>
+          <tr><th>Speed</th><td>Medium</td><td>Slow</td><td>Very fast</td></tr>
+          <tr><th>Cost per GB</th><td>Lowest</td><td>Low</td><td>Highest</td></tr>
+          <tr><th>Durability</th><td>Low (moving parts)</td><td>Low (scratches)</td><td>High (no moving parts)</td></tr>
+          <tr><th>Portability</th><td>Lower</td><td>High</td><td>Very high</td></tr>
+          <tr><th>Power use</th><td>Higher</td><td>Medium</td><td>Low</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="block-label">Activity · Pick the right device</div>
+    <div id="scenarioWrap"></div>
+
+    <div class="block-label">Check yourself</div>
+    <div class="quiz" data-quiz="3"></div>
+
+    <div class="block-label">Exam-style question</div>
+    <div class="exam">
+      <span class="marks">[3 marks]</span>
+      <div class="eq">A company needs to back up several terabytes of data every night as cheaply as possible. Identify a suitable storage device and justify your choice.</div>
+      <button class="btn ghost" style="margin-top:14px" data-reveal>Show mark scheme</button>
+      <div class="ms">
+        <h5>1 mark device + 2 marks justification</h5>
+        <ul>
+          <li><b>Magnetic</b> storage (HDD or magnetic tape). <i>(1)</i></li>
+          <li>It offers <b>very high capacity</b>, suitable for terabytes of data. <i>(1)</i></li>
+          <li>It has the <b>lowest cost per GB</b>, meeting the "as cheaply as possible" requirement. <i>(1)</i></li>
+          <li>(Accept: speed is less important as it runs overnight when nobody is using it.)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="checkpoint">
+      <h4><span class="pin">Teacher checkpoint</span>Talk these through</h4>
+      <ul>
+        <li><b>The golden rule for marks:</b> a justification must link a <i>property</i> of the device to a <i>requirement</i> in the scenario — not just describe the device.</li>
+        <li><b>Durability vs reliability:</b> draw out the difference (surviving a drop vs working consistently over time).</li>
+        <li><b>Stretch:</b> why do SSDs eventually wear out? (Finite read/write cycles per cell.)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap"><p>Revision Console · OCR GCSE Computer Science (J277) · Built for end-of-year revision</p></div>
+</footer>
+
+<script>
+/* ============ DATA ============ */
+const QUIZZES = {
+  1:[
+    {q:"What does the <b>sample rate</b> of an audio recording measure?",
+     o:["The number of samples taken each second","The number of colours in the file","The loudness of the sound","The length of the recording"],a:0,
+     fb:"Sample rate = samples per second, measured in Hertz (Hz)."},
+    {q:"An image is 200 × 150 pixels with a colour depth of 8 bits. What is its file size in <b>bits</b>?",
+     o:["1,600 bits","30,000 bits","240,000 bits","350 bits"],a:2,
+     fb:"width × height × colour depth = 200 × 150 × 8 = 240,000 bits."},
+    {q:"A colour depth of <b>4 bits</b> can represent how many different colours?",
+     o:["4","8","16","256"],a:2,
+     fb:"2ⁿ colours, so 2⁴ = 16."},
+    {q:"Increasing both the sample rate and bit depth of a sound file will…",
+     o:["improve quality but increase file size","reduce quality and file size","improve quality and reduce file size","have no effect on the file"],a:0,
+     fb:"More/finer samples = closer to the original wave = better quality, but more data to store."}
+  ],
+  2:[
+    {q:"A network <b>protocol</b> is best defined as…",
+     o:["a physical cable between two computers","a set of rules governing communication between devices","a piece of antivirus software","the speed of an internet connection"],a:1,
+     fb:"A protocol is an agreed set of rules for how devices communicate."},
+    {q:"Which is a genuine benefit of splitting protocols into <b>layers</b>?",
+     o:["It encrypts all data automatically","It removes the need for any cabling","Each layer can be changed without affecting the others","It guarantees the network is faster"],a:2,
+     fb:"Layers are self-contained, so one can be developed or replaced independently."},
+    {q:"Why do layers help different manufacturers' equipment work together?",
+     o:["They force everyone to use the same brand","They set common standards each layer follows","They make all devices identical","They ban older hardware"],a:1,
+     fb:"Layers provide universal standards, so compatible kit from any maker interoperates."}
+  ],
+  3:[
+    {q:"Which storage type has <b>no moving parts</b> and is the fastest?",
+     o:["Magnetic","Optical","Solid state","Magnetic tape"],a:2,
+     fb:"Solid state (flash) has no moving parts, making it fast, durable and silent."},
+    {q:"You need to give a free copy of a small program to 500 people as cheaply as possible. Best choice?",
+     o:["A separate SSD for each person","An optical disc (e.g. CD/DVD)","A magnetic tape for each person","Cloud only"],a:1,
+     fb:"Optical discs are extremely cheap per unit and easy to distribute — ideal for one-way handouts."},
+    {q:"Which storage type generally has the <b>lowest cost per GB</b>?",
+     o:["Solid state","Magnetic","Optical Blu-ray","USB flash drive"],a:1,
+     fb:"Magnetic (HDD/tape) gives the most storage for the least money — great for big cheap backups."}
+  ]
+};
+
+const BENEFITS = [
+  {t:"Each layer can be developed or changed without affecting the other layers.", good:true},
+  {t:"Layers break a complex task into smaller, manageable parts.", good:true},
+  {t:"They provide common standards so equipment from different manufacturers works together.", good:true},
+  {t:"Faults are easier to locate because you can isolate a single layer.", good:true},
+  {t:"Using layers automatically encrypts all of the user's data.", good:false},
+  {t:"Layers always make the network connection faster.", good:false},
+  {t:"Every layer must be built by the same company.", good:false},
+  {t:"Layers remove the need for any network cables.", good:false}
+];
+
+const SCENARIOS = [
+  {scn:"Scenario A", q:"A laptop needs storage that is fast, lightweight and can survive being carried around all day.",
+   correct:"Solid state", opts:["Magnetic","Optical","Solid state"],
+   fb:"<b>Solid state.</b> No moving parts means it survives knocks, it's light, low-power and very fast to boot — perfect for a portable laptop."},
+  {scn:"Scenario B", q:"A company must back up 8 TB of data every night, as cheaply as possible. Speed isn't important.",
+   correct:"Magnetic", opts:["Magnetic","Optical","Solid state"],
+   fb:"<b>Magnetic.</b> Highest capacity and lowest cost per GB. It's slower, but the backup runs overnight so speed doesn't matter."},
+  {scn:"Scenario C", q:"A magazine wants to attach a free game demo to 100,000 copies, as cheaply as possible per copy.",
+   correct:"Optical", opts:["Magnetic","Optical","Solid state"],
+   fb:"<b>Optical.</b> Discs cost pennies to produce in bulk and are light to post — ideal for cheap one-way distribution."}
+];
+
+/* ============ PROGRESS ============ */
+const done = new Set();
+let totalChecks = 0;
+function registerTotal(n){ totalChecks += n; }
+function complete(id){
+  if(done.has(id)) return;
+  done.add(id);
+  const pct = totalChecks ? Math.round(done.size/totalChecks*100) : 0;
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progLabel').textContent = done.size+' / '+totalChecks;
+}
+
+/* ============ BUILD QUIZZES ============ */
+Object.keys(QUIZZES).forEach(qid=>{
+  const host = document.querySelector(`.quiz[data-quiz="${qid}"]`);
+  QUIZZES[qid].forEach((item,i)=>{
+    registerTotal(1);
+    const card = document.createElement('div');
+    card.className='q';
+    const opts = item.o.map((txt,oi)=>
+      `<button class="opt" data-oi="${oi}"><span class="mk"></span><span>${txt}</span></button>`).join('');
+    card.innerHTML = `<div class="qtext"><span class="num">Q${i+1}</span>${item.q}</div>
+      <div class="opts">${opts}</div>
+      <div class="qfb"></div>`;
+    const btns = card.querySelectorAll('.opt');
+    const fb = card.querySelector('.qfb');
+    btns.forEach(b=>b.addEventListener('click',()=>{
+      const chosen = +b.dataset.oi;
+      btns.forEach(x=>x.disabled=true);
+      btns[item.a].classList.add('correct');
+      btns[item.a].querySelector('.mk').textContent='✓';
+      if(chosen===item.a){
+        fb.className='qfb ok show'; fb.innerHTML='<b>Correct.</b> '+item.fb;
+      } else {
+        b.classList.add('wrong'); b.querySelector('.mk').textContent='✕';
+        fb.className='qfb no show'; fb.innerHTML='<b>Not quite.</b> '+item.fb;
+      }
+      complete('q'+qid+'_'+i);
+    }));
+    host.appendChild(card);
+  });
+});
+
+/* ============ REVEAL BUTTONS ============ */
+document.querySelectorAll('[data-reveal]').forEach(btn=>{
+  const ms = btn.parentElement.querySelector('.ms');
+  btn.addEventListener('click',()=>{
+    const open = ms.classList.toggle('show');
+    btn.textContent = open ? 'Hide mark scheme' : 'Show mark scheme';
+  });
+});
+
+/* ============ SAMPLING VISUALISER ============ */
+const cv = document.getElementById('sampleCanvas');
+const ctx = cv.getContext('2d');
+const srS = document.getElementById('srSlider'), bdS = document.getElementById('bdSlider');
+function drawSampling(){
+  const dpr = window.devicePixelRatio||1;
+  const w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w*dpr; cv.height = h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+  const pad=14, top=pad, bot=h-pad, mid=h/2, amp=(h-2*pad)/2*0.92;
+  const samples = +srS.value, depth=+bdS.value, levels=Math.pow(2,depth);
+  // grid baseline
+  ctx.strokeStyle='#243056'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad,mid); ctx.lineTo(w-pad,mid); ctx.stroke();
+  const wave = x => Math.sin((x/ (w-2*pad))*Math.PI*2*1.5 - 0.4); // analogue source
+  // analogue curve
+  ctx.strokeStyle='rgba(155,178,255,.55)'; ctx.lineWidth=2; ctx.beginPath();
+  for(let i=0;i<=200;i++){ const x=pad+(w-2*pad)*i/200; const y=mid-wave(x)*amp; i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.stroke();
+  // quantise helper
+  const quant = v => { // v in -1..1 -> nearest of `levels` steps
+    const n=(v+1)/2; const q=Math.round(n*(levels-1))/(levels-1); return q*2-1;
+  };
+  // staircase (sample & hold)
+  ctx.strokeStyle='#F26B5B'; ctx.lineWidth=2.2; ctx.beginPath();
+  for(let s=0;s<samples;s++){
+    const x0=pad+(w-2*pad)*s/samples, x1=pad+(w-2*pad)*(s+1)/samples;
+    const xc=(x0+x1)/2; const yv=mid-quant(wave(xc))*amp;
+    if(s===0)ctx.moveTo(x0,yv); else ctx.lineTo(x0,yv);
+    ctx.lineTo(x1,yv);
+  }
+  ctx.stroke();
+  // sample points
+  for(let s=0;s<samples;s++){
+    const x0=pad+(w-2*pad)*s/samples, x1=pad+(w-2*pad)*(s+1)/samples, xc=(x0+x1)/2;
+    const yv=mid-quant(wave(xc))*amp;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(xc,yv,2.6,0,7); ctx.fill();
+    ctx.strokeStyle='rgba(242,107,91,.25)'; ctx.lineWidth=1; ctx.beginPath();
+    ctx.moveTo(xc,mid); ctx.lineTo(xc,yv); ctx.stroke();
+  }
+  document.getElementById('srVal').textContent=samples;
+  document.getElementById('bdVal').textContent=depth;
+  document.getElementById('bdExp').textContent=depth;
+  document.getElementById('levelsOut').textContent=levels;
+}
+[srS,bdS].forEach(s=>s.addEventListener('input',drawSampling));
+window.addEventListener('resize',drawSampling);
+
+/* ============ FILE-SIZE CALCULATOR ============ */
+const calcInputs=document.getElementById('calcInputs'), calcOut=document.getElementById('calcOut');
+let calcMode='img';
+const FIELDS={
+  img:[['w','Width (px)',64],['h','Height (px)',48],['cd','Colour depth (bits)',8]],
+  snd:[['rate','Sample rate (Hz)',8000],['bd','Bit depth (bits)',8],['sec','Duration (s)',5]]
+};
+function renderCalc(){
+  calcInputs.innerHTML = FIELDS[calcMode].map(f=>
+    `<div class="field"><label>${f[1]}</label><input type="number" min="0" data-k="${f[0]}" value="${f[2]}"></div>`).join('');
+  calcInputs.querySelectorAll('input').forEach(i=>i.addEventListener('input',compute));
+  compute();
+}
+function compute(){
+  const v={}; calcInputs.querySelectorAll('input').forEach(i=>v[i.dataset.k]=Math.max(0,+i.value||0));
+  let bits, line;
+  if(calcMode==='img'){
+    bits=v.w*v.h*v.cd;
+    line=`${v.w} × ${v.h} × ${v.cd}`;
+  } else {
+    bits=v.rate*v.bd*v.sec;
+    line=`${v.rate} × ${v.bd} × ${v.sec}`;
+  }
+  const bytes=bits/8, kb=bytes/1000;
+  calcOut.innerHTML =
+    `<div class="step">${calcMode==='img'?'width × height × colour depth':'rate × bit depth × seconds'} &nbsp;=&nbsp; <b>${line}</b></div>
+     <div class="step">= <b>${bits.toLocaleString()}</b> bits &nbsp;÷ 8 =&nbsp; <b>${bytes.toLocaleString()}</b> bytes</div>
+     <div class="big">≈ ${kb.toLocaleString(undefined,{maximumFractionDigits:2})} KB <span style="font-size:12px;color:var(--ink-soft);font-weight:500">(÷1000)</span></div>`;
+  complete('calc_used');
+}
+document.querySelectorAll('.calc-tabs button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.calc-tabs button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); calcMode=b.dataset.calc; renderCalc();
+}));
+registerTotal(1); // calculator counts as one activity
+
+/* ============ BENEFIT PICKER ============ */
+const picker=document.getElementById('benefitPicker'), pickerMsg=document.getElementById('pickerMsg');
+const goodTotal=BENEFITS.filter(b=>b.good).length;
+let foundGood=0;
+registerTotal(1);
+// shuffle for variety
+const shuffled=[...BENEFITS].sort(()=>Math.random()-0.5);
+shuffled.forEach((b,i)=>{
+  const el=document.createElement('button');
+  el.className='pick'; el.innerHTML=`<span class="box"></span><span>${b.t}</span>`;
+  el.addEventListener('click',()=>{
+    if(el.classList.contains('locked'))return;
+    el.classList.add('locked');
+    if(b.good){ el.classList.add('good'); el.querySelector('.box').textContent='✓'; foundGood++; }
+    else { el.classList.add('bad'); el.querySelector('.box').textContent='✕'; }
+    pickerMsg.textContent=`Found ${foundGood} of ${goodTotal}.`;
+    if(foundGood===goodTotal){
+      pickerMsg.textContent=`All ${goodTotal} benefits found — nicely done. The red ones are common exam traps.`;
+      pickerMsg.style.color='var(--good)';
+      complete('benefits');
+    }
+  });
+  picker.appendChild(el);
+});
+
+/* ============ SCENARIO PICKER ============ */
+const scWrap=document.getElementById('scenarioWrap');
+SCENARIOS.forEach((s,i)=>{
+  registerTotal(1);
+  const el=document.createElement('div'); el.className='scenario';
+  el.innerHTML=`<div class="s-q"><span class="scn">${s.scn}</span>${s.q}</div>
+    <div class="sopts">${s.opts.map(o=>`<button class="sopt">${o}</button>`).join('')}</div>
+    <div class="sfb"></div>`;
+  const fb=el.querySelector('.sfb');
+  el.querySelectorAll('.sopt').forEach(btn=>btn.addEventListener('click',()=>{
+    el.querySelectorAll('.sopt').forEach(b=>b.disabled=true);
+    el.querySelectorAll('.sopt').forEach(b=>{ if(b.textContent===s.correct)b.classList.add('correct'); });
+    if(btn.textContent!==s.correct) btn.classList.add('wrong');
+    fb.className='sfb show'; fb.innerHTML=s.fb;
+    complete('scn'+i);
+  }));
+  scWrap.appendChild(el);
+});
+
+/* ============ SCROLLSPY ============ */
+const navLinks=[...document.querySelectorAll('.navpills a')];
+const secs=[...document.querySelectorAll('section.topic')];
+const spy=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting){
+    const id=e.target.id;
+    navLinks.forEach(l=>l.classList.toggle('active', l.getAttribute('href')==='#'+id));
+  }});
+},{rootMargin:'-45% 0px -50% 0px'});
+secs.forEach(s=>spy.observe(s));
+
+/* ============ INIT ============ */
+renderCalc();
+drawSampling();
+</script>
+</body>
+</html>
