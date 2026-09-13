@@ -1,0 +1,1786 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Graveney School Key Stage 3 Computing curriculum plan, Years 7 to 9 — 18 units with National Curriculum coverage, thread mapping and progression to OCR J277.">
+<style>
+  /* baseline reset — matches what the artifact host supplies */
+  :root{color-scheme:light dark}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0}
+  img{max-width:100%;height:auto}
+  [hidden]{display:none!important}
+</style>
+<title>Graveney KS3 Computing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+:root{
+  --teal:#0F7A78; --teal-deep:#0A5D5C; --navy:#1B2A4A; --cream:#F6F1E3;
+  --ground:#FBF9F4;            /* warm neutral, biased to the cream */
+  --surface:#FFFFFF;
+  --surface-2:#F3EFE5;
+  --ink:#1C2433;
+  --ink-2:#4A5468;
+  --ink-3:#7A8496;
+  --rule:#E2DCCC;
+  --rule-soft:#EDE8DA;
+  --accent:var(--teal);
+  --accent-ink:#0A5D5C;
+  --chip:#E7F0EF;
+  --flag-bg:#FDF3E0; --flag-rule:#C98A1E; --flag-ink:#7A5310;
+  --shadow:0 1px 2px rgba(27,42,74,.05), 0 8px 24px -16px rgba(27,42,74,.18);
+
+  --display:"Literata",Georgia,"Times New Roman",serif;
+  --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+
+  --maxw:1180px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --teal:#4FC3BE; --teal-deep:#7FD8D3; --navy:#0C1322; --cream:#1A2133;
+    --ground:#0C1220; --surface:#141C2D; --surface-2:#1A2334;
+    --ink:#E9EDF5; --ink-2:#AFBACB; --ink-3:#7C8899;
+    --rule:#273245; --rule-soft:#1E2839;
+    --accent:#4FC3BE; --accent-ink:#7FD8D3; --chip:#16302F;
+    --flag-bg:#2A2011; --flag-rule:#B58136; --flag-ink:#E8C68A;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --teal:#4FC3BE; --teal-deep:#7FD8D3; --navy:#0C1322; --cream:#1A2133;
+  --ground:#0C1220; --surface:#141C2D; --surface-2:#1A2334;
+  --ink:#E9EDF5; --ink-2:#AFBACB; --ink-3:#7C8899;
+  --rule:#273245; --rule-soft:#1E2839;
+  --accent:#4FC3BE; --accent-ink:#7FD8D3; --chip:#16302F;
+  --flag-bg:#2A2011; --flag-rule:#B58136; --flag-ink:#E8C68A;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--display); text-wrap:balance; margin:0; line-height:1.22; color:var(--ink)}
+p{margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding-inline:20px}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--rule); background:var(--surface)}
+.mast .wrap{padding-block:40px 34px}
+.eyebrow{
+  font-family:var(--mono); font-size:11.5px; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--accent-ink); margin-bottom:14px;
+}
+.mast h1{font-size:clamp(30px,5.2vw,46px); font-weight:700; letter-spacing:-.015em}
+.mast .sub{font-family:var(--display); font-size:clamp(17px,2.4vw,21px); color:var(--accent-ink); margin-top:6px}
+.mast .meta{
+  display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:22px; padding-top:18px;
+  border-top:1px solid var(--rule-soft); font-size:13.5px; color:var(--ink-3);
+}
+.mast .meta b{font-weight:600; color:var(--ink-2)}
+
+/* ---------- layout ---------- */
+.shell{display:grid; grid-template-columns:216px minmax(0,1fr); gap:44px; align-items:start}
+.shell > .wrap{padding-inline:0}
+.page{max-width:var(--maxw); margin:0 auto; padding-inline:20px; padding-block:0 72px}
+
+nav.toc{position:sticky; top:0; max-height:100vh; overflow-y:auto; padding-block:34px 24px}
+nav.toc .grp{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--ink-3); margin:20px 0 8px;
+}
+nav.toc .grp:first-child{margin-top:0}
+nav.toc a{
+  display:block; padding:4px 0 4px 11px; font-size:13.5px; line-height:1.4;
+  color:var(--ink-2); text-decoration:none; border-left:2px solid var(--rule);
+}
+nav.toc a:hover{color:var(--accent-ink); border-left-color:var(--accent)}
+nav.toc a.on{color:var(--accent-ink); font-weight:600; border-left-color:var(--accent)}
+nav.toc a .c{font-family:var(--mono); font-size:11.5px; color:var(--ink-3); margin-right:6px}
+
+main section{scroll-margin-top:22px; padding-block:38px 0}
+main section + section{border-top:1px solid var(--rule-soft)}
+h2.sec{font-size:clamp(23px,3.2vw,30px); font-weight:700; letter-spacing:-.012em; margin-bottom:6px}
+.sec-note{color:var(--ink-2); max-width:66ch; margin-top:12px}
+.sec-note + .sec-note{margin-top:11px}
+h3.sub{font-size:19px; font-weight:600; margin-top:30px; margin-bottom:8px}
+.prose{max-width:66ch}
+.prose p + p{margin-top:11px}
+
+/* ---------- principle / intent list ---------- */
+.defs{display:grid; gap:0; margin-top:22px; border-top:1px solid var(--rule-soft)}
+.defs > div{
+  display:grid; grid-template-columns:minmax(0,15rem) minmax(0,1fr); gap:12px 32px;
+  padding-block:18px; border-bottom:1px solid var(--rule-soft);
+}
+.defs dt, .defs h4{font-family:var(--display); font-size:16.5px; font-weight:600; color:var(--accent-ink)}
+.defs p{color:var(--ink-2); font-size:15.5px}
+
+/* ---------- overview grid ---------- */
+.grid-ov{
+  display:grid; grid-template-columns:78px repeat(3,minmax(0,1fr)); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); margin-top:24px;
+  border-radius:4px; overflow:hidden;
+}
+.grid-ov > *{background:var(--surface); padding:11px 13px}
+.grid-ov .hd{
+  background:var(--navy); color:#fff; font-family:var(--mono); font-size:11px;
+  font-weight:600; letter-spacing:.11em; text-transform:uppercase; padding-block:10px;
+}
+:root[data-theme="dark"] .grid-ov .hd, :root:not([data-theme="light"]) .grid-ov .hd{background:var(--surface-2); color:var(--ink)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .grid-ov .hd{background:var(--navy); color:#fff}}
+.grid-ov .term{
+  background:var(--surface-2); font-family:var(--mono); font-size:10.5px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center;
+}
+.grid-ov .cell a{
+  display:block; text-decoration:none; font-size:14px; font-weight:600; line-height:1.32; color:var(--ink);
+}
+.grid-ov .cell a:hover{color:var(--accent-ink)}
+.grid-ov .cell .code{font-family:var(--mono); font-size:11.5px; color:var(--accent-ink); margin-right:5px}
+.grid-ov .cell .th{font-size:11px; color:var(--ink-3); margin-top:5px; line-height:1.35}
+
+/* ---------- thread weave matrix ---------- */
+.weave-scroll{overflow-x:auto; margin-top:22px; padding-bottom:4px}
+table.weave{border-collapse:separate; border-spacing:0; font-size:12px; min-width:640px}
+table.weave th, table.weave td{padding:0; text-align:center}
+table.weave th.rowhd{
+  text-align:left; font-family:var(--body); font-size:13px; font-weight:500; color:var(--ink-2);
+  padding:0 14px 0 0; white-space:nowrap; position:sticky; left:0; background:var(--ground);
+}
+table.weave td.u{width:30px; height:26px}
+table.weave .dot{
+  width:13px; height:13px; border-radius:50%; margin:0 auto;
+  background:var(--rule); display:block;
+}
+table.weave .dot.on{background:var(--accent); box-shadow:0 0 0 3px var(--chip)}
+table.weave th.colhd{
+  font-family:var(--mono); font-size:10px; font-weight:600; color:var(--ink-3);
+  padding-bottom:8px; width:30px; letter-spacing:0;
+}
+table.weave tr.yrhd th{
+  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--accent-ink); padding-bottom:4px; text-align:center;
+}
+table.weave tbody tr:hover th.rowhd{color:var(--accent-ink)}
+table.weave td.sep{width:12px}
+
+/* ---------- coverage tables ---------- */
+.tbl-scroll{overflow-x:auto; margin-top:22px}
+table.data{border-collapse:collapse; width:100%; min-width:560px; font-size:14.5px}
+table.data th, table.data td{text-align:left; vertical-align:top; padding:11px 14px; border-bottom:1px solid var(--rule-soft)}
+table.data thead th{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--ink-3); border-bottom:1px solid var(--rule);
+}
+table.data td.n{font-family:var(--mono); font-weight:600; color:var(--accent-ink); white-space:nowrap; width:1%}
+table.data td.refs{font-family:var(--mono); font-size:12.5px; font-weight:500; color:var(--ink-2); white-space:nowrap; width:1%}
+table.data td.refs.gap{font-family:var(--body); font-style:italic; font-weight:400; color:var(--ink-3); white-space:normal}
+table.data tbody tr:hover{background:var(--surface-2)}
+
+/* ---------- unit entries ---------- */
+.yearbar{
+  display:flex; align-items:baseline; gap:14px; margin-top:34px; padding-bottom:9px;
+  border-bottom:2px solid var(--accent);
+}
+.yearbar h3{font-size:22px; font-weight:700}
+.yearbar span{font-family:var(--mono); font-size:11.5px; color:var(--ink-3)}
+
+article.unit{padding-block:30px; border-bottom:1px solid var(--rule-soft)}
+article.unit > header{margin-bottom:16px}
+.unit h4{font-size:21px; font-weight:600; letter-spacing:-.008em}
+.unit h4 .code{font-family:var(--mono); font-size:15px; font-weight:600; color:var(--accent-ink); margin-right:9px}
+.unit .tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; align-items:center}
+.pill{
+  font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--accent-ink); background:var(--chip); padding:3px 8px; border-radius:3px;
+  white-space:nowrap; max-width:100%; overflow-wrap:anywhere;
+}
+.pill.plain{background:transparent; color:var(--ink-3); padding-left:0}
+.j277 .codes .pill{white-space:normal; line-height:1.5}
+
+.flag{
+  background:var(--flag-bg); border-left:3px solid var(--flag-rule); color:var(--flag-ink);
+  padding:10px 14px; font-size:13.5px; font-weight:500; margin-block:14px; border-radius:0 3px 3px 0;
+}
+
+.fields{display:grid; gap:18px; margin-top:4px}
+.field > .lbl{
+  font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--ink-3); margin-bottom:6px;
+}
+.field p, .field li{font-size:15px; color:var(--ink-2)}
+.field .prose p{max-width:66ch}
+
+ol.lessons{margin:0; padding:0; list-style:none; counter-reset:l; display:grid; gap:1px; background:var(--rule-soft); border:1px solid var(--rule-soft); border-radius:4px; overflow:hidden}
+ol.lessons li{
+  counter-increment:l; background:var(--surface); padding:8px 13px 8px 40px; position:relative;
+  font-size:14.5px; color:var(--ink);
+}
+ol.lessons li::before{
+  content:counter(l); position:absolute; left:0; top:0; bottom:0; width:30px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:11.5px; font-weight:600; color:var(--accent-ink); background:var(--surface-2);
+}
+ul.plain{margin:0; padding-left:18px}
+ul.plain li{margin-bottom:4px}
+ul.plain::marker{color:var(--accent)}
+
+.vocab{display:flex; flex-wrap:wrap; gap:5px}
+.vocab span{
+  font-size:12.5px; color:var(--ink-2); background:var(--surface-2);
+  padding:2.5px 8px; border-radius:3px; border:1px solid var(--rule-soft);
+}
+.nclist{display:grid; gap:9px}
+.nclist > div{display:grid; grid-template-columns:22px minmax(0,1fr); gap:10px; align-items:start}
+.nclist .n{font-family:var(--mono); font-size:12.5px; font-weight:600; color:var(--accent-ink); padding-top:1px}
+.nclist p{font-size:14px; color:var(--ink-2)}
+.j277 .codes{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:7px}
+
+.two{display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:18px}
+
+/* ---------- thread appendix ---------- */
+.threadcard{padding-block:20px; border-bottom:1px solid var(--rule-soft)}
+.threadcard h4{font-size:17px; font-weight:600}
+.threadcard .desc{font-size:14.5px; color:var(--ink-3); margin-top:4px; max-width:66ch}
+.threadcard .chain{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px; align-items:center}
+.threadcard .chain a{
+  font-size:13px; text-decoration:none; color:var(--ink); background:var(--surface);
+  border:1px solid var(--rule); padding:4px 9px; border-radius:3px;
+}
+.threadcard .chain a:hover{border-color:var(--accent); color:var(--accent-ink)}
+.threadcard .chain a .c{font-family:var(--mono); font-size:11px; color:var(--accent-ink); margin-right:5px}
+.threadcard .chain .arrow{color:var(--ink-3); font-size:12px}
+
+/* ---------- sources / foot ---------- */
+.src{display:grid; gap:16px; margin-top:20px}
+.src > div{padding-left:13px; border-left:2px solid var(--rule)}
+.src b{font-weight:600; display:block; font-size:15px}
+.src span{font-size:13.5px; color:var(--ink-3); display:block; margin-block:2px 4px}
+.src a{font-size:13px; word-break:break-all}
+footer.foot{margin-top:44px; padding-top:20px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-3)}
+
+/* ---------- responsive ---------- */
+@media (max-width:880px){
+  .shell{grid-template-columns:minmax(0,1fr); gap:0}
+  nav.toc{position:static; max-height:none; padding-block:22px 0; border-bottom:1px solid var(--rule-soft)}
+  nav.toc .cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:2px 22px}
+  .defs > div{grid-template-columns:minmax(0,1fr); gap:5px}
+  .grid-ov{grid-template-columns:64px repeat(3,minmax(0,1fr)); font-size:13px}
+  .grid-ov > *{padding:9px 9px}
+  .grid-ov .cell a{font-size:12.5px}
+}
+@media (max-width:560px){
+  .grid-ov{grid-template-columns:minmax(0,1fr)}
+  .grid-ov .hd{display:none}
+  .grid-ov .term{grid-column:1}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+</head>
+<body>
+<script type="application/json" id="data">{
+ "school": "Graveney School",
+ "title": "Key Stage 3 Computing Curriculum Plan",
+ "subtitle": "Years 7 to 9",
+ "year": "2026 to 2027",
+ "authorRole": "Key Stage 3 Coordinator, Computer Science",
+ "palette": {
+  "teal": "0F7A78",
+  "navy": "1B2A4A",
+  "cream": "F6F1E3",
+  "grey": "5A6270",
+  "light": "E8EEF0"
+ },
+ "intent": [
+  [
+   "Why we teach computing",
+   "Every pupil at Graveney leaves Key Stage 3 having been taught to understand the technology that shapes their life, not merely to operate it. Our curriculum treats computing as a discipline with its own body of knowledge — how data is represented, how networks move it, how programs transform it, and how the people who build these systems make choices that affect everyone else. Pupils who go on to study GCSE Computer Science arrive with that knowledge secure. Pupils who do not go on to study it leave with an informed, critical and confident relationship with digital technology that will serve them whatever they do next."
+  ],
+  [
+   "What we want pupils to be able to do",
+   "By the end of Year 9 a Graveney pupil can read and write programs in both a block-based and a text-based language; explain how text, numbers, images and sound are represented in binary and calculate the consequences for file size; describe how data travels across a network and what threatens it; plan, build and evaluate a digital artefact for a real audience; and reason about the social, legal and ethical consequences of a technology rather than simply reacting to it."
+  ],
+  [
+   "Ambition for all",
+   "The curriculum is taught to mixed-ability groups without setting or tiering. Scaffolding is built into the resources rather than into the curriculum: where pupils need more support they receive word banks, sentence starters, partially completed trace tables and hint boxes that guide reasoning without supplying the answer. The content itself is not reduced."
+  ]
+ ],
+ "principles": [
+  [
+   "Knowledge before application",
+   "Pupils are taught the substantive knowledge a task requires before being asked to perform the task. Vocabulary is introduced explicitly, defined, and revisited. Every unit carries a defined set of key terms that appear in teaching, in homework and in the end-of-unit assessment."
+  ],
+  [
+   "Sequenced so that knowledge compounds",
+   "Units are ordered so that each draws on what came before. Block-based programming in Year 7 precedes text-based programming in Year 8, which precedes data structures in Year 9. Binary number representation in Year 8 precedes image and sound representation in Year 9. The order in this document is the order of delivery, and the prior knowledge stated for each unit is knowledge pupils have genuinely been taught here."
+  ],
+  [
+   "Buffer-first planning",
+   "Units are six lessons long and sit inside seven-week half-terms. The spare week is deliberate. It absorbs trips, assemblies, snow days, fire drills and the lessons that simply take longer than planned, so that teachers are not forced to cut content to stay on schedule."
+  ],
+  [
+   "Merge rather than cut",
+   "Where a unit has to be shortened, related topics are combined into a single lesson rather than dropped. Coverage is protected; time is found by tightening, not by omission."
+  ],
+  [
+   "Equity by default",
+   "We assume that some pupils do not have a reliable device or internet connection at home. Homework is designed to be completable on paper. Where a task benefits from a device, that part of the task is optional and clearly marked as such, and it is never the part that carries the assessed knowledge."
+  ],
+  [
+   "Assessment that informs teaching",
+   "Every unit ends with an assessment that reports on the knowledge specified for that unit, not on generic computing ability. Assessments are auto-marked wherever the question type allows, so that teacher time goes into responding to what the results show rather than into marking."
+  ],
+  [
+   "Resources that are ready to teach",
+   "Planning documents are accompanied by finished materials — slides with speaker notes, worksheets, homework booklets, mark schemes and assessments. A teacher picking up a unit should not have to build it first."
+  ]
+ ],
+ "threadsIntro": "We use threads to signpost groups of units that link to one another and that together build a common body of knowledge over time. The term is deliberately visual: a thread weaves through the curriculum, appearing, disappearing and reappearing, each time carrying a little more than it did before.\n\nOur eleven threads are shared with the Oak National Academy computing curriculum, from which much of our unit content is drawn. Using a common set of threads means that pupils arriving from primary schools that follow the same scheme meet familiar territory, and that our Key Stage 3 sequence connects cleanly to Key Stage 4.",
+ "threads": [
+  [
+   "Algorithms and data structures",
+   "Expressing a solution as a precise sequence of steps, and choosing how to organise the data that solution works on."
+  ],
+  [
+   "Artificial intelligence",
+   "What machine learning actually is, how models are trained, and where they fail."
+  ],
+  [
+   "Computing systems",
+   "The hardware and software components of a computer and how they work together."
+  ],
+  [
+   "Creating media",
+   "Producing digital artefacts — text, image, sound, video, 3D — for an identified audience and purpose."
+  ],
+  [
+   "Data and information",
+   "How data is represented, stored, measured, cleaned, analysed and turned into something meaningful."
+  ],
+  [
+   "Design and development",
+   "Planning before building, testing against criteria, and evaluating the result honestly."
+  ],
+  [
+   "Effective use of tools",
+   "Choosing the right application for a job and using it fluently."
+  ],
+  [
+   "Impact of technology",
+   "The social, ethical, legal and environmental consequences of digital technology."
+  ],
+  [
+   "Networks",
+   "How devices connect, how data travels between them, and what the internet actually is."
+  ],
+  [
+   "Programming",
+   "Writing, reading, tracing and debugging code in block-based and text-based languages."
+  ],
+  [
+   "Safety and security",
+   "Using technology safely and responsibly, and protecting data, devices and people from threats."
+  ]
+ ],
+ "delivery": "Key Stage 3 Computing at Graveney is taught in one 60-minute lesson per week to mixed-ability groups across Years 7, 8 and 9.\n\nEach year comprises six units of six lessons, giving 36 taught lessons per year and 108 across the key stage. Each unit occupies one half-term of a seven-week cycle, leaving one week of slack per half-term as described under buffer-first planning above.\n\nThe final lesson of most units is an assessment lesson rather than a teaching lesson. Where a unit's sixth lesson carries new content, that content is compressed into the first part of the lesson and the assessment follows.\n\nAll work is set, collected and returned through Google Classroom, and the school uses Google Workspace throughout. Assessments are delivered as Google Forms in quiz mode, generated programmatically so that they can be rebuilt or amended without manual re-entry.",
+ "assessment": "Assessment at Key Stage 3 serves two purposes: to tell the teacher what pupils have retained, and to tell pupils what they know.\n\nEach unit ends with a summative assessment reporting against that unit's specified knowledge and vocabulary. Question types are chosen to match what is being assessed — multiple choice and short answer where recall is the target, trace tables and debugging tasks where program comprehension is the target, and extended response where reasoning about impact is the target. Where a unit's outcome is a made artefact — a website, an app, an animation, a physical computing project — it is assessed against an analytic rubric with defined performance levels rather than by a written test.\n\nAuto-marked questions are released to pupils only after teacher review, so that results can be looked at as a class picture before individual grades are seen.\n\nHomework is retrieval-focused. Tasks reinforce the current lesson and lightly recap the previous one, run to about 30 minutes, and follow a consistent structure within a unit so that pupils know what to expect. Every homework booklet carries a teacher answer key or mark scheme.",
+ "ks4Intro": "Our Key Stage 3 curriculum is not a GCSE course delivered early, and Year 9 is not a GCSE taster year. Pupils at Graveney choose their options at the end of Year 9, and a curriculum that narrowed towards Computer Science before that point would serve the majority of pupils badly.\n\nWhat the curriculum does instead is build, across all three years, the knowledge that OCR J277 later assumes. The table below shows which J277 topic each unit feeds. The connections are spread deliberately across Years 7 to 9 rather than concentrated at the end.",
+ "ks4Boundaries": "Two areas of the J277 specification are approached differently at Key Stage 3, and we set them out here so that the boundary reads as a decision rather than an oversight.\n\n**Computer systems is distributed, not taught as a unit.** We do not run a dedicated computer systems unit. The underlying ideas are nonetheless met in context across the key stage: input, process and output, and programming a device rather than a screen, in the Year 7 micro:bit unit; network hardware — routers, switches, servers and clients — in the Year 7 networks unit; how data is actually stored and measured in the Year 8 and Year 9 data representation units; how devices and networks are protected in the Year 8 online safety and Year 9 cybersecurity units; and a trained model running on a physical device in the Year 9 machine learning unit. What is left to Year 10 is the formal treatment — the CPU and the fetch-execute cycle, and the operating system as systems software. The time this would take at Key Stage 3 is spent instead on programming fluency and data representation, which are harder to acquire late and which benefit every pupil regardless of option choice. Should we later wish to draw the strand together, it sits naturally alongside the micro:bit unit in Year 7 or the online safety unit in Year 8, where the operating system's role in protecting a device is already half the conversation.\n\n**Boolean logic is deliberately thin, and taught through programming.** Pupils meet Boolean reasoning in the form they can immediately use: operators and conditions in Scratch in Year 7, comparison and logical operators in Python in Year 8, and conditions governing iteration over data structures in Year 9. Spread across all three years, this meets the national curriculum requirement to understand simple Boolean logic and its uses in programming. Logic gates and truth tables — the form J277 examines under 2.4 — are taught in Year 10, by which point pupils already have the underlying reasoning and are learning a notation rather than an idea.",
+ "howToUse": "This document sets out what is taught, in what order, and why. It is the reference point for curriculum conversations — with the department, with senior leaders, with governors and with external reviewers.\n\nIt is not a lesson plan. Each unit named here has its own medium-term plan and a full set of teaching resources held in the department's shared drive. Where this document lists the lessons in a unit, those are the lesson titles as they appear in those resources.\n\n**Reading a unit entry.** Each unit records the threads it belongs to, what the unit covers, why it sits at that point in the sequence, the lessons it contains, what pupils need to know before starting it, the National Curriculum statements it addresses, the J277 topics it feeds, its key vocabulary, and how it is assessed and supported by homework.\n\n**A note on sources.** Unit content is drawn from the Oak National Academy computing curriculum, developed with the Raspberry Pi Foundation, and adapted to Graveney's sequence, timetable and context. Unit 1 of Year 7 is written in school.",
+ "ncIntro": "The national curriculum for computing at Key Stage 3 sets out nine statements of what pupils should be taught. All nine are addressed by this curriculum. The table below shows where each is met.",
+ "sources": [
+  [
+   "National curriculum in England: computing programmes of study",
+   "Department for Education, September 2013",
+   "https://www.gov.uk/government/publications/national-curriculum-in-england-computing-programmes-of-study/national-curriculum-in-england-computing-programmes-of-study"
+  ],
+  [
+   "GCSE (9-1) Computer Science J277 specification",
+   "OCR, from 2020",
+   "https://www.ocr.org.uk/qualifications/gcse/computer-science-j277-from-2020/specification-at-a-glance/"
+  ],
+  [
+   "Computing curriculum",
+   "Oak National Academy, with the Raspberry Pi Foundation",
+   "https://www.thenational.academy/"
+  ]
+ ],
+ "nc": {
+  "1": "design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems",
+  "2": "understand several key algorithms that reflect computational thinking [for example, ones for sorting and searching]; use logical reasoning to compare the utility of alternative algorithms for the same problem",
+  "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions",
+  "4": "understand simple Boolean logic [for example, AND, OR and NOT] and some of its uses in circuits and programming; understand how numbers can be represented in binary, and be able to carry out simple operations on binary numbers [for example, binary addition, and conversion between binary and decimal]",
+  "5": "understand the hardware and software components that make up computer systems, and how they communicate with one another and with other systems",
+  "6": "understand how instructions are stored and executed within a computer system; understand how data of various types (including text, sounds and pictures) can be represented and manipulated digitally, in the form of binary digits",
+  "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users",
+  "8": "create, reuse, revise and repurpose digital artefacts for a given audience, with attention to trustworthiness, design and usability",
+  "9": "understand a range of ways to use technology safely, respectfully, responsibly and securely, including protecting their online identity and privacy; recognise inappropriate content, contact and conduct, and know how to report concerns"
+ },
+ "j277": {
+  "1.1": "Systems architecture",
+  "1.2": "Memory and storage",
+  "1.3": "Computer networks, connections and protocols",
+  "1.4": "Network security",
+  "1.5": "Systems software",
+  "1.6": "Ethical, legal, cultural and environmental impacts of digital technology",
+  "2.1": "Algorithms",
+  "2.2": "Programming fundamentals",
+  "2.3": "Producing robust programs",
+  "2.4": "Boolean logic",
+  "2.5": "Programming languages and Integrated Development Environments"
+ },
+ "years": {
+  "Year 7": [
+   {
+    "n": 1,
+    "title": "Welcome to Computing: Digital Literacy and Online Safety",
+    "source": "Written at Graveney School",
+    "oak": null,
+    "threads": [
+     "Safety and security",
+     "Effective use of tools",
+     "Impact of technology"
+    ],
+    "description": "This unit is pupils' introduction to computing at Graveney. It establishes the practical competence they will rely on in every subsequent unit and in every other subject — logging on, finding and naming work, searching well — and sets out what it means to behave safely and decently online. Pupils learn to judge whether what they find can be trusted, to protect their accounts and personal data, to recognise content, contact and conduct that is not right, and to know exactly who they can tell and how.",
+    "why": "Pupils arrive from a range of primary schools with very different levels of confidence and very different habits. Beginning here means no pupil is assumed to know how the school system works, and no pupil spends the rest of Year 7 quietly unable to find their own work. It also puts safeguarding first: pupils are meeting a new school network, new accounts and a widening online life at the same time, and the reporting routes need to be known before they are needed rather than after.",
+    "lessons": [
+     "Welcome to Computing: digital literacy and online safety",
+     "Managing your work: files and folders",
+     "Search smart, then check it's true",
+     "Protecting yourself online",
+     "Recognising and reporting concerns",
+     "Netiquette and end-of-unit assessment"
+    ],
+    "prior": [
+     "Pupils should have experience of using a computer or tablet to create and save work.",
+     "Pupils should be able to perform a simple online search.",
+     "Pupils should recognise that not everything they find online is true.",
+     "Pupils should know that they can tell an adult if something online worries them."
+    ],
+    "nc": [
+     9,
+     7
+    ],
+    "nc_text": {
+     "9": "understand a range of ways to use technology safely, respectfully, responsibly and securely, including protecting their online identity and privacy; recognise inappropriate content, contact and conduct, and know how to report concerns",
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     },
+     {
+      "code": "1.4",
+      "title": "Network security"
+     }
+    ],
+    "j277_note": "Establishes the responsible-use, privacy and data ideas revisited formally in 1.6, and the first threat vocabulary — password strength, reuse, reporting — that the Year 9 cybersecurity unit develops towards 1.4.",
+    "vocab": [
+     "account",
+     "password",
+     "log in",
+     "acceptable use agreement",
+     "Google Classroom",
+     "assignment",
+     "turn in",
+     "Google Drive",
+     "cloud",
+     "folder",
+     "file name",
+     "file type",
+     "keyword",
+     "refine",
+     "search engine",
+     "source",
+     "reliable",
+     "bias",
+     "evidence",
+     "misinformation",
+     "strong password",
+     "three random words",
+     "password reuse",
+     "personal data",
+     "privacy settings",
+     "digital footprint",
+     "content",
+     "contact",
+     "conduct",
+     "cyberbullying",
+     "bystander",
+     "upstander",
+     "block",
+     "report",
+     "trusted adult",
+     "Childline",
+     "CEOP Safety Centre",
+     "netiquette",
+     "THINK",
+     "RAG self-assessment"
+    ],
+    "assessment": "End-of-unit assessment in Lesson 6, 32 marks, mixed question types, with a teacher mark scheme using confidence bands and next-steps guidance. Also available as a self-grading Google Form. A RAG self-assessment sheet is used in the Lesson 6 plenary.",
+    "homework": "Two short tasks per lesson, all completable on paper without a home device. Tasks include signing the Acceptable Use Agreement with a parent or carer, rewriting badly named files against the naming rule, testing sources against Who / When / Why / Proof, listing personal data worth protecting, and making a 'Who I can tell and how to report' card to keep to hand."
+   },
+   {
+    "n": 2,
+    "title": "Computer Networks and Data Transmission",
+    "source": "Year 7 units / 2. Computer networks and data transmission",
+    "threads": [
+     "Networks"
+    ],
+    "description": "In this unit pupils will explore the impact networks have on our daily lives. They will define what a network is and explore the benefits of networking, before covering how data is transmitted across networks using protocols. They will investigate different types of network and hardware required.",
+    "why": "As pupils begin secondary school, they are using the internet and connected devices more independently and in increasingly complex ways. At this stage, it is important that they understand what is happening behind the scenes when data is shared or services are accessed online. This unit builds a foundation for making informed decisions about privacy and security, helping pupils see how network design and data transmission affect their experience. Learning this now equips them to navigate technology critically and responsibly as its role in their lives expands.",
+    "lessons": [
+     "An introduction to computer networks",
+     "Protocols and IP addresses",
+     "Wired and wireless networks",
+     "The internet",
+     "Exploring the World Wide Web (WWW)",
+     "Internet of Things"
+    ],
+    "prior": [
+     "Pupils should have some experience of using websites.",
+     "Pupils should be able to describe the features of a network.",
+     "Pupils should be aware of how the internet facilitates online communication and collaboration.",
+     "Pupils should be able to describe the concept of privacy and how the internet does not always afford this."
+    ],
+    "nc": [
+     5
+    ],
+    "nc_text": {
+     "5": "understand the hardware and software components that make up computer systems, and how they communicate with one another and with other systems"
+    },
+    "j277": [
+     {
+      "code": "1.3",
+      "title": "Computer networks, connections and protocols"
+     }
+    ],
+    "j277_note": "Direct precursor to 1.3. Pupils meet protocols, IP addressing, wired and wireless connections, and the internet/WWW distinction at an introductory level.",
+    "vocab": [
+     "network",
+     "LAN",
+     "WAN",
+     "protocol",
+     "IP address",
+     "router",
+     "switch",
+     "server",
+     "client",
+     "bandwidth",
+     "packet",
+     "wired",
+     "wireless",
+     "internet",
+     "World Wide Web",
+     "Internet of Things"
+    ],
+    "assessment": "Self-marking Google Form quiz, 25 questions, covering networks and hardware, protocols and IP addresses, the internet vs. the WWW, data packets and HTTP/HTTPS, and the Internet of Things. Lesson 6 runs as an assessment lesson.",
+    "homework": "Six-lesson homework booklet, four questions per lesson, with completion tables and a teacher answer guide."
+   },
+   {
+    "n": 3,
+    "title": "Using Fundamental Programming Constructs in a Block-Based Language",
+    "source": "Year 7 units / 4. Using fundamental programming constructs in a block-based language",
+    "threads": [
+     "Algorithms and data structures",
+     "Programming"
+    ],
+    "description": "In this unit pupils will build their confidence and knowledge of the key programming constructs (sequence, iteration, selection and variables). Learners will use Scratch to explore the key programming constructs firstly through editing pre-existing code and then by developing their own programs.",
+    "why": "This unit reintroduces block-based programming to establish a shared foundation, allowing teachers to identify and address gaps in knowledge. It reinforces the key programming constructs: sequence, variables, selection, and count-controlled iteration. By securing these essentials now, pupils are better prepared for more complex programming in future units, including the transition from block-based to text-based languages later in KS3.",
+    "lessons": [
+     "Sequence",
+     "Program variables",
+     "Selection",
+     "Operators",
+     "Count-controlled iteration",
+     "Problem solving using programming constructs"
+    ],
+    "prior": [
+     "Pupils should have experience of writing programs using block-based languages that use sequence, selection and iteration..",
+     "Pupils should be able to explain how algorithms describe the solution to problems.",
+     "Pupils should have experience of using events in programs as triggers to perform appropriate actions."
+    ],
+    "nc": [
+     2,
+     3
+    ],
+    "nc_text": {
+     "2": "understand several key algorithms that reflect computational thinking [for example, ones for sorting and searching]; use logical reasoning to compare the utility of alternative algorithms for the same problem",
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions"
+    },
+    "j277": [
+     {
+      "code": "2.1",
+      "title": "Algorithms"
+     },
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     }
+    ],
+    "j277_note": "Secures sequence, selection, iteration and variables in a block-based environment, so that Year 8's move to Python is a change of notation rather than of concept.",
+    "vocab": [
+     "sequence",
+     "selection",
+     "iteration",
+     "variable",
+     "operator",
+     "condition",
+     "algorithm",
+     "decomposition",
+     "debugging",
+     "sprite",
+     "event",
+     "count-controlled loop"
+    ],
+    "assessment": "30-question end-of-unit assessment in two formats: a self-marking Google Form and a printable Word version with answer key.",
+    "homework": "Two parallel booklets — standard and scaffolded — each with one 30-minute task per lesson, plus a unified teacher answer key. Scaffolding is embedded unobtrusively: word banks, sentence starters, partially completed trace tables and hint boxes."
+   },
+   {
+    "n": 4,
+    "title": "Using Media to Gain Support for a Cause",
+    "source": "Year 7 units / 3. Using media to gain support for a cause",
+    "threads": [
+     "Creating media",
+     "Effective use of tools"
+    ],
+    "description": "During this unit, pupils develop their understanding of information technology and digital literacy skills. They will use the skills learnt across the unit to create a blog post about a real-world cause that they would like to gain support for.",
+    "why": "As pupils become more independent in their use of technology, they need to understand how digital media shapes opinions and decisions. This unit helps them develop the skills to judge the reliability of online sources and understand copyright and licensing, preparing them to use content safely and ethically. By creating a blog to promote a cause, pupils practise communicating clearly and persuasively. These skills will be built on across subjects when presenting arguments, analysing sources and sharing ideas responsibly.",
+    "lessons": [
+     "Features of a blog",
+     "Using images appropriately",
+     "The credibility of sources",
+     "Research and planning a blog",
+     "Promoting a cause",
+     "Use criteria to develop a blog"
+    ],
+    "prior": [
+     "Pupils recognise that content they use might be subject to copyright and its use restricted.",
+     "Pupils can identify the audience for content they create.",
+     "Pupils can combine text and images in a single document.",
+     "Pupils can adjust properties of text to make the content suitable for an audience.",
+     "Pupils can select images to enhance a written description and meet the needs of an audience."
+    ],
+    "nc": [
+     7,
+     8
+    ],
+    "nc_text": {
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users",
+     "8": "create, reuse, revise and repurpose digital artefacts for a given audience, with attention to trustworthiness, design and usability"
+    },
+    "j277": [
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     }
+    ],
+    "j277_note": "Copyright, licensing and source credibility are the KS3 foundation of the legal and ethical strand of 1.6.",
+    "vocab": [
+     "blog",
+     "audience",
+     "purpose",
+     "copyright",
+     "Creative Commons",
+     "licence",
+     "attribution",
+     "credibility",
+     "bias",
+     "source",
+     "success criteria",
+     "call to action"
+    ],
+    "assessment": "Assessed against success criteria applied to the finished blog post.",
+    "homework": "Five homework tasks with five accompanying mark schemes. Fixed-answer questions carry model answers; open tasks carry marking guidance describing what to look for."
+   },
+   {
+    "n": 5,
+    "title": "Data Modelling",
+    "source": "Year 7 units / 6. Data modelling",
+    "threads": [
+     "Data and information",
+     "Effective use of tools"
+    ],
+    "description": "By the end of this unit pupils should be able to model data within a spreadsheet. Pupils will progress from using basic formulas to using inbuilt functions. Pupils will apply sorting and searching techniques to data and explore how conditional formatting can be used to present data effectively.",
+    "why": "Building on their understanding of variables from programming, pupils now apply this concept to organising and processing data in spreadsheets. This unit helps them see how raw data can be structured and transformed into meaningful information, allowing them to model real-life situations and draw conclusions. These skills are essential for future computing work and are widely used in subjects such as maths, science and geography, as well as in everyday tasks where data analysis supports decision-making.",
+    "lessons": [
+     "Formatting data in a spreadsheet",
+     "Spreadsheet calculations",
+     "Collecting data for a purpose",
+     "Analysing and visualising data",
+     "Sorting and searching data",
+     "Applying conditional formatting to data"
+    ],
+    "prior": [
+     "Pupils recognise that a spreadsheet stores numerical data",
+     "Pupils can enter data in to the cells of a spreadsheet",
+     "Pupils can identify different types of graphs and how to read them"
+    ],
+    "nc": [
+     7
+    ],
+    "nc_text": {
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     },
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     }
+    ],
+    "j277_note": "Introduces data types, cell referencing and formula logic — the reasoning behind 2.2 data types and operators — in a familiar applied context.",
+    "vocab": [
+     "spreadsheet",
+     "cell",
+     "row",
+     "column",
+     "cell reference",
+     "formula",
+     "function",
+     "SUM",
+     "AVERAGE",
+     "COUNT",
+     "sort",
+     "filter",
+     "chart",
+     "data type",
+     "validation"
+    ],
+    "assessment": "45-question multiple-choice end-of-unit assessment, auto-marked via Google Forms, filling a full lesson. Question distribution: formatting (8), calculations (10), collecting data (8), analysing and visualising (10), sorting and searching (9).",
+    "homework": "One 30-minute paper-based homework per content lesson, with a teacher answer key.",
+    "note": "Conditional formatting is deliberately outside the scope of this unit."
+   },
+   {
+    "n": 6,
+    "title": "Physical Computing Using the micro:bit",
+    "source": "Year 7 units / 5. Physical computing using the micro:bit",
+    "threads": [
+     "Algorithms and data structures",
+     "Programming"
+    ],
+    "description": "In this unit, pupils will plan, develop, and evaluate a physical computing project. They will break down the project into smaller, easier-to-solve tasks. They will put these plans into action to create a working prototype that they use to evaluate their successes and identify future improvements.",
+    "why": "Having already explored the core programming constructs of sequence, selection and iteration, pupils are now ready to apply these skills to real-world contexts through physical computing. This unit shows them that programming isn’t limited to on-screen outputs, helping them understand how code can control devices in the physical world. Pupils also develop their approach to project work by planning, implementing and reviewing solutions which are techniques that are valuable across subjects and essential for tackling more complex computing challenges in the future.",
+    "lessons": [
+     "Creating programs on a physical computing device",
+     "Using input and output",
+     "Connecting micro:bits to other hardware",
+     "Designing a physical computing project",
+     "Developing a physical computing project",
+     "Reflecting on a physical computing project"
+    ],
+    "prior": [
+     "Pupils will have created block-based programs that make use of subroutines.",
+     "Pupils will have programmed a physical computing device.",
+     "Pupils will have designed, implemented and reviewed a practical project."
+    ],
+    "nc": [
+     1,
+     3,
+     5
+    ],
+    "nc_text": {
+     "1": "design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems",
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions",
+     "5": "understand the hardware and software components that make up computer systems, and how they communicate with one another and with other systems"
+    },
+    "j277": [
+     {
+      "code": "1.1",
+      "title": "Systems architecture"
+     },
+     {
+      "code": "2.1",
+      "title": "Algorithms"
+     },
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     }
+    ],
+    "j277_note": "First encounter with input, process and output as a system, and with programming a device rather than a screen — groundwork for 1.1 systems architecture.",
+    "vocab": [
+     "microcontroller",
+     "input",
+     "output",
+     "sensor",
+     "actuator",
+     "embedded system",
+     "physical computing",
+     "flash",
+     "simulator",
+     "variable",
+     "iteration",
+     "project brief"
+    ],
+    "assessment": "Assessed on the designed and developed physical computing project, with a written reflection.",
+    "homework": "To be developed."
+   }
+  ],
+  "Year 8": [
+   {
+    "n": 1,
+    "title": "Online Safety",
+    "source": "Year 10 units (Core) / 1. Online safety",
+    "threads": [
+     "Impact of technology",
+     "Safety and security"
+    ],
+    "description": "In this unit, pupils will evaluate the online world and their own internet activity for safety concerns in order to equip themselves with tools for protecting their online identities. They key takeaway of this unit is a repository of practical, risk-reducing steps that pupils can implement online.",
+    "why": "As most pupils already have an online presence and experience of digital spaces, this unit encourages them to think more critically about their own behaviour and the actions of others online. It challenges pupils to engage with important debates, such as the balance between personal privacy and the powers of organisations or governments. By developing their own ideas and opinions, pupils grow into thoughtful and responsible digital citizens, able to navigate the online world with confidence and an understanding of their rights and responsibilities.",
+    "lessons": [
+     "Being safe online",
+     "Online reputation",
+     "Big data and data protection",
+     "Right to access",
+     "Social media bubbles",
+     "End-of-unit assessment"
+    ],
+    "prior": [
+     "Pupils can recognise how they should conduct themselves online.",
+     "Pupils can identify steps to take to ensure they use technology safely and responsibly.",
+     "Pupils understand that there are laws in place to deter people from misusing technology."
+    ],
+    "oak_lessons": [
+     "Being safe online",
+     "Online reputation",
+     "Big data and data protection",
+     "Right to privacy",
+     "Illegal content",
+     "Right to access",
+     "Social media bubbles",
+     "Protecting myself online"
+    ],
+    "nc": [
+     9
+    ],
+    "nc_text": {
+     "9": "understand a range of ways to use technology safely, respectfully, responsibly and securely, including protecting their online identity and privacy; recognise inappropriate content, contact and conduct, and know how to report concerns"
+    },
+    "j277": [
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     },
+     {
+      "code": "1.4",
+      "title": "Network security"
+     }
+    ],
+    "j277_note": "Data protection, the right to access and the reputational consequences of online activity map directly onto the legal and ethical content of 1.6.",
+    "vocab": [
+     "online reputation",
+     "digital footprint",
+     "big data",
+     "data protection",
+     "GDPR",
+     "personal data",
+     "right to access",
+     "subject access request",
+     "filter bubble",
+     "echo chamber",
+     "algorithm",
+     "targeted advertising"
+    ],
+    "assessment": "Lesson 6 is the end-of-unit assessment: 50 multiple-choice questions delivered as a Google Form, 10 per topic across five labelled sections. Quiz mode, one point per question, with grade release held for manual teacher review.",
+    "homework": "Five homework sheets, one per topic, each around 30 minutes: six quiz questions (short answer, true/false and multiple choice) plus an extended response, with a teacher answer key.",
+    "note": "Adapted from Oak's eight-lesson Year 10 Core unit, cut to five teaching lessons plus an assessment. Right to privacy, Illegal content and Protecting myself online are not taught as separate lessons; their content is carried within the five that remain."
+   },
+   {
+    "n": 2,
+    "title": "Developing for the Web",
+    "source": "Year 8 units / 3. Developing for the Web",
+    "threads": [
+     "Creating media",
+     "Programming"
+    ],
+    "description": "In this unit, pupils will explore the technologies that make up the internet and WWW. Starting with an exploration of the building blocks of the WWW, HTML, and CSS. They will construct a fully functioning website and discover how websites are catalogued for effective retrieval by search engines.",
+    "why": "As pupils become more independent digital learners, it is important that they understand how the web works, not just how to use it. This unit introduces the building blocks of websites, HTML and CSS, helping pupils see how content is created and structured. By making their own website, they grow in confidence as digital creators while also learning how search engines organise and retrieve information. These skills strengthen problem-solving, creativity and digital literacy, supporting future learning across subjects.",
+    "lessons": [
+     "Website building blocks",
+     "Adding images to a web page",
+     "Introduction to CSS",
+     "Search engines and results rankings",
+     "Using search and web navigation effectively",
+     "Creating a custom website"
+    ],
+    "prior": [
+     "Pupils understand that web pages are rendered in web browsers.",
+     "Pupils recognise the features of effective website layout.",
+     "Pupils have created web pages using web page design software.",
+     "Pupils understand how search results are indexed by search engines."
+    ],
+    "nc": [
+     3,
+     7,
+     8
+    ],
+    "nc_text": {
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions",
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users",
+     "8": "create, reuse, revise and repurpose digital artefacts for a given audience, with attention to trustworthiness, design and usability"
+    },
+    "j277": [
+     {
+      "code": "1.3",
+      "title": "Computer networks, connections and protocols"
+     },
+     {
+      "code": "2.5",
+      "title": "Programming languages and Integrated Development Environments"
+     }
+    ],
+    "j277_note": "Text-based authoring in HTML and CSS builds the syntax discipline that 2.5 assumes, and situates the web within the network content of 1.3.",
+    "vocab": [
+     "HTML",
+     "CSS",
+     "tag",
+     "element",
+     "attribute",
+     "hyperlink",
+     "anchor",
+     "stylesheet",
+     "selector",
+     "property",
+     "search engine",
+     "ranking",
+     "index",
+     "web server"
+    ],
+    "assessment": "Six-criteria analytic rubric, 30 marks plus 2 optional bonus, weighted towards build skills across four performance levels. Supplied as an Excel workbook structured for Google Classroom import.",
+    "homework": "Five-lesson retrieval-focused booklet. Each homework follows the same structure — multiple choice, fill-in-the-gaps, matching, written explanation, optional coding challenge — with a full teacher answer key."
+   },
+   {
+    "n": 3,
+    "title": "Mobile App Development",
+    "source": "Year 8 units / 5. Mobile app development",
+    "threads": [
+     "Design and development",
+     "Programming"
+    ],
+    "description": "This unit takes pupils from designer to developer in order to create their own mobile app. Using App Lab from code.org, learners will familiarise themselves with the coding environment and have an opportunity to build on the programming concepts they used in previous units to undertake a project.",
+    "why": "As pupils’ programming skills develop, they are ready to take on a more ambitious project that brings together the key constructs they have previously learned. This unit introduces a new block-based environment, giving pupils the chance to apply their knowledge of sequence, selection, iteration, and variables in a fresh context. By designing and building a mobile app, they experience the full process of planning, problem-solving and refining their work, showing them how programming can be used to create practical, real-world solutions.",
+    "lessons": [
+     "Introduction to app design",
+     "Events and interactions",
+     "User inputs and variables",
+     "Multiple screens and navigation",
+     "App development project part 1",
+     "App development project part 2"
+    ],
+    "prior": [
+     "Pupils have experience of creating block-based programs that use sequence, selection and iteration.",
+     "Pupils have designed programs based the requirements of a project.",
+     "Pupils have created programs that allow data to be input, stored in a variable and then output once processed."
+    ],
+    "nc": [
+     3,
+     7
+    ],
+    "nc_text": {
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions",
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "2.1",
+      "title": "Algorithms"
+     },
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     },
+     {
+      "code": "2.3",
+      "title": "Producing robust programs"
+     }
+    ],
+    "j277_note": "Event-driven design, user input handling and multi-screen navigation introduce the design-then-build discipline formalised in 2.3.",
+    "vocab": [
+     "app",
+     "user interface",
+     "event",
+     "event handler",
+     "input",
+     "output",
+     "variable",
+     "screen",
+     "navigation",
+     "design brief",
+     "user testing",
+     "prototype"
+    ],
+    "assessment": "Assessed on the two-part app development project.",
+    "homework": "One 30-minute retrieval homework per lesson in a single combined document, each following a four-part structure — key-word matching, short answers, ordering tasks, apply-it question — plus an optional hands-on App Lab practical. Teacher answer key included, marked for removal before distribution."
+   },
+   {
+    "n": 4,
+    "title": "Introduction to Python Programming",
+    "source": "Year 8 units / 6. Introduction to Python programming",
+    "threads": [
+     "Programming"
+    ],
+    "description": "This unit introduces pupils to text-based programming with Python. Pupils start with programs involving input and output, and gradually move on to using arithmetic operations, randomness, selection, and iteration. Pupils will consolidate these skills in a project at the end of the unit.",
+    "why": "Having built confidence with key programming constructs through block-based programming, pupils are now ready to apply these skills in a text-based language. This shift helps them understand how the same principles of sequence, selection, iteration, and variables are expressed in a different environment, developing their precision and problem-solving. Learning this now prepares pupils to take on more complex challenges, such as processing and analysing data stored in structures, which they will explore in later units.",
+    "lessons": [
+     "Writing a text-based program",
+     "Working with numerical inputs",
+     "Using selection",
+     "Selection with multiple paths",
+     "Iteration using while loops",
+     "Building a program using control structures"
+    ],
+    "prior": [
+     "Pupils have some prior experience of programming, possibly in a block-based context.",
+     "Pupils should be aware that the sequence of commands can affect the outcome of the program.",
+     "Pupils are aware of the key programming constructs of sequence, selection, iteration and variables.",
+     "Pupils should be familiar with arithmetic operators."
+    ],
+    "nc": [
+     3
+    ],
+    "nc_text": {
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions"
+    },
+    "j277": [
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     },
+     {
+      "code": "2.5",
+      "title": "Programming languages and Integrated Development Environments"
+     }
+    ],
+    "j277_note": "The transition from block-based to text-based programming. Sequence, selection and iteration are re-expressed in Python syntax, which is the language of the 2.2 content and the Component 02 Section B practical.",
+    "vocab": [
+     "Python",
+     "IDLE",
+     "syntax",
+     "syntax error",
+     "logic error",
+     "variable",
+     "input()",
+     "print()",
+     "int()",
+     "casting",
+     "selection",
+     "if/elif/else",
+     "comparison operator",
+     "logical operator",
+     "while loop",
+     "flag",
+     "condition"
+    ],
+    "assessment": "22-mark Google Form quiz with 20 auto-graded questions mapped across all six lessons, plus a printable Word reference copy with answer key and grade bands. Vending machine task rubric: 7 criteria, 28 marks, 1-4 scale, also available as an interactive Excel markbook.",
+    "homework": "One consolidation homework per lesson (~30 minutes): recall tasks, trace and spot-the-error tasks, short coding tasks, optional starred challenges, and a teacher answer key."
+   },
+   {
+    "n": 5,
+    "title": "Data Representation: Text and Numbers",
+    "source": "Year 8 units / 4. Data representation: text and numbers",
+    "threads": [
+     "Data and information"
+    ],
+    "description": "In this unit pupils will be introduced to binary digits and how they can be used to represent text and numbers. Pupils will perform conversions between binary and decimal numbers and how binary can be used to represent characters. They will explore how cryptography can be used to protect data.",
+    "why": "At this stage, pupils are ready to move beyond simply using technology to understanding how it works at its core. Binary underpins everything a computer does, from processing text and numbers to storing data. By comparing it with the familiar decimal system, pupils can begin to see how computers represent information differently from humans. Learning about binary now gives pupils the insight to make sense of everyday technology, such as file sizes measured in kilobytes, megabytes and gigabytes, helping them become more informed and confident users of digital systems.",
+    "lessons": [
+     "Representing information",
+     "Representing characters",
+     "Binary digits",
+     "Numbers in binary",
+     "Measurements of data",
+     "Turing's mug cryptography challenge"
+    ],
+    "prior": [
+     "Pupils recognise that data represents facts and objects.",
+     "Pupils can identify different formats of data.",
+     "Pupils recognise that instructions in computer systems are represented in binary.",
+     "Pupils can explain how simple logic circuits work."
+    ],
+    "nc": [
+     4,
+     6
+    ],
+    "nc_text": {
+     "4": "understand simple Boolean logic [for example, AND, OR and NOT] and some of its uses in circuits and programming; understand how numbers can be represented in binary, and be able to carry out simple operations on binary numbers [for example, binary addition, and conversion between binary and decimal]",
+     "6": "understand how instructions are stored and executed within a computer system; understand how data of various types (including text, sounds and pictures) can be represented and manipulated digitally, in the form of binary digits"
+    },
+    "j277": [
+     {
+      "code": "1.2",
+      "title": "Memory and storage"
+     }
+    ],
+    "j277_note": "Binary, denary and character encoding are examined content in 1.2, and units of data storage recur in every file-size calculation at GCSE.",
+    "vocab": [
+     "binary",
+     "denary",
+     "bit",
+     "nibble",
+     "byte",
+     "kilobyte",
+     "megabyte",
+     "gigabyte",
+     "ASCII",
+     "Unicode",
+     "character set",
+     "character code",
+     "place value",
+     "conversion",
+     "overflow"
+    ],
+    "assessment": "Assessed by end-of-unit quiz.",
+    "homework": "One retrieval and practice homework per lesson (~30 minutes each) in a single combined document, self-contained with ASCII and Morse code reference charts embedded, and an answer key at the end."
+   },
+   {
+    "n": 6,
+    "title": "Using Data Science and AI Tools Effectively and Safely",
+    "source": "Year 10 units (Core) / 3. Using data science and AI tools effectively and safely",
+    "threads": [
+     "Artificial intelligence",
+     "Impact of technology"
+    ],
+    "description": "In this unit, pupils will explore how data science and AI tools are having an impact on our daily lives. They will develop an understanding of how to use these tools effectively as well as an awareness of the issues relating to trust, bias and misinformation.",
+    "why": "AI, machine learning and data science are part of pupils’ daily lives through the apps, websites and tools they already use at home and in school. This unit helps them reflect on these experiences and understand how such technologies shape the world around them. Pupils learn to use these tools effectively while recognising potential risks, developing the judgment needed to become safe, discerning and responsible users of emerging digital systems.",
+    "lessons": [
+     "AI in our world today",
+     "Uses of predictive and generative AI",
+     "Chatbot applications and other LLMs",
+     "Getting the most out of an LLM",
+     "Bias and accuracy in machine learning",
+     "Understanding image generators"
+    ],
+    "prior": [
+     "Pupils recognise that computer systems follow instructions to carry out tasks.",
+     "Pupils understand that AI is computer systems that are designed to perform tasks typically associated with human intelligence.",
+     "Pupils recognise that AI tools can be used to generate content.",
+     "Pupils have experience of modelling and processing data."
+    ],
+    "oak_lessons": [
+     "AI in our world today",
+     "Uses of predictive and generative AI",
+     "Chatbot applications and other LLMs",
+     "Getting the most out of an LLM",
+     "Bias and accuracy in machine learning",
+     "Understanding image generators",
+     "Deepfakes and trust",
+     "Risk mitigation of AI"
+    ],
+    "nc": [
+     7
+    ],
+    "nc_text": {
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     }
+    ],
+    "j277_note": "Bias, accuracy, deepfakes and risk mitigation give pupils the evaluative vocabulary that the extended-response question in Component 01 rewards.",
+    "vocab": [
+     "artificial intelligence",
+     "machine learning",
+     "predictive AI",
+     "generative AI",
+     "large language model",
+     "prompt",
+     "prompt engineering",
+     "training data",
+     "bias",
+     "accuracy",
+     "hallucination",
+     "image generator",
+     "diffusion"
+    ],
+    "assessment": "To be developed.",
+    "homework": "To be developed.",
+    "note": "Adapted from Oak's eight-lesson Year 10 Core unit. Deepfakes and trust, and Risk mitigation of AI, are not taught here — deepfakes and image manipulation are met in the Year 9 images and sound unit, and the risk and mitigation content is taken up at Key Stage 4."
+   }
+  ],
+  "Year 9": [
+   {
+    "n": 1,
+    "title": "Introduction to Cybersecurity",
+    "source": "Year 9 units / 5. Introduction to cybersecurity",
+    "threads": [
+     "Networks",
+     "Safety and security"
+    ],
+    "description": "This unit takes pupils on a journey of discovery about techniques used by cybercriminals to steal data, disrupt systems and infiltrate networks. They will consider the value of data to organisations and what it is used for. They will look at social engineering techniques and common cybercrimes.",
+    "why": "As pupils grow older and begin using a wider range of digital tools, they increasingly interact with networks that connect across the world. This unit develops their understanding of online threats, moving beyond the basic risks they have encountered so far. Pupils learn about the scale of these threats at individual, organisational and governmental levels and, crucially, the steps they can take to protect themselves and their data. This empowers them to act safely and responsibly, both in their personal lives and in future work settings where secure practices are essential.",
+    "lessons": [
+     "Protecting personal data",
+     "Social engineering",
+     "Hacking and brute force attacks",
+     "Malicious software",
+     "Protecting networks from security threats",
+     "Preventing cyber attacks"
+    ],
+    "prior": [
+     "Pupils understand what networks are including the internet.",
+     "Pupils recognise ways they should stay safe online.",
+     "Pupils understand what computer systems are and why they need to communicate."
+    ],
+    "nc": [
+     9
+    ],
+    "nc_text": {
+     "9": "understand a range of ways to use technology safely, respectfully, responsibly and securely, including protecting their online identity and privacy; recognise inappropriate content, contact and conduct, and know how to report concerns"
+    },
+    "j277": [
+     {
+      "code": "1.4",
+      "title": "Network security"
+     },
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     }
+    ],
+    "j277_note": "The closest KS3 analogue of an examined GCSE topic. Social engineering, malware, brute force and network protection are 1.4 content taught at KS3 depth.",
+    "vocab": [
+     "cybersecurity",
+     "personal data",
+     "social engineering",
+     "phishing",
+     "pretexting",
+     "shouldering",
+     "blagging",
+     "hacking",
+     "brute force attack",
+     "malware",
+     "virus",
+     "worm",
+     "trojan",
+     "ransomware",
+     "firewall",
+     "penetration testing",
+     "encryption"
+    ],
+    "assessment": "30 auto-marked questions across six topic sections plus one 8-mark extended response, delivered as a Google Form. Levelled mark scheme for the extended answer with three descriptor bands, indicative content and common misconceptions. Lesson 6 is a compressed teaching block (~25 minutes on ransomware, WannaCry and LockBit, and a 'can security ever be complete?' discussion) followed by a ~30-minute exam.",
+    "homework": "Five retrieval-based homeworks, one per lesson, with an accompanying teacher mark scheme."
+   },
+   {
+    "n": 2,
+    "title": "Data Representation: Images and Sound",
+    "source": "Year 9 units / 4. Data representation: images and sound",
+    "threads": [
+     "Data and information"
+    ],
+    "description": "In this unit, pupils will focus on digital media such as images and sounds, and discover the binary digits that lie beneath these types of media. They will explore how images and sound can be manipulated and consider the link between quality of images and sound and the resulting file size.",
+    "why": "As pupils’ understanding of binary develops, they are ready to explore how it underpins the digital media they use every day. This unit helps them see that images and sound are not just files on a screen but are made up of binary digits that represent visual and audio data. By uncovering the hidden structure behind digital media, pupils gain a deeper appreciation of how technology works and why quality, size and format matter. This knowledge supports more informed and creative use of digital tools as they move on to complex media projects.",
+    "lessons": [
+     "Representing images with binary data",
+     "File size of digital images",
+     "Manipulating digital images",
+     "Representing sound with binary data",
+     "Editing sound",
+     "File size and compression"
+    ],
+    "prior": [
+     "Pupils recognise that computers use binary.",
+     "Pupils know that binary sequences are made from bits.",
+     "Pupils recognise that binary digits (bits) have two states, 1 and 0.",
+     "Pupils know that computers use binary to represent data and instructions.",
+     "Pupils can identify the impacts technology has on the way that people live their lives."
+    ],
+    "nc": [
+     6
+    ],
+    "nc_text": {
+     "6": "understand how instructions are stored and executed within a computer system; understand how data of various types (including text, sounds and pictures) can be represented and manipulated digitally, in the form of binary digits"
+    },
+    "j277": [
+     {
+      "code": "1.2",
+      "title": "Memory and storage"
+     }
+    ],
+    "j277_note": "Resolution, colour depth, sample rate, bit depth and compression are 1.2 content, and the file-size calculations are the same calculations pupils will sit at GCSE.",
+    "vocab": [
+     "pixel",
+     "resolution",
+     "colour depth",
+     "bits per pixel",
+     "metadata",
+     "sample",
+     "sample rate",
+     "bit depth",
+     "mono",
+     "stereo",
+     "compression",
+     "lossy",
+     "lossless",
+     "file size"
+    ],
+    "assessment": "39-mark Google Form quiz in quiz mode: auto-marked multiple-choice and short-answer questions across six sections, plus manually marked extended responses with a logged mark scheme. Lesson 6 is a hybrid session — a ~15-minute compression introduction followed by a 35-40 minute assessment.",
+    "homework": "To be developed."
+   },
+   {
+    "n": 3,
+    "title": "Python Programming with Sequences of Data",
+    "source": "Year 9 units / 1. Python programming with sequences of data",
+    "threads": [
+     "Algorithms and data structures",
+     "Programming"
+    ],
+    "description": "In this unit pupils will discover how data is represented and processed in sequences, such as lists and strings. They will cover a spectrum of operations on sequences of data, that range from accessing an individual element to manipulating the entire sequence though real world practical activites.",
+    "why": "Having already written Python programs that handle input, output, calculations and control flow, pupils are now ready to explore how data can be stored and processed in sequences such as strings and lists. This unit develops their understanding of how to work with collections of data, moving from accessing individual elements to manipulating entire sets. Learning these techniques at this stage helps pupils see how structured data makes programs more efficient, preparing them to solve increasingly complex problems where handling and organising information is essential.",
+    "lessons": [
+     "Creating lists in Python",
+     "Python list operations",
+     "Iterating through data structures",
+     "Using for loops to iterate data structures",
+     "Mathematical operations in data structures",
+     "Data structure projects in Python"
+    ],
+    "prior": [
+     "Pupils can write text-based programs that use sequence, selection and iteration structures.",
+     "Pupils can create and use variables in text-based programs.",
+     "Pupils can input and output data in text-based programs."
+    ],
+    "nc": [
+     2,
+     3
+    ],
+    "nc_text": {
+     "2": "understand several key algorithms that reflect computational thinking [for example, ones for sorting and searching]; use logical reasoning to compare the utility of alternative algorithms for the same problem",
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions"
+    },
+    "j277": [
+     {
+      "code": "2.1",
+      "title": "Algorithms"
+     },
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     }
+    ],
+    "j277_note": "Lists and iteration over data structures are explicitly named in the KS3 programme of study and are core 2.2 content; the projects rehearse the Component 02 Section B style of task.",
+    "vocab": [
+     "list",
+     "array",
+     "index",
+     "element",
+     "append",
+     "remove",
+     "length",
+     "for loop",
+     "iteration",
+     "traversal",
+     "accumulator",
+     "data structure",
+     "nested loop"
+    ],
+    "assessment": "Assessed on the Python data structure project.",
+    "homework": "To be developed."
+   },
+   {
+    "n": 4,
+    "title": "3D Animation",
+    "source": "Year 9 units / 2. 3D animation",
+    "threads": [
+     "Creating media",
+     "Effective use of tools"
+    ],
+    "description": "In this unit pupils will discover how to create 3D animations using industry-standard software.  They will gain a greater understanding of how 3D animation is used to make the media products that we consume. They will explore the basics of modelling, texturing, animating to create 3D models.",
+    "why": "Having previously created and manipulated 2D vector images, pupils are now ready to explore how these skills translate into three dimensions. This unit introduces the fundamentals of 3D modelling and animation, showing how shapes, textures and movement combine to create realistic digital worlds. By working with tools used by professionals, pupils develop an understanding of how complex animations are built. Learning this now helps them appreciate the creative and technical processes behind modern media, preparing them to take on more ambitious digital projects with confidence and precision.",
+    "lessons": [
+     "Move, rotate, scale, colour",
+     "Keyframe animation and parenting objects",
+     "Complex models and colours",
+     "Organic modelling",
+     "Lighting and cameras",
+     "Render and export animations"
+    ],
+    "prior": [
+     "Pupils understand what vector images are and have experience of creating them.",
+     "Pupils can find and use suitable digital artefacts.",
+     "Pupils can recognise the limitations placed on digital artefacts they find."
+    ],
+    "nc": [
+     7,
+     8
+    ],
+    "nc_text": {
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users",
+     "8": "create, reuse, revise and repurpose digital artefacts for a given audience, with attention to trustworthiness, design and usability"
+    },
+    "j277": [
+     {
+      "code": "1.2",
+      "title": "Memory and storage"
+     }
+    ],
+    "j277_note": "A creative project unit rather than a GCSE content unit. It reinforces coordinate geometry, file formats and rendering trade-offs, and sustains the creating-media thread for pupils who will not take GCSE Computer Science.",
+    "vocab": [
+     "3D model",
+     "mesh",
+     "vertex",
+     "edge",
+     "face",
+     "transform",
+     "translate",
+     "rotate",
+     "scale",
+     "keyframe",
+     "parenting",
+     "organic modelling",
+     "lighting",
+     "camera",
+     "render",
+     "export"
+    ],
+    "assessment": "Assessed on the rendered and exported animation.",
+    "homework": "To be developed."
+   },
+   {
+    "n": 5,
+    "title": "Using Data Science",
+    "source": "Year 9 units / 3. Using data science",
+    "threads": [
+     "Data and information",
+     "Design and development"
+    ],
+    "description": "In this unit pupils will discover how to use data to investigate problems and make changes to the world around them. Pupils will be exposed to both global and local data sets and gain an understanding of how visualising data can help with the process of identifying patterns and trends.",
+    "why": "As pupils encounter more data in their daily lives, it is important they understand how it can be used to answer questions and drive meaningful change. This unit introduces the principles of data science, showing pupils how systematic approaches can reveal patterns and insights that might otherwise be missed. By exploring how data informs decisions within their school community, pupils see the value of evidence-based thinking and develop the critical skills needed to interpret information thoughtfully and responsibly.",
+    "lessons": [
+     "Using data to support decision making",
+     "Global data",
+     "The investigative cycle",
+     "Capturing data to investigate an issue",
+     "Data cleansing",
+     "Using data to make recommendations"
+    ],
+    "prior": [
+     "Pupils recognise the forms that data can take.",
+     "Pupils understand that data needs to be processed in to information to be useful.",
+     "Pupils recognise the differences between primary and secondary data.",
+     "Pupils understand how numerical data can be represented graphically."
+    ],
+    "nc": [
+     7
+    ],
+    "nc_text": {
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     },
+     {
+      "code": "2.2",
+      "title": "Programming fundamentals"
+     }
+    ],
+    "j277_note": "The investigative cycle and data cleansing develop the data-handling reasoning behind 2.2 data types, and the societal framing supports 1.6.",
+    "vocab": [
+     "data science",
+     "dataset",
+     "investigative cycle",
+     "hypothesis",
+     "data capture",
+     "data cleansing",
+     "anomaly",
+     "visualisation",
+     "correlation",
+     "trend",
+     "recommendation",
+     "open data"
+    ],
+    "assessment": "Assessed on the data investigation and its recommendations.",
+    "homework": "To be developed."
+   },
+   {
+    "n": 6,
+    "title": "Machine Learning Using the micro:bit",
+    "source": "Year 9 units / 6. Machine learning using the micro:bit",
+    "threads": [
+     "Artificial intelligence",
+     "Computing systems",
+     "Programming"
+    ],
+    "description": "This unit is designed to develop pupils programming skills in a new engaging context: physical computing, using the BBC micro:bit. They will get acquainted with the host of components built into the micro:bit, and write simple programs that use these components to interact with the physical world.",
+    "why": "Applying programming skills to a physical computing context deepens pupils’ understanding of how code influences the world around them. This approach develops essential problem-solving, logical thinking and creative skills, helping pupils to see programming as more than just on-screen activity. By connecting their code to real, tangible outcomes, pupils gain a clearer sense of technology’s impact and begin to appreciate its role in shaping everyday life in an increasingly digital society.",
+    "lessons": [
+     "AI and machine learning applications",
+     "Gathering data for a model",
+     "Training and testing a model",
+     "Improving a model",
+     "Building a data-driven application",
+     "Documenting and evaluating a machine learning model"
+    ],
+    "prior": [
+     "Pupils have experience of creating block-based programs.",
+     "Pupils understand how physical computers interact and control the environment they are used in.",
+     "Pupils can identify and use sequence, selection and iteration as part of programs.",
+     "Pupils can recognise and use variables and data structures in programs.",
+     "Pupils can explain what computer systems are."
+    ],
+    "nc": [
+     1,
+     3,
+     7
+    ],
+    "nc_text": {
+     "1": "design, use and evaluate computational abstractions that model the state and behaviour of real-world problems and physical systems",
+     "3": "use 2 or more programming languages, at least one of which is textual, to solve a variety of computational problems; make appropriate use of data structures [for example, lists, tables or arrays]; design and develop modular programs that use procedures or functions",
+     "7": "undertake creative projects that involve selecting, using, and combining multiple applications, preferably across a range of devices, to achieve challenging goals, including collecting and analysing data and meeting the needs of known users"
+    },
+    "j277": [
+     {
+      "code": "1.1",
+      "title": "Systems architecture"
+     },
+     {
+      "code": "2.1",
+      "title": "Algorithms"
+     },
+     {
+      "code": "1.6",
+      "title": "Ethical, legal, cultural and environmental impacts of digital technology"
+     }
+    ],
+    "j277_note": "Closes KS3 by returning to the micro:bit from Year 7 with a model-building task, and gives pupils a concrete account of what machine learning actually is before they meet AI in 1.6.",
+    "vocab": [
+     "machine learning",
+     "model",
+     "training data",
+     "testing data",
+     "label",
+     "feature",
+     "classification",
+     "accuracy",
+     "overfitting",
+     "bias",
+     "evaluation",
+     "data-driven application"
+    ],
+    "assessment": "Assessed on the data-driven application, its documentation and its evaluation.",
+    "homework": "To be developed."
+   }
+  ]
+ },
+ "j277GapNote": {
+  "1.5": "Formal treatment in Year 10 — see the boundary note below",
+  "2.4": "Met through programming in 7.3, 8.4 and 9.3; gates and truth tables in Year 10"
+ }
+}</script>
+
+<div class="mast">
+  <div class="wrap">
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1 id="mtitle"></h1>
+    <div class="sub" id="msub"></div>
+    <div class="meta" id="mmeta"></div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="shell">
+    <nav class="toc" id="toc" aria-label="Contents"></nav>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+(function(){
+  const B = JSON.parse(document.getElementById('data').textContent);
+  const YEARS = ['Year 7','Year 8','Year 9'];
+  const TERMS = ['Autumn 1','Autumn 2','Spring 1','Spring 2','Summer 1','Summer 2'];
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const rich = s => esc(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+  const paras = s => s.split('\n\n').map(t=>`<p>${rich(t)}</p>`).join('');
+  const yn = y => y.slice(-1);
+  const uid = (y,u) => `u${yn(y)}-${u.n}`;
+  const allUnits = () => YEARS.flatMap(y => B.years[y].map(u => ({y,u})));
+
+  // ---------- masthead ----------
+  document.getElementById('eyebrow').textContent = B.school;
+  document.getElementById('mtitle').textContent = B.title;
+  document.getElementById('msub').textContent = B.subtitle;
+  document.getElementById('mmeta').innerHTML = [
+    `<span><b>${B.year}</b></span>`,
+    `<span>${esc(B.authorRole)}</span>`,
+    `<span><b>18</b> units · <b>108</b> lessons · one 60-minute lesson per week</span>`,
+  ].join('');
+
+  // ---------- sections ----------
+  const S = [];
+  const add = (id,label,html,group) => S.push({id,label,html,group});
+
+  add('how','How to use this document', `<h2 class="sec">How to use this document</h2><div class="prose sec-note">${paras(B.howToUse)}</div>`,'Curriculum');
+
+  add('intent','Curriculum intent',
+    `<h2 class="sec">Curriculum intent</h2><div class="defs">` +
+    B.intent.map(([t,b])=>`<div><h4>${esc(t)}</h4><div class="prose">${paras(b)}</div></div>`).join('') +
+    `</div>`,'Curriculum');
+
+  add('principles','Curriculum principles',
+    `<h2 class="sec">Curriculum principles</h2><p class="sec-note">Seven principles govern the design of this curriculum. They are the reasons behind the decisions recorded in the rest of this document.</p><div class="defs">` +
+    B.principles.map(([t,b])=>`<div><h4>${esc(t)}</h4><div class="prose">${paras(b)}</div></div>`).join('') +
+    `</div>`,'Curriculum');
+
+  // threads + weave matrix
+  const units = allUnits();
+  const weave = `<div class="weave-scroll"><table class="weave">
+    <thead>
+      <tr class="yrhd"><th class="rowhd"></th>${YEARS.map((y,i)=>`${i?'<th class="sep"></th>':''}<th colspan="6">${esc(y)}</th>`).join('')}</tr>
+      <tr><th class="rowhd"></th>${YEARS.map((y,i)=>`${i?'<th class="sep"></th>':''}${B.years[y].map(u=>`<th class="colhd" title="${esc(u.title)}">${yn(y)}.${u.n}</th>`).join('')}`).join('')}</tr>
+    </thead>
+    <tbody>${B.threads.map(([name])=>`<tr><th class="rowhd">${esc(name)}</th>${
+      YEARS.map((y,i)=>`${i?'<td class="sep"></td>':''}${B.years[y].map(u=>{
+        const on=(u.threads||[]).includes(name);
+        return `<td class="u"><span class="dot${on?' on':''}" title="${on?esc(yn(y)+'.'+u.n+' '+u.title):''}"></span></td>`;
+      }).join('')}`).join('')
+    }</tr>`).join('')}</tbody></table></div>`;
+
+  add('threads','Threads',
+    `<h2 class="sec">Threads</h2><div class="prose sec-note">${paras(B.threadsIntro)}</div>
+     <h3 class="sub">How the threads weave through Key Stage 3</h3>
+     <p class="sec-note">Each row is a thread; each column is a unit, in teaching order. A filled dot means that unit carries that thread.</p>
+     ${weave}
+     <h3 class="sub">What each thread covers</h3>
+     <div class="defs">${B.threads.map(([n,d])=>`<div><h4>${esc(n)}</h4><p>${esc(d)}</p></div>`).join('')}</div>`,'Curriculum');
+
+  add('delivery','Curriculum delivery',
+    `<h2 class="sec">Curriculum delivery</h2><div class="prose sec-note">${paras(B.delivery)}</div>
+     <h3 class="sub">Assessment and homework</h3><div class="prose sec-note">${paras(B.assessment)}</div>`,'Curriculum');
+
+  // NC coverage
+  const ncUnits = n => units.filter(({u})=>u.nc.includes(Number(n))).map(({y,u})=>`${yn(y)}.${u.n}`);
+  add('nc','National Curriculum coverage',
+    `<h2 class="sec">National Curriculum coverage</h2><p class="sec-note">${esc(B.ncIntro)}</p>
+     <div class="tbl-scroll"><table class="data"><thead><tr><th></th><th>Pupils should be taught to…</th><th>Units</th></tr></thead>
+     <tbody>${Object.keys(B.nc).map(k=>`<tr><td class="n">${k}</td><td>${esc(B.nc[k])}</td><td class="refs">${ncUnits(k).join(', ')}</td></tr>`).join('')}
+     </tbody></table></div>
+     <p class="sec-note" style="font-size:13.5px;color:var(--ink-3)">Unit references are given as year.unit — so 8.4 is Year 8, Unit 4.</p>`,'Curriculum');
+
+  // KS4
+  const jUnits = c => units.filter(({u})=>u.j277.some(x=>x.code===c)).map(({y,u})=>`${yn(y)}.${u.n}`);
+  add('ks4','Progression to Key Stage 4',
+    `<h2 class="sec">Progression to Key Stage 4</h2><div class="prose sec-note">${paras(B.ks4Intro)}</div>
+     <h3 class="sub">J277 topic coverage across Key Stage 3</h3>
+     <div class="tbl-scroll"><table class="data"><thead><tr><th></th><th>OCR J277 topic</th><th>Units that feed it</th></tr></thead>
+     <tbody>${Object.keys(B.j277).map(c=>{const h=jUnits(c);
+       const note=(B.j277GapNote||{})[c]||'Taught at Key Stage 4';
+       return `<tr><td class="n">${c}</td><td>${esc(B.j277[c])}</td><td class="refs${h.length?'':' gap'}">${h.length?h.join(', '):esc(note)}</td></tr>`;
+     }).join('')}</tbody></table></div>
+     <h3 class="sub">Where the Key Stage 3 boundary sits</h3><div class="prose sec-note">${paras(B.ks4Boundaries)}</div>`,'Curriculum');
+
+  // overview
+  add('overview','Long-term overview',
+    `<h2 class="sec">Long-term overview</h2><p class="sec-note">Eighteen units across three years, one per half-term. The order below is the order of delivery.</p>
+     <div class="grid-ov">
+       <div class="hd"></div>${YEARS.map(y=>`<div class="hd">${esc(y)}</div>`).join('')}
+       ${TERMS.map((t,i)=>`<div class="term">${esc(t)}</div>` + YEARS.map(y=>{
+          const u=B.years[y][i];
+          return `<div class="cell"><a href="#${uid(y,u)}"><span class="code">${yn(y)}.${u.n}</span>${esc(u.title)}</a><div class="th">${(u.threads||['Threads to confirm']).join(' · ')}</div></div>`;
+        }).join('')).join('')}
+     </div>`,'Curriculum');
+
+  // unit entries
+  function unitHTML(y,u){
+    const lessons = u.lessons||[];
+    const f=[];
+    if(u.description) f.push(`<div class="field"><div class="lbl">Unit description</div><div class="prose">${paras(u.description)}</div></div>`);
+    if(u.why) f.push(`<div class="field"><div class="lbl">Why this, why now?</div><div class="prose">${paras(u.why)}</div></div>`);
+    f.push(`<div class="field"><div class="lbl">Lessons in unit</div>${
+      lessons.length ? `<ol class="lessons">${lessons.map(l=>`<li>${esc(l)}</li>`).join('')}</ol>` : `<p style="font-style:italic;color:var(--ink-3)">To be confirmed.</p>`
+    }${lessons.length>6?`<div class="flag">To confirm — the source unit runs ${lessons.length} lessons; Graveney teaches six. Confirm which six.</div>`:''}</div>`);
+    if((u.prior||[]).length) f.push(`<div class="field"><div class="lbl">Prior knowledge requirements</div><ul class="plain">${u.prior.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>`);
+    f.push(`<div class="two">
+      <div class="field"><div class="lbl">National Curriculum</div><div class="nclist">${
+        u.nc.map(n=>`<div><span class="n">${n}</span><p>${esc(B.nc[String(n)])}</p></div>`).join('')}</div></div>
+      <div class="field j277"><div class="lbl">Progression to GCSE (OCR J277)</div>
+        <div class="codes">${u.j277.map(x=>`<span class="pill">${x.code} ${esc(x.title)}</span>`).join('')}</div>
+        <p>${esc(u.j277_note)}</p></div>
+    </div>`);
+    f.push(`<div class="field"><div class="lbl">Key vocabulary</div><div class="vocab">${u.vocab.map(v=>`<span>${esc(v)}</span>`).join('')}</div></div>`);
+    f.push(`<div class="two">
+      <div class="field"><div class="lbl">Assessment</div><p>${esc(u.assessment)}</p></div>
+      <div class="field"><div class="lbl">Homework</div><p>${esc(u.homework)}</p></div>
+    </div>`);
+    if(u.note) f.push(`<div class="field"><div class="lbl">Note</div><p>${esc(u.note)}</p></div>`);
+
+    return `<article class="unit" id="${uid(y,u)}">
+      <header>
+        <h4><span class="code">${yn(y)}.${u.n}</span>${esc(u.title)}</h4>
+        <div class="tags">
+          <span class="pill plain">${esc(TERMS[u.n-1])}</span>
+          <span class="pill plain">${lessons.length||6} lessons</span>
+          ${(u.threads||[]).map(t=>`<span class="pill">${esc(t)}</span>`).join('') || '<span class="pill">Threads to confirm</span>'}
+        </div>
+      </header>
+      ${!u.lessons?`<div class="flag">To complete — this unit is written in school and has no Oak source entry. Lesson titles, description and prior knowledge to be added.</div>`:''}
+      <div class="fields">${f.join('')}</div>
+    </article>`;
+  }
+
+  YEARS.forEach(y=>{
+    add('y'+yn(y), y+' units',
+      `<div class="yearbar"><h3>${esc(y)} units</h3><span>6 units · 36 lessons</span></div>` +
+      B.years[y].map(u=>unitHTML(y,u)).join(''), 'Units');
+  });
+
+  // thread appendix
+  add('threadmap','Threads in computing',
+    `<h2 class="sec">Threads in computing</h2><p class="sec-note">Each thread below lists the units that carry it, in teaching order, so the development of a single idea across Key Stage 3 can be read in one place.</p>` +
+    B.threads.map(([name,desc])=>{
+      const hits = units.filter(({u})=>(u.threads||[]).includes(name));
+      return `<div class="threadcard"><h4>${esc(name)}</h4><p class="desc">${esc(desc)}</p>
+        <div class="chain">${hits.length
+          ? hits.map(({y,u},i)=>`${i?'<span class="arrow">→</span>':''}<a href="#${uid(y,u)}"><span class="c">${yn(y)}.${u.n}</span>${esc(u.title)}</a>`).join('')
+          : '<span style="font-size:13.5px;color:var(--ink-3);font-style:italic">Not currently carried by a Key Stage 3 unit.</span>'}</div></div>`;
+    }).join(''),'Reference');
+
+  add('sources','Sources',
+    `<h2 class="sec">Sources</h2><div class="src">${B.sources.map(([t,w,url])=>
+      `<div><b>${esc(t)}</b><span>${esc(w)}</span><a href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></div>`).join('')}</div>
+     <footer class="foot">${esc(B.school)} · ${esc(B.title)} · ${esc(B.year)}</footer>`,'Reference');
+
+  // ---------- render ----------
+  document.getElementById('main').innerHTML = S.map(s=>`<section id="${s.id}">${s.html}</section>`).join('');
+
+  const groups=[];
+  S.forEach(s=>{ let g=groups.find(x=>x.name===s.group); if(!g){g={name:s.group,items:[]};groups.push(g);} g.items.push(s); });
+  document.getElementById('toc').innerHTML = `<div class="cols">` + groups.map(g=>
+    `<div><div class="grp">${esc(g.name)}</div>${g.items.map(s=>`<a href="#${s.id}" data-t="${s.id}">${esc(s.label)}</a>`).join('')}</div>`
+  ).join('') + `</div>`;
+
+  // scroll spy
+  const links = [...document.querySelectorAll('nav.toc a')];
+  const secs = S.map(s=>document.getElementById(s.id));
+  const spy = new IntersectionObserver(es=>{
+    es.forEach(e=>{ if(e.isIntersecting){
+      links.forEach(a=>a.classList.toggle('on', a.dataset.t===e.target.id));
+    }});
+  }, {rootMargin:'0px 0px -72% 0px', threshold:0});
+  secs.forEach(s=>s&&spy.observe(s));
+})();
+</script>
+</body>
+</html>
