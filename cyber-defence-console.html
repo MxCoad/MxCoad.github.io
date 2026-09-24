@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cyber Defence Console — Hacking &amp; Brute Force</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    --bg:#0d1424;
+    --panel:#131d33;
+    --panel-2:#1b2949;
+    --ink:#eaf1ff;
+    --muted:#9fb0d0;
+    --line:#2a3a63;
+    --cyan:#31d0e0;
+    --cyan-deep:#0e7d8c;
+    --amber:#ffbf47;
+    --safe:#3ad07a;
+    --safe-deep:#146c40;
+    --danger:#ff6b6b;
+    --danger-deep:#8a2b2b;
+    --mono:"DM Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --sans:"Space Grotesk","Segoe UI",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:inherit}
+  html,body{margin:0}
+  body{
+    font-family:var(--sans);
+    background:
+      radial-gradient(1100px 600px at 80% -10%, rgba(49,208,224,.10), transparent 60%),
+      radial-gradient(900px 500px at -10% 110%, rgba(255,191,71,.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-text-size-adjust:100%;
+    min-height:100%;
+  }
+  .wrap{max-width:860px;margin:0 auto;padding:20px 18px 80px}
+
+  /* ---- Header / progress ---- */
+  header.top{
+    position:sticky;top:0;z-index:20;
+    padding-top:calc(10px + env(safe-area-inset-top,0px));
+    background:linear-gradient(180deg, rgba(13,20,36,.97), rgba(13,20,36,.86));
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .top-inner{max-width:860px;margin:0 auto;padding:0 18px 12px}
+  .brand{display:flex;align-items:center;gap:10px;margin:6px 0 10px}
+  .brand .dot{width:11px;height:11px;border-radius:50%;background:var(--safe);
+    box-shadow:0 0 0 4px rgba(58,208,122,.18);flex:none}
+  .brand h1{font-size:1rem;letter-spacing:.02em;margin:0;font-weight:600}
+  .brand .tag{font-family:var(--mono);font-size:.72rem;color:var(--muted);margin-left:auto}
+  .bar{height:9px;border-radius:99px;background:var(--panel-2);overflow:hidden;border:1px solid var(--line)}
+  .bar > i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--cyan-deep),var(--cyan));
+    transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:7px;
+    font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+  .score b{color:var(--amber);font-weight:500}
+
+  /* ---- Cards / screens ---- */
+  .screen{display:none;animation:fade .35s ease both}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){
+    .screen.active{animation:none}
+    .bar>i{transition:none}
+    *{scroll-behavior:auto!important}
+  }
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin:16px 0}
+  .kicker{font-family:var(--mono);font-size:.75rem;color:var(--cyan);margin:0 0 6px}
+  h2.title{font-size:1.5rem;line-height:1.15;margin:0 0 4px;font-weight:700}
+  .goal{color:var(--muted);margin:2px 0 0;font-size:.95rem}
+  .lede{font-size:1.02rem;margin:14px 0 0}
+
+  /* mission select tiles */
+  .missions{display:grid;gap:12px;margin-top:18px}
+  .mtile{display:flex;gap:14px;align-items:center;text-align:left;width:100%;
+    background:var(--panel-2);border:1px solid var(--line);border-radius:14px;
+    padding:15px 16px;color:var(--ink);cursor:pointer;font:inherit;transition:border-color .15s,transform .12s}
+  .mtile:hover:not(:disabled){border-color:var(--cyan);transform:translateY(-2px)}
+  .mtile:disabled{opacity:.5;cursor:not-allowed}
+  .mtile .num{font-family:var(--mono);font-size:1.1rem;width:40px;height:40px;flex:none;
+    display:grid;place-items:center;border-radius:10px;background:var(--bg);
+    border:1px solid var(--line);color:var(--cyan)}
+  .mtile .body{flex:1}
+  .mtile .body strong{display:block;font-size:1.02rem;font-weight:600}
+  .mtile .body span{color:var(--muted);font-size:.85rem}
+  .mtile .state{font-family:var(--mono);font-size:.72rem;color:var(--muted);flex:none}
+  .mtile.done .num{background:var(--safe-deep);border-color:var(--safe);color:#eafff2}
+  .mtile.done .state{color:var(--safe)}
+
+  /* step counter inside a mission */
+  .steps{display:flex;gap:6px;margin:0 0 4px}
+  .steps i{height:5px;flex:1;border-radius:99px;background:var(--panel-2)}
+  .steps i.on{background:var(--cyan)}
+
+  /* generic question block */
+  .q{font-size:1.12rem;font-weight:600;margin:6px 0 4px}
+  .hint{color:var(--muted);font-size:.9rem;margin:0 0 14px}
+
+  /* option buttons */
+  .opts{display:grid;gap:10px;margin:8px 0 0}
+  .opt{display:flex;align-items:center;gap:12px;text-align:left;width:100%;font:inherit;
+    background:var(--panel-2);border:1.5px solid var(--line);color:var(--ink);
+    border-radius:12px;padding:14px 15px;cursor:pointer;transition:border-color .15s,background .15s}
+  .opt:hover:not(.locked){border-color:var(--cyan)}
+  .opt .tick{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--muted);flex:none;
+    display:grid;place-items:center;font-size:.8rem;color:transparent}
+  .opt.correct{border-color:var(--safe);background:rgba(58,208,122,.12)}
+  .opt.correct .tick{background:var(--safe);border-color:var(--safe);color:#04220f}
+  .opt.wrong{border-color:var(--danger);background:rgba(255,107,107,.1)}
+  .opt.wrong .tick{border-color:var(--danger);color:var(--danger)}
+  .opt.locked{cursor:default;opacity:.85}
+  .opt.dim{opacity:.45}
+
+  /* tap-to-fill sentences */
+  .cloze{font-size:1.12rem;line-height:2.1;margin:6px 0 14px}
+  .blank{display:inline-block;min-width:120px;border-bottom:2px dashed var(--cyan);
+    text-align:center;color:var(--cyan);font-family:var(--mono);padding:0 6px;vertical-align:baseline}
+  .blank.filled{border-bottom-style:solid}
+  .blank.ok{color:var(--safe);border-color:var(--safe)}
+  .wordbank{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .word{font-family:var(--mono);font-size:.9rem;background:var(--panel-2);
+    border:1.5px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 13px;cursor:pointer;
+    transition:border-color .15s,transform .1s}
+  .word:hover:not(:disabled){border-color:var(--cyan);transform:translateY(-1px)}
+  .word:disabled{opacity:.3;cursor:default}
+  .word.selected{border-color:var(--amber);color:var(--amber)}
+
+  /* sorting: two bins */
+  .bins{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
+  @media(max-width:560px){.bins{grid-template-columns:1fr}}
+  .bin{background:var(--panel-2);border:1.5px solid var(--line);border-radius:12px;padding:12px;min-height:92px}
+  .bin h4{margin:0 0 8px;font-size:.9rem;font-family:var(--mono)}
+  .bin.legal h4{color:var(--safe)} .bin.illegal h4{color:var(--danger)}
+  .bin .drop{display:grid;gap:7px}
+  .cardlet{background:var(--bg);border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;
+    font-size:.9rem;cursor:pointer;transition:border-color .15s}
+  .cardlet:hover:not(.placed){border-color:var(--cyan)}
+  .cardlet.placed{cursor:default}
+  .cardlet.ok{border-color:var(--safe)} .cardlet.no{border-color:var(--danger)}
+  .pool{display:grid;gap:7px;margin-top:4px}
+
+  /* shop analogy */
+  .shop{position:relative;background:var(--bg);border:1px solid var(--line);border-radius:12px;
+    padding:16px;margin-top:8px;overflow:hidden}
+  .shopfront{display:flex;align-items:flex-end;justify-content:center;gap:4px;height:120px;position:relative}
+  .door{width:66px;height:96px;background:linear-gradient(180deg,#20305a,#16223f);
+    border:2px solid var(--cyan-deep);border-radius:8px 8px 0 0;position:relative;flex:none}
+  .door::after{content:"SHOP";position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+    font-family:var(--mono);font-size:.7rem;color:var(--cyan)}
+  .figs{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;gap:3px;pointer-events:none}
+  .fig{width:15px;height:34px;border-radius:8px 8px 3px 3px;flex:none;opacity:0;transform:translateY(10px)}
+  .fig.show{opacity:1;transform:none;transition:opacity .3s,transform .3s}
+  .fig.att{background:var(--danger)} .fig.cust{background:var(--safe)}
+  .shop .caption{font-family:var(--mono);font-size:.82rem;color:var(--muted);margin-top:10px;text-align:center}
+  .toggle{display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+  .toggle button{font:inherit;font-family:var(--mono);font-size:.82rem;background:var(--panel-2);
+    border:1.5px solid var(--line);color:var(--ink);border-radius:10px;padding:9px 15px;cursor:pointer}
+  .toggle button.on{border-color:var(--cyan);color:var(--cyan);background:rgba(49,208,224,.1)}
+
+  /* brute force simulator */
+  .term{background:#06101f;border:1px solid var(--cyan-deep);border-radius:12px;padding:14px;
+    font-family:var(--mono);font-size:.92rem;margin-top:8px}
+  .term .line{color:var(--muted)}
+  .term .try{color:var(--amber);min-height:1.5em;word-break:break-all}
+  .term .crack{color:var(--safe)}
+  .picks{display:grid;gap:9px;margin-top:6px}
+  .pick{display:flex;justify-content:space-between;align-items:center;gap:10px;font:inherit;
+    background:var(--panel-2);border:1.5px solid var(--line);color:var(--ink);border-radius:11px;
+    padding:12px 14px;cursor:pointer;transition:border-color .15s}
+  .pick:hover:not(:disabled){border-color:var(--cyan)}
+  .pick:disabled{opacity:.4;cursor:default}
+  .pick code{font-family:var(--mono);font-size:.95rem}
+  .pick .lvl{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+  .timebar{height:8px;border-radius:99px;background:var(--panel-2);overflow:hidden;margin-top:12px;border:1px solid var(--line)}
+  .timebar > i{display:block;height:100%;width:0;background:var(--danger)}
+  .verdict{margin-top:12px;font-size:.98rem;display:none}
+  .verdict.show{display:block}
+  .verdict.fast{color:var(--danger)} .verdict.slow{color:var(--safe)}
+
+  /* feedback pill + buttons */
+  .fb{margin-top:16px;padding:12px 14px;border-radius:11px;font-size:.95rem;display:none;
+    border:1px solid var(--line);background:var(--panel-2)}
+  .fb.show{display:block}
+  .fb.good{border-color:var(--safe);background:rgba(58,208,122,.1)}
+  .fb.try{border-color:var(--amber);background:rgba(255,191,71,.1)}
+  .fb b{color:var(--ink)}
+  .row{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:600;border-radius:11px;padding:13px 22px;cursor:pointer;border:1.5px solid transparent}
+  .btn.primary{background:var(--cyan);color:#04222a;border-color:var(--cyan)}
+  .btn.primary:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--cyan)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;filter:none}
+  .btn:focus-visible,.opt:focus-visible,.word:focus-visible,.mtile:focus-visible,
+  .pick:focus-visible,.cardlet:focus-visible,.toggle button:focus-visible{
+    outline:3px solid var(--amber);outline-offset:2px}
+
+  /* badges / end */
+  .badge{display:flex;gap:14px;align-items:center;background:var(--panel-2);border:1px solid var(--safe);
+    border-radius:14px;padding:16px;margin-top:14px}
+  .badge .seal{width:54px;height:54px;border-radius:50%;flex:none;display:grid;place-items:center;
+    background:radial-gradient(circle at 40% 35%,var(--safe),var(--safe-deep));font-size:1.5rem}
+  .keyterms{display:grid;gap:10px;margin-top:14px}
+  .kt{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+  .kt b{color:var(--cyan)}
+  .credit{color:var(--muted);font-size:.78rem;text-align:center;margin-top:26px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand">
+      <span class="dot" id="statusdot"></span>
+      <h1>Cyber Defence Console</h1>
+      <span class="tag" id="clock">SYSTEM: ONLINE</span>
+    </div>
+    <div class="bar"><i id="progbar"></i></div>
+    <div class="meta">
+      <span id="progtext">0 / 3 missions cleared</span>
+      <span class="score">SCORE <b id="score">0</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ HOME ============ -->
+  <section class="screen active" id="home">
+    <div class="panel">
+      <p class="kicker">BRIEFING</p>
+      <h2 class="title">You're on the security team.</h2>
+      <p class="lede">Attackers are probing the network. Your job is to understand how they get in — so you can shut them out. Clear three missions to earn your Cyber Defender badge.</p>
+      <div class="missions">
+        <button class="mtile" data-go="m1">
+          <span class="num">01</span>
+          <span class="body"><strong>Know your enemy</strong><span>Why do people hack — and when is it legal?</span></span>
+          <span class="state" id="s-m1">START</span>
+        </button>
+        <button class="mtile" data-go="m2" id="tile-m2" disabled>
+          <span class="num">02</span>
+          <span class="body"><strong>Flood the gates</strong><span>How a DDoS attack knocks a service offline.</span></span>
+          <span class="state" id="s-m2">LOCKED</span>
+        </button>
+        <button class="mtile" data-go="m3" id="tile-m3" disabled>
+          <span class="num">03</span>
+          <span class="body"><strong>Crack the code</strong><span>How brute force works — and how to beat it.</span></span>
+          <span class="state" id="s-m3">LOCKED</span>
+        </button>
+      </div>
+    </div>
+    <p class="credit">Year 9 · Introduction to cybersecurity</p>
+  </section>
+
+  <!-- ============ MISSION 1 ============ -->
+  <section class="screen" id="m1">
+    <div class="panel">
+      <div class="steps"><i></i><i></i><i></i></div>
+      <p class="kicker">MISSION 01 · KNOW YOUR ENEMY</p>
+      <h2 class="title">What is hacking?</h2>
+
+      <!-- 1.1 cloze -->
+      <div class="step" data-step="0">
+        <p class="q">Tap the right word for each gap.</p>
+        <p class="cloze">
+          Hacking is when someone gains <span class="blank" data-answer="unauthorised" data-i="0"></span>
+          access to a system without <span class="blank" data-answer="permission" data-i="1"></span>.
+          An ethical hacker is hired to find weaknesses, which is
+          <span class="blank" data-answer="legal" data-i="2"></span>. An unethical hacker breaks in to cause
+          harm, which is <span class="blank" data-answer="illegal" data-i="3"></span>.
+        </p>
+        <div class="wordbank" id="wb1">
+          <button class="word" data-w="unauthorised">unauthorised</button>
+          <button class="word" data-w="permission">permission</button>
+          <button class="word" data-w="legal">legal</button>
+          <button class="word" data-w="illegal">illegal</button>
+        </div>
+        <div class="fb" id="fb1"></div>
+        <div class="row"><button class="btn primary" data-next="0" disabled id="n1-0">Next</button></div>
+      </div>
+
+      <!-- 1.2 MCQ job -->
+      <div class="step" data-step="1" hidden>
+        <p class="q">Someone is <em>paid by a company</em> to legally hack in and find security holes. What's their job?</p>
+        <p class="hint">Pick one. Green means you've got it.</p>
+        <div class="opts" data-single data-correct="pen">
+          <button class="opt" data-k="admin"><span class="tick">✓</span> Systems administrator</button>
+          <button class="opt" data-k="pen"><span class="tick">✓</span> Penetration tester</button>
+          <button class="opt" data-k="mgr"><span class="tick">✓</span> IT manager</button>
+          <button class="opt" data-k="tech"><span class="tick">✓</span> IT technician</button>
+        </div>
+        <div class="fb" id="fb2"></div>
+        <div class="row"><button class="btn primary" data-next="1" disabled id="n1-1">Next</button></div>
+      </div>
+
+      <!-- 1.3 select reasons -->
+      <div class="step" data-step="2" hidden>
+        <p class="q">Why do unethical hackers break in? Tap <em>every</em> reason that fits.</p>
+        <p class="hint">There's more than one. All of these are real motives — trust yourself.</p>
+        <div class="opts" data-multi>
+          <button class="opt" data-good><span class="tick">✓</span> To steal data</button>
+          <button class="opt" data-good><span class="tick">✓</span> For money</button>
+          <button class="opt" data-good><span class="tick">✓</span> For a political cause (hacktivism)</button>
+          <button class="opt" data-good><span class="tick">✓</span> Just for fun, or to prove they can</button>
+          <button class="opt" data-good><span class="tick">✓</span> To disrupt a service</button>
+        </div>
+        <div class="fb" id="fb3"></div>
+        <div class="row"><button class="btn primary" data-finish="m1" disabled id="n1-2">Complete mission</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MISSION 2 ============ -->
+  <section class="screen" id="m2">
+    <div class="panel">
+      <div class="steps"><i></i><i></i><i></i></div>
+      <p class="kicker">MISSION 02 · FLOOD THE GATES</p>
+      <h2 class="title">Jamming a service</h2>
+
+      <!-- 2.1 shop analogy -->
+      <div class="step" data-step="0">
+        <p class="q">A shop only has one door. Watch what happens.</p>
+        <p class="hint">Tap the buttons to see each attack. Then answer below.</p>
+        <div class="shop">
+          <div class="shopfront">
+            <div class="figs" id="figs"></div>
+            <div class="door"></div>
+          </div>
+          <div class="caption" id="shopcap">Normal day: real customers walk straight in.</div>
+        </div>
+        <div class="toggle">
+          <button data-mode="normal" class="on">Normal</button>
+          <button data-mode="dos">DoS attack</button>
+          <button data-mode="ddos">DDoS attack</button>
+        </div>
+        <p class="q" style="margin-top:18px">So what is a DDoS attack trying to do?</p>
+        <div class="opts" data-single data-correct="flood">
+          <button class="opt" data-k="virus"><span class="tick">✓</span> Sneak a virus onto the network</button>
+          <button class="opt" data-k="flood"><span class="tick">✓</span> Flood a service with traffic so real users can't get in</button>
+          <button class="opt" data-k="steal"><span class="tick">✓</span> Steal secret company documents</button>
+        </div>
+        <div class="fb" id="fb4"></div>
+        <div class="row"><button class="btn primary" data-next="0" data-m="m2" disabled id="n2-0">Next</button></div>
+      </div>
+
+      <!-- 2.2 sorting DoS vs DDoS -->
+      <div class="step" data-step="1" hidden>
+        <p class="q">Drop each clue under the right attack.</p>
+        <p class="hint">Tap a clue, then tap the box it belongs in. Both attacks flood a target — the difference is <em>how many</em> attackers.</p>
+        <div class="bins">
+          <div class="bin legal"><h4>DoS — one attacker</h4><div class="drop" id="binA"></div></div>
+          <div class="bin illegal"><h4>DDoS — many attackers</h4><div class="drop" id="binB"></div></div>
+        </div>
+        <div class="pool" id="pool2"></div>
+        <div class="fb" id="fb5"></div>
+        <div class="row"><button class="btn primary" data-finish="m2" disabled id="n2-1">Complete mission</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MISSION 3 ============ -->
+  <section class="screen" id="m3">
+    <div class="panel">
+      <div class="steps"><i></i><i></i><i></i></div>
+      <p class="kicker">MISSION 03 · CRACK THE CODE</p>
+      <h2 class="title">The brute force machine</h2>
+
+      <!-- 3.1 simulator -->
+      <div class="step" data-step="0">
+        <p class="q">A brute force attack just tries passwords, one after another, until one works.</p>
+        <p class="hint">Pick a password and watch the cracker attack it. Which ones hold up?</p>
+        <div class="picks" id="picks">
+          <button class="pick" data-pw="1234" data-strength="1"><code>1234</code><span class="lvl">4 digits</span></button>
+          <button class="pick" data-pw="password" data-strength="2"><code>password</code><span class="lvl">common word</span></button>
+          <button class="pick" data-pw="Rabbit7" data-strength="3"><code>Rabbit7</code><span class="lvl">word + number</span></button>
+          <button class="pick" data-pw="P$tertherabb1t" data-strength="5"><code>P$tertherabb1t</code><span class="lvl">long + mixed</span></button>
+        </div>
+        <div class="term">
+          <div class="line">cracker@console:~$ attacking target...</div>
+          <div class="try" id="tryline">_</div>
+          <div class="crack" id="crackline"></div>
+        </div>
+        <div class="timebar"><i id="timebar"></i></div>
+        <div class="verdict" id="verdict"></div>
+        <div class="row"><button class="btn primary" data-next="0" data-m="m3" disabled id="n3-0">Next</button></div>
+      </div>
+
+      <!-- 3.2 strongest password -->
+      <div class="step" data-step="1" hidden>
+        <p class="q">Which password is the <em>toughest</em> against a brute force attack?</p>
+        <p class="hint">Think: long, and a mix of upper case, lower case, numbers and symbols.</p>
+        <div class="opts" data-single data-correct="best">
+          <button class="opt" data-k="short"><span class="tick">✓</span> <code>peter1£@!</code> — short, but symbols</button>
+          <button class="opt" data-k="word"><span class="tick">✓</span> <code>Petertherabbit</code> — long, letters only</button>
+          <button class="opt" data-k="mix1"><span class="tick">✓</span> <code>P3tertherabb1t</code> — long, letters + numbers</button>
+          <button class="opt" data-k="best"><span class="tick">✓</span> <code>P$tertherabb1t</code> — long, letters, numbers + symbol</button>
+        </div>
+        <div class="fb" id="fb6"></div>
+        <div class="row"><button class="btn primary" data-next="1" data-m="m3" disabled id="n3-1">Next</button></div>
+      </div>
+
+      <!-- 3.3 defences -->
+      <div class="step" data-step="2" hidden>
+        <p class="q">You run the login system. Tap the <em>two</em> ways to defend it from brute force.</p>
+        <p class="hint">Two are real defences. Two won't help at all.</p>
+        <div class="opts" data-multi>
+          <button class="opt" data-good><span class="tick">✓</span> Lock the account after too many wrong attempts</button>
+          <button class="opt"><span class="tick">✓</span> Let users try as many times as they like</button>
+          <button class="opt" data-good><span class="tick">✓</span> Require strong passwords (long + mixed characters)</button>
+          <button class="opt"><span class="tick">✓</span> Print everyone's password on a poster</button>
+        </div>
+        <div class="fb" id="fb7"></div>
+        <div class="row"><button class="btn primary" data-finish="m3" disabled id="n3-2">Complete mission</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPLETE ============ -->
+  <section class="screen" id="done">
+    <div class="panel">
+      <p class="kicker">MISSION COMPLETE</p>
+      <h2 class="title">Network secured.</h2>
+      <p class="lede">You worked out how attackers get in — and how to lock them out. Here's your badge.</p>
+      <div class="badge">
+        <span class="seal">🛡️</span>
+        <div>
+          <strong>Cyber Defender — Level 1</strong>
+          <div style="color:var(--muted);font-size:.88rem">Final score: <b id="finalscore" style="color:var(--amber)">0</b></div>
+        </div>
+      </div>
+      <h3 style="margin:22px 0 0;font-size:1.05rem">Three things to remember</h3>
+      <div class="keyterms">
+        <div class="kt"><b>Hacking</b> — getting into a system without permission. Legal when you're hired to test it (ethical), illegal when you're not (unethical).</div>
+        <div class="kt"><b>DDoS</b> — <b>many</b> computers flood one service with traffic at once, so real users can't get in. Harder to stop than a single-attacker DoS.</div>
+        <div class="kt"><b>Brute force</b> — trying every possible password until one works. Beaten by long, mixed passwords and locking accounts after failed tries.</div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="replay">Play again</button>
+      </div>
+    </div>
+    <p class="credit">Year 9 · Introduction to cybersecurity</p>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var state={score:0, cleared:{m1:false,m2:false,m3:false}};
+  var $=function(s,r){return (r||document).querySelector(s)};
+  var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+
+  function addScore(n){ state.score+=n; $("#score").textContent=state.score; $("#finalscore").textContent=state.score; }
+  function refreshProgress(){
+    var done=(state.cleared.m1?1:0)+(state.cleared.m2?1:0)+(state.cleared.m3?1:0);
+    $("#progbar").style.width=(done/3*100)+"%";
+    $("#progtext").textContent=done+" / 3 missions cleared";
+  }
+  function show(id){
+    $$(".screen").forEach(function(s){s.classList.remove("active")});
+    $("#"+id).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function fb(el,msg,kind){ el.className="fb show "+kind; el.innerHTML=msg; }
+
+  // step navigation inside a mission
+  function goStep(missionId, idx){
+    var steps=$$("#"+missionId+" .step");
+    steps.forEach(function(s,i){ s.hidden = (i!==idx); });
+    var dots=$$("#"+missionId+" .steps i");
+    dots.forEach(function(d,i){ d.classList.toggle("on", i<=idx); });
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+
+  // ---------- HOME tiles ----------
+  $$(".mtile").forEach(function(t){
+    t.addEventListener("click",function(){
+      if(t.disabled) return;
+      var go=t.getAttribute("data-go");
+      goStep(go,0);
+      show(go);
+    });
+  });
+  function unlock(id){
+    var tile=$("#tile-"+id); if(tile){tile.disabled=false; $("#s-"+id).textContent="START";}
+  }
+  function markDone(id){
+    state.cleared[id]=true;
+    var tile=$("[data-go='"+id+"']");
+    tile.classList.add("done"); $("#s-"+id).textContent="CLEARED ✓";
+    refreshProgress();
+  }
+
+  function finishMission(id){
+    markDone(id);
+    if(id==="m1"){ unlock("m2"); }
+    if(id==="m2"){ unlock("m3"); }
+    if(id==="m1"||id==="m2"){ show("home"); }
+    if(id==="m3"){ show("done"); }
+  }
+
+  // ============ MISSION 1.1 — cloze ============
+  var blanks=$$("#m1 .blank");
+  var selectedWord=null;
+  $$("#wb1 .word").forEach(function(w){
+    w.addEventListener("click",function(){
+      if(w.disabled) return;
+      if(selectedWord===w){ w.classList.remove("selected"); selectedWord=null; return; }
+      $$("#wb1 .word").forEach(function(x){x.classList.remove("selected")});
+      w.classList.add("selected"); selectedWord=w;
+    });
+  });
+  blanks.forEach(function(b){
+    b.setAttribute("tabindex","0"); b.setAttribute("role","button");
+    b.addEventListener("click",function(){ tryFill(b); });
+    b.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){e.preventDefault(); tryFill(b);} });
+  });
+  function tryFill(b){
+    if(!selectedWord) return;
+    var word=selectedWord.getAttribute("data-w");
+    // clear any blank already holding this word
+    blanks.forEach(function(x){ if(x.getAttribute("data-filled")===word){ x.textContent=""; x.classList.remove("filled","ok"); x.removeAttribute("data-filled"); }});
+    b.textContent=word; b.classList.add("filled"); b.setAttribute("data-filled",word);
+    selectedWord.classList.add("selected");
+    // re-enable all words, then disable used ones
+    var used={}; blanks.forEach(function(x){var f=x.getAttribute("data-filled"); if(f)used[f]=1;});
+    $$("#wb1 .word").forEach(function(x){ x.disabled=!!used[x.getAttribute("data-w")]; x.classList.remove("selected"); });
+    selectedWord=null;
+    checkCloze();
+  }
+  function checkCloze(){
+    var allFilled=blanks.every(function(b){return b.getAttribute("data-filled");});
+    if(!allFilled) return;
+    var allRight=blanks.every(function(b){return b.getAttribute("data-filled")===b.getAttribute("data-answer");});
+    if(allRight){
+      blanks.forEach(function(b){b.classList.add("ok")});
+      fb($("#fb1"),"<b>Nailed it.</b> Unauthorised access, no permission — that's what makes hacking hacking.","good");
+      $("#n1-0").disabled=false; addScore(10);
+    } else {
+      fb($("#fb1"),"So close — some words are in the wrong gaps. Tap a word, then tap the gap to swap it.","try");
+    }
+  }
+  $("#n1-0").addEventListener("click",function(){ goStep("m1",1); });
+
+  // ============ generic single-answer MCQ ============
+  function wireSingle(container, onCorrect, points){
+    var correct=container.getAttribute("data-correct");
+    $$(".opt",container).forEach(function(o){
+      o.addEventListener("click",function(){
+        if(container.getAttribute("data-locked")) return;
+        var k=o.getAttribute("data-k");
+        if(k===correct){
+          container.setAttribute("data-locked","1");
+          $$(".opt",container).forEach(function(x){ x.classList.add("locked"); if(x!==o)x.classList.add("dim"); });
+          o.classList.add("correct");
+          addScore(points||10); onCorrect(true);
+        } else {
+          o.classList.add("wrong");
+          o.querySelector(".tick").textContent="✕";
+          onCorrect(false,o);
+        }
+      });
+    });
+  }
+
+  // M1.2
+  wireSingle($("#m1 [data-single][data-correct='pen']"), function(ok){
+    if(ok){ fb($("#fb2"),"<b>Correct.</b> A penetration tester (pen tester) is an <em>ethical</em> hacker — hired, with permission.","good"); $("#n1-1").disabled=false; }
+    else { fb($("#fb2"),"Not that one — but keep going. Which job is <em>hired to hack legally</em>?","try"); }
+  });
+  $("#n1-1").addEventListener("click",function(){ goStep("m1",2); });
+
+  // ============ generic multi-select (tap all good) ============
+  function wireMulti(container, doneBtn, msgEl, goodMsg){
+    var goods=$$(".opt[data-good]",container);
+    var got=0;
+    $$(".opt",container).forEach(function(o){
+      o.addEventListener("click",function(){
+        if(o.classList.contains("locked")) return;
+        if(o.hasAttribute("data-good")){
+          o.classList.add("correct","locked"); got++;
+          if(got===goods.length){
+            fb(msgEl,goodMsg,"good"); doneBtn.disabled=false; addScore(10);
+          }
+        } else {
+          o.classList.add("wrong"); o.querySelector(".tick").textContent="✕";
+          fb(msgEl,"That one's not a defender here — leave it. Look for the real ones.","try");
+          setTimeout(function(){o.classList.remove("wrong"); o.querySelector(".tick").textContent="✓";},900);
+        }
+      });
+    });
+  }
+  // M1.3
+  wireMulti($("#m1 [data-multi]"), $("#n1-2"), $("#fb3"),
+    "<b>Spot on.</b> Money, data, causes, disruption, or just to prove they can — all real reasons.");
+  $("#n1-2").addEventListener("click",function(){ finishMission("m1"); });
+
+  // ============ MISSION 2.1 — shop analogy ============
+  var figs=$("#figs");
+  function drawFigs(mode){
+    figs.innerHTML="";
+    var conf={normal:{att:0,cust:3},dos:{att:1,cust:0},ddos:{att:9,cust:0}}[mode];
+    var total=conf.att+conf.cust, made=0;
+    for(var i=0;i<conf.att;i++) mk("att",i);
+    for(var j=0;j<conf.cust;j++) mk("cust",conf.att+j);
+    function mk(cls,delay){
+      var f=document.createElement("span"); f.className="fig "+cls; figs.appendChild(f);
+      setTimeout(function(){f.classList.add("show")}, (window.matchMedia("(prefers-reduced-motion:reduce)").matches?0:delay*60));
+    }
+    var cap={normal:"Normal day: real customers walk straight in.",
+      dos:"DoS: one attacker jams the door. One source — easier to block.",
+      ddos:"DDoS: many attackers swarm the door at once. Real customers are shut out — and it's much harder to stop."}[mode];
+    $("#shopcap").textContent=cap;
+  }
+  $$(".toggle button").forEach(function(b){
+    b.addEventListener("click",function(){
+      $$(".toggle button").forEach(function(x){x.classList.remove("on")});
+      b.classList.add("on"); drawFigs(b.getAttribute("data-mode"));
+    });
+  });
+  drawFigs("normal");
+  wireSingle($("#m2 [data-single][data-correct='flood']"), function(ok){
+    if(ok){ fb($("#fb4"),"<b>Yes.</b> Flooding the service with so much traffic it can't respond to real users.","good"); $("#n2-0").disabled=false; }
+    else { fb($("#fb4"),"That's a different attack. A DDoS is about <em>traffic</em>, not viruses or theft.","try"); }
+  });
+  $("#n2-0").addEventListener("click",function(){ goStep("m2",1); buildSort(); });
+
+  // ============ MISSION 2.2 — sorting ============
+  var sortClues=[
+    {t:"One attacker",bin:"A"},
+    {t:"Many attackers at once",bin:"B"},
+    {t:"Easier to stop",bin:"A"},
+    {t:"Harder to stop",bin:"B"},
+    {t:"Easier to find who's responsible",bin:"A"},
+    {t:"Harder to find who's responsible",bin:"B"}
+  ];
+  var selCard=null, placedCount=0, sortBuilt=false;
+  function buildSort(){
+    if(sortBuilt) return; sortBuilt=true;
+    var pool=$("#pool2");
+    sortClues.forEach(function(c,i){
+      var el=document.createElement("div");
+      el.className="cardlet"; el.textContent=c.t; el.setAttribute("data-bin",c.bin); el.setAttribute("tabindex","0");
+      el.addEventListener("click",function(){ selectCard(el); });
+      el.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();selectCard(el);}});
+      pool.appendChild(el);
+    });
+    $("#binA").parentElement.addEventListener("click",function(){placeIn("A");});
+    $("#binB").parentElement.addEventListener("click",function(){placeIn("B");});
+  }
+  function selectCard(el){
+    if(el.classList.contains("placed"))return;
+    $$("#pool2 .cardlet").forEach(function(x){x.style.borderColor=""});
+    if(selCard===el){selCard=null; el.style.borderColor=""; return;}
+    selCard=el; el.style.borderColor="var(--amber)";
+  }
+  function placeIn(bin){
+    if(!selCard)return;
+    var right=selCard.getAttribute("data-bin")===bin;
+    var target=$(bin==="A"?"#binA":"#binB");
+    if(right){
+      selCard.classList.add("placed","ok"); selCard.style.borderColor="";
+      target.appendChild(selCard); selCard=null; placedCount++;
+      if(placedCount===sortClues.length){
+        fb($("#fb5"),"<b>All sorted.</b> Same idea — flood the target — but DDoS uses many machines, so it's harder to trace and harder to stop.","good");
+        $("#n2-1").disabled=false; addScore(10);
+      }
+    } else {
+      selCard.classList.add("no");
+      var bad=selCard;
+      setTimeout(function(){bad.classList.remove("no"); bad.style.borderColor="";},700);
+      fb($("#fb5"),"Not that box — think about whether that clue means <em>one</em> attacker or <em>many</em>.","try");
+      selCard=null;
+    }
+  }
+  $("#n2-1").addEventListener("click",function(){ finishMission("m2"); });
+
+  // ============ MISSION 3.1 — brute force sim ============
+  var running=false;
+  var pwPools={
+    lower:"abcdefghijklmnopqrstuvwxyz",
+    upper:"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    digit:"0123456789",
+    sym:"!£$%@#?*"
+  };
+  function randFrom(pw){
+    // produce a random "guess" the same length as pw using a plausible charset
+    var set=pwPools.lower;
+    if(/[A-Z]/.test(pw)) set+=pwPools.upper;
+    if(/[0-9]/.test(pw)) set+=pwPools.digit;
+    if(/[^A-Za-z0-9]/.test(pw)) set+=pwPools.sym;
+    if(/^[0-9]+$/.test(pw)) set=pwPools.digit;
+    var out=""; for(var i=0;i<pw.length;i++){ out+=set[Math.floor(Math.random()*set.length)]; }
+    return out;
+  }
+  function attack(pw,strength){
+    if(running)return; running=true;
+    $$("#picks .pick").forEach(function(p){p.disabled=true});
+    var tryEl=$("#tryline"), crackEl=$("#crackline"), bar=$("#timebar"), vEl=$("#verdict");
+    crackEl.textContent=""; vEl.className="verdict";
+    var reduce=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    // more strength => "takes longer" => more ticks before we crack (weak) or give up (strong)
+    var maxTicks= strength<=2 ? (6+strength*2) : (strength>=5? 26 : 16);
+    var willCrack= strength<=3;
+    var t=0;
+    var iv=setInterval(function(){
+      t++;
+      tryEl.textContent = willCrack && t>=maxTicks ? pw : randFrom(pw);
+      bar.style.width=Math.min(100, t/maxTicks*100)+"%";
+      if(t>=maxTicks){
+        clearInterval(iv); running=false;
+        $$("#picks .pick").forEach(function(p){p.disabled=false});
+        if(willCrack){
+          tryEl.textContent=pw;
+          crackEl.textContent="✓ CRACKED: "+pw+"  ("+(strength===1?"instantly":"in seconds")+")";
+          vEl.className="verdict show fast";
+          vEl.innerHTML="<b>Too weak.</b> Short or predictable passwords fall fast. Try a <em>stronger</em> one to see if you can stop the machine.";
+        } else {
+          crackEl.textContent="✗ gave up — too many combinations";
+          vEl.className="verdict show slow";
+          vEl.innerHTML="<b>That held.</b> Long + mixed characters means billions of combinations — brute force runs out of time.";
+          addScore(10); $("#n3-0").disabled=false;
+        }
+      }
+    }, reduce?60:110);
+  }
+  $$("#picks .pick").forEach(function(p){
+    p.addEventListener("click",function(){
+      attack(p.getAttribute("data-pw"), parseInt(p.getAttribute("data-strength"),10));
+    });
+  });
+  // let them proceed after trying the strong one; also nudge if they only try weak ones
+  $("#n3-0").addEventListener("click",function(){ goStep("m3",1); });
+
+  // M3.2 strongest password
+  wireSingle($("#m3 [data-single][data-correct='best']"), function(ok){
+    if(ok){ fb($("#fb6"),"<b>Strongest of the four.</b> Long, plus upper case, lower case, a number and a symbol.","good"); $("#n3-1").disabled=false; }
+    else { fb($("#fb6"),"Close, but there's a stronger one. Which has the <em>most</em> variety <em>and</em> length?","try"); }
+  });
+  $("#n3-1").addEventListener("click",function(){ goStep("m3",2); });
+
+  // M3.3 defences
+  wireMulti($("#m3 [data-multi]"), $("#n3-2"), $("#fb7"),
+    "<b>Both defences found.</b> Limit the attempts, and demand strong passwords. That's how real login systems fight back.");
+  $("#n3-2").addEventListener("click",function(){ finishMission("m3"); });
+
+  // ============ replay ============
+  $("#replay").addEventListener("click",function(){ location.reload(); });
+
+  refreshProgress();
+})();
+</script>
+</body>
+</html>
