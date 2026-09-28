@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Floating point practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2F5F9;
+    --grid: #DFE6EF;
+    --ink: #1B2A41;
+    --muted: #55647A;
+    --surface: #FFFFFF;
+    --line: #C7D2DF;
+    --mant: #2E5E8E;
+    --mant-soft: #DCE8F5;
+    --exp: #7A3B69;
+    --exp-soft: #F2E2ED;
+    --good: #1E7A4C;
+    --good-soft: #E1F3E9;
+    --bad: #B3261E;
+    --bad-soft: #FAE4E2;
+    --focus: #E0A100;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #121923;
+      --grid: #1B2431;
+      --ink: #E6ECF3;
+      --muted: #9CAABB;
+      --surface: #19212D;
+      --line: #2C384A;
+      --mant: #86B5E3;
+      --mant-soft: #203650;
+      --exp: #D9A0C8;
+      --exp-soft: #3A2436;
+      --good: #72D3A0;
+      --good-soft: #163426;
+      --bad: #F39A91;
+      --bad-soft: #3D1E1B;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  .fp { max-width: 780px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { font-size: clamp(1.75rem, 4.5vw, 2.4rem); line-height: 1.15; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  .lede { margin: 0; color: var(--muted); max-width: 60ch; }
+
+  .settings {
+    margin-top: 1.5rem;
+    display: grid;
+    gap: .9rem 1.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    align-items: end;
+  }
+  .setting { display: flex; flex-direction: column; gap: .35rem; }
+  .setting-name { font-weight: 700; font-size: .92rem; }
+  .seg { display: flex; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--surface); }
+  .seg button {
+    flex: 1; font: inherit; font-size: .95rem; padding: .5rem .6rem;
+    border: 0; background: transparent; color: var(--ink); cursor: pointer;
+  }
+  .seg button + button { border-left: 2px solid var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 700; }
+  select {
+    font: inherit; font-size: .95rem; padding: .5rem .6rem;
+    border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink);
+  }
+  .level-note { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .95rem; }
+
+  .score {
+    margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; align-items: baseline;
+    padding: .55rem 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  }
+  .score-num { font-family: var(--mono); font-weight: 700; font-size: 1.25rem; }
+  .score .link { margin-left: auto; font-size: .95rem; }
+
+  .card {
+    margin-top: 1.5rem; background: var(--surface); border: 2px solid var(--ink); border-radius: 12px;
+    padding: 1.25rem clamp(1rem, 3vw, 1.75rem) 1.5rem; box-shadow: 6px 6px 0 var(--line);
+  }
+  .prompt { margin: 0; font-size: 1.1rem; max-width: 62ch; }
+  .denary { font-family: var(--mono); font-weight: 700; font-size: clamp(2.2rem, 8vw, 3.2rem); margin: .6rem 0 .2rem; line-height: 1.1; }
+
+  .register {
+    --cell: clamp(22px, calc((min(100vw, 780px) - 5.5rem) / (var(--n) + 1.5)), 44px);
+    display: flex; flex-wrap: wrap; gap: 1rem 1.75rem; align-items: flex-start;
+    margin: 1rem 0 .4rem; overflow-x: auto; padding: 2px 2px .3rem;
+  }
+  .group { display: flex; flex-direction: column; gap: .35rem; }
+  .cells { display: flex; align-items: center; gap: 4px; }
+  .group-name { font-size: .88rem; font-weight: 700; }
+  .mant .group-name { color: var(--mant); }
+  .exp .group-name { color: var(--exp); }
+  .bit {
+    --c: var(--mant); --soft: var(--mant-soft);
+    width: var(--cell); height: calc(var(--cell) * 1.2); flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: calc(var(--cell) * .5);
+    border: 2px solid var(--c); border-radius: 6px; background: var(--surface); color: var(--c); padding: 0;
+  }
+  .exp .bit { --c: var(--exp); --soft: var(--exp-soft); }
+  .bit.on { background: var(--soft); }
+  button.bit { cursor: pointer; }
+  button.bit:hover:not(:disabled) { box-shadow: inset 0 -3px 0 var(--c); }
+  button.bit:disabled { cursor: default; opacity: 1; }
+  .point { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); align-self: flex-end; margin: 0 2px 5px; flex: none; }
+  .bit-help { color: var(--muted); font-size: .95rem; margin: .2rem 0 0; }
+
+  .den-label { display: block; font-weight: 700; margin: 1.1rem 0 .35rem; }
+  .den-input {
+    font-family: var(--mono); font-size: 1.4rem; padding: .45rem .7rem; width: min(100%, 17rem);
+    border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink);
+  }
+
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; align-items: center; }
+  .primary, .secondary {
+    font: inherit; font-weight: 700; padding: .6rem 1.1rem; border-radius: 8px;
+    border: 2px solid var(--ink); cursor: pointer;
+  }
+  .primary { background: var(--ink); color: var(--surface); }
+  .secondary { background: var(--surface); color: var(--ink); }
+  .primary:disabled, .secondary:disabled { opacity: .4; cursor: not-allowed; }
+  .link {
+    font: inherit; background: none; border: 0; padding: 0; color: var(--mant);
+    text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+  }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .hints { margin: 1rem 0 0; padding: .7rem 1rem .7rem 2.3rem; background: var(--paper); border-radius: 8px; }
+  .hints li { margin: .25rem 0; }
+  .feedback { margin-top: 1rem; padding: .7rem 1rem; border-radius: 8px; border-left: 6px solid; }
+  .feedback.good { background: var(--good-soft); border-color: var(--good); }
+  .feedback.bad { background: var(--bad-soft); border-color: var(--bad); }
+  .feedback strong { display: block; }
+  #show-solution { margin-top: .8rem; display: inline-block; }
+  .solution { margin-top: .8rem; padding-top: .8rem; border-top: 2px dashed var(--line); }
+  .solution h2 { font-size: 1.05rem; margin: 0 0 .3rem; }
+  .solution ol { padding-left: 1.4rem; margin: 0; }
+  .solution li { margin: .55rem 0; }
+  .answer-line { font-weight: 700; margin: .8rem 0 0; }
+  code.bits {
+    font-family: var(--mono); font-size: .92em; background: var(--paper);
+    padding: .05em .35em; border-radius: 4px; white-space: nowrap;
+  }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: no-preference) {
+    .feedback { animation: pop .18s ease-out; }
+    @keyframes pop { from { transform: translateY(-4px); opacity: 0; } }
+  }
+</style>
+</head>
+<body>
+<main class="fp">
+  <header>
+    <h1>Floating point practice</h1>
+    <p class="lede">Normalised floating point binary with a two's complement mantissa and exponent.</p>
+  </header>
+
+  <section class="settings" aria-label="Question settings">
+    <div class="setting">
+      <span class="setting-name" id="mode-name">Question type</span>
+      <div class="seg" role="group" aria-labelledby="mode-name" data-setting="mode">
+        <button type="button" data-value="d2b" aria-pressed="true">Denary to binary</button>
+        <button type="button" data-value="b2d" aria-pressed="false">Binary to denary</button>
+      </div>
+    </div>
+    <div class="setting">
+      <label class="setting-name" for="fmt">Size</label>
+      <select id="fmt">
+        <option value="8-4">Mantissa 8 bits, exponent 4</option>
+        <option value="10-6">Mantissa 10 bits, exponent 6</option>
+        <option value="12-4">Mantissa 12 bits, exponent 4</option>
+        <option value="16-8">Mantissa 16 bits, exponent 8</option>
+      </select>
+    </div>
+    <div class="setting">
+      <span class="setting-name" id="level-name">Difficulty</span>
+      <div class="seg" role="group" aria-labelledby="level-name" data-setting="level">
+        <button type="button" data-value="easy" aria-pressed="true">Easy</button>
+        <button type="button" data-value="medium" aria-pressed="false">Medium</button>
+        <button type="button" data-value="hard" aria-pressed="false">Hard</button>
+      </div>
+    </div>
+    <p class="level-note" id="level-note"></p>
+  </section>
+
+  <section class="score" aria-label="Score">
+    <div><span class="score-num" id="s-correct">0</span> of <span id="s-att">0</span> correct first time</div>
+    <div>Streak <span class="score-num" id="s-streak">0</span></div>
+    <div>Best <span class="score-num" id="s-best">0</span></div>
+    <button type="button" class="link" id="reset">Reset score</button>
+  </section>
+
+  <section class="card" aria-label="Question">
+    <p class="prompt" id="prompt"></p>
+    <div id="given"></div>
+    <div id="answer"></div>
+    <div class="actions">
+      <button type="button" class="primary" id="check">Check answer</button>
+      <button type="button" class="secondary" id="hint">Show a hint</button>
+      <button type="button" class="secondary" id="next">Skip question</button>
+    </div>
+    <ol class="hints" id="hints" hidden></ol>
+    <div class="feedback" id="feedback" role="status" hidden></div>
+    <button type="button" class="link" id="show-solution" hidden>Show worked solution</button>
+    <div class="solution" id="solution" hidden></div>
+  </section>
+</main>
+
+<script>
+/* ---------- Number logic ---------- */
+const FORMATS = { "8-4": { m: 8, e: 4 }, "10-6": { m: 10, e: 6 }, "12-4": { m: 12, e: 4 }, "16-8": { m: 16, e: 8 } };
+const MINUS = "\u2212";
+
+function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+
+// Two's complement bit string -> integer
+function twos(bits) {
+  let v = 0;
+  for (const b of bits) v = v * 2 + (b === "1" ? 1 : 0);
+  if (bits[0] === "1") v -= 2 ** bits.length;
+  return v;
+}
+// Integer -> w-bit two's complement string
+function toTwos(v, w) {
+  const mod = 2 ** w;
+  return (((v % mod) + mod) % mod).toString(2).padStart(w, "0");
+}
+function flip(bits) { return bits.replace(/[01]/g, c => (c === "1" ? "0" : "1")); }
+const art = n => (n === 8 || n === 11 || n === 18) ? "an" : "a";
+function signed(n) { return n < 0 ? MINUS + (-n) : String(n); }
+
+// Value of mantissa x 2^exponent as N / 2^F (exact)
+function reduce(N, F) { while (F > 0 && N % 2 === 0) { N /= 2; F--; } return { N: N === 0 ? 0 : N, F }; }
+function valueOf(mBits, eBits) {
+  const M = twos(mBits), E = twos(eBits);
+  const s = E - (mBits.length - 1);
+  return s >= 0 ? reduce(M * 2 ** s, 0) : reduce(M, -s);
+}
+// Exact decimal string of N / 2^F
+function toDecimal(N, F) {
+  const neg = N < 0;
+  let s = (BigInt(Math.abs(N)) * 5n ** BigInt(F)).toString();
+  if (F > 0) {
+    s = s.padStart(F + 1, "0");
+    s = (s.slice(0, -F) + "." + s.slice(-F)).replace(/0+$/, "").replace(/\.$/, "");
+  }
+  return (neg ? MINUS : "") + s;
+}
+// Minimal two's complement fixed point string for N / 2^F
+function fixed(N, F) {
+  if (F === 0) { N *= 2; F = 1; }
+  const sc = 2 ** F;
+  let n = 1;
+  while (!(-(2 ** (n - 1)) * sc <= N && N < 2 ** (n - 1) * sc)) n++;
+  return fixedWidth(N, F, n);
+}
+function fixedWidth(N, F, n) {
+  const bits = toTwos(N, n + F);
+  return { bits, point: n, N, F, str: bits.slice(0, n) + "." + bits.slice(n) };
+}
+// Normalise a fixed point string: point goes between the first two bits that differ
+function normaliseFixed(fx) {
+  const b = fx.bits + "0";
+  let i = 0;
+  while (b[i] === b[i + 1]) i++;
+  let mant = b.slice(i).replace(/0+$/, "");
+  if (mant.length < 2) mant = mant.padEnd(2, "0");
+  return { mant, E: fx.point - (i + 1), dropped: i };
+}
+function placeValue(p) { return p >= 0 ? String(2 ** p) : toDecimal(1, -p); }
+function termsStr(bits, point) {
+  const t = [];
+  for (let i = 0; i < bits.length; i++) {
+    if (bits[i] !== "1") continue;
+    t.push((i === 0 ? MINUS : "") + placeValue(point - 1 - i));
+  }
+  return t.length ? t.join(" + ") : "0";
+}
+function sumStr(bits, point, result) {
+  const t = termsStr(bits, point);
+  return t === result ? result : `${t} = ${result}`;
+}
+function parseAnswer(raw) {
+  const s = raw.trim().replace(/\u2212/g, "-").replace(/\s+/g, "");
+  if (/^[-+]?\d+\/\d+$/.test(s)) {
+    const [a, b] = s.split("/");
+    return Number(b) === 0 ? null : Number(a) / Number(b);
+  }
+  if (/^[-+]?(\d+\.?\d*|\.\d+)$/.test(s)) return Number(s);
+  return null;
+}
+
+const LEVELS = {
+  easy:   { note: "Positive numbers with a positive exponent.", neg: false, lo: 0,  hi: 4, k: 3 },
+  medium: { note: "Positive numbers. The exponent can be negative, giving small fractions.", neg: false, lo: -4, hi: 5, k: 4 },
+  hard:   { note: "Positive and negative numbers with positive or negative exponents.", neg: true, lo: -5, hi: 6, k: 6 }
+};
+
+function generate(fmtKey, levelKey) {
+  const { m, e } = FORMATS[fmtKey];
+  const L = LEVELS[levelKey];
+  const Emin = -(2 ** (e - 1)), Emax = 2 ** (e - 1) - 1;
+  const neg = L.neg && Math.random() < 0.5;
+  const k = Math.min(L.k, m - 2);
+  let rest = "";
+  for (let i = 0; i < m - 2; i++) rest += (i < k && Math.random() < 0.5) ? "1" : "0";
+  const mBits = (neg ? "10" : "01") + rest;
+  const E = randInt(Math.max(Emin, L.lo), Math.min(Emax, L.hi));
+  const eBits = toTwos(E, e);
+  const v = valueOf(mBits, eBits);
+  return { mBits, eBits, E, N: v.N, F: v.F, dec: toDecimal(v.N, v.F), neg };
+}
+
+/* ---------- Explanations ---------- */
+const code = s => `<code class="bits">${s}</code>`;
+const places = n => `${n} place${n === 1 ? "" : "s"}`;
+const withPoint = mant => mant[0] + "." + mant.slice(1);
+
+// The working fixed point string used for denary -> binary
+function d2bWorking(q) {
+  const fx = fixed(q.N, q.F);
+  if (!q.neg) return { fx, work: fx };
+  const mag = fixed(-fx.N, fx.F);
+  const flipped = { str: flip(mag.str) };
+  const work = fixedWidth(fx.N, fx.F, mag.point);
+  return { fx, mag, flipped, work };
+}
+
+function hintsFor(q, fmt) {
+  if (state.mode === "b2d") {
+    const fx = fixed(q.N, q.F);
+    const move = q.E === 0
+      ? `The exponent is 0, so the point stays after the first mantissa bit: ${code(withPoint(q.mBits))}.`
+      : `The exponent is ${signed(q.E)}. Write the mantissa as ${code(withPoint(q.mBits))} and move the point ${places(Math.abs(q.E))} to the ${q.E > 0 ? "right" : "left"}.`;
+    return [
+      `Start with the exponent. It's ${art(fmt.e)} ${fmt.e}-bit two's complement number, so its leftmost bit is worth ${MINUS}${2 ** (fmt.e - 1)}.`,
+      move,
+      `After moving the point you get ${code(fx.str)}. Convert that to denary, remembering the leftmost bit has a negative place value.`
+    ];
+  }
+  const w = d2bWorking(q);
+  const nm = normaliseFixed(w.work);
+  return [
+    q.neg ? "The number is negative, so the mantissa must start 10." : "The number is positive, so the mantissa must start 01.",
+    q.neg
+      ? `In two's complement fixed point binary this is ${code(w.work.str)}.`
+      : `In fixed point binary (with a 0 sign bit at the front) this is ${code(w.work.str)}.`,
+    `Normalised, that's ${code(withPoint(nm.mant))} × 2<sup>${signed(nm.E)}</sup>, so the exponent is ${signed(nm.E)}.`
+  ];
+}
+
+function solutionFor(q, fmt) {
+  const steps = [];
+  if (state.mode === "b2d") {
+    const fx = fixed(q.N, q.F);
+    const zeroNote = q.mBits.endsWith("0") ? " Zeros at the end of the fraction make no difference, so they're dropped." : "";
+    steps.push(`Split the bits into the mantissa ${code(q.mBits)} and the exponent ${code(q.eBits)}.`);
+    steps.push(`Work out the exponent. The leftmost bit has a negative place value: ${code(q.eBits)} = ${sumStr(q.eBits, fmt.e, signed(q.E))}.`);
+    steps.push(`Put the binary point after the first mantissa bit: ${code(withPoint(q.mBits))}.`);
+    if (q.E > 0) steps.push(`The exponent is ${q.E}, so move the point ${places(q.E)} to the right: ${code(fx.str)}.${zeroNote}`);
+    else if (q.E < 0) steps.push(`The exponent is ${signed(q.E)}, so move the point ${places(-q.E)} to the left, filling the new places with copies of the sign bit (${q.mBits[0]}): ${code(fx.str)}.${zeroNote}`);
+    else steps.push(`The exponent is 0, so the point stays where it is: ${code(fx.str)}.${zeroNote}`);
+    steps.push(`Convert to denary. The leftmost bit has a negative place value: ${code(fx.str)} = ${sumStr(fx.bits, fx.point, q.dec)}.`);
+    return { steps, answer: `Answer: ${q.dec}` };
+  }
+  const w = d2bWorking(q);
+  const nm = normaliseFixed(w.work);
+  if (q.neg) {
+    const absDec = q.dec.slice(1);
+    steps.push(`Write ${absDec} in fixed point binary with a 0 sign bit at the front: ${code(w.mag.str)}. To make it negative, flip every bit (${code(w.flipped.str)}) and add 1 in the last place: ${code(w.work.str)}.`);
+  } else {
+    steps.push(`Write ${q.dec} in fixed point binary with a 0 sign bit at the front: ${code(w.work.str)}.`);
+  }
+  let norm = `Normalise: move the point so it sits between the first two bits that are different, giving ${code(withPoint(nm.mant))}. `;
+  if (nm.dropped > 0) norm += `The extra ${w.work.bits[0]}s at the front aren't needed, so they're dropped. `;
+  if (nm.E > 0) norm += `The point moved ${places(nm.E)} to the left, so the exponent is ${nm.E}.`;
+  else if (nm.E < 0) norm += `The point moved ${places(-nm.E)} to the right, so the exponent is ${signed(nm.E)}.`;
+  else norm += "The point didn't move, so the exponent is 0.";
+  steps.push(norm);
+  steps.push(`Pad the mantissa with 0s on the right to make ${fmt.m} bits: ${code(q.mBits)}.`);
+  if (q.E >= 0) steps.push(`Write the exponent ${q.E} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${code(q.eBits)}.`);
+  else {
+    const pos = toTwos(-q.E, fmt.e);
+    steps.push(`Write the exponent ${signed(q.E)} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${-q.E} is ${code(pos)}, flip the bits (${code(flip(pos))}) and add 1 to get ${code(q.eBits)}.`);
+  }
+  return { steps, answer: `Answer: mantissa ${code(q.mBits)}, exponent ${code(q.eBits)}` };
+}
+
+/* ---------- UI ---------- */
+const $ = id => document.getElementById(id);
+const SCORE_KEY = "fp-practice-score";
+const state = {
+  mode: "d2b", fmt: "8-4", level: "easy",
+  q: null, bits: [], scored: false, correct: false, hintsShown: 0,
+  score: { correct: 0, attempted: 0, streak: 0, best: 0 }
+};
+
+function loadScore() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SCORE_KEY));
+    if (s && typeof s.correct === "number") state.score = s;
+  } catch (e) { /* storage unavailable */ }
+}
+function saveScore() {
+  try { localStorage.setItem(SCORE_KEY, JSON.stringify(state.score)); } catch (e) { /* ignore */ }
+}
+function renderScore() {
+  $("s-correct").textContent = state.score.correct;
+  $("s-att").textContent = state.score.attempted;
+  $("s-streak").textContent = state.score.streak;
+  $("s-best").textContent = state.score.best;
+}
+
+function registerHTML(mBits, eBits, editable) {
+  const cell = (b, i, group, pos) => editable
+    ? `<button type="button" class="bit${b === "1" ? " on" : ""}" data-i="${i}" aria-label="${group} bit ${pos}: ${b}">${b}</button>`
+    : `<span class="bit${b === "1" ? " on" : ""}" aria-hidden="true">${b}</span>`;
+  let mCells = "", eCells = "";
+  [...mBits].forEach((b, i) => {
+    mCells += cell(b, i, "Mantissa", i + 1);
+    if (i === 0) mCells += '<span class="point" aria-hidden="true"></span>';
+  });
+  [...eBits].forEach((b, i) => { eCells += cell(b, mBits.length + i, "Exponent", i + 1); });
+  const sr = editable ? "" : `<span class="sr">Mantissa ${mBits}, exponent ${eBits}.</span>`;
+  return `<div class="register" style="--n:${mBits.length}">${sr}
+    <div class="group mant"><div class="cells">${mCells}</div><span class="group-name">Mantissa</span></div>
+    <div class="group exp"><div class="cells">${eCells}</div><span class="group-name">Exponent</span></div>
+  </div>`;
+}
+
+function newQuestion() {
+  const prev = state.q ? state.q.mBits + state.q.eBits : "";
+  let q;
+  for (let t = 0; t < 25; t++) {
+    q = generate(state.fmt, state.level);
+    if (q.mBits + q.eBits !== prev) break;
+  }
+  state.q = q;
+  state.scored = false;
+  state.correct = false;
+  state.hintsShown = 0;
+  render();
+}
+
+function render() {
+  const q = state.q, fmt = FORMATS[state.fmt];
+  $("level-note").textContent = LEVELS[state.level].note;
+  $("hints").hidden = true; $("hints").innerHTML = "";
+  $("feedback").hidden = true;
+  $("show-solution").hidden = true; $("show-solution").textContent = "Show worked solution";
+  $("solution").hidden = true; $("solution").innerHTML = "";
+  $("hint").disabled = false; $("hint").textContent = "Show a hint";
+  $("check").disabled = false;
+  $("next").textContent = "Skip question";
+  $("next").className = "secondary";
+
+  if (state.mode === "b2d") {
+    $("prompt").textContent = "Convert this normalised floating point number to denary.";
+    $("given").innerHTML = registerHTML(q.mBits, q.eBits, false);
+    $("answer").innerHTML = `<label class="den-label" for="den">Your answer in denary</label>
+      <input class="den-input" id="den" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="e.g. 5.75 or 3/8">`;
+    $("den").addEventListener("keydown", ev => {
+      if (ev.key === "Enter") { ev.preventDefault(); state.correct ? newQuestion() : check(); }
+    });
+  } else {
+    $("prompt").textContent = `Write this number as a normalised floating point binary number with ${art(fmt.m)} ${fmt.m}-bit mantissa and ${art(fmt.e)} ${fmt.e}-bit exponent, both in two's complement.`;
+    $("given").innerHTML = `<div class="denary">${q.dec}</div>`;
+    state.bits = Array(fmt.m + fmt.e).fill("0");
+    drawEditable();
+  }
+}
+
+function drawEditable() {
+  const fmt = FORMATS[state.fmt];
+  const s = state.bits.join("");
+  $("answer").innerHTML = registerHTML(s.slice(0, fmt.m), s.slice(fmt.m), true) +
+    `<p class="bit-help">Click a bit to flip it, or type 0s and 1s. <button type="button" class="link" id="clear-bits">Set all to 0</button></p>`;
+  if (state.correct) $("answer").querySelectorAll("button").forEach(b => (b.disabled = true));
+}
+
+function setBit(i, v, focusIdx) {
+  state.bits[i] = v;
+  const btn = $("answer").querySelector(`.bit[data-i="${i}"]`);
+  btn.textContent = v;
+  btn.classList.toggle("on", v === "1");
+  btn.setAttribute("aria-label", btn.getAttribute("aria-label").replace(/: [01]$/, ": " + v));
+  if (focusIdx !== undefined) focusBit(focusIdx);
+}
+function focusBit(i) {
+  const n = state.bits.length;
+  const btn = $("answer").querySelector(`.bit[data-i="${Math.max(0, Math.min(n - 1, i))}"]`);
+  if (btn) btn.focus();
+}
+
+$("answer").addEventListener("click", ev => {
+  if (state.mode !== "d2b" || state.correct) return;
+  if (ev.target.id === "clear-bits") { state.bits.fill("0"); drawEditable(); focusBit(0); return; }
+  const btn = ev.target.closest(".bit");
+  if (!btn) return;
+  const i = Number(btn.dataset.i);
+  setBit(i, state.bits[i] === "1" ? "0" : "1");
+});
+$("answer").addEventListener("keydown", ev => {
+  const btn = ev.target.closest && ev.target.closest("button.bit");
+  if (!btn || state.correct) return;
+  const i = Number(btn.dataset.i);
+  if (ev.key === "0" || ev.key === "1") { ev.preventDefault(); setBit(i, ev.key, i + 1); }
+  else if (ev.key === "ArrowRight") { ev.preventDefault(); focusBit(i + 1); }
+  else if (ev.key === "ArrowLeft") { ev.preventDefault(); focusBit(i - 1); }
+  else if (ev.key === "Backspace") { ev.preventDefault(); setBit(i, "0", i - 1); }
+});
+
+function showFeedback(kind, html) {
+  const fb = $("feedback");
+  fb.className = "feedback " + kind;
+  fb.innerHTML = html;
+  fb.hidden = false;
+}
+
+function check() {
+  if (state.correct) return;
+  const q = state.q, fmt = FORMATS[state.fmt];
+  let ok, msg;
+  if (state.mode === "b2d") {
+    const v = parseAnswer($("den").value);
+    if (v === null) {
+      showFeedback("bad", `Enter a number such as 5.75, ${MINUS}0.375 or 3/8.`);
+      return;
+    }
+    ok = v === q.N / 2 ** q.F;
+    msg = ok ? `${code(q.mBits)} with exponent ${code(q.eBits)} is ${q.dec}.`
+             : "Check your working and try again, or open the worked solution.";
+  } else {
+    const s = state.bits.join("");
+    const mb = s.slice(0, fmt.m), eb = s.slice(fmt.m);
+    ok = mb === q.mBits && eb === q.eBits;
+    if (ok) msg = `${q.dec} is ${code(q.mBits)} with exponent ${code(q.eBits)}.`;
+    else {
+      const v = valueOf(mb, eb);
+      if (v.N === q.N && v.F === q.F && mb[0] === mb[1])
+        msg = "Those bits give the right value, but the mantissa isn't normalised. Its first two bits must be different.";
+      else msg = `Your bits represent ${toDecimal(v.N, v.F)}, not ${q.dec}. Try again, or open the worked solution.`;
+    }
+  }
+
+  if (!state.scored) {
+    state.scored = true;
+    const sc = state.score;
+    sc.attempted++;
+    if (ok) { sc.correct++; sc.streak++; sc.best = Math.max(sc.best, sc.streak); }
+    else sc.streak = 0;
+    saveScore(); renderScore();
+  }
+
+  if (ok) {
+    const streak = state.score.streak;
+    const extra = streak >= 3 ? ` That's ${streak} in a row.` : "";
+    showFeedback("good", `<strong>Correct.${extra}</strong>${msg}`);
+    state.correct = true;
+    $("check").disabled = true;
+    $("hint").disabled = true;
+    if (state.mode === "b2d") $("den").readOnly = true;
+    else $("answer").querySelectorAll("button").forEach(b => (b.disabled = true));
+    $("next").textContent = "Next question";
+    $("next").className = "primary";
+    $("next").focus();
+  } else {
+    showFeedback("bad", `<strong>Not quite.</strong>${msg}`);
+  }
+  $("show-solution").hidden = false;
+}
+
+function showHint() {
+  const list = hintsFor(state.q, FORMATS[state.fmt]);
+  if (state.hintsShown >= list.length) return;
+  const li = document.createElement("li");
+  li.innerHTML = list[state.hintsShown];
+  $("hints").appendChild(li);
+  $("hints").hidden = false;
+  state.hintsShown++;
+  if (state.hintsShown >= list.length) { $("hint").textContent = "No more hints"; $("hint").disabled = true; }
+  else $("hint").textContent = `Show another hint (${state.hintsShown} of ${list.length} shown)`;
+}
+
+function toggleSolution() {
+  const sol = $("solution");
+  if (sol.hidden) {
+    const { steps, answer } = solutionFor(state.q, FORMATS[state.fmt]);
+    sol.innerHTML = `<h2>Worked solution</h2><ol>${steps.map(s => `<li>${s}</li>`).join("")}</ol><p class="answer-line">${answer}</p>`;
+    sol.hidden = false;
+    $("show-solution").textContent = "Hide worked solution";
+  } else {
+    sol.hidden = true;
+    $("show-solution").textContent = "Show worked solution";
+  }
+}
+
+document.querySelectorAll(".seg").forEach(seg => {
+  seg.addEventListener("click", ev => {
+    const btn = ev.target.closest("button");
+    if (!btn) return;
+    seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+    state[seg.dataset.setting] = btn.dataset.value;
+    newQuestion();
+  });
+});
+$("fmt").addEventListener("change", ev => { state.fmt = ev.target.value; newQuestion(); });
+$("check").addEventListener("click", check);
+$("hint").addEventListener("click", showHint);
+$("next").addEventListener("click", newQuestion);
+$("show-solution").addEventListener("click", toggleSolution);
+$("reset").addEventListener("click", () => {
+  state.score = { correct: 0, attempted: 0, streak: 0, best: 0 };
+  saveScore(); renderScore();
+});
+
+loadScore();
+renderScore();
+newQuestion();
+</script>
+</body>
+</html>
