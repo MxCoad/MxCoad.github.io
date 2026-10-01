@@ -63,12 +63,15 @@
 
   .settings {
     margin-top: 1.5rem;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: .9rem 1.25rem;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    align-items: end;
+    align-items: flex-end;
   }
-  .setting { display: flex; flex-direction: column; gap: .35rem; }
+  .setting { display: flex; flex-direction: column; gap: .35rem; flex: 1 1 auto; }
+  .setting.wide { flex-basis: 100%; }
+  .setting.wide .seg { max-width: 34rem; }
+  .register-title { font-weight: 700; margin: 1.1rem 0 0; }
   .setting-name { font-weight: 700; font-size: .92rem; }
   .seg { display: flex; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--surface); }
   .seg button {
@@ -81,7 +84,7 @@
     font: inherit; font-size: .95rem; padding: .5rem .6rem;
     border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink);
   }
-  .level-note { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: .95rem; }
+  .level-note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: .95rem; }
 
   .score {
     margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; align-items: baseline;
@@ -173,11 +176,12 @@
   </header>
 
   <section class="settings" aria-label="Question settings">
-    <div class="setting">
+    <div class="setting wide">
       <span class="setting-name" id="mode-name">Question type</span>
       <div class="seg" role="group" aria-labelledby="mode-name" data-setting="mode">
         <button type="button" data-value="d2b" aria-pressed="true">Denary to binary</button>
         <button type="button" data-value="b2d" aria-pressed="false">Binary to denary</button>
+        <button type="button" data-value="norm" aria-pressed="false">Normalise binary</button>
       </div>
     </div>
     <div class="setting">
@@ -328,6 +332,26 @@ function generate(fmtKey, levelKey) {
   return { mBits, eBits, E, N: v.N, F: v.F, dec: toDecimal(v.N, v.F), neg };
 }
 
+// Normalise mode: start from a normalised answer, then shift the mantissa right
+// (copying the sign bit in) and raise the exponent to match, so the value is unchanged.
+function generateNormalise(fmtKey, levelKey) {
+  const { m, e } = FORMATS[fmtKey];
+  const Emax = 2 ** (e - 1) - 1;
+  for (let t = 0; t < 500; t++) {
+    const q = generate(fmtKey, levelKey);
+    const trailing = q.mBits.length - q.mBits.replace(/0+$/, "").length;
+    const maxShift = Math.min(trailing, Emax - q.E, levelKey === "easy" ? 3 : 4);
+    if (maxShift < 1) continue;
+    const shift = randInt(1, maxShift);
+    q.uMBits = q.mBits[0].repeat(shift) + q.mBits.slice(0, m - shift);
+    q.uE = q.E + shift;
+    q.uEBits = toTwos(q.uE, e);
+    q.shift = shift;
+    return q;
+  }
+  return null;
+}
+
 /* ---------- Explanations ---------- */
 const code = s => `<code class="bits">${s}</code>`;
 const places = n => `${n} place${n === 1 ? "" : "s"}`;
@@ -355,6 +379,16 @@ function hintsFor(q, fmt) {
       `After moving the point you get ${code(fx.str)}. Convert that to denary, remembering the leftmost bit has a negative place value.`
     ];
   }
+  if (state.mode === "norm") {
+    const lead = q.neg ? "1" : "0";
+    return [
+      q.neg
+        ? `A normalised negative mantissa starts 10. This one has ${q.shift} extra 1${q.shift === 1 ? "" : "s"} at the front.`
+        : `A normalised positive mantissa starts 01. This one has ${q.shift} extra 0${q.shift === 1 ? "" : "s"} at the front.`,
+      `Move the point ${places(q.shift)} to the right so it sits between the first two bits that are different: ${code(withPoint(q.mBits.replace(/0+$/, "").padEnd(2, "0")))}. Drop the extra ${lead}${q.shift === 1 ? "" : "s"} at the front and fill the end with 0s.`,
+      `Moving the point ${places(q.shift)} right multiplies the mantissa by 2<sup>${q.shift}</sup>, so the exponent must go down by ${q.shift} to keep the same value: ${q.uE} ${MINUS} ${q.shift} = ${signed(q.E)}.`
+    ];
+  }
   const w = d2bWorking(q);
   const nm = normaliseFixed(w.work);
   return [
@@ -364,6 +398,12 @@ function hintsFor(q, fmt) {
       : `In fixed point binary (with a 0 sign bit at the front) this is ${code(w.work.str)}.`,
     `Normalised, that's ${code(withPoint(nm.mant))} × 2<sup>${signed(nm.E)}</sup>, so the exponent is ${signed(nm.E)}.`
   ];
+}
+
+function exponentStep(q, fmt) {
+  if (q.E >= 0) return `Write the exponent ${q.E} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${code(q.eBits)}.`;
+  const pos = toTwos(-q.E, fmt.e);
+  return `Write the exponent ${signed(q.E)} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${-q.E} is ${code(pos)}, flip the bits (${code(flip(pos))}) and add 1 to get ${code(q.eBits)}.`;
 }
 
 function solutionFor(q, fmt) {
@@ -380,6 +420,16 @@ function solutionFor(q, fmt) {
     steps.push(`Convert to denary. The leftmost bit has a negative place value: ${code(fx.str)} = ${sumStr(fx.bits, fx.point, q.dec)}.`);
     return { steps, answer: `Answer: ${q.dec}` };
   }
+  if (state.mode === "norm") {
+    const lead = q.neg ? "1" : "0";
+    steps.push(`The mantissa ${code(withPoint(q.uMBits))} isn't normalised because its first two bits are the same. A normalised ${q.neg ? "negative" : "positive"} mantissa starts ${q.neg ? "10" : "01"}.`);
+    steps.push(`Work out the exponent: ${code(q.uEBits)} = ${sumStr(q.uEBits, fmt.e, signed(q.uE))}.`);
+    steps.push(`Move the point ${places(q.shift)} to the right so it sits between the first two bits that are different. The ${q.shift} extra ${lead}${q.shift === 1 ? "" : "s"} at the front ${q.shift === 1 ? "is" : "are"} dropped and 0s fill the gap at the end: ${code(q.mBits)}.`);
+    steps.push(`Moving the point ${places(q.shift)} right multiplies the mantissa by 2<sup>${q.shift}</sup>, so take ${q.shift} off the exponent to keep the same value: ${q.uE} ${MINUS} ${q.shift} = ${signed(q.E)}.`);
+    steps.push(exponentStep(q, fmt));
+    steps.push(`Check: both versions represent ${q.dec}.`);
+    return { steps, answer: `Answer: mantissa ${code(q.mBits)}, exponent ${code(q.eBits)}` };
+  }
   const w = d2bWorking(q);
   const nm = normaliseFixed(w.work);
   if (q.neg) {
@@ -395,11 +445,7 @@ function solutionFor(q, fmt) {
   else norm += "The point didn't move, so the exponent is 0.";
   steps.push(norm);
   steps.push(`Pad the mantissa with 0s on the right to make ${fmt.m} bits: ${code(q.mBits)}.`);
-  if (q.E >= 0) steps.push(`Write the exponent ${q.E} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${code(q.eBits)}.`);
-  else {
-    const pos = toTwos(-q.E, fmt.e);
-    steps.push(`Write the exponent ${signed(q.E)} as ${art(fmt.e)} ${fmt.e}-bit two's complement number: ${-q.E} is ${code(pos)}, flip the bits (${code(flip(pos))}) and add 1 to get ${code(q.eBits)}.`);
-  }
+  steps.push(exponentStep(q, fmt));
   return { steps, answer: `Answer: mantissa ${code(q.mBits)}, exponent ${code(q.eBits)}` };
 }
 
@@ -449,7 +495,7 @@ function newQuestion() {
   const prev = state.q ? state.q.mBits + state.q.eBits : "";
   let q;
   for (let t = 0; t < 25; t++) {
-    q = generate(state.fmt, state.level);
+    q = state.mode === "norm" ? generateNormalise(state.fmt, state.level) : generate(state.fmt, state.level);
     if (q.mBits + q.eBits !== prev) break;
   }
   state.q = q;
@@ -479,6 +525,11 @@ function render() {
     $("den").addEventListener("keydown", ev => {
       if (ev.key === "Enter") { ev.preventDefault(); state.correct ? newQuestion() : check(); }
     });
+  } else if (state.mode === "norm") {
+    $("prompt").textContent = "This floating point number isn't normalised. Normalise it, keeping the same mantissa and exponent sizes.";
+    $("given").innerHTML = registerHTML(q.uMBits, q.uEBits, false);
+    state.bits = Array(fmt.m + fmt.e).fill("0");
+    drawEditable();
   } else {
     $("prompt").textContent = `Write this number as a normalised floating point binary number with ${art(fmt.m)} ${fmt.m}-bit mantissa and ${art(fmt.e)} ${fmt.e}-bit exponent, both in two's complement.`;
     $("given").innerHTML = `<div class="denary">${q.dec}</div>`;
@@ -490,7 +541,8 @@ function render() {
 function drawEditable() {
   const fmt = FORMATS[state.fmt];
   const s = state.bits.join("");
-  $("answer").innerHTML = registerHTML(s.slice(0, fmt.m), s.slice(fmt.m), true) +
+  const title = state.mode === "norm" ? '<p class="register-title">Your normalised version</p>' : "";
+  $("answer").innerHTML = title + registerHTML(s.slice(0, fmt.m), s.slice(fmt.m), true) +
     `<p class="bit-help">Click a bit to flip it, or type 0s and 1s. <button type="button" class="link" id="clear-bits">Set all to 0</button></p>`;
   if (state.correct) $("answer").querySelectorAll("button").forEach(b => (b.disabled = true));
 }
@@ -510,7 +562,7 @@ function focusBit(i) {
 }
 
 $("answer").addEventListener("click", ev => {
-  if (state.mode !== "d2b" || state.correct) return;
+  if (state.mode === "b2d" || state.correct) return;
   if (ev.target.id === "clear-bits") { state.bits.fill("0"); drawEditable(); focusBit(0); return; }
   const btn = ev.target.closest(".bit");
   if (!btn) return;
@@ -554,8 +606,13 @@ function check() {
     if (ok) msg = `${q.dec} is ${code(q.mBits)} with exponent ${code(q.eBits)}.`;
     else {
       const v = valueOf(mb, eb);
-      if (v.N === q.N && v.F === q.F && mb[0] === mb[1])
+      const sameValue = v.N === q.N && v.F === q.F;
+      if (sameValue && mb[0] === mb[1])
         msg = "Those bits give the right value, but the mantissa isn't normalised. Its first two bits must be different.";
+      else if (state.mode === "norm" && mb === q.mBits)
+        msg = "Your mantissa is right, but the exponent doesn't match. Moving the point changes the exponent too. Try again, or open the worked solution.";
+      else if (state.mode === "norm")
+        msg = `Your bits represent ${toDecimal(v.N, v.F)}, but the original number is ${q.dec}. Normalising mustn't change the value. Try again, or open the worked solution.`;
       else msg = `Your bits represent ${toDecimal(v.N, v.F)}, not ${q.dec}. Try again, or open the worked solution.`;
     }
   }
