@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Negative numbers in binary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F2F5F9; --grid: #DFE6EF; --ink: #1B2A41; --muted: #55647A; --surface: #FFFFFF; --line: #C7D2DF;
+    --mant: #2E5E8E; --mant-soft: #DCE8F5; --exp: #7A3B69; --exp-soft: #F2E2ED;
+    --good: #1E7A4C; --good-soft: #E1F3E9; --bad: #B3261E; --bad-soft: #FAE4E2; --focus: #E0A100;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #121923; --grid: #1B2431; --ink: #E6ECF3; --muted: #9CAABB; --surface: #19212D; --line: #2C384A;
+      --mant: #86B5E3; --mant-soft: #203650; --exp: #D9A0C8; --exp-soft: #3A2436;
+      --good: #72D3A0; --good-soft: #163426; --bad: #F39A91; --bad-soft: #3D1E1B;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background-color: var(--paper);
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px; color: var(--ink);
+    font-family: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 1.0625rem; line-height: 1.55;
+  }
+  .fp { max-width: 780px; margin: 0 auto; padding: 2rem 1rem 3rem; }
+  h1 { font-size: clamp(1.75rem, 4.5vw, 2.4rem); line-height: 1.15; margin: 0 0 .35rem; letter-spacing: -.01em; }
+  .lede { margin: 0; color: var(--muted); max-width: 60ch; }
+  .settings { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .9rem 1.25rem; align-items: flex-end; }
+  .setting { display: flex; flex-direction: column; gap: .35rem; flex: 1 1 auto; min-width: 0; }
+  .setting.wide { flex-basis: 100%; }
+  .setting.wide .seg { max-width: 46rem; }
+  .setting-name { font-weight: 700; font-size: .92rem; }
+  .seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr)); gap: 2px; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--ink); }
+  .seg button { font: inherit; font-size: .95rem; padding: .5rem .6rem; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
+  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 700; }
+  select { font: inherit; font-size: .95rem; padding: .5rem .6rem; border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .check-setting { flex: 0 1 auto; }
+  .check-setting label { display: flex; gap: .5rem; align-items: center; font-weight: 700; font-size: .92rem; padding: .55rem 0; cursor: pointer; }
+  input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--ink); margin: 0; }
+  .level-note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: .95rem; }
+  .score { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; align-items: baseline; padding: .55rem 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  .score-num { font-family: var(--mono); font-weight: 700; font-size: 1.25rem; }
+  .score .link { margin-left: auto; font-size: .95rem; }
+  .card { margin-top: 1.5rem; background: var(--surface); border: 2px solid var(--ink); border-radius: 12px; padding: 1.25rem clamp(1rem, 3vw, 1.75rem) 1.5rem; box-shadow: 6px 6px 0 var(--line); }
+  .prompt { margin: 0; font-size: 1.1rem; max-width: 62ch; }
+  .big { font-family: var(--mono); font-weight: 700; font-size: clamp(2.2rem, 8vw, 3.2rem); margin: .6rem 0 .2rem; line-height: 1.1; }
+  .register { --cell: clamp(24px, calc((min(100vw, 780px) - 6rem) / (var(--n) * 1.15 + 1)), 46px); margin: 1rem 0 .4rem; overflow-x: auto; padding: 2px 2px .3rem; }
+  .cells { display: flex; align-items: flex-end; gap: 4px; }
+  .cellwrap { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: none; min-width: var(--cell); }
+  .cellwrap.nib { margin-left: 10px; }
+  .colval { display: none; font-family: var(--mono); font-size: .72rem; color: var(--muted); white-space: nowrap; }
+  .show-cols .colval { display: block; }
+  .bit {
+    --c: var(--mant); --soft: var(--mant-soft);
+    width: var(--cell); height: calc(var(--cell) * 1.2); flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: calc(var(--cell) * .5);
+    border: 2px solid var(--c); border-radius: 6px; background: var(--surface); color: var(--c); padding: 0;
+  }
+  .bit.sign { --c: var(--exp); --soft: var(--exp-soft); }
+  .bit.on { background: var(--soft); }
+  button.bit { cursor: pointer; }
+  button.bit:hover:not(:disabled) { box-shadow: inset 0 -3px 0 var(--c); }
+  button.bit:disabled { cursor: default; opacity: 1; }
+  .bit-help { color: var(--muted); font-size: .95rem; margin: .2rem 0 0; }
+  .den-label { display: block; font-weight: 700; margin: 1.1rem 0 .35rem; }
+  .den-input { font-family: var(--mono); font-size: 1.4rem; padding: .45rem .7rem; width: min(100%, 17rem); border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; align-items: center; }
+  .primary, .secondary { font: inherit; font-weight: 700; padding: .6rem 1.1rem; border-radius: 8px; border: 2px solid var(--ink); cursor: pointer; }
+  .primary { background: var(--ink); color: var(--surface); }
+  .secondary { background: var(--surface); color: var(--ink); }
+  .primary:disabled, .secondary:disabled { opacity: .4; cursor: not-allowed; }
+  .link { font: inherit; background: none; border: 0; padding: 0; color: var(--mant); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .hints { margin: 1rem 0 0; padding: .7rem 1rem .7rem 2.3rem; background: var(--paper); border-radius: 8px; }
+  .hints li { margin: .25rem 0; }
+  .feedback { margin-top: 1rem; padding: .7rem 1rem; border-radius: 8px; border-left: 6px solid; }
+  .feedback.good { background: var(--good-soft); border-color: var(--good); }
+  .feedback.bad { background: var(--bad-soft); border-color: var(--bad); }
+  .feedback strong { display: block; }
+  #show-solution { margin-top: .8rem; display: inline-block; }
+  .solution { margin-top: .8rem; padding-top: .8rem; border-top: 2px dashed var(--line); }
+  .solution h2 { font-size: 1.05rem; margin: 0 0 .3rem; }
+  .solution ol { padding-left: 1.4rem; margin: 0; }
+  .solution li { margin: .55rem 0; }
+  .answer-line { font-weight: 700; margin: .8rem 0 0; }
+  .table-wrap { overflow-x: auto; }
+  table.work { border-collapse: collapse; margin: .5rem 0; font-size: .95rem; }
+  table.work th, table.work td { padding: .25rem .8rem; border-bottom: 1px solid var(--line); text-align: right; }
+  table.work td { font-family: var(--mono); }
+  code.bits { font-family: var(--mono); font-size: .92em; background: var(--paper); padding: .05em .35em; border-radius: 4px; white-space: nowrap; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  @media (prefers-reduced-motion: no-preference) {
+    .feedback { animation: pop .18s ease-out; }
+    @keyframes pop { from { transform: translateY(-4px); opacity: 0; } }
+  }
+</style>
+</head>
+<body>
+<main class="fp">
+  <header>
+    <h1>Negative numbers in binary</h1>
+    <p class="lede">Practise two's complement and sign and magnitude.</p>
+  </header>
+
+  <section class="settings" aria-label="Question settings">
+    <div class="setting wide">
+      <span class="setting-name" id="mode-name">Question type</span>
+      <div class="seg" role="group" aria-labelledby="mode-name" id="mode-seg"></div>
+    </div>
+    <div class="setting">
+      <label class="setting-name" for="size">Size</label>
+      <select id="size"></select>
+    </div>
+    <div class="setting check-setting" id="cols-setting">
+      <label><input type="checkbox" id="cols"> Show column values</label>
+    </div>
+    <p class="level-note" id="note"></p>
+  </section>
+
+  <section class="score" aria-label="Score">
+    <div><span class="score-num" id="s-correct">0</span> of <span id="s-att">0</span> correct first time</div>
+    <div>Streak <span class="score-num" id="s-streak">0</span></div>
+    <div>Best <span class="score-num" id="s-best">0</span></div>
+    <button type="button" class="link" id="reset">Reset score</button>
+  </section>
+
+  <section class="card" aria-label="Question">
+    <p class="prompt" id="prompt"></p>
+    <div id="given"></div>
+    <div id="answer"></div>
+    <div class="actions">
+      <button type="button" class="primary" id="check">Check answer</button>
+      <button type="button" class="secondary" id="hint">Show a hint</button>
+      <button type="button" class="secondary" id="next">Skip question</button>
+    </div>
+    <ol class="hints" id="hints" hidden></ol>
+    <div class="feedback" id="feedback" role="status" hidden></div>
+    <button type="button" class="link" id="show-solution" hidden>Show worked solution</button>
+    <div class="solution" id="solution" hidden></div>
+  </section>
+</main>
+
+<script>
+/* ---------- Shared helpers ---------- */
+const MINUS = "\u2212";
+const HEX = "0123456789ABCDEF";
+const randInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const code = s => `<code class="bits">${s}</code>`;
+const signed = n => (n < 0 ? MINUS + (-n) : String(n));
+const flip = bits => bits.replace(/[01]/g, c => (c === "1" ? "0" : "1"));
+function toBits(v, n) { const mod = 2 ** n; return (((v % mod) + mod) % mod).toString(2).padStart(n, "0"); }
+const unsigned = bits => parseInt(bits, 2);
+const twos = bits => unsigned(bits) - (bits[0] === "1" ? 2 ** bits.length : 0);
+const smValue = bits => (bits[0] === "1" ? -1 : 1) * unsigned(bits.slice(1) || "0");
+const unsignedCols = n => Array.from({ length: n }, (_, i) => 2 ** (n - 1 - i));
+function termsStr(bits, weights) {
+  const t = [];
+  [...bits].forEach((b, i) => { if (b === "1") t.push(signed(weights[i])); });
+  return t.length ? t.join(" + ") : "0";
+}
+function sumStr(bits, weights, total) {
+  const t = termsStr(bits, weights);
+  return t === signed(total) ? t : `${t} = ${signed(total)}`;
+}
+function parseIntAnswer(raw) {
+  const s = raw.trim().replace(/\u2212/g, "-").replace(/[\s,]+/g, "");
+  return /^[-+]?\d+$/.test(s) ? Number(s) : null;
+}
+function parseHexAnswer(raw) {
+  const s = raw.trim().replace(/\s+/g, "").replace(/^0x/i, "").replace(/^#/, "");
+  return /^[0-9a-f]+$/i.test(s) ? { value: parseInt(s, 16), clean: s.toUpperCase() } : null;
+}
+function registerHTML(bits, opts = {}) {
+  const n = bits.length;
+  let cells = "";
+  [...bits].forEach((b, i) => {
+    const nib = i > 0 && (n - i) % 4 === 0 ? " nib" : "";
+    const cls = `bit${b === "1" ? " on" : ""}${opts.signBit && i === 0 ? " sign" : ""}`;
+    const col = opts.cols ? (typeof opts.cols[i] === "number" ? signed(opts.cols[i]) : opts.cols[i]) : "";
+    const label = opts.cols ? `<span class="colval" aria-hidden="true">${col}</span>` : "";
+    const cell = opts.editable
+      ? `<button type="button" class="${cls}" data-i="${i}" aria-label="Bit ${i + 1}${col ? ", column " + col : ""}: ${b}">${b}</button>`
+      : `<span class="${cls}" aria-hidden="true">${b}</span>`;
+    cells += `<div class="cellwrap${nib}">${label}${cell}</div>`;
+  });
+  const sr = opts.editable ? "" : `<span class="sr">${bits}</span>`;
+  return `<div class="register" style="--n:${n}">${sr}<div class="cells">${cells}</div></div>`;
+}
+
+/* ---------- Page content ---------- */
+const NOTE_TC = "Two's complement: the left column has a negative value. All the other columns are positive.";
+const NOTE_SM = "Sign and magnitude: the left bit is the sign (0 for positive, 1 for negative). The other bits give the size.";
+const tcCols = n => unsignedCols(n).map((w, i) => (i === 0 ? -w : w));
+const smCols = n => ["sign", ...unsignedCols(n - 1)];
+function genSigned(kind) {
+  return n => {
+    const top = 2 ** (n - 1);
+    const neg = Math.random() < 0.75;
+    const v = neg ? randInt(kind === "tc" ? -top : -(top - 1), -1) : randInt(1, top - 1);
+    const abs = Math.abs(v);
+    const tc = toBits(v, n);
+    const sm = abs < top ? (v < 0 ? "1" : "0") + toBits(abs, n - 1) : null;
+    return { v, n, abs, top, tc, sm, key: String(v) };
+  };
+}
+const posFit = v => 2 ** Math.floor(Math.log2(v));
+
+const PAGE = {
+  key: "negative-binary-practice-score",
+  columns: true,
+  defaultSize: 8,
+  sizes: [
+    { value: 4, label: "4 bits" },
+    { value: 8, label: "8 bits" },
+    { value: 12, label: "12 bits" },
+    { value: 16, label: "16 bits" }
+  ],
+  modes: [
+    {
+      id: "d2t", label: "Denary to two's complement", note: NOTE_TC,
+      gen: genSigned("tc"),
+      prompt: q => `Write this number in ${q.n}-bit two's complement.`,
+      given: q => `<div class="big">${signed(q.v)}</div>`,
+      answer: { type: "bits", cols: q => tcCols(q.n) },
+      check(q, bits) {
+        if (bits === q.tc) return { ok: true, msg: `${signed(q.v)} is ${code(q.tc)} in two's complement.` };
+        if (q.v < 0) {
+          if (bits === q.sm) return { ok: false, msg: "That's sign and magnitude. For two's complement, write the positive number in binary, flip every bit, then add 1." };
+          if (bits === flip(toBits(q.abs, q.n))) return { ok: false, msg: "You've flipped the bits but haven't added 1 yet." };
+          if (bits === toBits(q.abs, q.n)) return { ok: false, msg: `That's ${q.abs}, the positive version. To make it negative, flip every bit and add 1.` };
+        }
+        return { ok: false, msg: `Your bits are ${signed(twos(bits))} in two's complement, not ${signed(q.v)}. Try again, or open the worked solution.` };
+      },
+      hints(q) {
+        if (q.v < 0) {
+          const pos = toBits(q.abs, q.n);
+          return [
+            `Start by writing ${q.abs} in binary using ${q.n} bits.`,
+            `${q.abs} is ${code(pos)}. Now flip every bit.`,
+            `Flipped, that's ${code(flip(pos))}. Now add 1.`
+          ];
+        }
+        return [
+          "Positive numbers look the same as normal binary, with a 0 in the left column.",
+          `The positive column values are ${unsignedCols(q.n - 1).join(", ")}.`,
+          `The biggest column value that fits into ${q.v} is ${posFit(q.v)}.`
+        ];
+      },
+      solution(q) {
+        const cols = tcCols(q.n);
+        if (q.v < 0) {
+          const pos = toBits(q.abs, q.n);
+          return {
+            steps: [
+              `Write ${q.abs} in binary using ${q.n} bits: ${code(pos)}.`,
+              `Flip every bit: ${code(flip(pos))}.`,
+              `Add 1: ${code(q.tc)}.`,
+              `Check: the left column is worth ${signed(cols[0])}, so ${sumStr(q.tc, cols, q.v)}.`
+            ],
+            answer: `Answer: ${code(q.tc)}`
+          };
+        }
+        return {
+          steps: [
+            `${q.v} is positive, so write it in normal binary with a 0 in the left column: ${code(q.tc)}.`,
+            `Check: ${sumStr(q.tc, cols, q.v)}.`
+          ],
+          answer: `Answer: ${code(q.tc)}`
+        };
+      }
+    },
+    {
+      id: "t2d", label: "Two's complement to denary", note: NOTE_TC,
+      gen: genSigned("tc"),
+      prompt: () => "Convert this two's complement number to denary.",
+      given: q => registerHTML(q.tc, { cols: tcCols(q.n) }),
+      answer: { type: "text", label: "Your answer in denary", placeholder: `e.g. ${MINUS}45`, inputmode: "text" },
+      check(q, raw) {
+        const p = parseIntAnswer(raw);
+        if (p === null) return { invalid: `Enter a whole number such as ${MINUS}45 or 72.` };
+        if (p === q.v) return { ok: true, msg: `${code(q.tc)} is ${signed(q.v)} in two's complement.` };
+        if (q.v < 0 && p === smValue(q.tc)) return { ok: false, msg: `You've read it as sign and magnitude. In two's complement the left column is worth ${signed(-q.top)}.` };
+        if (q.v < 0 && p === unsigned(q.tc)) return { ok: false, msg: `You've read it as normal binary. In two's complement the left column is worth ${signed(-q.top)}, not ${q.top}.` };
+        if (p === -q.v) return { ok: false, msg: "Check the sign. In two's complement, a 1 in the left column means the number is negative." };
+        return { ok: false };
+      },
+      hints(q) {
+        const cols = tcCols(q.n);
+        const ones = cols.filter((w, i) => q.tc[i] === "1").map(signed);
+        return [
+          `In two's complement the left column is worth ${signed(cols[0])}. All the other columns are positive.`,
+          `The 1s are in the columns worth ${ones.join(", ")}.`,
+          q.v < 0 ? "Add those column values together, including the negative one." : "The left bit is 0, so the number is positive. Add those column values together."
+        ];
+      },
+      solution(q) {
+        const cols = tcCols(q.n);
+        const steps = [
+          `The column values, from the left, are ${cols.map(signed).join(", ")}.`,
+          `Add the column values wherever there's a 1: ${sumStr(q.tc, cols, q.v)}.`
+        ];
+        if (q.v < 0) steps.push(`Another way: flip the bits (${code(flip(q.tc))}) and add 1 to get ${code(toBits(q.abs, q.n))}, which is ${q.abs}. So the number is ${signed(q.v)}.`);
+        return { steps, answer: `Answer: ${signed(q.v)}` };
+      }
+    },
+    {
+      id: "d2s", label: "Denary to sign and magnitude", note: NOTE_SM,
+      gen: genSigned("sm"),
+      prompt: q => `Write this number in ${q.n}-bit sign and magnitude.`,
+      given: q => `<div class="big">${signed(q.v)}</div>`,
+      answer: { type: "bits", cols: q => smCols(q.n), signBit: true },
+      check(q, bits) {
+        if (bits === q.sm) return { ok: true, msg: `${signed(q.v)} is ${code(q.sm)} in sign and magnitude.` };
+        if (q.v < 0 && bits === q.tc) return { ok: false, msg: "That's two's complement. In sign and magnitude, write the size in normal binary and set the left bit to 1." };
+        if (bits.slice(1) === q.sm.slice(1)) return { ok: false, msg: "The size is right, but the sign bit isn't. Use 1 for negative and 0 for positive." };
+        return { ok: false, msg: `Your bits are ${signed(smValue(bits))} in sign and magnitude, not ${signed(q.v)}. Try again, or open the worked solution.` };
+      },
+      hints(q) {
+        const mag = q.sm.slice(1);
+        return [
+          `The left bit is the sign: 0 for positive and 1 for negative. Here it's ${q.sm[0]}.`,
+          `The other ${q.n - 1} bits hold the size, ${q.abs}, in normal binary.`,
+          `${q.abs} in ${q.n - 1} bits is ${code(mag)}.`
+        ];
+      },
+      solution(q) {
+        const mag = q.sm.slice(1);
+        return {
+          steps: [
+            q.v < 0 ? "The number is negative, so the sign bit is 1." : "The number is positive, so the sign bit is 0.",
+            `Write the size, ${q.abs}, in the other ${q.n - 1} bits: ${code(mag)}. Check: ${sumStr(mag, unsignedCols(q.n - 1), q.abs)}.`,
+            `Put them together: ${code(q.sm)}.`
+          ],
+          answer: `Answer: ${code(q.sm)}`
+        };
+      }
+    },
+    {
+      id: "s2d", label: "Sign and magnitude to denary", note: NOTE_SM,
+      gen: genSigned("sm"),
+      prompt: () => "Convert this sign and magnitude number to denary.",
+      given: q => registerHTML(q.sm, { cols: smCols(q.n), signBit: true }),
+      answer: { type: "text", label: "Your answer in denary", placeholder: `e.g. ${MINUS}45`, inputmode: "text" },
+      check(q, raw) {
+        const p = parseIntAnswer(raw);
+        if (p === null) return { invalid: `Enter a whole number such as ${MINUS}45 or 72.` };
+        if (p === q.v) return { ok: true, msg: `${code(q.sm)} is ${signed(q.v)} in sign and magnitude.` };
+        if (q.v < 0 && p === twos(q.sm)) return { ok: false, msg: "You've read it as two's complement. In sign and magnitude, the left bit only gives the sign." };
+        if (p === -q.v) return { ok: false, msg: "The size is right, but check the sign bit: 1 means negative and 0 means positive." };
+        if (q.v < 0 && p === unsigned(q.sm)) return { ok: false, msg: "The left bit is the sign, not a column value." };
+        return { ok: false };
+      },
+      hints(q) {
+        const mag = q.sm.slice(1);
+        return [
+          "The left bit is the sign: 0 means positive and 1 means negative.",
+          `The other bits, ${code(mag)}, give the size in normal binary.`,
+          `The size is ${termsStr(mag, unsignedCols(q.n - 1))}.`
+        ];
+      },
+      solution(q) {
+        const mag = q.sm.slice(1);
+        return {
+          steps: [
+            q.v < 0 ? "The sign bit is 1, so the number is negative." : "The sign bit is 0, so the number is positive.",
+            `Work out the size from the other bits: ${code(mag)} = ${sumStr(mag, unsignedCols(q.n - 1), q.abs)}.`,
+            `So the number is ${signed(q.v)}.`
+          ],
+          answer: `Answer: ${signed(q.v)}`
+        };
+      }
+    }
+  ]
+};
+
+
+/* ---------- Page engine ---------- */
+const $ = id => document.getElementById(id);
+const state = {
+  mode: PAGE.modes[0].id, size: PAGE.defaultSize,
+  q: null, bits: [], scored: false, correct: false, hintsShown: 0,
+  score: { correct: 0, attempted: 0, streak: 0, best: 0 }
+};
+const currentMode = () => PAGE.modes.find(m => m.id === state.mode);
+
+function loadScore() {
+  try { const s = JSON.parse(localStorage.getItem(PAGE.key)); if (s && typeof s.correct === "number") state.score = s; } catch (e) { /* unavailable */ }
+}
+function saveScore() { try { localStorage.setItem(PAGE.key, JSON.stringify(state.score)); } catch (e) { /* ignore */ } }
+function renderScore() {
+  $("s-correct").textContent = state.score.correct;
+  $("s-att").textContent = state.score.attempted;
+  $("s-streak").textContent = state.score.streak;
+  $("s-best").textContent = state.score.best;
+}
+
+function newQuestion() {
+  const prev = state.q ? state.q.key : "";
+  let q;
+  for (let t = 0; t < 25; t++) { q = currentMode().gen(state.size); if (q.key !== prev) break; }
+  state.q = q; state.scored = false; state.correct = false; state.hintsShown = 0;
+  render();
+}
+
+function render() {
+  const q = state.q, mode = currentMode();
+  const note = mode.note || "";
+  $("note").textContent = note; $("note").hidden = !note;
+  $("hints").hidden = true; $("hints").innerHTML = "";
+  $("feedback").hidden = true;
+  $("show-solution").hidden = true; $("show-solution").textContent = "Show worked solution";
+  $("solution").hidden = true; $("solution").innerHTML = "";
+  $("hint").disabled = false; $("hint").textContent = "Show a hint";
+  $("check").disabled = false;
+  $("next").textContent = "Skip question"; $("next").className = "secondary";
+  $("prompt").innerHTML = mode.prompt(q);
+  $("given").innerHTML = mode.given(q);
+  if (mode.answer.type === "text") {
+    $("answer").innerHTML = `<label class="den-label" for="ans">${mode.answer.label}</label>
+      <input class="den-input" id="ans" type="text" inputmode="${mode.answer.inputmode || "text"}" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="${mode.answer.placeholder}">`;
+    $("ans").addEventListener("keydown", ev => {
+      if (ev.key === "Enter") { ev.preventDefault(); state.correct ? newQuestion() : check(); }
+    });
+  } else {
+    state.bits = Array(q.n).fill("0");
+    drawEditable();
+  }
+}
+
+function drawEditable() {
+  const mode = currentMode();
+  $("answer").innerHTML = registerHTML(state.bits.join(""), {
+    editable: true, cols: mode.answer.cols ? mode.answer.cols(state.q) : null, signBit: mode.answer.signBit
+  }) + `<p class="bit-help">Click a bit to flip it, or type 0s and 1s. <button type="button" class="link" id="clear-bits">Set all to 0</button></p>`;
+  if (state.correct) $("answer").querySelectorAll("button").forEach(b => (b.disabled = true));
+}
+function setBit(i, v, focusIdx) {
+  state.bits[i] = v;
+  const btn = $("answer").querySelector(`.bit[data-i="${i}"]`);
+  btn.textContent = v;
+  btn.classList.toggle("on", v === "1");
+  btn.setAttribute("aria-label", btn.getAttribute("aria-label").replace(/: [01]$/, ": " + v));
+  if (focusIdx !== undefined) focusBit(focusIdx);
+}
+function focusBit(i) {
+  const n = state.bits.length;
+  const btn = $("answer").querySelector(`.bit[data-i="${Math.max(0, Math.min(n - 1, i))}"]`);
+  if (btn) btn.focus();
+}
+$("answer").addEventListener("click", ev => {
+  if (currentMode().answer.type !== "bits" || state.correct) return;
+  if (ev.target.id === "clear-bits") { state.bits.fill("0"); drawEditable(); focusBit(0); return; }
+  const btn = ev.target.closest(".bit");
+  if (!btn) return;
+  const i = Number(btn.dataset.i);
+  setBit(i, state.bits[i] === "1" ? "0" : "1");
+});
+$("answer").addEventListener("keydown", ev => {
+  const btn = ev.target.closest && ev.target.closest("button.bit");
+  if (!btn || state.correct) return;
+  const i = Number(btn.dataset.i);
+  if (ev.key === "0" || ev.key === "1") { ev.preventDefault(); setBit(i, ev.key, i + 1); }
+  else if (ev.key === "ArrowRight") { ev.preventDefault(); focusBit(i + 1); }
+  else if (ev.key === "ArrowLeft") { ev.preventDefault(); focusBit(i - 1); }
+  else if (ev.key === "Backspace") { ev.preventDefault(); setBit(i, "0", i - 1); }
+});
+
+function showFeedback(kind, html) {
+  const fb = $("feedback");
+  fb.className = "feedback " + kind; fb.innerHTML = html; fb.hidden = false;
+}
+
+function check() {
+  if (state.correct) return;
+  const mode = currentMode();
+  const answer = mode.answer.type === "text" ? $("ans").value : state.bits.join("");
+  const r = mode.check(state.q, answer);
+  if (r.invalid) { showFeedback("bad", r.invalid); return; }
+  if (!state.scored) {
+    state.scored = true;
+    const sc = state.score;
+    sc.attempted++;
+    if (r.ok) { sc.correct++; sc.streak++; sc.best = Math.max(sc.best, sc.streak); } else sc.streak = 0;
+    saveScore(); renderScore();
+  }
+  if (r.ok) {
+    const streak = state.score.streak;
+    showFeedback("good", `<strong>Correct.${streak >= 3 ? ` That's ${streak} in a row.` : ""}</strong>${r.msg || ""}`);
+    state.correct = true;
+    $("check").disabled = true; $("hint").disabled = true;
+    if (mode.answer.type === "text") $("ans").readOnly = true;
+    else $("answer").querySelectorAll("button").forEach(b => (b.disabled = true));
+    $("next").textContent = "Next question"; $("next").className = "primary"; $("next").focus();
+  } else {
+    showFeedback("bad", `<strong>Not quite.</strong>${r.msg || "Check your working and try again, or open the worked solution."}`);
+  }
+  $("show-solution").hidden = false;
+}
+
+function showHint() {
+  const list = currentMode().hints(state.q);
+  if (state.hintsShown >= list.length) return;
+  const li = document.createElement("li");
+  li.innerHTML = list[state.hintsShown];
+  $("hints").appendChild(li); $("hints").hidden = false;
+  state.hintsShown++;
+  if (state.hintsShown >= list.length) { $("hint").textContent = "No more hints"; $("hint").disabled = true; }
+  else $("hint").textContent = `Show another hint (${state.hintsShown} of ${list.length} shown)`;
+}
+
+function toggleSolution() {
+  const sol = $("solution");
+  if (sol.hidden) {
+    const { steps, answer } = currentMode().solution(state.q);
+    sol.innerHTML = `<h2>Worked solution</h2><ol>${steps.map(s => `<li>${s}</li>`).join("")}</ol><p class="answer-line">${answer}</p>`;
+    sol.hidden = false; $("show-solution").textContent = "Hide worked solution";
+  } else {
+    sol.hidden = true; $("show-solution").textContent = "Show worked solution";
+  }
+}
+
+$("mode-seg").innerHTML = PAGE.modes.map(m =>
+  `<button type="button" data-value="${m.id}" aria-pressed="${m.id === state.mode}">${m.label}</button>`).join("");
+$("size").innerHTML = PAGE.sizes.map(s =>
+  `<option value="${s.value}"${s.value === PAGE.defaultSize ? " selected" : ""}>${s.label}</option>`).join("");
+$("cols-setting").hidden = !PAGE.columns;
+$("mode-seg").addEventListener("click", ev => {
+  const btn = ev.target.closest("button");
+  if (!btn) return;
+  $("mode-seg").querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === btn)));
+  state.mode = btn.dataset.value;
+  newQuestion();
+});
+$("size").addEventListener("change", ev => { state.size = Number(ev.target.value); newQuestion(); });
+$("cols").addEventListener("change", ev => document.body.classList.toggle("show-cols", ev.target.checked));
+$("check").addEventListener("click", check);
+$("hint").addEventListener("click", showHint);
+$("next").addEventListener("click", newQuestion);
+$("show-solution").addEventListener("click", toggleSolution);
+$("reset").addEventListener("click", () => { state.score = { correct: 0, attempted: 0, streak: 0, best: 0 }; saveScore(); renderScore(); });
+
+loadScore(); renderScore(); newQuestion();
+</script>
+</body>
+</html>
