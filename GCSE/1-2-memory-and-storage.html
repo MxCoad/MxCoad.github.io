@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2 Memory and storage — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 1.2 Memory and storage: RAM, ROM, virtual memory, secondary storage, units, binary, hex, characters, images, sound and compression.">
+<style>
+  /* File size calculator */
+  .calc-out { margin-top: 16px; padding: 14px 16px; border-radius: 10px; background: var(--ms-surface-2); font-size: 17px; }
+  .calc-out ol { margin: 0; padding-left: 22px; }
+  .calc-out .answer { margin: 10px 0 0; font-family: var(--ms-font-mono); font-size: 20px; font-weight: 700; color: var(--ms-accent); }
+
+  /* Binary playground */
+  .bits-row { display: grid; grid-template-columns: 70px repeat(8, minmax(0, 1fr)) 70px; gap: 4px; align-items: center; margin: 4px 0; }
+  .bits-row .lbl { font-weight: 700; font-size: 15px; }
+  .bits-row .den { font-family: var(--ms-font-mono); font-weight: 700; text-align: right; }
+  .bit, .rbit {
+    min-height: 44px; border-radius: 8px; font-family: var(--ms-font-mono); font-size: 20px; font-weight: 700;
+    display: grid; place-items: center;
+  }
+  .bit { border: 2px solid var(--ms-accent); background: var(--ms-surface); color: var(--ms-accent); cursor: pointer; padding: 0; }
+  .bit[aria-pressed="true"] { background: var(--ms-accent-soft); }
+  .rbit { border: 2px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); }
+  .rbit.lost { border-style: dashed; color: var(--ms-bad); }
+  .carry { font-family: var(--ms-font-mono); font-size: 14px; text-align: center; color: var(--ms-bad); min-height: 18px; }
+  .pv { font-family: var(--ms-font-mono); font-size: 12px; text-align: center; color: var(--ms-muted); }
+  .rule { height: 2px; background: var(--ms-text); margin: 6px 0; grid-column: 2 / 10; }
+  @media (max-width: 520px) {
+    .bits-row { grid-template-columns: 46px repeat(8, minmax(0, 1fr)) 46px; gap: 3px; }
+    .bit, .rbit { font-size: 16px; min-height: 40px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/#gcse">GCSE</a> › 1.2 Memory and storage</p>
+  <p class="eyebrow">OCR J277 · Paper 1 · Topic 1.2</p>
+  <h1>Memory and storage</h1>
+  <p class="intro">Where computers keep programs and data, how much space things take up, and how numbers, text, images and sound are all stored as binary. This is the biggest topic on Paper 1, and it's full of calculations, so practise with the tools.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="primary">
+    <div class="sec-head"><span class="sec-num">1.2.1</span><h2>Primary storage (memory)</h2></div>
+    <p><span class="term">Primary storage</span> is memory the CPU can access <strong>directly</strong>. Computers need it because the CPU works far too fast to wait for secondary storage: programs and data that are <strong>currently in use</strong> are copied into primary storage so the CPU can fetch them quickly.</p>
+    <table class="def">
+      <tr><th scope="row">RAM<small>Random access memory</small></th>
+        <td>Holds the <strong>programs and data currently in use</strong>, including the operating system. It can be <strong>read and written</strong>. It is <strong>volatile</strong>: its contents are lost when the power is switched off.</td></tr>
+      <tr><th scope="row">ROM<small>Read-only memory</small></th>
+        <td>Holds the <strong>start-up (boot) instructions</strong> — often called the BIOS — that the computer needs as soon as it is switched on. It is <strong>read-only</strong>, and it is <strong>non-volatile</strong>: its contents stay when the power is off.</td></tr>
+    </table>
+    <h3>Virtual memory</h3>
+    <p>If RAM fills up, the operating system can use part of <strong>secondary storage</strong> (e.g. the hard drive or SSD) as <span class="term">virtual memory</span>:</p>
+    <ol>
+      <li>Data or programs in RAM that <strong>aren't being used right now</strong> are moved out to virtual memory.</li>
+      <li>That frees space in RAM for the data the CPU needs now.</li>
+      <li>When the moved data is needed again, it is swapped back into RAM.</li>
+    </ol>
+    <p>This lets the computer keep running more programs than RAM can hold — but it <strong>slows the computer down</strong>, because secondary storage is much slower than RAM. Adding more RAM reduces the need for virtual memory.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>Volatile means "<strong>loses its contents when the power is off</strong>" — not "unstable" or "can be changed".</li>
+        <li>Virtual memory is not "extra RAM" or "memory in the cloud". It's space on <strong>secondary storage</strong> used as if it were RAM.</li>
+      </ul>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>If a computer has far too little RAM, it can spend more time swapping data between RAM and virtual memory than doing useful work. This is called <strong>disk thrashing</strong>, and it's why an old computer slows to a crawl with lots of browser tabs open.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="secondary">
+    <div class="sec-head"><span class="sec-num">1.2.2</span><h2>Secondary storage</h2></div>
+    <p><span class="term">Secondary storage</span> is <strong>non-volatile</strong> storage that keeps programs and files <strong>permanently</strong>, even when the computer is off. It's needed because RAM is volatile and far too small to hold everything.</p>
+    <h3>Three types</h3>
+    <div class="table-wrap">
+      <table class="def">
+        <thead><tr><th scope="col">Type</th><th scope="col">How it works</th><th scope="col">Examples</th><th scope="col">Strengths</th><th scope="col">Weaknesses</th></tr></thead>
+        <tr><th scope="row">Magnetic</th><td>Data stored as magnetised areas on spinning platters, read by a moving head</td><td>Hard disk drive (HDD), magnetic tape</td><td>Very high capacity, cheap per gigabyte</td><td>Moving parts so less durable; slower than solid state; heavier</td></tr>
+        <tr><th scope="row">Optical</th><td>A laser reads pits and lands on the surface of a disc</td><td>CD, DVD, Blu-ray</td><td>Very cheap, light and portable</td><td>Low capacity (CD ≈ 700 MB, DVD ≈ 4.7 GB, Blu-ray ≈ 25 GB); slow; easily scratched</td></tr>
+        <tr><th scope="row">Solid state</th><td>Data stored electronically in flash memory chips, no moving parts</td><td>SSD, USB flash drive, SD card</td><td>Very fast, durable (no moving parts), small and light, low power</td><td>More expensive per gigabyte; a limited number of write cycles</td></tr>
+      </table>
+    </div>
+    <h3>Choosing a device: the six characteristics</h3>
+    <div class="two-col">
+      <div class="mini"><ul>
+        <li><strong>Capacity</strong> — how much it can store</li>
+        <li><strong>Speed</strong> — how fast data can be read and written</li>
+        <li><strong>Portability</strong> — how easy it is to carry (size, weight)</li>
+      </ul></div>
+      <div class="mini"><ul>
+        <li><strong>Durability</strong> — how well it survives knocks, drops or heat</li>
+        <li><strong>Reliability</strong> — how consistently it works over time</li>
+        <li><strong>Cost</strong> — usually compared per gigabyte</li>
+      </ul></div>
+    </div>
+    <div class="tool">
+      <p class="tool-title">Try it: magnetic, optical or solid state?</p>
+      <p class="tool-sub">Choose the type for each device.</p>
+      <div id="sort-storage"></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>"Recommend a storage device" questions want a <strong>recommendation</strong> plus <strong>justifications linked to the scenario</strong>. "SSDs are fast" isn't enough — say why speed, durability or portability matters <em>for that person</em>.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="units">
+    <div class="sec-head"><span class="sec-num">1.2.3</span><h2>Units and file sizes</h2></div>
+    <p>Computers store everything in <strong>binary</strong> because they are made of billions of tiny switches (transistors), each with only two states: on (1) or off (0).</p>
+    <table class="def">
+      <tr><th scope="row">Bit</th><td>A single binary digit: 0 or 1</td></tr>
+      <tr><th scope="row">Nibble</th><td>4 bits</td></tr>
+      <tr><th scope="row">Byte</th><td>8 bits</td></tr>
+      <tr><th scope="row">Kilobyte (KB)</th><td>1,000 bytes</td></tr>
+      <tr><th scope="row">Megabyte (MB)</th><td>1,000 kilobytes</td></tr>
+      <tr><th scope="row">Gigabyte (GB)</th><td>1,000 megabytes</td></tr>
+      <tr><th scope="row">Terabyte (TB)</th><td>1,000 gigabytes</td></tr>
+      <tr><th scope="row">Petabyte (PB)</th><td>1,000 terabytes</td></tr>
+    </table>
+    <p>To go <strong>up</strong> a unit, divide by 1,000 (or by 8 to go from bits to bytes). To go <strong>down</strong>, multiply.</p>
+    <h3>File size formulas</h3>
+    <table class="def">
+      <tr><th scope="row">Image</th><td><code>width × height × colour depth</code> (in pixels and bits) = size in bits</td></tr>
+      <tr><th scope="row">Sound</th><td><code>sample rate × bit depth × duration</code> (in Hz, bits and seconds) = size in bits</td></tr>
+      <tr><th scope="row">Text</th><td><code>bits per character × number of characters</code> = size in bits</td></tr>
+    </table>
+    <p>All three give an answer in <strong>bits</strong> — remember to <strong>divide by 8</strong> to get bytes, then by 1,000 for kilobytes, and so on.</p>
+
+    <div class="tool" id="sizecalc">
+      <p class="tool-title">Try it: file size calculator</p>
+      <p class="tool-sub">Pick a file type and change the numbers. The working is shown the way you'd write it in the exam.</p>
+      <fieldset class="ctl" style="margin-bottom:16px">
+        <legend>File type</legend>
+        <div class="seg">
+          <label><input type="radio" name="fs-type" value="image" checked><span>Image</span></label>
+          <label><input type="radio" name="fs-type" value="sound"><span>Sound</span></label>
+          <label><input type="radio" name="fs-type" value="text"><span>Text</span></label>
+        </div>
+      </fieldset>
+      <div class="controls" data-for="image">
+        <div class="ctl"><label for="fs-w">Width (pixels)</label><input class="field" type="number" id="fs-w" value="800" min="1"></div>
+        <div class="ctl"><label for="fs-h">Height (pixels)</label><input class="field" type="number" id="fs-h" value="600" min="1"></div>
+        <div class="ctl"><label for="fs-cd">Colour depth (bits)</label><input class="field" type="number" id="fs-cd" value="8" min="1" max="48"></div>
+      </div>
+      <div class="controls" data-for="sound" hidden>
+        <div class="ctl"><label for="fs-sr">Sample rate (Hz)</label><input class="field" type="number" id="fs-sr" value="44100" min="1"></div>
+        <div class="ctl"><label for="fs-bd">Bit depth (bits)</label><input class="field" type="number" id="fs-bd" value="16" min="1"></div>
+        <div class="ctl"><label for="fs-sec">Duration (seconds)</label><input class="field" type="number" id="fs-sec" value="10" min="1"></div>
+      </div>
+      <div class="controls" data-for="text" hidden>
+        <div class="ctl"><label for="fs-bpc">Bits per character</label><input class="field" type="number" id="fs-bpc" value="8" min="1"></div>
+        <div class="ctl"><label for="fs-chars">Number of characters</label><input class="field" type="number" id="fs-chars" value="2000" min="1"></div>
+      </div>
+      <div class="calc-out" id="fs-out" aria-live="polite"></div>
+      <p class="small">OCR accepts 1,000 or 1,024 for converting between units; this calculator uses 1,000.</p>
+    </div>
+
+    <div class="box worked">
+      <p class="box-label">Worked example: storage needed</p>
+      <p>A student wants to store 200 photos of 3 MB each and 50 songs of 4 MB each. Total = (200 × 3) + (50 × 4) = 600 + 200 = <strong>800 MB</strong> = 0.8 GB. So a 1 GB drive would just fit them; a 16 GB USB stick would leave plenty of room.</p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>Forgetting to <strong>divide by 8</strong> — the formulas give bits, not bytes.</li>
+        <li>Using minutes instead of <strong>seconds</strong> in the sound formula.</li>
+        <li>Not showing your working — you can still get method marks if the final answer is wrong.</li>
+      </ul>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>Strictly, 1,024 bytes is a <strong>kibibyte (KiB)</strong> and 1,000 bytes is a kilobyte (KB). Operating systems often show sizes using 1,024 but label them "KB", which is why a "500 GB" drive shows up as about 465 GB on your computer.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="numbers">
+    <div class="sec-head"><span class="sec-num">1.2.4</span><h2>Numbers: binary and hex</h2></div>
+    <h3>Binary ↔ denary</h3>
+    <p>Each bit in an 8-bit binary number has a <strong>place value</strong>: 128, 64, 32, 16, 8, 4, 2, 1. Add up the place values that have a 1. With 8 bits you can store 0 to <strong>255</strong>.</p>
+    <pre><code>128  64  32  16   8   4   2   1
+  1   0   1   1   0   1   1   0   = 128 + 32 + 16 + 4 + 2 = 182</code></pre>
+    <p>To convert denary to binary, work from the left: if the place value fits into what's left, write 1 and subtract it; otherwise write 0.</p>
+    <h3>Hexadecimal</h3>
+    <p>Hex is <strong>base 16</strong>: digits 0–9 then A (10), B (11), C (12), D (13), E (14), F (15). <strong>One hex digit = one nibble (4 bits)</strong>, so binary ↔ hex is easy: split the byte into two nibbles.</p>
+    <pre><code>1011 0110
+  11    6   →  B6</code></pre>
+    <p>Hex ↔ denary: the left digit is worth 16s, the right digit 1s. B6 = (11 × 16) + 6 = <strong>182</strong>.</p>
+    <p>Hex is used because it is <strong>shorter and easier for humans to read, remember and write</strong> than binary, with less chance of making mistakes — for example in colour codes like <code>#FF8800</code> or MAC addresses.</p>
+    <h3>Binary addition and overflow</h3>
+    <p>Add from the right, carrying like in normal addition: 0+0 = 0, 0+1 = 1, 1+1 = 0 carry 1, 1+1+1 = 1 carry 1. If the answer needs <strong>more bits than are available</strong> (more than 255 for 8 bits), the extra carry is lost. This is an <span class="term">overflow error</span>.</p>
+    <h3>Binary shifts</h3>
+    <p>A <strong>left shift</strong> moves every bit left and fills the gaps with 0s. Each place <strong>multiplies by 2</strong>. A <strong>right shift</strong> moves bits right; each place <strong>divides by 2</strong>. Bits shifted off the end are <strong>lost</strong>, which can make the answer wrong (overflow on a left shift, or losing the remainder on a right shift).</p>
+
+    <div class="tool" id="binplay">
+      <p class="tool-title">Try it: binary playground</p>
+      <p class="tool-sub">Click bits to switch them on or off, then choose what to do with them.</p>
+      <div class="controls" style="margin-bottom:12px">
+        <fieldset class="ctl">
+          <legend>Operation</legend>
+          <div class="seg">
+            <label><input type="radio" name="bp-op" value="add" checked><span>Add</span></label>
+            <label><input type="radio" name="bp-op" value="left"><span>Left shift</span></label>
+            <label><input type="radio" name="bp-op" value="right"><span>Right shift</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="ctl" id="bp-places-wrap" hidden>
+          <legend>Places</legend>
+          <div class="seg">
+            <label><input type="radio" name="bp-n" value="1" checked><span>1</span></label>
+            <label><input type="radio" name="bp-n" value="2"><span>2</span></label>
+            <label><input type="radio" name="bp-n" value="3"><span>3</span></label>
+          </div>
+        </fieldset>
+      </div>
+      <div id="bp-grid"></div>
+      <p class="explain" id="bp-say" aria-live="polite"></p>
+      <p class="small">For more conversion practice, use the <a href="/Binary_Practice/binary.html">binary practice tools</a>.</p>
+    </div>
+
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>"Hex is used because it uses less memory" is <strong>wrong</strong> — the computer still stores it in binary. Hex is for <strong>humans</strong>: shorter, easier to read and fewer errors.</p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>Computers use shifts because they're far quicker than general multiplication. A right shift of an odd number loses the 1 at the end: 00010111 (23) shifted right 1 place gives 00001011 (11), not 11.5. That's a loss of <strong>precision</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="characters">
+    <div class="sec-head"><span class="sec-num">1.2.4</span><h2>Characters</h2></div>
+    <p>Text is stored by giving every character a <strong>unique binary code</strong>. The full list of characters a computer can represent, with their codes, is called a <span class="term">character set</span>.</p>
+    <table class="def">
+      <tr><th scope="row">ASCII</th><td>Uses <strong>7 bits</strong> per character, so 2<sup>7</sup> = <strong>128</strong> characters: English letters, digits, punctuation and control codes. (Extended ASCII uses 8 bits for 256 characters.)</td></tr>
+      <tr><th scope="row">Unicode</th><td>Uses <strong>more bits per character</strong> (up to 32), so it can represent <strong>over a million</strong> characters — every writing system in the world, plus symbols and emoji. Its first 128 codes are the same as ASCII.</td></tr>
+    </table>
+    <p>The <strong>more bits per character</strong>, the <strong>more characters</strong> can be represented (2<sup>bits</sup>) — but each character takes up more storage.</p>
+    <p>Codes are in <strong>logical order</strong>: 'A' is 65, so 'B' is 66, 'C' is 67… Lower-case 'a' is 97, and the digit '0' is 48. If you know one code you can work out the others.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>The character '7' is not stored as the number 7 — in ASCII it is code 55. Characters and numbers are stored differently.</p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="images-sound">
+    <div class="sec-head"><span class="sec-num">1.2.4</span><h2>Images and sound</h2></div>
+    <h3>Images</h3>
+    <p>A bitmap image is made of a grid of <span class="term">pixels</span> (picture elements). Each pixel's colour is stored as a binary number.</p>
+    <ul>
+      <li><strong>Colour depth</strong> — the number of bits used for each pixel. More bits = more colours (2<sup>bits</sup>): 1 bit gives 2 colours, 8 bits give 256, 24 bits give over 16 million.</li>
+      <li><strong>Resolution</strong> — the number of pixels in the image (width × height).</li>
+      <li><strong>Metadata</strong> — extra data stored with the image, such as its width, height, colour depth, the date it was taken and the camera used. It's needed so the computer can display the image correctly.</li>
+    </ul>
+    <p>Increasing the colour depth or the resolution <strong>improves the quality</strong> of the image but <strong>increases the file size</strong>.</p>
+    <h3>Sound</h3>
+    <p>Sound is an <strong>analogue</strong> wave. To store it, the computer <strong>samples</strong> it: it measures the amplitude (height) of the wave at regular intervals and stores each measurement as a binary number.</p>
+    <ul>
+      <li><strong>Sample rate</strong> — how many samples are taken per second, in hertz (Hz). CD quality is 44,100 Hz.</li>
+      <li><strong>Bit depth</strong> — the number of bits used for each sample.</li>
+      <li><strong>Duration</strong> — how long the recording is, in seconds.</li>
+    </ul>
+    <p>A higher sample rate or bit depth means the digital version is <strong>closer to the original</strong> sound (better quality), but the <strong>file is bigger</strong>. A longer duration also means a bigger file. Use the calculator above to see the effect.</p>
+    <p>The <a href="Revision_Console.html">GCSE Revision Console</a> has an interactive sampling demo and more practice questions on images and sound.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Resolution is not "how clear the image is" — it's the <strong>number of pixels</strong>. Quality improves because of it, but the definition is the pixel count.</p>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="topic" id="compression">
+    <div class="sec-head"><span class="sec-num">1.2.5</span><h2>Compression</h2></div>
+    <p><span class="term">Compression</span> makes files smaller. Smaller files take up <strong>less storage space</strong>, are <strong>quicker to send</strong> over a network or download, and use less bandwidth — useful for streaming and email attachments.</p>
+    <table class="def">
+      <tr><th scope="row">Lossy</th><td><strong>Permanently removes</strong> some data — usually detail people are unlikely to notice. The original file <strong>cannot be fully recovered</strong>. Gives much smaller files. Used for <strong>photos (JPEG), music (MP3) and video</strong> streaming.</td></tr>
+      <tr><th scope="row">Lossless</th><td>Makes the file smaller <strong>without losing any data</strong>: the original can be <strong>restored exactly</strong>. Files are not reduced as much. Used for <strong>text documents, program files and spreadsheets</strong>, where every bit matters (PNG and ZIP use lossless compression).</td></tr>
+    </table>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>When asked which to use, link it to the file: for a program or text file, <strong>lossless</strong>, because losing any data would break it or change its meaning. For a photo to send on social media, <strong>lossy</strong>, because a smaller file matters more than tiny details.</p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>One lossless method is <strong>run-length encoding (RLE)</strong>: instead of storing <code>WWWWWWBBBWW</code>, store <code>6W 3B 2W</code>. It works well when there are long runs of the same value, such as simple graphics, but can make files with lots of variation <em>bigger</em>.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-1-systems-architecture.html">1.1 Systems architecture</a> · Next: <a href="1-3-networks.html">1.3 Networks</a> · <a href="/Binary_Practice/binary.html">Binary practice tools</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-1-2-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe two differences between RAM and ROM.',
+      points: ['RAM is volatile / loses its contents when the power is off', 'ROM is non-volatile / keeps its contents when the power is off', 'RAM can be read from and written to', 'ROM is read-only / cannot be changed', 'RAM stores the programs and data currently in use', 'ROM stores the start-up / boot instructions (BIOS)'],
+      guide: 'Up to 2 marks per difference: 1 for RAM, 1 for the matching ROM point. Maximum 4.' },
+    { id: 'q2', marks: 3, text: 'Explain how virtual memory is used when RAM is full.',
+      points: ['Part of secondary storage is used as if it were RAM', 'Data / programs not currently in use are moved from RAM to virtual memory', 'This frees space in RAM for data that is needed now', 'Data is moved back into RAM when it is needed again'],
+      guide: 'Any three points, 1 mark each.' },
+    { id: 'q3', marks: 3, text: 'A photographer travels around the world and needs to back up their photos each day. Recommend a suitable type of secondary storage and justify your choice.',
+      points: ['Recommendation: solid state, e.g. a portable SSD / USB flash drive / SD card', 'Durable / no moving parts, so will not be damaged when knocked while travelling', 'Small and light / portable, so easy to carry', 'Fast, so photos can be copied quickly', 'Enough capacity for lots of high-resolution photos'],
+      guide: '1 mark for the recommendation, plus up to 2 marks for justifications linked to travelling.' },
+    { id: 'q4', marks: 2, text: 'Convert the binary number 10110110 into (a) denary and (b) hexadecimal.',
+      points: ['(a) 182', '(b) B6'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Add the 8-bit binary numbers 10011010 and 11001100. Show your working and explain what happens.',
+      points: ['8-bit result 01100110 (with a carry out of the left-most bit)', 'An overflow (error) occurs', 'Because the answer (358) is greater than 255 / needs 9 bits, which cannot be stored in 8 bits'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'The binary number 00010110 is shifted 2 places to the left. Give the result and state the effect on its denary value.',
+      points: ['01011000', 'The value is multiplied by 4 (22 becomes 88)'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 3, text: 'An image is 800 pixels wide and 600 pixels high, with a colour depth of 8 bits. Calculate its file size in kilobytes. Show your working.',
+      points: ['800 × 600 × 8 (= 3,840,000 bits)', '÷ 8 to convert to bytes (= 480,000 bytes)', '÷ 1,000 = 480 KB (or ÷ 1,024 = 468.75 KB)'],
+      guide: '1 mark for each step. Full marks for the correct answer with working.' },
+    { id: 'q8', marks: 2, text: 'Explain why Unicode is used instead of ASCII in many modern systems.',
+      points: ['Unicode uses more bits per character (than ASCII)', 'So it can represent many more characters, e.g. other alphabets / languages / emoji', 'ASCII can only represent 128 (or 256) characters'],
+      guide: 'Any two points, 1 mark each.' },
+    { id: 'q9', marks: 4, text: 'Describe the difference between lossy and lossless compression. Give a suitable use for each.',
+      points: ['Lossy permanently removes some data', 'Lossless does not lose any data / the original can be restored exactly', 'Suitable use of lossy, e.g. photos / music / video streaming', 'Suitable use of lossless, e.g. text documents / program files'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Storage sorter ----------
+  TopicKit.sorter(document.getElementById('sort-storage'), ['Magnetic', 'Optical', 'Solid state'], [
+    { text: 'Hard disk drive (HDD)', answer: 'Magnetic', why: 'Spinning platters read by a moving head.' },
+    { text: 'Blu-ray disc', answer: 'Optical', why: 'Read by a laser.' },
+    { text: 'SD card in a camera', answer: 'Solid state', why: 'Flash memory, no moving parts.' },
+    { text: 'USB memory stick', answer: 'Solid state', why: 'Flash memory, no moving parts.' },
+    { text: 'DVD', answer: 'Optical', why: 'Read by a laser.' },
+    { text: 'Magnetic tape used for large back-ups', answer: 'Magnetic', why: 'Cheap, huge capacity, but slow to find data.' },
+    { text: 'SSD inside a laptop', answer: 'Solid state', why: 'Fast and durable, which suits a laptop that gets carried around.' }
+  ]);
+
+  // ---------- File size calculator ----------
+  function n(id) { var v = parseFloat(document.getElementById(id).value); return isFinite(v) && v > 0 ? v : 0; }
+  function fmt(x) { return (Math.round(x * 1000) / 1000).toLocaleString('en-GB', { maximumFractionDigits: 3 }); }
+  function updateSize() {
+    var type = document.querySelector('input[name="fs-type"]:checked').value;
+    document.querySelectorAll('#sizecalc [data-for]').forEach(function (d) { d.hidden = d.getAttribute('data-for') !== type; });
+    var bits, first;
+    if (type === 'image') {
+      bits = n('fs-w') * n('fs-h') * n('fs-cd');
+      first = 'width × height × colour depth = ' + fmt(n('fs-w')) + ' × ' + fmt(n('fs-h')) + ' × ' + fmt(n('fs-cd')) + ' = ' + fmt(bits) + ' bits';
+    } else if (type === 'sound') {
+      bits = n('fs-sr') * n('fs-bd') * n('fs-sec');
+      first = 'sample rate × bit depth × duration = ' + fmt(n('fs-sr')) + ' × ' + fmt(n('fs-bd')) + ' × ' + fmt(n('fs-sec')) + ' = ' + fmt(bits) + ' bits';
+    } else {
+      bits = n('fs-bpc') * n('fs-chars');
+      first = 'bits per character × number of characters = ' + fmt(n('fs-bpc')) + ' × ' + fmt(n('fs-chars')) + ' = ' + fmt(bits) + ' bits';
+    }
+    var bytes = bits / 8, kb = bytes / 1000, mb = kb / 1000;
+    var out = document.getElementById('fs-out');
+    out.innerHTML = '';
+    var ol = document.createElement('ol');
+    [first, '÷ 8 = ' + fmt(bytes) + ' bytes', '÷ 1,000 = ' + fmt(kb) + ' KB', '÷ 1,000 = ' + fmt(mb) + ' MB'].forEach(function (t) {
+      var li = document.createElement('li'); li.textContent = t; ol.appendChild(li);
+    });
+    out.appendChild(ol);
+    var ans = document.createElement('p');
+    ans.className = 'answer';
+    ans.textContent = mb >= 1 ? '≈ ' + fmt(mb) + ' MB' : '≈ ' + fmt(kb) + ' KB';
+    out.appendChild(ans);
+  }
+  document.querySelectorAll('#sizecalc input').forEach(function (i) { i.addEventListener('input', updateSize); i.addEventListener('change', updateSize); });
+  updateSize();
+
+  // ---------- Binary playground ----------
+  var A = [1, 0, 0, 1, 1, 0, 1, 0], B = [1, 1, 0, 0, 1, 1, 0, 0];
+  var PV = [128, 64, 32, 16, 8, 4, 2, 1];
+  var grid = document.getElementById('bp-grid');
+  function toNum(bits) { return bits.reduce(function (t, b, i) { return t + b * PV[i]; }, 0); }
+  function op() { return document.querySelector('input[name="bp-op"]:checked').value; }
+  function places() { return +document.querySelector('input[name="bp-n"]:checked').value; }
+  function cell(cls, text) { var d = document.createElement('div'); d.className = cls; d.textContent = text; return d; }
+  function row(label, contents, den) {
+    var r = document.createElement('div');
+    r.className = 'bits-row';
+    r.appendChild(cell('lbl', label));
+    contents.forEach(function (c) { r.appendChild(c); });
+    r.appendChild(cell('den', den));
+    return r;
+  }
+  function bitButtons(arr, name) {
+    return arr.map(function (b, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'bit';
+      btn.textContent = b;
+      btn.setAttribute('aria-pressed', b ? 'true' : 'false');
+      btn.setAttribute('aria-label', name + ' bit worth ' + PV[i] + ', currently ' + b);
+      btn.addEventListener('click', function () { arr[i] = arr[i] ? 0 : 1; renderBits(); grid.querySelectorAll('.bit')[name === 'A' ? i : 8 + i].focus(); });
+      return btn;
+    });
+  }
+  function renderBits() {
+    var o = op();
+    document.getElementById('bp-places-wrap').hidden = o === 'add';
+    grid.innerHTML = '';
+    grid.appendChild(row('', PV.map(function (v) { return cell('pv', v); }), ''));
+    var say;
+    if (o === 'add') {
+      var carries = new Array(9).fill(0), res = new Array(8).fill(0);
+      for (var i = 7; i >= 0; i--) {
+        var s = A[i] + B[i] + carries[i + 1];
+        res[i] = s % 2;
+        carries[i] = s >= 2 ? 1 : 0;
+      }
+      grid.appendChild(row('A', bitButtons(A, 'A'), toNum(A)));
+      grid.appendChild(row('+ B', bitButtons(B, 'B'), toNum(B)));
+      grid.appendChild(row('carry', carries.slice(1).map(function (c) { return cell('carry', c ? '1' : ''); }), ''));
+      var rule = document.createElement('div'); rule.className = 'bits-row'; rule.innerHTML = '<div></div><div class="rule"></div>'; grid.appendChild(rule);
+      var total = toNum(A) + toNum(B);
+      grid.appendChild(row('A + B', res.map(function (b) { return cell('rbit', b); }), toNum(res)));
+      say = carries[0]
+        ? 'Overflow! ' + toNum(A) + ' + ' + toNum(B) + ' = ' + total + ', which is more than 255, so it needs 9 bits. The carry out of the left-most bit is lost, and the 8-bit result (' + toNum(res) + ') is wrong.'
+        : toNum(A) + ' + ' + toNum(B) + ' = ' + total + '. It fits in 8 bits, so there is no overflow.';
+    } else {
+      var k = places(), out, lost;
+      if (o === 'left') { out = A.slice(k).concat(new Array(k).fill(0)); lost = A.slice(0, k); }
+      else { out = new Array(k).fill(0).concat(A.slice(0, 8 - k)); lost = A.slice(8 - k); }
+      grid.appendChild(row('Before', bitButtons(A, 'A'), toNum(A)));
+      var rule2 = document.createElement('div'); rule2.className = 'bits-row'; rule2.innerHTML = '<div></div><div class="rule"></div>'; grid.appendChild(rule2);
+      grid.appendChild(row('After', out.map(function (b) { return cell('rbit', b); }), toNum(out)));
+      var lostOnes = lost.some(Boolean);
+      var factor = Math.pow(2, k);
+      if (o === 'left') {
+        say = 'Shifting left ' + k + ' place' + (k > 1 ? 's' : '') + ' multiplies by ' + factor + ': ' + toNum(A) + ' × ' + factor + ' = ' + (toNum(A) * factor) + '. ';
+        say += lostOnes ? 'But a 1 was shifted off the left end and lost, so the result (' + toNum(out) + ') is wrong — an overflow.' : 'No 1s were lost, so the result is correct.';
+      } else {
+        say = 'Shifting right ' + k + ' place' + (k > 1 ? 's' : '') + ' divides by ' + factor + ': ' + toNum(A) + ' ÷ ' + factor + ' = ' + (toNum(A) / factor) + '. ';
+        say += lostOnes ? 'A 1 was shifted off the right end and lost, so the result (' + toNum(out) + ') has lost the remainder — a loss of precision.' : 'No 1s were lost, so the result is exact.';
+      }
+    }
+    document.getElementById('bp-say').textContent = say;
+  }
+  document.querySelectorAll('#binplay input').forEach(function (i) { i.addEventListener('change', renderBits); });
+  renderBits();
+})();
+</script>
+</body>
+</html>
