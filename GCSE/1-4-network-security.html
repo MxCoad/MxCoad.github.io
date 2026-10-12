@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4 Network security — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 1.4 Network security: malware, social engineering, brute-force and denial of service attacks, data interception, SQL injection, and how to prevent them.">
+<style>
+  /* Password tool */
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .checks label { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; font-weight: 700; font-size: 16px; cursor: pointer; }
+  .checks input { width: 22px; height: 22px; accent-color: var(--ms-accent); }
+  .pw-out { margin-top: 16px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .stat { padding: 12px 14px; border-radius: 10px; background: var(--ms-surface-2); }
+  .stat .k { font-size: 14px; color: var(--ms-muted); }
+  .stat .v { font-family: var(--ms-font-mono); font-size: 20px; font-weight: 700; overflow-wrap: anywhere; }
+  .strength { height: 12px; border-radius: 999px; background: var(--ms-surface-2); overflow: hidden; margin-top: 14px; }
+  .strength > div { height: 100%; transition: width .3s, background .3s; }
+
+  /* SQL injection demo */
+  .login { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .query { margin: 12px 0; }
+  .query .inj { background: var(--ms-bad-soft); color: var(--ms-bad); font-weight: 700; border-radius: 4px; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 700; cursor: pointer; }
+  .switch input { width: 22px; height: 22px; accent-color: var(--ms-good); }
+  .try-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 8px; }
+  .try-list button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 14px; cursor: pointer; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/#gcse">GCSE</a> › 1.4 Network security</p>
+  <p class="eyebrow">OCR J277 · Paper 1 · Topic 1.4</p>
+  <h1>Network security</h1>
+  <p class="intro">The ways attackers try to get into networks and steal or damage data, and the methods organisations use to stop them. For a game-style introduction, try the <a href="/cyber-defence-console.html">Cyber Defence Console</a> first.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="malware">
+    <div class="sec-head"><span class="sec-num">1.4.1</span><h2>Malware</h2></div>
+    <p><span class="term">Malware</span> (malicious software) is any software written to <strong>cause harm</strong> to a computer or its user, or to <strong>gain unauthorised access</strong> to it.</p>
+    <table class="def">
+      <tr><th scope="row">Virus</th><td>Attaches itself to a legitimate file or program. It spreads when the infected file is <strong>run or copied</strong> by a user, and can delete or corrupt data.</td></tr>
+      <tr><th scope="row">Worm</th><td><strong>Copies itself</strong> and spreads across a network <strong>on its own</strong>, without a user having to do anything. It can use up bandwidth and slow networks down.</td></tr>
+      <tr><th scope="row">Trojan</th><td>Pretends to be <strong>useful, legitimate software</strong> so the user installs it. Once installed it does something harmful, such as opening a "back door" for attackers.</td></tr>
+      <tr><th scope="row">Ransomware</th><td><strong>Encrypts the user's files</strong> and demands payment (a ransom) for the key to unlock them.</td></tr>
+      <tr><th scope="row">Spyware</th><td>Secretly <strong>records what the user does</strong>, e.g. logging keystrokes to capture passwords, and sends it to the attacker.</td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Don't use "virus" to mean all malware. The key difference: a <strong>virus</strong> needs a user to run or copy a file; a <strong>worm</strong> spreads by itself.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="social">
+    <div class="sec-head"><span class="sec-num">1.4.1</span><h2>Social engineering</h2></div>
+    <p><span class="term">Social engineering</span> means <strong>tricking people</strong> into giving away personal information, passwords or access. It works because <strong>people are often the weakest point</strong> in a network's security — a strong system is no use if someone hands over their password.</p>
+    <table class="def">
+      <tr><th scope="row">Phishing</th><td>Fake emails, texts or websites that <strong>pretend to be from a trusted organisation</strong> (a bank, a delivery company, the school) to trick people into entering their details or clicking a harmful link.</td></tr>
+      <tr><th scope="row">Pretexting (blagging)</th><td>Inventing a believable story to get information, e.g. phoning a member of staff and pretending to be from the IT department.</td></tr>
+      <tr><th scope="row">Shouldering</th><td>Watching someone enter a password or PIN, e.g. looking over their shoulder at a cash machine.</td></tr>
+    </table>
+    <h3>Signs of a phishing message</h3>
+    <ul>
+      <li>A sender's address that doesn't match the organisation (e.g. <code>support@paypa1-secure.net</code>)</li>
+      <li>A general greeting like "Dear customer" instead of your name</li>
+      <li>Urgency or threats: "Your account will be closed in 24 hours"</li>
+      <li>Links whose real web address is different from what it claims</li>
+      <li>Spelling and grammar mistakes</li>
+    </ul>
+    <p><strong>Prevention:</strong> train staff and users to spot it, never click links in unexpected messages, and contact the organisation directly using details you already trust.</p>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="bruteforce-dos">
+    <div class="sec-head"><span class="sec-num">1.4.1</span><h2>Brute-force and denial of service attacks</h2></div>
+    <h3>Brute-force attack</h3>
+    <p>Using automated software to <strong>try every possible password</strong> (or a list of common ones) until the right one is found. Short, simple passwords can be cracked in seconds.</p>
+    <p><strong>Prevention:</strong> long, strong passwords; <strong>locking the account</strong> after a few failed attempts; CAPTCHA tests that software can't pass; two-factor authentication.</p>
+
+    <div class="tool" id="pw">
+      <p class="tool-title">Try it: how long would a brute-force attack take?</p>
+      <p class="tool-sub">Choose a password length and the types of character used. <strong>Don't type in a real password</strong> — you don't need to.</p>
+      <div class="controls">
+        <div class="ctl">
+          <label for="pw-len">Length <output id="pw-len-o" for="pw-len">8 characters</output></label>
+          <input type="range" id="pw-len" min="4" max="20" value="8">
+        </div>
+        <fieldset class="ctl">
+          <legend>Characters used</legend>
+          <div class="checks">
+            <label><input type="checkbox" id="pw-lo" checked>a–z</label>
+            <label><input type="checkbox" id="pw-up">A–Z</label>
+            <label><input type="checkbox" id="pw-num">0–9</label>
+            <label><input type="checkbox" id="pw-sym">Symbols</label>
+          </div>
+        </fieldset>
+      </div>
+      <div class="pw-out">
+        <div class="stat"><div class="k">Possible characters</div><div class="v" id="pw-set"></div></div>
+        <div class="stat"><div class="k">Possible passwords</div><div class="v" id="pw-combos"></div></div>
+        <div class="stat"><div class="k">Time to try them all</div><div class="v" id="pw-time"></div></div>
+      </div>
+      <div class="strength" aria-hidden="true"><div id="pw-bar"></div></div>
+      <p class="explain" id="pw-say" aria-live="polite"></p>
+      <p class="small">Assumes an attacker with fast hardware trying 10 billion passwords a second against a stolen password file. A real word or name, or a password used on another site that was leaked, can be cracked far faster — attackers try those first.</p>
+    </div>
+
+    <h3>Denial of service (DoS) attack</h3>
+    <p>An attacker <strong>floods a server</strong> (e.g. a website) with so many requests that it <strong>can't cope</strong>, so <strong>legitimate users can't access it</strong>. In a <strong>distributed denial of service (DDoS)</strong> attack, the requests come from thousands of computers at once — often a <em>botnet</em> of computers infected with malware — which makes it much harder to block.</p>
+    <p><strong>Prevention:</strong> a firewall that detects and blocks unusual amounts of traffic; services that filter traffic before it reaches the server.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>A DoS attack doesn't usually steal data or get into the system. Its aim is to make a service <strong>unavailable</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="interception-sql">
+    <div class="sec-head"><span class="sec-num">1.4.1</span><h2>Data interception and SQL injection</h2></div>
+    <h3>Data interception and theft</h3>
+    <p>Data travelling across a network can be <strong>intercepted</strong> — for example, by using <strong>packet-sniffing</strong> software to capture packets on a public Wi-Fi network. If the data isn't protected, the attacker can read passwords, messages or card details.</p>
+    <p><strong>Prevention:</strong> <strong>encryption</strong>, so intercepted data can't be understood (e.g. websites using HTTPS, encrypted Wi-Fi).</p>
+    <h3>SQL injection</h3>
+    <p>Many websites store data in a database and use <strong>SQL</strong> to look things up, building the query from what the user types. In an <span class="term">SQL injection</span> attack, the attacker types <strong>SQL code into an input box</strong> (like a log-in form). If the website doesn't check the input, that code becomes part of the query and is <strong>run by the database</strong> — letting the attacker log in without a password, or view, change or delete data.</p>
+    <p><strong>Prevention:</strong> <strong>validate and sanitise input</strong> (check it only contains what's expected), use <strong>parameterised queries</strong> that treat input as data, never as code, and give the website's database account only the access levels it needs.</p>
+
+    <div class="tool" id="sqli">
+      <p class="tool-title">Try it: SQL injection (safe simulation)</p>
+      <p class="tool-sub">This pretend log-in page builds an SQL query from what you type. Nothing is sent anywhere. The real password for user <code>amira</code> is <code>sunflower</code>.</p>
+      <div class="login">
+        <div class="ctl"><label for="sq-user">Username</label><input class="field" type="text" id="sq-user" value="amira" autocomplete="off" spellcheck="false"></div>
+        <div class="ctl"><label for="sq-pass">Password</label><input class="field" type="text" id="sq-pass" value="" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <p class="small" style="margin:0 0 4px">Try typing these into the password box:</p>
+      <div class="try-list" id="sq-tries">
+        <button type="button" data-pass="sunflower">sunflower</button>
+        <button type="button" data-pass="guess123">guess123</button>
+        <button type="button" data-pass="' OR '1'='1">' OR '1'='1</button>
+      </div>
+      <label class="switch"><input type="checkbox" id="sq-safe">Protect the website (validate input and use a parameterised query)</label>
+      <div class="query"><pre><code id="sq-query"></code></pre></div>
+      <p class="explain" id="sq-say" aria-live="polite"></p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>Why does <code>' OR '1'='1</code> work? The first <code>'</code> closes the password text early. Then <code>OR '1'='1'</code> adds a condition that is <strong>always true</strong>, so the database returns a matching row whatever the password is. A parameterised query sends the whole input to the database as a single piece of text, so the quote marks can't change the query.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="prevention">
+    <div class="sec-head"><span class="sec-num">1.4.2</span><h2>Preventing attacks</h2></div>
+    <table class="def">
+      <tr><th scope="row">Penetration testing</th><td>An organisation <strong>pays authorised experts to attack its own system</strong>, to <strong>find vulnerabilities</strong> so they can be fixed before real attackers find them.</td></tr>
+      <tr><th scope="row">Anti-malware software</th><td><strong>Scans files</strong> and compares them against a database of <strong>known malware</strong>. Infected files are <strong>quarantined or deleted</strong>. It must be <strong>updated regularly</strong> to recognise new threats.</td></tr>
+      <tr><th scope="row">Firewall</th><td><strong>Monitors traffic</strong> coming into and going out of a network and <strong>blocks or allows it based on a set of rules</strong> (e.g. blocking certain addresses or ports).</td></tr>
+      <tr><th scope="row">User access levels</th><td>Different users are given <strong>different permissions</strong> — what they can read, edit or delete. People only get access to what they need, which limits the damage an attacker or careless user can do.</td></tr>
+      <tr><th scope="row">Passwords</th><td><strong>Strong passwords</strong>: long, with a mix of upper and lower case letters, numbers and symbols, not a real word or personal detail, and different for each account. Often combined with two-factor authentication.</td></tr>
+      <tr><th scope="row">Encryption</th><td><strong>Scrambles data using a key</strong> so that if it's intercepted or stolen it <strong>can't be understood</strong> without the key.</td></tr>
+      <tr><th scope="row">Physical security</th><td>Stops people <strong>physically getting to the hardware</strong>: locked server rooms, ID cards or biometrics, CCTV and alarms.</td></tr>
+    </table>
+
+    <div class="tool">
+      <p class="tool-title">Try it: match the threat to the best defence</p>
+      <p class="tool-sub">For each situation, choose the method that would help most.</p>
+      <div id="sort-defence"></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>When asked how a method protects a network, say <strong>what it does</strong> and <strong>which threat it stops</strong>. "Use a firewall" scores less than "a firewall checks incoming traffic against rules and blocks anything suspicious, which can stop hackers getting in".</p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>A firewall is <strong>not</strong> anti-malware. A firewall filters <strong>network traffic</strong>; anti-malware scans <strong>files</strong> on the computer.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-3-networks.html">1.3 Networks</a> · Next: <a href="1-5-systems-software.html">1.5 Systems software</a> · <a href="/cyber-defence-console.html">Cyber Defence Console</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-1-4-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe two different types of malware.',
+      points: ['Names a first type of malware', 'Correctly describes the first type', 'Names a second, different type of malware', 'Correctly describes the second type'],
+      guide: 'Example descriptions — Virus: attaches to a file and spreads when the file is run or copied. Worm: copies itself and spreads across a network without user action. Trojan: disguised as legitimate software, then causes harm. Ransomware: encrypts files and demands payment. Spyware: secretly records activity such as keystrokes.' },
+    { id: 'q2', marks: 3, text: 'Explain what phishing is and how a user can avoid being caught out by it.',
+      points: ['A fake email / message / website pretending to be from a trusted organisation', 'To trick the user into giving personal details / passwords or clicking a harmful link', 'Check the sender\'s address / look for spelling mistakes / generic greetings', 'Do not click links in unexpected messages; contact the organisation directly'],
+      guide: 'Any three points, 1 mark each.' },
+    { id: 'q3', marks: 2, text: 'Describe a brute-force attack.',
+      points: ['Trying every possible combination / many common passwords', 'Using automated software, until the correct password is found'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Give two ways an organisation can reduce the risk of a brute-force attack succeeding.',
+      points: ['Require strong / long / complex passwords', 'Lock accounts after a number of failed log-in attempts', 'Use CAPTCHA', 'Use two-factor authentication'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Explain how a denial of service attack stops an online shop from working.',
+      points: ['The server is flooded with (fake) requests / traffic', 'The server cannot respond to them all / is overloaded / crashes', 'So genuine customers cannot access the website / buy items', 'A DDoS uses many computers / a botnet, making it hard to block'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain what is meant by SQL injection and give one way to prevent it.',
+      points: ['SQL code is typed into an input box / form on a website', 'The code is run by the database as part of a query', 'Allowing the attacker to access / change / delete data without permission', 'Prevention: input validation / sanitisation / parameterised queries'],
+      guide: 'Up to 2 marks for the explanation and 1 for the prevention. Maximum 3.' },
+    { id: 'q7', marks: 2, text: 'Explain how a firewall helps to protect a network.',
+      points: ['It monitors incoming and outgoing network traffic', 'It blocks or allows traffic based on a set of rules'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 2, text: 'Describe the purpose of penetration testing.',
+      points: ['An authorised / simulated attack on the organisation\'s own system', 'To find vulnerabilities so they can be fixed before real attackers exploit them'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 6, text: 'A hospital stores patient records on its network. Discuss the threats to the hospital\'s network and the methods it should use to protect the records.',
+      points: ['Threat: malware, e.g. ransomware encrypting patient records', 'Threat: phishing / social engineering of staff', 'Threat: interception of data sent across the network', 'Threat: brute-force attacks on staff accounts', 'Method: anti-malware software kept up to date', 'Method: staff training to recognise phishing', 'Method: encryption of records and data in transit', 'Method: user access levels so staff only see the records they need', 'Method: strong passwords / two-factor authentication / firewall / physical security of servers', 'Methods clearly linked to the threats they prevent and to the hospital context'],
+      levels: [
+        ['5–6 marks', 'A range of threats and methods, accurately described. Each method is clearly linked to the threat it prevents and to the hospital. Well organised.'],
+        ['3–4 marks', 'Several threats and methods with some accurate description. Some links between methods, threats and the hospital.'],
+        ['1–2 marks', 'A few threats or methods, mostly just listed, with little explanation or link to the hospital.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your level.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Defence sorter ----------
+  TopicKit.sorter(document.getElementById('sort-defence'), ['Anti-malware', 'Firewall', 'Encryption', 'Access levels', 'Staff training', 'Physical security'], [
+    { text: 'Staff keep receiving convincing fake emails asking them to "confirm" their log-in details', answer: 'Staff training', why: 'Phishing targets people, so people need to learn to spot it.' },
+    { text: 'A laptop is used on public café Wi-Fi to send customer data', answer: 'Encryption', why: 'If the data is intercepted it can\'t be read.' },
+    { text: 'A worker downloaded a "free game" that turned out to be a trojan', answer: 'Anti-malware', why: 'It scans files and removes known malware.' },
+    { text: 'Unknown computers keep trying to connect to the school\'s network from the Internet', answer: 'Firewall', why: 'It blocks traffic that doesn\'t meet its rules.' },
+    { text: 'A trainee accidentally deleted the whole payroll database', answer: 'Access levels', why: 'A trainee shouldn\'t have permission to delete it.' },
+    { text: 'Someone walked into the office and took a hard drive from the server', answer: 'Physical security', why: 'Locked server rooms and ID cards stop people reaching the hardware.' }
+  ]);
+
+  // ---------- Password brute-force estimator ----------
+  var RATE = 1e10;
+  function human(sec) {
+    if (sec < 1) return 'under a second';
+    var units = [['year', 31557600], ['day', 86400], ['hour', 3600], ['minute', 60], ['second', 1]];
+    if (sec > 31557600 * 1e9) return 'billions of years';
+    if (sec > 31557600 * 1e6) return 'millions of years';
+    for (var i = 0; i < units.length; i++) {
+      if (sec >= units[i][1]) {
+        var v = sec / units[i][1];
+        var r = v >= 100 ? Math.round(v).toLocaleString('en-GB') : (Math.round(v * 10) / 10).toLocaleString('en-GB');
+        return r + ' ' + units[i][0] + (r === '1' ? '' : 's');
+      }
+    }
+  }
+  function big(x) {
+    if (x < 1e6) return Math.round(x).toLocaleString('en-GB');
+    var e = Math.floor(Math.log10(x));
+    return (x / Math.pow(10, e)).toFixed(1) + ' × 10^' + e;
+  }
+  function updatePw() {
+    var len = +document.getElementById('pw-len').value;
+    document.getElementById('pw-len-o').textContent = len + ' characters';
+    var set = (document.getElementById('pw-lo').checked ? 26 : 0) + (document.getElementById('pw-up').checked ? 26 : 0) +
+              (document.getElementById('pw-num').checked ? 10 : 0) + (document.getElementById('pw-sym').checked ? 32 : 0);
+    var combos = Math.pow(set, len);
+    var secs = combos / RATE;
+    document.getElementById('pw-set').textContent = set;
+    document.getElementById('pw-combos').textContent = set ? big(combos) : '—';
+    document.getElementById('pw-time').textContent = set ? human(secs) : '—';
+    var score = set ? Math.min(1, Math.log10(Math.max(secs, 1)) / 12) : 0;
+    var bar = document.getElementById('pw-bar');
+    bar.style.width = Math.max(4, score * 100) + '%';
+    bar.style.background = score < 0.35 ? 'var(--ms-bad)' : score < 0.7 ? 'var(--ks-ks3)' : 'var(--ms-good)';
+    var say;
+    if (!set) say = 'Choose at least one type of character.';
+    else if (secs < 3600) say = 'Very weak: this could be cracked in ' + human(secs) + '. Make it longer and use more types of character.';
+    else if (secs < 31557600) say = 'Weak: about ' + human(secs) + '. A determined attacker could crack this.';
+    else if (secs < 31557600 * 1000) say = 'Reasonable: ' + human(secs) + ' to try every combination.';
+    else say = 'Strong: ' + human(secs) + ' to try every combination. Notice that adding length helps more than anything else.';
+    document.getElementById('pw-say').textContent = say;
+  }
+  document.querySelectorAll('#pw input').forEach(function (i) { i.addEventListener('input', updatePw); i.addEventListener('change', updatePw); });
+  updatePw();
+
+  // ---------- SQL injection simulation ----------
+  var USERS = { amira: 'sunflower', ben: 'rocket77', chloe: 'pa55word!' };
+  function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function updateSql() {
+    var u = document.getElementById('sq-user').value;
+    var pw = document.getElementById('sq-pass').value;
+    var safe = document.getElementById('sq-safe').checked;
+    var code = document.getElementById('sq-query');
+    var say;
+    if (safe) {
+      code.innerHTML = "SELECT * FROM users\nWHERE username = ?  AND  password = ?\n\n-- values sent separately, as text: " + esc(JSON.stringify(u)) + ', ' + esc(JSON.stringify(pw));
+      var bad = /['";]|--/.test(u + pw);
+      if (bad) say = 'Blocked. Validation rejected the input because it contains characters like \' or -- that aren\'t allowed. Even if it had got through, the parameterised query would treat it as plain text, not SQL.';
+      else if (USERS[u] !== undefined && USERS[u] === pw) say = 'Logged in as ' + u + ' — the correct password was entered.';
+      else say = 'Log-in failed: wrong username or password.';
+    } else {
+      var injected = pw.indexOf("'") >= 0 || u.indexOf("'") >= 0;
+      code.innerHTML = "SELECT * FROM users\nWHERE username = '" + (u.indexOf("'") >= 0 ? '<span class="inj">' + esc(u) + '</span>' : esc(u)) +
+        "' AND password = '" + (pw.indexOf("'") >= 0 ? '<span class="inj">' + esc(pw) + '</span>' : esc(pw)) + "'";
+      var always = /'\s*or\s*'?(\w+)'?\s*=\s*'?\1'?/i.test(pw) || /'\s*or\s*'?(\w+)'?\s*=\s*'?\1'?/i.test(u) || /'\s*--/.test(u);
+      if (always) say = 'Logged in without the password! The \' closed the text early, and OR \'1\'=\'1\' is always true, so the database returned a user. The attacker is in. Now tick "Protect the website" and try again.';
+      else if (injected) say = 'The quote mark broke the query — on a real site this might cause an error message that gives the attacker clues. Try the \' OR \'1\'=\'1 example.';
+      else if (USERS[u] !== undefined && USERS[u] === pw) say = 'Logged in as ' + u + ' — the correct password was entered.';
+      else say = 'Log-in failed: wrong username or password.';
+    }
+    document.getElementById('sq-say').textContent = say;
+  }
+  document.querySelectorAll('#sqli input').forEach(function (i) { i.addEventListener('input', updateSql); i.addEventListener('change', updateSql); });
+  document.querySelectorAll('#sq-tries button').forEach(function (b) {
+    b.addEventListener('click', function () { document.getElementById('sq-pass').value = b.getAttribute('data-pass'); updateSql(); });
+  });
+  updateSql();
+})();
+</script>
+</body>
+</html>
