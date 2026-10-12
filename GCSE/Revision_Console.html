@@ -4,19 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Revision Console — OCR GCSE Computer Science</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 <style>
   :root{
-    --bg:#EEF1F6; --surface:#FFFFFF; --surface-2:#F7F9FC;
-    --ink:#161B2E; --ink-soft:#525A72; --line:#DCE2EC;
-    --brand:#3B5BFF;
+    /* Colours come from the shared design (/assets/site.css) */
+    --bg:var(--ms-bg); --surface:var(--ms-surface); --surface-2:var(--ms-surface-2);
+    --ink:var(--ms-text); --ink-soft:var(--ms-muted); --line:var(--ms-line);
+    --brand:var(--ms-accent);
     --sound:#F26B5B; --net:#0FA39C; --store:#7B61FF;
-    --good:#138A4B; --good-bg:#E7F7EE; --good-line:#A9E3C2;
-    --bad:#D4374B; --bad-bg:#FCEBED; --bad-line:#F3BDC6;
+    --good:var(--ms-good); --good-bg:var(--ms-good-soft); --good-line:color-mix(in srgb, var(--ms-good) 40%, transparent);
+    --bad:var(--ms-bad); --bad-bg:var(--ms-bad-soft); --bad-line:color-mix(in srgb, var(--ms-bad) 40%, transparent);
+    --dark-panel:#161B2E;
     --r:14px; --r-sm:9px;
-    --shadow:0 1px 2px rgba(22,27,46,.05), 0 8px 24px -16px rgba(22,27,46,.25);
+    --shadow:var(--ms-shadow);
     --topic:var(--brand);
   }
   *{box-sizing:border-box}
@@ -24,22 +25,22 @@
   @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   body{
     margin:0; background:var(--bg); color:var(--ink);
-    font-family:'Inter',system-ui,sans-serif; line-height:1.55;
+    font-family:var(--ms-font-body),system-ui,sans-serif; line-height:1.55;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif; line-height:1.15; margin:0}
-  .mono{font-family:'JetBrains Mono',monospace}
+  h1,h2,h3,h4{font-family:var(--ms-font-head),sans-serif; line-height:1.15; margin:0}
+  .mono{font-family:var(--ms-font-mono),monospace}
   p{margin:0 0 .8em}
   .wrap{max-width:920px; margin:0 auto; padding:0 22px}
 
   /* ---------- top nav ---------- */
   .topbar{
-    position:sticky; top:0; z-index:50; background:rgba(238,241,246,.86);
+    position:sticky; top:0; z-index:50; background:color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
   }
   .topbar-in{max-width:920px; margin:0 auto; padding:11px 22px;
     display:flex; align-items:center; gap:14px; flex-wrap:wrap}
-  .brand{display:flex; align-items:center; gap:9px; font-family:'Space Grotesk';
+  .brand{display:flex; align-items:center; gap:9px; font-family:var(--ms-font-head);
     font-weight:700; font-size:15px; letter-spacing:-.01em; margin-right:auto}
   .brand svg{display:block}
   .navpills{display:flex; gap:6px; flex-wrap:wrap}
@@ -59,7 +60,7 @@
 
   /* ---------- hero ---------- */
   .hero{padding:46px 0 30px}
-  .eyebrow{font-family:'JetBrains Mono'; font-size:12px; font-weight:500; letter-spacing:.12em;
+  .eyebrow{font-family:var(--ms-font-mono); font-size:12px; font-weight:500; letter-spacing:.12em;
     text-transform:uppercase; color:var(--brand); margin-bottom:14px}
   .hero h1{font-size:clamp(30px,6vw,46px); font-weight:700; letter-spacing:-.02em; max-width:16ch}
   .hero h1 em{font-style:normal; color:var(--brand)}
@@ -82,13 +83,13 @@
   section.topic[data-t="2"]{--topic:var(--net)}
   section.topic[data-t="3"]{--topic:var(--store)}
   .sec-head{display:flex; align-items:flex-start; gap:16px; margin-bottom:8px}
-  .sec-num{font-family:'Space Grotesk'; font-weight:700; font-size:13px; color:#fff;
+  .sec-num{font-family:var(--ms-font-head); font-weight:700; font-size:13px; color:#fff;
     background:var(--topic); width:34px; height:34px; border-radius:9px; display:grid; place-items:center; flex:none; margin-top:3px}
   .sec-head h2{font-size:clamp(23px,4vw,30px); letter-spacing:-.02em}
-  .sec-head .tag{font-family:'JetBrains Mono'; font-size:11.5px; color:var(--ink-soft);
+  .sec-head .tag{font-family:var(--ms-font-mono); font-size:11.5px; color:var(--ink-soft);
     border:1px solid var(--line); padding:2px 8px; border-radius:99px; margin-top:7px; display:inline-block; background:var(--surface)}
 
-  .block-label{font-family:'JetBrains Mono'; font-size:11.5px; font-weight:500; letter-spacing:.1em;
+  .block-label{font-family:var(--ms-font-mono); font-size:11.5px; font-weight:500; letter-spacing:.1em;
     text-transform:uppercase; color:var(--topic); margin:30px 0 12px; display:flex; align-items:center; gap:9px}
   .block-label::before{content:""; width:18px; height:2px; background:var(--topic); border-radius:2px}
 
@@ -97,9 +98,9 @@
   @media(max-width:620px){.recap{grid-template-columns:1fr}}
   .recap.tri{grid-template-columns:repeat(3,1fr)}
   @media(max-width:720px){.recap.tri{grid-template-columns:1fr}}
-  .rc{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow)}
+  .rc{min-width:0; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow)}
   .rc h4{font-size:16px; margin-bottom:10px; display:flex; align-items:center; gap:9px}
-  .rc h4 .chip{font-family:'JetBrains Mono'; font-size:10.5px; font-weight:700; color:var(--topic);
+  .rc h4 .chip{font-family:var(--ms-font-mono); font-size:10.5px; font-weight:700; color:var(--topic);
     background:color-mix(in srgb, var(--topic) 12%, white); padding:3px 7px; border-radius:6px}
   .rc ul{margin:0; padding-left:0; list-style:none}
   .rc li{font-size:13.7px; color:var(--ink-soft); padding:5px 0 5px 22px; position:relative; border-top:1px solid var(--surface-2)}
@@ -107,14 +108,14 @@
   .rc li::before{content:""; position:absolute; left:4px; top:12px; width:7px; height:7px; border-radius:2px;
     background:var(--topic); opacity:.55}
   .rc li b{color:var(--ink); font-weight:600}
-  .formula{font-family:'JetBrains Mono'; font-size:12.5px; background:var(--ink); color:#fff;
+  .formula{overflow-x:auto; font-family:var(--ms-font-mono); font-size:12.5px; background:var(--dark-panel); color:#fff;
     padding:9px 12px; border-radius:8px; margin-top:10px; display:block; overflow-x:auto; white-space:nowrap}
   .formula .v{color:#9DB2FF}
 
   /* generic activity panel */
   .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
     padding:22px; box-shadow:var(--shadow)}
-  .panel.dark{background:var(--ink); border-color:#222a45; color:#E8ECF6}
+  .panel.dark{background:var(--dark-panel); border-color:#222a45; color:#E8ECF6}
 
   /* sampling visualiser */
   .viz-grid{display:grid; grid-template-columns:1fr 230px; gap:22px; align-items:center}
@@ -122,30 +123,30 @@
   #sampleCanvas{width:100%; height:230px; display:block; border-radius:10px; background:#0E1430}
   .viz-controls label{display:block; font-size:12.5px; font-weight:600; color:#C3CCE6; margin:0 0 6px}
   .viz-controls .row{margin-bottom:18px}
-  .viz-controls .val{font-family:'JetBrains Mono'; color:#fff; float:right; font-weight:700}
+  .viz-controls .val{font-family:var(--ms-font-mono); color:#fff; float:right; font-weight:700}
   input[type=range]{width:100%; accent-color:var(--sound); cursor:pointer}
   .viz-controls[data-acc] input[type=range]{accent-color:var(--topic)}
-  .viz-readout{font-family:'JetBrains Mono'; font-size:12px; color:#9DB2FF; margin-top:6px;
+  .viz-readout{font-family:var(--ms-font-mono); font-size:12px; color:#9DB2FF; margin-top:6px;
     border-top:1px solid #2a335a; padding-top:14px}
   .viz-readout b{color:#fff}
 
   /* calculator */
   .calc-tabs{display:flex; gap:8px; margin-bottom:16px}
-  .calc-tabs button{font-family:'Inter'; font-size:13px; font-weight:600; padding:8px 15px;
+  .calc-tabs button{font-family:var(--ms-font-body); font-size:13px; font-weight:600; padding:8px 15px;
     border-radius:8px; border:1px solid var(--line); background:var(--surface-2); color:var(--ink-soft); cursor:pointer; transition:.15s}
   .calc-tabs button.on{background:var(--topic); color:#fff; border-color:var(--topic)}
   .calc-inputs{display:flex; gap:14px; flex-wrap:wrap}
   .field{flex:1; min-width:120px}
   .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:5px}
-  .field input{width:100%; font-family:'JetBrains Mono'; font-size:14px; padding:9px 11px;
+  .field input{width:100%; font-family:var(--ms-font-mono); font-size:14px; padding:9px 11px;
     border:1px solid var(--line); border-radius:8px; background:var(--surface-2); color:var(--ink)}
   .field input:focus{outline:2px solid var(--topic); outline-offset:1px; border-color:transparent}
   .calc-out{margin-top:16px; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
-  .calc-out .step{font-family:'JetBrains Mono'; font-size:13px; color:var(--ink-soft); padding:3px 0}
+  .calc-out .step{font-family:var(--ms-font-mono); font-size:13px; color:var(--ink-soft); padding:3px 0}
   .calc-out .step b{color:var(--ink)}
-  .calc-out .big{font-family:'JetBrains Mono'; font-size:18px; font-weight:700; color:var(--topic); margin-top:6px}
+  .calc-out .big{font-family:var(--ms-font-mono); font-size:18px; font-weight:700; color:var(--topic); margin-top:6px}
 
-  .btn{font-family:'Inter'; font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:8px;
+  .btn{font-family:var(--ms-font-body); font-size:13.5px; font-weight:600; padding:9px 16px; border-radius:8px;
     border:1px solid var(--topic); background:var(--topic); color:#fff; cursor:pointer; transition:.15s}
   .btn:hover{filter:brightness(1.07)}
   .btn.ghost{background:transparent; color:var(--topic)}
@@ -155,24 +156,24 @@
   .quiz{display:grid; gap:14px}
   .q{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow)}
   .q .qtext{font-weight:600; font-size:15px; margin-bottom:13px}
-  .q .qtext .num{font-family:'JetBrains Mono'; color:var(--topic); font-size:13px; margin-right:7px}
+  .q .qtext .num{font-family:var(--ms-font-mono); color:var(--topic); font-size:13px; margin-right:7px}
   .opts{display:grid; gap:8px}
-  .opt{text-align:left; font-family:'Inter'; font-size:14px; padding:11px 13px; border-radius:9px;
+  .opt{text-align:left; font-family:var(--ms-font-body); font-size:14px; padding:11px 13px; border-radius:9px;
     border:1px solid var(--line); background:var(--surface-2); color:var(--ink); cursor:pointer; transition:.12s;
     display:flex; align-items:center; gap:10px}
-  .opt:hover:not(:disabled){border-color:var(--topic); background:#fff}
+  .opt:hover:not(:disabled){border-color:var(--topic); background:var(--surface)}
   .opt:focus-visible{outline:2px solid var(--topic); outline-offset:1px}
   .opt .mk{width:20px; height:20px; border-radius:50%; border:2px solid var(--line); flex:none; display:grid; place-items:center;
     font-size:12px; font-weight:700; color:#fff}
   .opt:disabled{cursor:default}
-  .opt.correct{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
+  .opt.correct{background:var(--good-bg); border-color:var(--good-line); color:var(--good)}
   .opt.correct .mk{background:var(--good); border-color:var(--good)}
-  .opt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .opt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:var(--bad)}
   .opt.wrong .mk{background:var(--bad); border-color:var(--bad)}
   .qfb{font-size:13px; margin-top:12px; padding:11px 13px; border-radius:9px; display:none; line-height:1.5}
   .qfb.show{display:block}
-  .qfb.ok{background:var(--good-bg); color:#0a5e33; border:1px solid var(--good-line)}
-  .qfb.no{background:var(--bad-bg); color:#8a1827; border:1px solid var(--bad-line)}
+  .qfb.ok{background:var(--good-bg); color:var(--good); border:1px solid var(--good-line)}
+  .qfb.no{background:var(--bad-bg); color:var(--bad); border:1px solid var(--bad-line)}
   .qfb b{font-weight:700}
 
   /* benefit picker */
@@ -181,9 +182,9 @@
     background:var(--surface-2); color:var(--ink); cursor:pointer; display:flex; gap:11px; align-items:flex-start; transition:.12s}
   .pick:hover:not(.locked){border-color:var(--topic)}
   .pick .box{width:20px;height:20px;border-radius:6px;border:2px solid var(--line);flex:none;margin-top:1px;display:grid;place-items:center;color:#fff;font-size:13px}
-  .pick.good{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
+  .pick.good{background:var(--good-bg); border-color:var(--good-line); color:var(--good)}
   .pick.good .box{background:var(--good); border-color:var(--good)}
-  .pick.bad{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .pick.bad{background:var(--bad-bg); border-color:var(--bad-line); color:var(--bad)}
   .pick.bad .box{background:var(--bad); border-color:var(--bad)}
   .pick.locked{cursor:default}
   .picker-msg{margin-top:14px; font-size:13.5px; font-weight:600; color:var(--ink-soft)}
@@ -192,9 +193,9 @@
   .ctable{width:100%; border-collapse:collapse; font-size:13.3px; background:var(--surface); border-radius:var(--r); overflow:hidden;
     border:1px solid var(--line); box-shadow:var(--shadow)}
   .ctable th,.ctable td{padding:11px 13px; text-align:left; border-bottom:1px solid var(--line)}
-  .ctable thead th{background:var(--surface-2); font-family:'Space Grotesk'; font-size:13px}
+  .ctable thead th{background:var(--surface-2); font-family:var(--ms-font-head); font-size:13px}
   .ctable thead th .ico{display:inline-block; width:9px; height:9px; border-radius:3px; margin-right:6px}
-  .ctable tbody th{font-weight:600; color:var(--ink); background:var(--surface-2); width:130px; font-family:'Inter'}
+  .ctable tbody th{font-weight:600; color:var(--ink); background:var(--surface-2); width:130px; font-family:var(--ms-font-body)}
   .ctable td{color:var(--ink-soft)}
   .ctable tr:last-child td,.ctable tr:last-child th{border-bottom:none}
   .ct-wrap{overflow-x:auto}
@@ -202,13 +203,13 @@
   /* scenario picker */
   .scenario{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 19px; box-shadow:var(--shadow); margin-bottom:14px}
   .scenario .s-q{font-size:14.5px; margin-bottom:13px}
-  .scenario .s-q .scn{font-family:'JetBrains Mono'; font-size:11px; color:var(--topic); display:block; margin-bottom:5px}
+  .scenario .s-q .scn{font-family:var(--ms-font-mono); font-size:11px; color:var(--topic); display:block; margin-bottom:5px}
   .sopts{display:flex; gap:8px; flex-wrap:wrap}
   .sopt{font-size:13.5px; font-weight:600; padding:9px 15px; border-radius:8px; border:1px solid var(--line);
     background:var(--surface-2); cursor:pointer; color:var(--ink); transition:.12s}
   .sopt:hover:not(:disabled){border-color:var(--topic)}
-  .sopt.correct{background:var(--good-bg); border-color:var(--good-line); color:#0a5e33}
-  .sopt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:#8a1827}
+  .sopt.correct{background:var(--good-bg); border-color:var(--good-line); color:var(--good)}
+  .sopt.wrong{background:var(--bad-bg); border-color:var(--bad-line); color:var(--bad)}
   .sfb{font-size:13px; margin-top:12px; display:none; color:var(--ink-soft); line-height:1.5;
     border-left:3px solid var(--topic); padding-left:12px}
   .sfb.show{display:block}
@@ -216,20 +217,20 @@
 
   /* exam reveal */
   .exam{background:var(--surface); border:1px dashed var(--ink-soft); border-radius:var(--r); padding:19px 20px}
-  .exam .marks{font-family:'JetBrains Mono'; font-size:11.5px; font-weight:700; color:var(--topic); float:right}
+  .exam .marks{font-family:var(--ms-font-mono); font-size:11.5px; font-weight:700; color:var(--topic); float:right}
   .exam .eq{font-weight:600; font-size:15px; max-width:60ch}
   .ms{display:none; margin-top:15px; padding-top:15px; border-top:1px solid var(--line)}
   .ms.show{display:block}
-  .ms h5{font-family:'JetBrains Mono'; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 8px}
+  .ms h5{font-family:var(--ms-font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 8px}
   .ms ul{margin:0; padding-left:18px}
   .ms li{font-size:13.5px; color:var(--ink-soft); padding:3px 0}
   .ms li b{color:var(--ink)}
 
   /* teacher checkpoint */
-  .checkpoint{background:linear-gradient(180deg,#fff, var(--surface-2)); border:1px solid var(--line);
+  .checkpoint{background:linear-gradient(180deg,var(--surface), var(--surface-2)); border:1px solid var(--line);
     border-left:4px solid var(--brand); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow); margin-top:14px}
   .checkpoint h4{font-size:15px; display:flex; align-items:center; gap:10px; margin-bottom:9px}
-  .checkpoint h4 .pin{font-family:'JetBrains Mono'; font-size:10px; font-weight:700; letter-spacing:.06em;
+  .checkpoint h4 .pin{font-family:var(--ms-font-mono); font-size:10px; font-weight:700; letter-spacing:.06em;
     background:var(--brand); color:#fff; padding:4px 8px; border-radius:6px; text-transform:uppercase}
   .checkpoint p{font-size:13.7px; color:var(--ink-soft); margin:0 0 .5em}
   .checkpoint ul{margin:6px 0 0; padding-left:18px}

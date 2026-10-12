@@ -4,23 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Negative numbers in binary</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 <style>
   :root {
-    --paper: #F2F5F9; --grid: #DFE6EF; --ink: #1B2A41; --muted: #55647A; --surface: #FFFFFF; --line: #C7D2DF;
-    --mant: #2E5E8E; --mant-soft: #DCE8F5; --exp: #7A3B69; --exp-soft: #F2E2ED;
-    --good: #1E7A4C; --good-soft: #E1F3E9; --bad: #B3261E; --bad-soft: #FAE4E2; --focus: #E0A100;
-    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+    /* Colours come from the shared design (/assets/site.css) */
+    --paper: var(--ms-bg); --grid: transparent; --ink: var(--ms-text); --muted: var(--ms-muted);
+    --surface: var(--ms-surface); --line: var(--ms-line);
+    --mant: var(--ms-accent); --mant-soft: var(--ms-accent-soft); --exp: #7A3B69; --exp-soft: #F2E2ED;
+    --good: var(--ms-good); --good-soft: var(--ms-good-soft); --bad: var(--ms-bad); --bad-soft: var(--ms-bad-soft);
+    --focus: var(--ms-focus);
+    --mono: var(--ms-font-mono);
   }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #121923; --grid: #1B2431; --ink: #E6ECF3; --muted: #9CAABB; --surface: #19212D; --line: #2C384A;
-      --mant: #86B5E3; --mant-soft: #203650; --exp: #D9A0C8; --exp-soft: #3A2436;
-      --good: #72D3A0; --good-soft: #163426; --bad: #F39A91; --bad-soft: #3D1E1B;
-    }
-  }
+  :root[data-theme="dark"] { --exp: #D9A0C8; --exp-soft: #3A2436; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) { --exp: #D9A0C8; --exp-soft: #3A2436; } }
+  h1, h2, h3 { font-family: var(--ms-font-head); }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   body {
@@ -38,18 +36,18 @@
   .setting.wide { flex-basis: 100%; }
   .setting.wide .seg { max-width: 46rem; }
   .setting-name { font-weight: 700; font-size: .92rem; }
-  .seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr)); gap: 2px; border: 2px solid var(--ink); border-radius: 8px; overflow: hidden; background: var(--ink); }
+  .seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9.5rem, 100%), 1fr)); gap: 2px; border: 1px solid var(--muted); border-radius: 8px; overflow: hidden; background: var(--ink); }
   .seg button { font: inherit; font-size: .95rem; padding: .5rem .6rem; border: 0; background: var(--surface); color: var(--ink); cursor: pointer; }
-  .seg button[aria-pressed="true"] { background: var(--ink); color: var(--surface); font-weight: 700; }
-  select { font: inherit; font-size: .95rem; padding: .5rem .6rem; border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .seg button[aria-pressed="true"] { background: var(--ms-accent); color: var(--ms-on-accent); font-weight: 700; }
+  select { font: inherit; font-size: .95rem; padding: .5rem .6rem; border: 1px solid var(--muted); border-radius: 8px; background: var(--surface); color: var(--ink); }
   .check-setting { flex: 0 1 auto; }
   .check-setting label { display: flex; gap: .5rem; align-items: center; font-weight: 700; font-size: .92rem; padding: .55rem 0; cursor: pointer; }
   input[type="checkbox"] { width: 1.15rem; height: 1.15rem; accent-color: var(--ink); margin: 0; }
   .level-note { flex-basis: 100%; margin: 0; color: var(--muted); font-size: .95rem; }
-  .score { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; align-items: baseline; padding: .55rem 0; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); }
+  .score { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: .4rem 1.5rem; align-items: baseline; padding: .55rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
   .score-num { font-family: var(--mono); font-weight: 700; font-size: 1.25rem; }
   .score .link { margin-left: auto; font-size: .95rem; }
-  .card { margin-top: 1.5rem; background: var(--surface); border: 2px solid var(--ink); border-radius: 12px; padding: 1.25rem clamp(1rem, 3vw, 1.75rem) 1.5rem; box-shadow: 6px 6px 0 var(--line); }
+  .card { margin-top: 1.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.25rem clamp(1rem, 3vw, 1.75rem) 1.5rem; box-shadow: var(--ms-shadow); }
   .prompt { margin: 0; font-size: 1.1rem; max-width: 62ch; }
   .big { font-family: var(--mono); font-weight: 700; font-size: clamp(2.2rem, 8vw, 3.2rem); margin: .6rem 0 .2rem; line-height: 1.1; }
   .register { --cell: clamp(24px, calc((min(100vw, 780px) - 6rem) / (var(--n) * 1.15 + 1)), 46px); margin: 1rem 0 .4rem; overflow-x: auto; padding: 2px 2px .3rem; }
@@ -72,10 +70,10 @@
   button.bit:disabled { cursor: default; opacity: 1; }
   .bit-help { color: var(--muted); font-size: .95rem; margin: .2rem 0 0; }
   .den-label { display: block; font-weight: 700; margin: 1.1rem 0 .35rem; }
-  .den-input { font-family: var(--mono); font-size: 1.4rem; padding: .45rem .7rem; width: min(100%, 17rem); border: 2px solid var(--ink); border-radius: 8px; background: var(--surface); color: var(--ink); }
+  .den-input { font-family: var(--mono); font-size: 1.4rem; padding: .45rem .7rem; width: min(100%, 17rem); border: 1px solid var(--muted); border-radius: 8px; background: var(--surface); color: var(--ink); }
   .actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.25rem; align-items: center; }
-  .primary, .secondary { font: inherit; font-weight: 700; padding: .6rem 1.1rem; border-radius: 8px; border: 2px solid var(--ink); cursor: pointer; }
-  .primary { background: var(--ink); color: var(--surface); }
+  .primary, .secondary { font: inherit; font-weight: 700; padding: .6rem 1.1rem; border-radius: 8px; border: 1px solid var(--muted); cursor: pointer; }
+  .primary { background: var(--ms-accent); border-color: var(--ms-accent); color: var(--ms-on-accent); }
   .secondary { background: var(--surface); color: var(--ink); }
   .primary:disabled, .secondary:disabled { opacity: .4; cursor: not-allowed; }
   .link { font: inherit; background: none; border: 0; padding: 0; color: var(--mant); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }

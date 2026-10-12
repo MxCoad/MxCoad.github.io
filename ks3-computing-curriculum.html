@@ -6,56 +6,35 @@
 <meta name="description" content="Graveney School Key Stage 3 Computing curriculum plan, Years 7 to 9.">
 <style>:root{color-scheme:light dark}html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%;height:auto}[hidden]{display:none!important}</style>
 <title>Graveney KS3 Computing</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 
 <style>
 :root{
-  --teal:#0F7A78; --teal-deep:#0A5D5C; --navy:#1B2A4A; --cream:#F6F1E3;
-  --ground:#FBF9F4;            /* warm neutral, biased to the cream */
-  --surface:#FFFFFF;
-  --surface-2:#F3EFE5;
-  --ink:#1C2433;
-  --ink-2:#4A5468;
-  --ink-3:#7A8496;
-  --rule:#E2DCCC;
-  --rule-soft:#EDE8DA;
-  --accent:var(--teal);
-  --accent-ink:#0A5D5C;
-  --chip:#E7F0EF;
-  --flag-bg:#FDF3E0; --flag-rule:#C98A1E; --flag-ink:#7A5310;
-  --shadow:0 1px 2px rgba(27,42,74,.05), 0 8px 24px -16px rgba(27,42,74,.18);
+  /* Colours come from the shared design (/assets/site.css) */
+  --teal:var(--ms-accent); --teal-deep:var(--ms-accent-hover); --navy:#1B2A4A; --cream:var(--ms-surface-2);
+  --ground:var(--ms-bg);
+  --surface:var(--ms-surface);
+  --surface-2:var(--ms-surface-2);
+  --ink:var(--ms-text);
+  --ink-2:var(--ms-muted);
+  --ink-3:var(--ms-muted);
+  --rule:var(--ms-line);
+  --rule-soft:color-mix(in srgb, var(--ms-line) 60%, var(--ms-surface));
+  --accent:var(--ms-accent);
+  --accent-ink:var(--ms-accent);
+  --chip:var(--ms-accent-soft);
+  --flag-bg:var(--ms-warn-soft); --flag-rule:#C98A1E; --flag-ink:var(--ms-warn);
+  --shadow:var(--ms-shadow);
 
-  --display:"Literata",Georgia,"Times New Roman",serif;
-  --body:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --display:var(--ms-font-head);
+  --body:var(--ms-font-body);
+  --mono:var(--ms-font-mono);
 
   --maxw:1180px;
-  color-scheme:light;
 }
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --teal:#4FC3BE; --teal-deep:#7FD8D3; --navy:#0C1322; --cream:#1A2133;
-    --ground:#0C1220; --surface:#141C2D; --surface-2:#1A2334;
-    --ink:#E9EDF5; --ink-2:#AFBACB; --ink-3:#7C8899;
-    --rule:#273245; --rule-soft:#1E2839;
-    --accent:#4FC3BE; --accent-ink:#7FD8D3; --chip:#16302F;
-    --flag-bg:#2A2011; --flag-rule:#B58136; --flag-ink:#E8C68A;
-    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --teal:#4FC3BE; --teal-deep:#7FD8D3; --navy:#0C1322; --cream:#1A2133;
-  --ground:#0C1220; --surface:#141C2D; --surface-2:#1A2334;
-  --ink:#E9EDF5; --ink-2:#AFBACB; --ink-3:#7C8899;
-  --rule:#273245; --rule-soft:#1E2839;
-  --accent:#4FC3BE; --accent-ink:#7FD8D3; --chip:#16302F;
-  --flag-bg:#2A2011; --flag-rule:#B58136; --flag-ink:#E8C68A;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px -18px rgba(0,0,0,.8);
-  color-scheme:dark;
-}
+:root[data-theme="dark"]{ --navy:#0C1322; }
+@media (prefers-color-scheme:dark){ :root:not([data-theme]){ --navy:#0C1322; } }
 
 *{box-sizing:border-box}
 body{
@@ -134,7 +113,7 @@ h3.sub{font-size:19px; font-weight:600; margin-top:30px; margin-bottom:8px}
   font-weight:600; letter-spacing:.11em; text-transform:uppercase; padding-block:10px;
 }
 :root[data-theme="dark"] .grid-ov .hd, :root:not([data-theme="light"]) .grid-ov .hd{background:var(--surface-2); color:var(--ink)}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .grid-ov .hd{background:var(--navy); color:#fff}}
+:root:not([data-theme="dark"]) .grid-ov .hd{background:var(--navy); color:#fff}
 .grid-ov .term{
   background:var(--surface-2); font-family:var(--mono); font-size:10.5px; font-weight:600;
   letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); display:flex; align-items:center;
@@ -155,7 +134,7 @@ h3.sub{font-size:19px; font-weight:600; margin-top:30px; margin-bottom:8px}
 }
 :root[data-theme="dark"] .grid-ov .exambar,
 :root:not([data-theme="light"]) .grid-ov .exambar{color:#06201F}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .grid-ov .exambar{color:#fff}}
+:root:not([data-theme="dark"]) .grid-ov .exambar{color:#fff}
 
 /* ---------- thread weave matrix ---------- */
 .weave-scroll{overflow-x:auto; margin-top:22px; padding-bottom:4px}

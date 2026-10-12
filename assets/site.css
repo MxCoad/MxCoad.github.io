@@ -1,0 +1,241 @@
+/* Mx. Coad CS Resources — shared design.
+   Every page links this file and assets/site.js. Pages map their own CSS
+   variables onto the --ms-* tokens below so light and dark mode work
+   everywhere from one place. */
+
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Literata:opsz,wght@7..72,500;7..72,700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  color-scheme: light;
+
+  --ms-font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --ms-font-head: Literata, Georgia, "Times New Roman", serif;
+  --ms-font-mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --ms-bg: #F6F7F9;
+  --ms-surface: #FFFFFF;
+  --ms-surface-2: #EEF1F5;
+  --ms-text: #18202B;
+  --ms-muted: #4A5565;
+  --ms-line: #DDE2E8;
+  --ms-line-strong: #C3CBD5;
+  --ms-accent: #1F4FB8;
+  --ms-accent-hover: #163A8A;
+  --ms-on-accent: #FFFFFF;
+  --ms-accent-soft: #EAF0FB;
+  --ms-good: #1E7A4C;
+  --ms-good-soft: #E1F3E9;
+  --ms-bad: #B3261E;
+  --ms-bad-soft: #FAE4E2;
+  --ms-warn: #8A5A00;
+  --ms-warn-soft: #FDF1D8;
+  --ms-focus: #E0A100;
+  --ms-shadow: 0 1px 2px rgba(24, 32, 43, .06), 0 8px 24px -12px rgba(24, 32, 43, .18);
+
+  /* Key-stage colours: the same in both modes, always with dark text on top */
+  --ks-ks3: #FFB547;
+  --ks-gcse: #5B9BFF;
+  --ks-alevel: #B892FF;
+  --ks-btec: #3FD2B5;
+  --ks-tools: #FF8FB8;
+  --ms-on-stage: #18202B;
+
+  --ms-radius: 14px;
+  --ms-radius-sm: 8px;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ms-bg: #10151C;
+  --ms-surface: #18202A;
+  --ms-surface-2: #1F2935;
+  --ms-text: #E7EBF0;
+  --ms-muted: #A6B0BD;
+  --ms-line: #2B3542;
+  --ms-line-strong: #3C4858;
+  --ms-accent: #8DB0FF;
+  --ms-accent-hover: #B5CBFF;
+  --ms-on-accent: #0E1520;
+  --ms-accent-soft: #1E2A3B;
+  --ms-good: #5FD39A;
+  --ms-good-soft: #15301F;
+  --ms-bad: #FF8A80;
+  --ms-bad-soft: #3A1B1A;
+  --ms-warn: #F5C062;
+  --ms-warn-soft: #33280F;
+  --ms-focus: #F5C062;
+  --ms-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+}
+
+/* Without JavaScript, follow the device setting */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --ms-bg: #10151C;
+    --ms-surface: #18202A;
+    --ms-surface-2: #1F2935;
+    --ms-text: #E7EBF0;
+    --ms-muted: #A6B0BD;
+    --ms-line: #2B3542;
+    --ms-line-strong: #3C4858;
+    --ms-accent: #8DB0FF;
+    --ms-accent-hover: #B5CBFF;
+    --ms-on-accent: #0E1520;
+    --ms-accent-soft: #1E2A3B;
+    --ms-good: #5FD39A;
+    --ms-good-soft: #15301F;
+    --ms-bad: #FF8A80;
+    --ms-bad-soft: #3A1B1A;
+    --ms-warn: #F5C062;
+    --ms-warn-soft: #33280F;
+    --ms-focus: #F5C062;
+    --ms-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  }
+}
+
+/* ---------- Shared site bar (inserted by site.js) ---------- */
+
+.ms-bar {
+  position: relative;
+  z-index: 50;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  background: var(--ms-surface);
+  border-bottom: 1px solid var(--ms-line);
+  color: var(--ms-text);
+  font-family: var(--ms-font-body);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: normal;
+  text-align: left;
+  text-transform: none;
+}
+.ms-bar *, .ms-bar *::before, .ms-bar *::after { box-sizing: border-box; }
+.ms-bar .ms-bar-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 24px;
+}
+.ms-bar .ms-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  font-family: var(--ms-font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ms-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ms-bar .ms-brand span { font-weight: 500; color: var(--ms-muted); margin-left: .35em; }
+.ms-bar .ms-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  align-items: center;
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+.ms-bar .ms-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--ms-radius-sm);
+  background: none;
+  color: var(--ms-text);
+  font-family: var(--ms-font-body);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.ms-bar .ms-nav a:hover { background: var(--ms-surface-2); color: var(--ms-text); }
+.ms-bar .ms-dot {
+  display: inline-block;
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+.ms-bar .ms-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+  border: 1px solid var(--ms-line-strong);
+  border-radius: 999px;
+  background: var(--ms-bg);
+  color: var(--ms-text);
+  font-family: var(--ms-font-body);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: none;
+  text-transform: none;
+  width: auto;
+  height: auto;
+}
+.ms-bar .ms-theme:hover { border-color: var(--ms-accent); }
+.ms-bar .ms-theme svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ms-bar a:focus-visible, .ms-bar button:focus-visible {
+  outline: 3px solid var(--ms-focus);
+  outline-offset: 2px;
+}
+@media (max-width: 640px) {
+  .ms-bar .ms-bar-inner { padding: 6px 12px; gap: 0 12px; }
+  .ms-bar .ms-brand span { display: none; }
+  .ms-bar .ms-nav { order: 3; flex-basis: 100%; overflow-x: auto; flex-wrap: nowrap; }
+  .ms-bar .ms-nav a { padding: 0 10px; white-space: nowrap; }
+  .ms-bar .ms-theme { margin-left: auto; padding: 0 12px; }
+  .ms-bar .ms-theme-label { display: none; }
+}
+@media print {
+  .ms-bar { display: none; }
+}
+
+/* Always print in light colours, whatever the screen theme */
+@media print {
+  :root, :root[data-theme="dark"] {
+    color-scheme: light;
+    --ms-bg: #FFFFFF;
+    --ms-surface: #FFFFFF;
+    --ms-surface-2: #EEF1F5;
+    --ms-text: #18202B;
+    --ms-muted: #4A5565;
+    --ms-line: #DDE2E8;
+    --ms-line-strong: #C3CBD5;
+    --ms-accent: #1F4FB8;
+    --ms-accent-hover: #163A8A;
+    --ms-on-accent: #FFFFFF;
+    --ms-accent-soft: #EAF0FB;
+    --ms-good: #1E7A4C;
+    --ms-good-soft: #E1F3E9;
+    --ms-bad: #B3261E;
+    --ms-bad-soft: #FAE4E2;
+    --ms-warn: #8A5A00;
+    --ms-warn-soft: #FDF1D8;
+    --ms-shadow: none;
+  }
+}

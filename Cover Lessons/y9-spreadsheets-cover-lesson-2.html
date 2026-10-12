@@ -4,27 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Year 9 Spreadsheets — Cover Lesson 2</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 <style>
   :root {
-    --ink: #1a1a2e;
+    --ink: var(--ms-text);
     --accent: #2563eb;
-    --accent-light: #dbeafe;
-    --border: #e2e8f0;
-    --muted: #64748b;
-    --alt: #f8fafc;
-    --page: #ffffff;
+    --accent-light: color-mix(in srgb, var(--accent) 14%, var(--ms-surface));
+    --border: var(--ms-line);
+    --muted: var(--ms-muted);
+    --alt: var(--ms-surface-2);
+    --page: var(--ms-surface);
   }
+  /* Lighter accent on dark backgrounds */
+  :root[data-theme="dark"] { --accent: color-mix(in srgb, #2563eb 55%, #ffffff); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) { --accent: color-mix(in srgb, #2563eb 55%, #ffffff); } }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: var(--ms-font-body), sans-serif;
     font-size: 13px;
     line-height: 1.6;
     color: var(--ink);
-    background: #f8fafc;
-    padding: 24px 16px;
+    background: var(--ms-bg);
+    padding: 0;
   }
 
   .page {
@@ -47,25 +51,25 @@
     align-items: start;
   }
   .header-badge {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #94a3b8;
+    color: var(--ms-muted);
     margin-bottom: 6px;
   }
   .header h1 {
-    font-family: 'DM Serif Display', serif;
+    font-family: var(--ms-font-head), serif;
     font-size: 28px;
     font-weight: 400;
     line-height: 1.2;
     color: white;
   }
-  .header h1 span { color: #60a5fa; }
+  .header h1 span { color: var(--accent); }
   .header-meta {
     text-align: right;
     font-size: 11px;
-    color: #94a3b8;
+    color: var(--ms-muted);
     line-height: 1.8;
   }
   .header-meta strong {
@@ -80,24 +84,24 @@
 
   /* RECALL BOX */
   .recall {
-    background: #f0fdf4;
+    background: var(--ms-good-soft);
     border-left: 4px solid #16a34a;
     border-radius: 0 6px 6px 0;
     padding: 14px 18px;
     margin-bottom: 20px;
   }
   .recall-label {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: #16a34a;
+    color: var(--ms-good);
     font-weight: 500;
     margin-bottom: 5px;
   }
-  .recall p { font-size: 12.5px; color: #14532d; line-height: 1.6; }
+  .recall p { font-size: 12.5px; color: var(--ms-text); line-height: 1.6; }
   .recall ul { padding-left: 16px; margin-top: 4px; }
-  .recall ul li { font-size: 12.5px; color: #14532d; margin-bottom: 2px; }
+  .recall ul li { font-size: 12.5px; color: var(--ms-text); margin-bottom: 2px; }
 
   /* SCENARIO */
   .scenario {
@@ -108,7 +112,7 @@
     margin-bottom: 20px;
   }
   .scenario-label {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -116,7 +120,7 @@
     font-weight: 500;
     margin-bottom: 5px;
   }
-  .scenario p { font-size: 13px; color: #1e3a5f; line-height: 1.65; }
+  .scenario p { font-size: 13px; color: var(--ms-text); line-height: 1.65; }
 
   /* INSTRUCTIONS */
   .instructions {
@@ -134,7 +138,7 @@
     padding: 2px 0 2px 14px;
     position: relative;
     font-size: 12.5px;
-    color: #334155;
+    color: var(--ms-text);
   }
   .instructions ul li::before {
     content: '→';
@@ -146,7 +150,7 @@
 
   /* SECTION TITLE */
   .section-title {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -166,7 +170,7 @@
 
   /* NEW SKILL BADGE */
   .new-skill-strip {
-    background: #fef3c7;
+    background: var(--ms-warn-soft);
     border: 1.5px solid #f59e0b;
     border-radius: 6px;
     padding: 12px 16px;
@@ -178,7 +182,7 @@
   .new-skill-strip .badge {
     background: #f59e0b;
     color: white;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -188,13 +192,13 @@
     flex-shrink: 0;
     margin-top: 2px;
   }
-  .new-skill-strip p { font-size: 12.5px; color: #78350f; line-height: 1.6; }
+  .new-skill-strip p { font-size: 12.5px; color: var(--ms-warn); line-height: 1.6; }
 
   /* DATA TABLE */
   .data-section { margin-bottom: 28px; }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: 'DM Mono', monospace; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; font-family: var(--ms-font-mono), monospace; }
   thead th {
-    background: var(--ink);
+    background: #1e293b;
     color: white;
     padding: 8px 10px;
     text-align: left;
@@ -202,7 +206,7 @@
     letter-spacing: 0.04em;
     font-weight: 500;
   }
-  tbody tr:nth-child(even) { background: #f8fafc; }
+  tbody tr:nth-child(even) { background: var(--ms-surface-2); }
   tbody tr:hover { background: var(--accent-light); }
   tbody td { padding: 7px 10px; border-bottom: 1px solid var(--border); color: var(--ink); }
   tbody td:first-child { font-weight: 500; }
@@ -211,18 +215,18 @@
   .tasks { display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px; }
   .task-card { border-radius: 8px; border: 1.5px solid; overflow: hidden; }
   .task-card.bronze { border-color: #d97706; }
-  .task-card.silver { border-color: #94a3b8; }
+  .task-card.silver { border-color: var(--ms-muted); }
   .task-card.gold   { border-color: #ca8a04; }
-  .task-card.ext    { border-color: #16a34a; }
+  .task-card.ext    { border-color: var(--ms-good); }
 
   .task-header { display: flex; align-items: center; gap: 10px; padding: 10px 16px; }
-  .task-card.bronze .task-header { background: #fef3c7; }
-  .task-card.silver .task-header { background: #f1f5f9; }
-  .task-card.gold   .task-header { background: #fef9c3; }
-  .task-card.ext    .task-header { background: #dcfce7; }
+  .task-card.bronze .task-header { background: var(--ms-warn-soft); }
+  .task-card.silver .task-header { background: var(--ms-surface-2); }
+  .task-card.gold   .task-header { background: var(--ms-warn-soft); }
+  .task-card.ext    .task-header { background: var(--ms-good-soft); }
 
   .task-badge {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -237,15 +241,15 @@
 
   .task-title { font-weight: 600; font-size: 13px; color: var(--ink); }
 
-  .task-body { padding: 14px 16px; background: white; }
+  .task-body { padding: 14px 16px; background: var(--ms-surface); }
   .task-body ol { padding-left: 18px; }
-  .task-body ol li { margin-bottom: 6px; font-size: 12.5px; line-height: 1.6; color: #1e293b; }
+  .task-body ol li { margin-bottom: 6px; font-size: 12.5px; line-height: 1.6; color: var(--ms-text); }
   .task-body ol li:last-child { margin-bottom: 0; }
 
   code {
-    font-family: 'DM Mono', monospace;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    font-family: var(--ms-font-mono), monospace;
+    background: var(--ms-surface-2);
+    border: 1px solid var(--ms-line);
     border-radius: 3px;
     padding: 1px 5px;
     font-size: 11.5px;
@@ -257,29 +261,29 @@
     border-radius: 5px;
     padding: 10px 14px;
     margin: 8px 0;
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 11.5px;
     color: #86efac;
     line-height: 1.9;
   }
-  .formula-box .comment { color: #64748b; }
+  .formula-box .comment { color: #94a3b8; }
   .formula-box .highlight { color: #fde68a; }
 
   /* ABS REF EXPLAINER */
   .abs-explainer {
-    background: #fff7ed;
+    background: var(--ms-warn-soft);
     border: 1.5px solid #fb923c;
     border-radius: 6px;
     padding: 12px 16px;
     margin: 10px 0;
   }
-  .abs-explainer p { font-size: 12px; color: #7c2d12; line-height: 1.6; }
-  .abs-explainer strong { color: #c2410c; }
+  .abs-explainer p { font-size: 12px; color: var(--ms-warn); line-height: 1.6; }
+  .abs-explainer strong { color: var(--ms-warn); }
 
   /* HELP BOX */
   .help-box {
-    background: #fffbeb;
-    border: 1.5px solid #fcd34d;
+    background: var(--ms-warn-soft);
+    border: 1.5px solid color-mix(in srgb, var(--ms-warn) 45%, transparent);
     border-radius: 8px;
     padding: 16px 20px;
     margin-bottom: 28px;
@@ -288,23 +292,23 @@
     font-size: 13px;
     font-weight: 600;
     margin-bottom: 10px;
-    color: #92400e;
+    color: var(--ms-warn);
   }
   .help-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .help-item {
-    background: white;
+    background: var(--ms-surface);
     border-radius: 5px;
     padding: 8px 12px;
-    border: 1px solid #fcd34d;
+    border: 1px solid color-mix(in srgb, var(--ms-warn) 45%, transparent);
   }
   .help-item .formula-name {
-    font-family: 'DM Mono', monospace;
+    font-family: var(--ms-font-mono), monospace;
     font-size: 11px;
     color: var(--accent);
     font-weight: 500;
     margin-bottom: 2px;
   }
-  .help-item p { font-size: 11px; color: #78350f; line-height: 1.5; }
+  .help-item p { font-size: 11px; color: var(--ms-warn); line-height: 1.5; }
 
   /* FOOTER */
   .footer {
@@ -313,7 +317,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8fafc;
+    background: var(--ms-surface-2);
   }
   .footer p { font-size: 11px; color: var(--muted); }
   .done-checklist { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -321,10 +325,18 @@
   .done-item .box { width: 14px; height: 14px; border: 1.5px solid var(--muted); border-radius: 2px; flex-shrink: 0; }
 
   @media print {
-    body { background: white; padding: 0; }
+    body { background: var(--ms-surface); padding: 0; }
     .page { box-shadow: none; border-radius: 0; max-width: 100%; }
     .task-card, .help-box, .scenario, .recall { break-inside: avoid; }
   }
+
+  /* Shared design: light title band instead of the dark slab */
+  .header { background: var(--ms-surface-2); color: var(--ms-text); border-bottom: 1px solid var(--ms-line); border-top: 6px solid var(--ks-ks3); }
+  .header h1, .header-meta strong { color: var(--ms-text); }
+  .header-badge, .header-meta { color: var(--ms-muted); }
+  .header h1 span { color: var(--accent); }
+  body > .page { margin: 24px auto; }
+  @media (max-width: 860px) { body > .page { margin: 16px; } }
 </style>
 </head>
 <body>
@@ -382,7 +394,7 @@
     <!-- DATA TABLE -->
     <div class="data-section">
       <div class="section-title">Step 1 — Set up your Points System (do this FIRST)</div>
-      <p style="font-size:12.5px; color:#334155; margin-bottom:12px;">
+      <p style="font-size:12.5px; color:var(--ms-text); margin-bottom:12px;">
         In cell <strong>K1</strong> type the label <strong>Points per Win</strong> and in <strong>L1</strong> type the value <strong>3</strong>.<br>
         In cell <strong>K2</strong> type the label <strong>Points per Draw</strong> and in <strong>L2</strong> type the value <strong>1</strong>.<br>
         You will reference these cells in your formulas using <strong>$L$1</strong> and <strong>$L$2</strong>. (See the Gold task for why this matters.)

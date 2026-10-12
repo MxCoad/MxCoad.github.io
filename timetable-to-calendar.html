@@ -4,97 +4,99 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Timetable → Calendar</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 <style>
   :root{
-    --cream:#F4EFE3;--cream-2:#FBF8F0;--navy:#1C2B4A;--navy-soft:#31446b;
-    --gold:#C79A22;--gold-deep:#a9821a;--teal:#217F7C;--teal-deep:#1a6663;
-    --line:#e0d8c4;--ink:#20283a;--muted:#6b7385;--danger:#a5462f;
-    --radius:10px;--shadow:0 1px 2px rgba(28,43,74,.06),0 6px 18px rgba(28,43,74,.06);
+    /* Colours come from the shared design (/assets/site.css) */
+    --cream:var(--ms-bg);--cream-2:var(--ms-surface);--navy:var(--ms-text);--navy-soft:var(--ms-muted);
+    --gold:#C79A22;--gold-deep:#a9821a;--teal:var(--ms-accent);--teal-deep:var(--ms-accent-hover);
+    --line:var(--ms-line);--ink:var(--ms-text);--muted:var(--ms-muted);--danger:var(--ms-bad);
+    --radius:10px;--shadow:var(--ms-shadow);
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--cream);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.5}
-  h1,h2,h3,.dsp{font-family:"Lexend",system-ui,sans-serif;font-weight:600;letter-spacing:-.01em}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:var(--ms-font-body),system-ui,sans-serif;line-height:1.5}
+  h1,h2,h3,.dsp{font-family:var(--ms-font-head);font-weight:600;letter-spacing:-.01em}
   .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 140px}
   header.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:2px solid var(--navy);padding-bottom:16px;margin-bottom:22px}
-  header.top .eyebrow{font-family:"Lexend";font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600}
+  header.top .eyebrow{font-family:var(--ms-font-body);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600}
   header.top h1{font-size:1.7rem;margin:.15rem 0 0;color:var(--navy);line-height:1.1}
   header.top p{margin:.15rem 0 0;color:var(--muted);font-size:.95rem;flex-basis:100%}
   .card{background:var(--cream-2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
   .card>h2{font-size:1.05rem;margin:0 0 4px;color:var(--navy);display:flex;align-items:center;gap:10px}
-  .card>h2 .n{font-family:"Lexend";font-size:.7rem;font-weight:700;color:var(--cream-2);background:var(--teal);width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .card>h2 .n{font-family:var(--ms-font-body);font-size:.7rem;font-weight:700;color:var(--cream-2);background:var(--teal);width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}
   .card>.hint{color:var(--muted);font-size:.85rem;margin:0 0 16px}
   label.fld{display:block;font-size:.8rem;font-weight:700;color:var(--navy-soft);margin:0 0 5px}
-  input[type=text],input[type=date],input[type=time],input[type=number],select{font-family:inherit;font-size:.92rem;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+  input[type=text],input[type=date],input[type=time],input[type=number],select{font-family:inherit;font-size:.92rem;color:var(--ink);background:var(--ms-surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
   input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:var(--gold)}
   .row{display:flex;gap:14px;flex-wrap:wrap}
   .row>div{flex:1 1 180px}
-  .btn{font-family:"Lexend";font-weight:600;font-size:.9rem;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .04s ease,background .15s}
+  .btn{font-family:var(--ms-font-body);font-weight:600;font-size:.9rem;border:0;border-radius:8px;padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:transform .04s ease,background .15s}
   .btn:active{transform:translateY(1px)}
-  .btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal-deep)}
+  .btn-primary{background:var(--teal);color:var(--ms-on-accent)}.btn-primary:hover{background:var(--teal-deep)}
   .btn-ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}.btn-ghost:hover{border-color:var(--navy-soft)}
   .btn-gold{background:var(--gold);color:#241c00}.btn-gold:hover{background:var(--gold-deep)}
   .btn-mini{font-size:.78rem;padding:5px 10px}
-  .btn-danger{color:var(--danger);background:transparent;border:1px solid transparent}.btn-danger:hover{background:#f7e9e4}
+  .btn-danger{color:var(--danger);background:transparent;border:1px solid transparent}.btn-danger:hover{background:var(--ms-bad-soft)}
   table.plist{width:100%;border-collapse:collapse}
-  table.plist th{font-family:"Lexend";font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:0 8px 8px}
+  table.plist th{font-family:var(--ms-font-body);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;font-weight:600;padding:0 8px 8px}
   table.plist td{padding:4px 8px 4px 0;vertical-align:middle}
   table.plist td.act{width:36px;text-align:right;padding-right:0}
   .icon-x{border:0;background:transparent;color:var(--muted);font-size:1.05rem;cursor:pointer;line-height:1;padding:6px;border-radius:6px}
-  .icon-x:hover{color:var(--danger);background:#f7e9e4}
+  .icon-x:hover{color:var(--danger);background:var(--ms-bad-soft)}
   .tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
-  .tabs button{font-family:"Lexend";font-weight:500;font-size:.9rem;border:1px solid var(--line);background:#fff;color:var(--navy-soft);padding:8px 16px;border-radius:8px 8px 0 0;border-bottom:0;cursor:pointer}
-  .tabs button[aria-selected=true]{background:var(--navy);color:var(--cream-2);border-color:var(--navy)}
-  .gridscroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+  .tabs button{font-family:var(--ms-font-body);font-weight:500;font-size:.9rem;border:1px solid var(--line);background:var(--ms-surface);color:var(--navy-soft);padding:8px 16px;border-radius:8px 8px 0 0;border-bottom:0;cursor:pointer}
+  .tabs button[aria-selected=true]{background:var(--ms-accent);color:var(--ms-on-accent);border-color:var(--ms-accent)}
+  .gridscroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--ms-surface)}
   table.grid{border-collapse:collapse;min-width:520px;width:100%}
   table.grid th,table.grid td{border:1px solid var(--line);padding:0;vertical-align:top}
-  table.grid thead th{background:var(--navy);color:var(--cream-2);font-family:"Lexend";font-weight:500;font-size:.82rem;padding:8px 10px}
-  table.grid th.period{background:var(--cream);color:var(--navy);text-align:left;font-family:"Lexend";font-weight:600;font-size:.8rem;padding:8px 10px;white-space:nowrap;min-width:118px}
-  table.grid th.period small{display:block;font-weight:400;font-family:"Atkinson Hyperlegible";color:var(--muted);font-size:.72rem}
+  table.grid thead th{background:var(--ms-surface-2);color:var(--ms-text);font-family:var(--ms-font-body);font-weight:500;font-size:.82rem;padding:8px 10px}
+  table.grid th.period{background:var(--cream);color:var(--navy);text-align:left;font-family:var(--ms-font-body);font-weight:600;font-size:.8rem;padding:8px 10px;white-space:nowrap;min-width:118px}
+  table.grid th.period small{display:block;font-weight:400;font-family:var(--ms-font-body);color:var(--muted);font-size:.72rem}
   .cell{display:flex;flex-direction:column;gap:2px;padding:5px}
-  .cell input{border:1px solid transparent;border-radius:5px;padding:5px 6px;font-size:.82rem;background:#fff}
+  .cell input{border:1px solid transparent;border-radius:5px;padding:5px 6px;font-size:.82rem;background:var(--ms-surface)}
   .cell input.subj{font-weight:700;color:var(--navy)}
   .cell input.room{font-size:.74rem;color:var(--muted)}
   .cell input:hover{border-color:var(--line)}
-  .cell input:focus{border-color:var(--gold);background:#fffdf6}
+  .cell input:focus{border-color:var(--gold);background:var(--ms-accent-soft)}
   .dayassign{display:flex;gap:10px;flex-wrap:wrap}
-  .dayassign .day{flex:1 1 150px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
-  .dayassign .day .nm{font-family:"Lexend";font-weight:600;font-size:.85rem;color:var(--navy);margin-bottom:6px}
+  .dayassign .day{flex:1 1 150px;background:var(--ms-surface);border:1px solid var(--line);border-radius:8px;padding:10px}
+  .dayassign .day .nm{font-family:var(--ms-font-body);font-weight:600;font-size:.85rem;color:var(--navy);margin-bottom:6px}
   .patlist{display:flex;flex-direction:column;gap:8px;margin-bottom:4px}
-  .patlist .prow{display:flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+  .patlist .prow{display:flex;gap:10px;align-items:center;background:var(--ms-surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
   .patlist .prow .swatch{width:10px;height:26px;border-radius:3px;flex:0 0 auto}
-  .patlist .prow input{border:1px solid transparent;font-family:"Lexend";font-weight:600;color:var(--navy)}
+  .patlist .prow input{border:1px solid transparent;font-family:var(--ms-font-body);font-weight:600;color:var(--navy)}
   .patlist .prow input:hover{border-color:var(--line)}
   .patlist .prow .days{font-size:.78rem;color:var(--muted);margin-left:auto;white-space:nowrap}
-  .actionbar{position:fixed;left:0;right:0;bottom:0;background:rgba(28,43,74,.97);backdrop-filter:blur(6px);border-top:1px solid var(--navy);padding:12px 20px;z-index:20}
+  .actionbar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb, var(--ms-surface) 96%, transparent);backdrop-filter:blur(6px);border-top:1px solid var(--ms-line-strong);box-shadow:0 -6px 20px -12px rgba(0,0,0,.25);padding:12px 20px;z-index:20}
   .actionbar .inner{max-width:1040px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  .actionbar .status{color:#cdd6e8;font-size:.85rem;margin-left:auto}
-  .actionbar .status b{color:var(--gold);font-family:"Lexend"}
+  .actionbar .status{color:var(--ms-muted);font-size:.85rem;margin-left:auto}
+  .actionbar .status b{color:var(--ms-text);font-family:var(--ms-font-body)}
   .steps{list-style:none;counter-reset:s;padding:0;margin:0}
   .steps li{counter-increment:s;position:relative;padding:0 0 12px 34px;font-size:.9rem}
-  .steps li:before{content:counter(s);position:absolute;left:0;top:-1px;width:22px;height:22px;background:var(--gold);color:#241c00;font-family:"Lexend";font-weight:700;font-size:.75rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:-1px;width:22px;height:22px;background:var(--gold);color:#241c00;font-family:var(--ms-font-body);font-weight:700;font-size:.75rem;border-radius:50%;display:flex;align-items:center;justify-content:center}
   .steps li:last-child{padding-bottom:0}
   code{background:var(--cream);border:1px solid var(--line);border-radius:4px;padding:1px 5px;font-size:.85em}
   .inline-note{font-size:.82rem;color:var(--muted);margin-top:6px}
-  .banner{background:#fff7e2;border:1px solid var(--gold);border-radius:8px;padding:10px 14px;font-size:.85rem;color:#5c4a10;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
-  .banner b{font-family:"Lexend"}
-  details.help{background:var(--navy);color:var(--cream-2);border-radius:var(--radius)}
-  details.help summary{cursor:pointer;padding:16px 20px;font-family:"Lexend";font-weight:600;list-style:none}
+  .banner{background:var(--ms-warn-soft);border:1px solid var(--gold);border-radius:8px;padding:10px 14px;font-size:.85rem;color:var(--ms-warn);margin-bottom:16px;display:flex;gap:10px;align-items:flex-start}
+  .banner b{font-family:var(--ms-font-body)}
+  details.help{background:var(--ms-surface-2);color:var(--ms-text);border:1px solid var(--ms-line);border-radius:var(--radius)}
+  details.help summary{cursor:pointer;padding:16px 20px;font-family:var(--ms-font-body);font-weight:600;list-style:none}
   details.help summary::-webkit-details-marker{display:none}
   details.help summary:after{content:"›";float:right;transition:transform .2s}
   details.help[open] summary:after{transform:rotate(90deg)}
   details.help .body{padding:0 20px 20px}
-  details.help .body a{color:var(--gold)}
-  .subhead{font-family:"Lexend";font-weight:600;font-size:.9rem;color:var(--navy);margin:6px 0 8px}
-  .emptynote{font-size:.85rem;color:var(--muted);padding:14px;background:#fff;border:1px dashed var(--line);border-radius:8px}
+  details.help .body a{color:var(--ms-accent)}
+  .subhead{font-family:var(--ms-font-body);font-weight:600;font-size:.9rem;color:var(--navy);margin:6px 0 8px}
+  .emptynote{font-size:.85rem;color:var(--muted);padding:14px;background:var(--ms-surface);border:1px dashed var(--line);border-radius:8px}
   @media (max-width:640px){
     .wrap{padding:20px 14px 150px}
     header.top h1{font-size:1.4rem}
     .actionbar .status{margin-left:0;flex-basis:100%;order:5}
   }
+  /* Narrow screens: let the period-times table scroll instead of widening the page */
+  @media (max-width:520px){ table.plist{display:block; max-width:100%; overflow-x:auto} }
 </style>
 </head>
 <body>
@@ -112,7 +114,7 @@
     <summary>How to get this into Google Calendar</summary>
     <div class="body">
       <p style="margin-top:0">Import is a desktop job — the mobile app can't import files. On a computer:</p>
-      <ol class="steps" style="color:var(--cream-2)">
+      <ol class="steps">
         <li>In Google Calendar, create a <b>new calendar</b> first (e.g. "Timetable 2026–27"). A separate calendar means you can hide it, or delete the whole thing next year, without touching anything else.</li>
         <li>Fill in the sections below, then press <b>Download .ics</b>.</li>
         <li>Go to <b>Settings → Import &amp; export</b>, choose the file, and pick your new calendar as the destination.</li>
@@ -188,7 +190,7 @@
   <div class="inner">
     <button class="btn btn-primary" id="download">⬇ Download .ics</button>
     <button class="btn btn-gold btn-mini" id="saveCfg">Save setup</button>
-    <button class="btn btn-ghost btn-mini" id="loadCfg" style="color:var(--cream-2);border-color:var(--navy-soft)">Load setup</button>
+    <button class="btn btn-ghost btn-mini" id="loadCfg">Load setup</button>
     <input type="file" id="cfgFile" accept="application/json,.json" hidden>
     <div class="status" id="status">Ready</div>
   </div>

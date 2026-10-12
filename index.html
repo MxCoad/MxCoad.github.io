@@ -1,512 +1,336 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mx. Coad — CS Resources</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="description" content="Computer science practice tools, revision and lessons for KS3, GCSE, A-Level and BTEC IT.">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/site.js"></script>
   <style>
-    :root {
-      --bg: #0d0f14;
-      --surface: #13161d;
-      --border: #1e2330;
-      --border-hover: #2e3550;
-      --text: #cdd6f4;
-      --muted: #6c7398;
-      --accent-1: #89b4fa;
-      --accent-2: #a6e3a1;
-      --accent-3: #f38ba8;
-      --accent-4: #fab387;
-      --glow-1: rgba(137,180,250,0.12);
-      --glow-2: rgba(166,227,161,0.10);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    *, *::before, *::after { box-sizing: border-box; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
+      margin: 0;
+      background: var(--ms-bg);
+      color: var(--ms-text);
+      font-family: var(--ms-font-body);
+      font-size: 18px;
+      line-height: 1.55;
     }
+    a { color: var(--ms-accent); }
+    a:hover { color: var(--ms-accent-hover); }
+    :focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
 
-    /* ── Grid background ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(137,180,250,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(137,180,250,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px; }
+    main.wrap { padding-top: 56px; padding-bottom: 80px; }
 
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 80px 24px 100px;
-    }
-
-    /* ── Header ── */
-    header {
-      margin-bottom: 64px;
-      animation: fadeUp 0.6s ease both;
-    }
-
-    .eyebrow {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent-1);
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .eyebrow::before {
-      content: '';
-      display: block;
-      width: 28px;
-      height: 1px;
-      background: var(--accent-1);
-    }
-
+    .eyebrow { margin: 0 0 12px; font-weight: 700; color: var(--ms-muted); }
     h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 800;
-      line-height: 1.0;
-      letter-spacing: -0.02em;
-      color: #fff;
+      margin: 0 0 16px;
+      max-width: 18ch;
+      font-family: var(--ms-font-head);
+      font-size: clamp(36px, 5vw, 56px);
+      line-height: 1.1;
+    }
+    .intro { margin: 0; max-width: 60ch; font-size: 20px; color: var(--ms-muted); }
+
+    /* Exam countdowns */
+    .countdowns {
+      margin-top: 36px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .cd {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: var(--ms-surface);
+      border: 1px solid var(--ms-line);
+      border-top: 5px solid var(--stage);
+    }
+    .cd-label { font-weight: 700; }
+    .cd-days { font-family: var(--ms-font-head); font-size: 32px; font-weight: 700; line-height: 1.15; color: var(--ms-accent); }
+    .cd-days.urgent { color: var(--ms-bad); }
+    .cd-date { font-size: 15px; color: var(--ms-muted); }
+
+    /* Topic filter */
+    .filter {
+      margin-top: 48px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-label { font-weight: 700; margin-right: 8px; }
+    .chip {
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid var(--ms-line-strong);
+      background: var(--ms-surface);
+      color: var(--ms-text);
+      font: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .chip:hover { border-color: var(--ms-accent); }
+    .chip[aria-pressed="true"] { background: var(--ms-accent); border-color: var(--ms-accent); color: var(--ms-on-accent); }
+
+    /* Key-stage sections */
+    .stage { margin-top: 56px; scroll-margin-top: 16px; }
+    .stage[hidden] { display: none; }
+    .stage-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 14px;
+      padding-bottom: 12px;
       margin-bottom: 20px;
+      border-bottom: 3px solid var(--stage);
     }
+    .stage-mark { width: 18px; height: 18px; border-radius: 6px; background: var(--stage); }
+    .stage-head h2 { margin: 0; font-family: var(--ms-font-head); font-size: 32px; line-height: 1.2; }
+    .stage-sub { color: var(--ms-muted); }
 
-    h1 span {
-      color: var(--accent-1);
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: var(--muted);
-      max-width: 480px;
-      line-height: 1.65;
-    }
-
-    /* ── Section label ── */
-    .section-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 24px;
-      animation: fadeUp 0.6s 0.15s ease both;
-    }
-
-    /* ── Cards grid ── */
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
     }
-
     .card {
-      display: block;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 22px 24px 24px;
+      border-radius: var(--ms-radius);
+      border: 1px solid var(--ms-line);
+      border-top: 6px solid var(--stage);
+      background: var(--ms-surface);
+      color: var(--ms-text);
       text-decoration: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px 28px 24px;
-      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
-      position: relative;
-      overflow: hidden;
-      animation: fadeUp 0.6s ease both;
+      transition: box-shadow .15s, transform .15s;
     }
-
-    .card:nth-child(1) { animation-delay: 0.2s; --card-accent: var(--accent-1); --card-glow: var(--glow-1); }
-    .card:nth-child(2) { animation-delay: 0.3s; --card-accent: var(--accent-2); --card-glow: var(--glow-2); }
-    .card:nth-child(3) { animation-delay: 0.4s; --card-accent: var(--accent-4); }
-    .card:nth-child(4) { animation-delay: 0.5s; --card-accent: var(--accent-3); }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--card-accent);
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .card::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at top left, var(--card-glow, transparent) 0%, transparent 60%);
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .card:hover {
-      border-color: var(--border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-    }
-
-    .card:hover::before { opacity: 1; }
-    .card:hover::after  { opacity: 1; }
-
-    .card-tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--card-accent);
-      background: color-mix(in srgb, var(--card-accent) 12%, transparent);
-      border: 1px solid color-mix(in srgb, var(--card-accent) 25%, transparent);
-      padding: 3px 9px;
-      border-radius: 4px;
-      display: inline-block;
-      margin-bottom: 18px;
-    }
-
-    .card-title {
-      font-family: 'Syne', sans-serif;
-      font-size: 1.25rem;
+    .card:hover { color: var(--ms-text); box-shadow: var(--ms-shadow); transform: translateY(-2px); }
+    .card[hidden] { display: none; }
+    .tag {
+      align-self: flex-start;
+      padding: 3px 12px;
+      border-radius: 999px;
+      background: var(--stage);
+      color: var(--ms-on-stage);
+      font-size: 13px;
       font-weight: 700;
-      color: #fff;
-      margin-bottom: 10px;
-      line-height: 1.2;
+      letter-spacing: .04em;
+      text-transform: uppercase;
     }
+    .card-title { font-family: var(--ms-font-head); font-size: 22px; font-weight: 700; line-height: 1.25; }
+    .card-desc { font-size: 17px; color: var(--ms-muted); }
+    .card-ext { margin-top: auto; padding-top: 4px; font-size: 15px; color: var(--ms-muted); }
 
-    .card-desc {
-      font-size: 0.875rem;
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 22px;
-    }
+    .none { margin-top: 56px; color: var(--ms-muted); }
 
-    .card-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .card-url {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
-      color: color-mix(in srgb, var(--muted) 70%, transparent);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 220px;
-    }
-
-    .card-arrow {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s, border-color 0.2s, transform 0.2s;
-    }
-
-    .card:hover .card-arrow {
-      background: var(--card-accent);
-      border-color: var(--card-accent);
-      transform: rotate(45deg);
-    }
-
-    .card-arrow svg {
-      width: 12px;
-      height: 12px;
-      fill: none;
-      stroke: var(--muted);
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.2s;
-    }
-
-    .card:hover .card-arrow svg { stroke: #000; }
-
-    /* ── Footer ── */
-    footer {
-      margin-top: 72px;
+    footer { border-top: 1px solid var(--ms-line); background: var(--ms-surface); }
+    footer .wrap {
       padding-top: 28px;
-      border-top: 1px solid var(--border);
+      padding-bottom: 28px;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       flex-wrap: wrap;
+      justify-content: space-between;
       gap: 12px;
-      animation: fadeUp 0.6s 0.5s ease both;
+      font-size: 16px;
+      color: var(--ms-muted);
     }
+    footer p { margin: 0; }
 
-    .footer-left {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
-
-    .footer-left span { color: var(--accent-1); }
-
-    .footer-school {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    /* ── Countdown section ── */
-    .countdown-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-      margin-bottom: 56px;
-    }
- 
-    .cd-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px 18px 18px;
-      position: relative;
-      overflow: hidden;
-      animation: fadeUp 0.6s ease both;
-    }
- 
-    .cd-card:nth-child(1) { animation-delay: 0.2s; --cd-accent: var(--accent-4); }
-    .cd-card:nth-child(2) { animation-delay: 0.28s; --cd-accent: var(--accent-3); }
-    .cd-card:nth-child(3) { animation-delay: 0.36s; --cd-accent: var(--accent-1); }
-    .cd-card:nth-child(4) { animation-delay: 0.44s; --cd-accent: var(--accent-2); }
- 
-    .cd-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--cd-accent);
-    }
- 
-    .cd-label {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--cd-accent);
-      margin-bottom: 12px;
-      display: block;
-    }
- 
-    .cd-days {
-      font-family: 'Syne', sans-serif;
-      font-size: 3rem;
-      font-weight: 800;
-      line-height: 1;
-      color: #fff;
-      margin-bottom: 4px;
-      letter-spacing: -0.03em;
-    }
- 
-    .cd-days.urgent { color: var(--cd-accent); }
- 
-    .cd-unit {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
- 
-    .cd-date {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
- 
-    .cd-bar-track {
-      height: 3px;
-      background: var(--border);
-      border-radius: 2px;
-      margin-top: 14px;
-      overflow: hidden;
-    }
- 
-    .cd-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      background: var(--cd-accent);
-      transition: width 1s ease;
-    }
-    
-
-    /* ── Animations ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+    @media (max-width: 640px) {
+      main.wrap { padding-top: 36px; }
+      .countdowns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .cd-days { font-size: 26px; }
+      .stage-head h2 { font-size: 28px; }
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
+  <main class="wrap">
+    <p class="eyebrow">Graveney School · Computer Science</p>
+    <h1>Computer science resources for every key stage</h1>
+    <p class="intro">Practice tools, revision and lessons for KS3, GCSE, A-Level and BTEC IT. Choose your key stage, or filter by topic.</p>
 
-    <header>
-      <p class="eyebrow">Graveney School · Computer Science</p>
-      <h1>Mx. Coad's<br><span>Resource Hub</span></h1>
-      <p class="subtitle">A collection of websites and tools built for students across KS3, GCSE, and A-Level. Click a card to open the site.</p>
-    </header>
+    <section class="countdowns" id="countdowns" aria-label="Exam countdowns"></section>
 
-    
-    <p class="section-label">// exam countdowns</p>
- 
-    <div class="countdown-grid" id="countdown-grid">
-      <!-- filled by JS -->
+    <div class="filter" role="group" aria-label="Filter by topic">
+      <span class="filter-label">Topic</span>
+      <button type="button" class="chip" data-topic="all" aria-pressed="true">All topics</button>
+      <button type="button" class="chip" data-topic="number" aria-pressed="false">Number systems</button>
+      <button type="button" class="chip" data-topic="programming" aria-pressed="false">Programming</button>
+      <button type="button" class="chip" data-topic="spreadsheets" aria-pressed="false">Spreadsheets</button>
+      <button type="button" class="chip" data-topic="cyber" aria-pressed="false">Cyber security</button>
+      <button type="button" class="chip" data-topic="revision" aria-pressed="false">Revision</button>
+      <button type="button" class="chip" data-topic="games" aria-pressed="false">Game development</button>
+      <button type="button" class="chip" data-topic="web" aria-pressed="false">Web design</button>
+      <button type="button" class="chip" data-topic="curriculum" aria-pressed="false">Curriculum</button>
+      <button type="button" class="chip" data-topic="tools" aria-pressed="false">Tools</button>
     </div>
 
-    <p class="section-label">// student sites</p>
+    <!-- To add a resource: copy a card into the right section and set data-topic to one of the filter topics above. -->
 
-    <div class="cards">
+    <section class="stage" id="ks3" style="--stage: var(--ks-ks3)">
+      <div class="stage-head"><span class="stage-mark" aria-hidden="true"></span><h2>KS3</h2><span class="stage-sub">Years 7–9</span></div>
+      <div class="cards">
+        <a class="card" data-topic="curriculum" href="ks3-computing-curriculum.html">
+          <span class="tag">Curriculum</span>
+          <span class="card-title">KS3 Computing curriculum</span>
+          <span class="card-desc">What we cover in Years 7, 8 and 9, term by term. This is a draft and may change.</span>
+        </a>
+        <a class="card" data-topic="number" href="Binary_Practice/binary.html">
+          <span class="tag">Number systems</span>
+          <span class="card-title">Binary practice tools</span>
+          <span class="card-desc">Practise converting between binary, denary and hexadecimal, with instant feedback.</span>
+        </a>
+        <a class="card" data-topic="spreadsheets" href="Cover%20Lessons/">
+          <span class="tag">Spreadsheets</span>
+          <span class="card-title">Spreadsheet cover lessons</span>
+          <span class="card-desc">Year 7 and Year 9 spreadsheet lessons, from first formulas to VLOOKUP, plus Year 9 revision.</span>
+        </a>
+        <a class="card" data-topic="cyber" href="cyber-defence-console.html">
+          <span class="tag">Cyber security</span>
+          <span class="card-title">Cyber Defence Console</span>
+          <span class="card-desc">Defend a network against hackers, service jamming and brute-force attacks.</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="card" href="https://mxcoad.github.io/timetable-to-calendar.html" target="_blank" rel="noopener">
-        <span class="card-tag">Timetable</span>
-        <h2 class="card-title">Create Google Calendar</h2>
-        <p class="card-desc">Enter your timetable once, download an .ics file, and import your whole year into Google Calendar in one go. Built for a one-week timetable where different days can run to different bells.</p>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/timetable-to-calendar.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>
+    <section class="stage" id="gcse" style="--stage: var(--ks-gcse)">
+      <div class="stage-head"><span class="stage-mark" aria-hidden="true"></span><h2>GCSE</h2><span class="stage-sub">OCR J277</span></div>
+      <div class="cards">
+        <a class="card" data-topic="revision" href="GCSE/Revision_Console.html">
+          <span class="tag">Revision</span>
+          <span class="card-title">GCSE Revision Console</span>
+          <span class="card-desc">Revision and practice questions for OCR GCSE Computer Science.</span>
+        </a>
+        <a class="card" data-topic="programming" href="https://gocodeit.online/" target="_blank" rel="noopener">
+          <span class="tag">Programming</span>
+          <span class="card-title">GCSE programming practice</span>
+          <span class="card-desc">Go Code It: coding exercises and assignments for GCSE Computer Science.</span>
+          <span class="card-ext">gocodeit.online · opens in a new tab</span>
+        </a>
+        <a class="card" data-topic="number" href="Binary_Practice/binary.html">
+          <span class="tag">Number systems</span>
+          <span class="card-title">Binary practice tools</span>
+          <span class="card-desc">Binary, hexadecimal, negative numbers and floating point, with instant feedback.</span>
+        </a>
+        <a class="card" data-topic="cyber" href="cyber-defence-console.html">
+          <span class="tag">Cyber security</span>
+          <span class="card-title">Cyber Defence Console</span>
+          <span class="card-desc">See how hacking, denial-of-service and brute-force attacks work, and how to stop them.</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="card" href="https://mxcoad.github.io/ks3-computing-curriculum.html" target="_blank" rel="noopener">
-        <span class="card-tag">KS3 Curriculum</span>
-        <h2 class="card-title">KS3 Curriculum Draft</h2>
-        <p class="card-desc">This is the current KS3 Curriculum at the moment things may change in the near future</p>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/ks3-computing-curriculum.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>      
+    <section class="stage" id="alevel" style="--stage: var(--ks-alevel)">
+      <div class="stage-head"><span class="stage-mark" aria-hidden="true"></span><h2>A-Level</h2><span class="stage-sub">Years 12–13</span></div>
+      <div class="cards">
+        <a class="card" data-topic="games" href="Defold/01-homepage.html">
+          <span class="tag">Game development</span>
+          <span class="card-title">Learning Defold</span>
+          <span class="card-desc">Build five 2D games step by step in the Defold engine, with help sheets and assets.</span>
+        </a>
+        <a class="card" data-topic="number" href="Binary_Practice/binary.html">
+          <span class="tag">Number systems</span>
+          <span class="card-title">Binary practice tools</span>
+          <span class="card-desc">Including negative numbers and normalised floating point.</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="card" href="https://mxcoad.github.io/Defold/01-homepage.html" target="_blank" rel="noopener">
-        <span class="card-tag">A-Level</span>
-        <h2 class="card-title">Learning Defold</h2>
-        <p class="card-desc">A guided resource for getting started with the Defold game engine — covering projects, concepts, and examples.</p>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/Defold/01-homepage.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>
-      
-      <a class="card" href="https://mxcoad.github.io/Binary_Practice/binary.html" target="_blank" rel="noopener">
-        <span class="card-tag">A-Level/GCSE/KS3</span>
-        <h2 class="card-title">Binary practice tools</h2>
-        <p class="card-desc">A place to practice your Binary conversions.</p>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/Binary_Practice/binary.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>
+    <section class="stage" id="btec" style="--stage: var(--ks-btec)">
+      <div class="stage-head"><span class="stage-mark" aria-hidden="true"></span><h2>BTEC IT</h2><span class="stage-sub">Example work</span></div>
+      <div class="cards">
+        <a class="card" data-topic="web" href="EcommerceWebsite/shophomepage.html">
+          <span class="tag">Web design</span>
+          <span class="card-title">GreenThread example website</span>
+          <span class="card-desc">A sample online shop showing good web design practice and content structure.</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="card" href="https://mxcoad.github.io/EcommerceWebsite/shophomepage.html" target="_blank" rel="noopener">
-        <span class="card-tag">BTEC IT</span>
-        <h2 class="card-title">BTEC Example Website</h2>
-        <p class="card-desc">An example site produced for BTEC IT students — demonstrating good web design practice and content structure.</p>
-        <div class="card-footer">
-          <span class="card-url">https://mxcoad.github.io/EcommerceWebsite/shophomepage.html</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a>
+    <section class="stage" id="tools" style="--stage: var(--ks-tools)">
+      <div class="stage-head"><span class="stage-mark" aria-hidden="true"></span><h2>Student tools</h2><span class="stage-sub">Handy extras</span></div>
+      <div class="cards">
+        <a class="card" data-topic="tools" href="timetable-to-calendar.html">
+          <span class="tag">Tools</span>
+          <span class="card-title">Timetable → Calendar</span>
+          <span class="card-desc">Enter your timetable once and import your whole year into Google Calendar.</span>
+        </a>
+      </div>
+    </section>
 
-      <a class="card" href="https://gocodeit.online/" target="_blank" rel="noopener">
-        <span class="card-tag">GCSE Computer Science</span>
-        <h2 class="card-title">GCSE Programming Practice</h2>
-        <p class="card-desc">Go Code It: A low-cost, feature-rich coding platform built to make Computer Science teaching easier.
-Built by a teacher, for teachers, with practical tools for assignments, tracking progress, grading, and classroom management in one place. </p>
-        <div class="card-footer">
-          <span class="card-url">https://gocodeit.online/</span>
-          <span class="card-arrow">
-            <svg viewBox="0 0 12 12"><line x1="2" y1="10" x2="10" y2="2"/><polyline points="4 2 10 2 10 8"/></svg>
-          </span>
-        </div>
-      </a> 
-      
+    <p class="none" id="none" hidden>Nothing for this topic yet.</p>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p>© <span id="year">2026</span> Mx. Coad · Graveney School Computer Science</p>
+      <p>Light and dark mode follow your device settings</p>
     </div>
+  </footer>
 
-    <footer>
-      <p class="footer-left">
-        <span>©</span> <script>document.write(new Date().getFullYear())</script> · Mx. Coad
-      </p>
-      <p class="footer-school">Graveney School · Computer Science Department</p>
-    </footer>
-
-  </div>
-    <script>
-    const exams = [
-      { label: 'GCSE',     date: '2027-05-10', color: 'var(--accent-4)' },
-      { label: 'AS Level', date: '2027-05-11', color: 'var(--accent-3)' },
-      { label: 'A-Level',  date: '2027-06-07', color: 'var(--accent-1)' },
-      { label: 'BTEC',     date: '2027-05-14', color: 'var(--accent-2)' },
+  <script>
+    // Exam countdowns — update the dates each year.
+    var exams = [
+      { label: 'GCSE',     date: '2027-05-10', stage: 'gcse' },
+      { label: 'AS Level', date: '2027-05-11', stage: 'alevel' },
+      { label: 'A-Level',  date: '2027-06-07', stage: 'alevel' },
+      { label: 'BTEC',     date: '2027-05-14', stage: 'btec' }
     ];
- 
+
     function daysUntil(dateStr) {
-      const now  = new Date();
-      now.setHours(0, 0, 0, 0);
-      const target = new Date(dateStr);
-      target.setHours(0, 0, 0, 0);
+      var now = new Date(); now.setHours(0, 0, 0, 0);
+      var target = new Date(dateStr + 'T00:00:00');
       return Math.round((target - now) / 86400000);
     }
- 
-    function formatDate(dateStr) {
-      return new Date(dateStr).toLocaleDateString('en-GB', {
-        day: 'numeric', month: 'long', year: 'numeric'
+
+    var box = document.getElementById('countdowns');
+    exams.forEach(function (exam) {
+      var days = daysUntil(exam.date);
+      var big = days < 0 ? 'Done' : days === 0 ? 'Today!' : days + (days === 1 ? ' day' : ' days');
+      var card = document.createElement('div');
+      card.className = 'cd';
+      card.style.setProperty('--stage', 'var(--ks-' + exam.stage + ')');
+      var label = document.createElement('span'); label.className = 'cd-label'; label.textContent = exam.label;
+      var num = document.createElement('span'); num.className = 'cd-days' + (days >= 0 && days <= 14 ? ' urgent' : ''); num.textContent = big;
+      var date = document.createElement('span'); date.className = 'cd-date';
+      date.textContent = new Date(exam.date + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      card.append(label, num, date);
+      box.appendChild(card);
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Topic filter
+    var chips = document.querySelectorAll('.chip');
+    chips.forEach(function (chip) {
+      chip.addEventListener('click', function () {
+        var topic = chip.getAttribute('data-topic');
+        chips.forEach(function (c) { c.setAttribute('aria-pressed', c === chip ? 'true' : 'false'); });
+        var anyShown = false;
+        document.querySelectorAll('.stage').forEach(function (stage) {
+          var shown = 0;
+          stage.querySelectorAll('.card').forEach(function (card) {
+            var match = topic === 'all' || card.getAttribute('data-topic') === topic;
+            card.hidden = !match;
+            if (match) shown++;
+          });
+          stage.hidden = shown === 0;
+          if (shown) anyShown = true;
+        });
+        document.getElementById('none').hidden = anyShown;
       });
-    }
- 
-    // Max days span for progress bar: days from today to furthest exam
-    const maxDays = Math.max(...exams.map(e => Math.max(daysUntil(e.date), 0)));
- 
-    const grid = document.getElementById('countdown-grid');
- 
-    exams.forEach(exam => {
-      const days = daysUntil(exam.date);
-      const isUrgent = days <= 14 && days >= 0;
-      const isPast   = days < 0;
- 
-      const pct = isPast ? 100 : maxDays > 0 ? Math.round((1 - days / maxDays) * 100) : 100;
- 
-      const label  = isPast ? 'Complete' : days === 0 ? 'Today!' : `${days}`;
-      const unit   = isPast ? '' : days === 0 ? '' : days === 1 ? 'day to go' : 'days to go';
- 
-      const card = document.createElement('div');
-      card.className = 'cd-card';
-      card.innerHTML = `
-        <span class="cd-label">${exam.label}</span>
-        <div class="cd-days${isUrgent ? ' urgent' : ''}">${label}</div>
-        <div class="cd-unit">${unit}</div>
-        <div class="cd-date">${formatDate(exam.date)}</div>
-        `;
-      grid.appendChild(card);
     });
   </script>
 </body>
