@@ -171,7 +171,7 @@ fieldset.ctl { border: 0; margin: 0; padding: 0; min-width: 0; }
 .ms h4 { margin: 0 0 8px; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; color: var(--ms-muted); }
 .ms .pt { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
 .ms .pt input { width: 22px; height: 22px; margin-top: 3px; flex: none; accent-color: var(--ms-good); }
-.ms .guide { margin: 10px 0 0; font-size: 15px; color: var(--ms-muted); }
+.ms .guide { margin: 10px 0 0; font-size: 15px; color: var(--ms-muted); white-space: pre-line; }
 .ms select { font: inherit; font-size: 16px; min-height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); }
 .score-line { margin: 12px 0 0; font-weight: 700; }
 .levels { margin: 6px 0 10px; font-size: 16px; }
