@@ -43,12 +43,14 @@ The `Defold/` folder is a complete course:
 
 ```
 index.html                  Homepage
+assets/site.css             Shared design: colours, fonts, light/dark mode, site bar
+assets/site.js              Sets light/dark mode and adds the site bar to every page
 ks3-computing-curriculum.html
 cyber-defence-console.html
 timetable-to-calendar.html
-floating-point-practice.html
+floating-point-practice.html  Redirect (moved to Binary_Practice/)
 Binary_Practice/            Number-representation practice tools
-Cover Lessons/              KS3 spreadsheet cover lessons
+Cover Lessons/              KS3 spreadsheet cover lessons (index.html lists them)
 Defold/                     Defold game-development course
 EcommerceWebsite/           BTEC IT example website
 GCSE/                       GCSE revision console
@@ -57,7 +59,15 @@ GCSE/                       GCSE revision console
 ## Adding or updating a page
 
 1. Add or edit the `.html` file (uploading through GitHub's website works fine).
-2. To make it easy to find, add a card linking to it in `index.html`.
-3. Commit to `main`. GitHub Pages republishes the site within a minute or two.
+2. Give a new page the shared design by adding these two lines inside `<head>`, straight after `<title>`:
+   ```html
+   <link rel="stylesheet" href="/assets/site.css">
+   <script src="/assets/site.js"></script>
+   ```
+   Then use the `--ms-*` colour and font variables from `assets/site.css` (for example `background: var(--ms-bg); color: var(--ms-text);`) so the page works in light and dark mode.
+3. To make it easy to find, copy a card in `index.html` into the right key-stage section and set its `data-topic`.
+4. Commit to `main`. GitHub Pages republishes the site within a minute or two.
+
+The Defold course and the BTEC example website keep their own designs on purpose.
 
 Links are case-sensitive on GitHub Pages, so `Climbing Stairs/` and `Climbing stairs/` are different folders. Check that a link's capitalisation matches the file or folder name exactly.

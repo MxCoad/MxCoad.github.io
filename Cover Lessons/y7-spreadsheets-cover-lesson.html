@@ -5,19 +5,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Year 7 Spreadsheets — Paws & Claws Animal Rescue</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap"
-        rel="stylesheet">
-    <style>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<style>
         :root {
-            --ink: #1a1a2e;
+            --ink: var(--ms-text);
             --accent: #16a34a;
-            --accent-light: #dcfce7;
-            --border: #e2e8f0;
-            --muted: #64748b;
-            --page: #ffffff;
-            --alt: #f8fafc;
+            --accent-light: color-mix(in srgb, var(--accent) 14%, var(--ms-surface));
+            --border: var(--ms-line);
+            --muted: var(--ms-muted);
+            --page: var(--ms-surface);
+            --alt: var(--ms-surface-2);
         }
+  /* Lighter accent on dark backgrounds */
+  :root[data-theme="dark"] { --accent: color-mix(in srgb, #16a34a 55%, #ffffff); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme]) { --accent: color-mix(in srgb, #16a34a 55%, #ffffff); } }
 
         * {
             box-sizing: border-box;
@@ -26,12 +28,12 @@
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--ms-font-body), sans-serif;
             font-size: 14px;
             line-height: 1.7;
             color: var(--ink);
-            background: #f8fafc;
-            padding: 24px 16px;
+            background: var(--ms-bg);
+            padding: 0;
         }
 
         .page {
@@ -55,16 +57,16 @@
         }
 
         .header-badge {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10px;
             letter-spacing: 0.12em;
             text-transform: uppercase;
-            color: #94a3b8;
+            color: var(--ms-muted);
             margin-bottom: 6px;
         }
 
         .header h1 {
-            font-family: 'DM Serif Display', serif;
+            font-family: var(--ms-font-head), serif;
             font-size: 26px;
             font-weight: 400;
             line-height: 1.2;
@@ -78,7 +80,7 @@
         .header-meta {
             text-align: right;
             font-size: 11px;
-            color: #94a3b8;
+            color: var(--ms-muted);
             line-height: 1.9;
         }
 
@@ -104,7 +106,7 @@
         }
 
         .scenario-label {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -115,7 +117,7 @@
 
         .scenario p {
             font-size: 14px;
-            color: #14532d;
+            color: var(--ms-text);
             line-height: 1.65;
         }
 
@@ -145,7 +147,7 @@
             padding: 3px 0 3px 16px;
             position: relative;
             font-size: 13.5px;
-            color: #334155;
+            color: var(--ms-text);
         }
 
         .instructions ul li::before {
@@ -158,7 +160,7 @@
 
         /* ── SECTION TITLE ── */
         .section-title {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10.5px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -189,7 +191,7 @@
         }
 
         thead th {
-            background: var(--ink);
+            background: #1e293b;
             color: white;
             padding: 9px 12px;
             text-align: left;
@@ -199,7 +201,7 @@
         }
 
         tbody tr:nth-child(even) {
-            background: #f8fafc;
+            background: var(--ms-surface-2);
         }
 
         tbody tr:hover {
@@ -213,7 +215,7 @@
 
         tbody td:first-child {
             font-weight: 600;
-            color: #15803d;
+            color: var(--ms-good);
         }
 
         .emoji-col {
@@ -240,7 +242,7 @@
         }
 
         .task-card.silver {
-            border-color: #94a3b8;
+            border-color: var(--ms-muted);
         }
 
         .task-card.gold {
@@ -248,7 +250,7 @@
         }
 
         .task-card.ext {
-            border-color: #16a34a;
+            border-color: var(--ms-good);
         }
 
         .task-header {
@@ -259,23 +261,23 @@
         }
 
         .task-card.bronze .task-header {
-            background: #fef3c7;
+            background: var(--ms-warn-soft);
         }
 
         .task-card.silver .task-header {
-            background: #f1f5f9;
+            background: var(--ms-surface-2);
         }
 
         .task-card.gold .task-header {
-            background: #fef9c3;
+            background: var(--ms-warn-soft);
         }
 
         .task-card.ext .task-header {
-            background: #dcfce7;
+            background: var(--ms-good-soft);
         }
 
         .task-badge {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10px;
             letter-spacing: 0.1em;
             text-transform: uppercase;
@@ -312,7 +314,7 @@
 
         .task-body {
             padding: 18px 20px;
-            background: white;
+            background: var(--ms-surface);
         }
 
         /* Step lists — larger and clearer for lower ability */
@@ -327,7 +329,7 @@
             margin-bottom: 14px;
             align-items: flex-start;
             font-size: 13.5px;
-            color: #1e293b;
+            color: var(--ms-text);
             line-height: 1.65;
         }
 
@@ -336,9 +338,9 @@
         }
 
         .step-num {
-            background: var(--ink);
+            background: #1e293b;
             color: white;
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 11px;
             font-weight: 500;
             min-width: 24px;
@@ -376,23 +378,23 @@
         }
 
         .formula-reveal .formula-label {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10px;
-            color: #64748b;
+            color: #94a3b8;
             letter-spacing: 0.08em;
             text-transform: uppercase;
             margin-bottom: 6px;
         }
 
         .formula-reveal .formula-text {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 15px;
             color: #86efac;
             letter-spacing: 0.02em;
         }
 
         .formula-reveal .formula-explain {
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--ms-font-body), sans-serif;
             font-size: 12px;
             color: #94a3b8;
             margin-top: 6px;
@@ -401,8 +403,8 @@
 
         /* ── CHECKPOINT BOX ── */
         .checkpoint {
-            background: #eff6ff;
-            border: 1.5px solid #bfdbfe;
+            background: var(--ms-accent-soft);
+            border: 1.5px solid color-mix(in srgb, var(--accent) 35%, transparent);
             border-radius: 6px;
             padding: 12px 16px;
             margin-top: 12px;
@@ -418,32 +420,32 @@
 
         .checkpoint p {
             font-size: 12.5px;
-            color: #1e40af;
+            color: var(--ms-text);
             line-height: 1.55;
         }
 
         /* ── HOW TO BOX ── */
         .howto {
-            background: #fff7ed;
-            border: 1.5px solid #fed7aa;
+            background: var(--ms-warn-soft);
+            border: 1.5px solid color-mix(in srgb, var(--ms-warn) 45%, transparent);
             border-radius: 6px;
             padding: 12px 16px;
             margin: 10px 0;
         }
 
         .howto-label {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 10px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #c2410c;
+            color: var(--ms-warn);
             font-weight: 500;
             margin-bottom: 5px;
         }
 
         .howto p {
             font-size: 12.5px;
-            color: #7c2d12;
+            color: var(--ms-warn);
             line-height: 1.6;
         }
 
@@ -453,15 +455,15 @@
 
         .howto ol li {
             font-size: 12.5px;
-            color: #7c2d12;
+            color: var(--ms-warn);
             margin-bottom: 3px;
             line-height: 1.55;
         }
 
         code {
-            font-family: 'DM Mono', monospace;
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            font-family: var(--ms-font-mono), monospace;
+            background: var(--ms-surface-2);
+            border: 1px solid var(--ms-line);
             border-radius: 3px;
             padding: 1px 6px;
             font-size: 12.5px;
@@ -470,8 +472,8 @@
 
         /* ── HELP CARD ── */
         .help-box {
-            background: #fffbeb;
-            border: 1.5px solid #fcd34d;
+            background: var(--ms-warn-soft);
+            border: 1.5px solid color-mix(in srgb, var(--ms-warn) 45%, transparent);
             border-radius: 8px;
             padding: 16px 20px;
             margin-bottom: 28px;
@@ -481,7 +483,7 @@
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 12px;
-            color: #92400e;
+            color: var(--ms-warn);
         }
 
         .help-grid {
@@ -491,23 +493,23 @@
         }
 
         .help-item {
-            background: white;
+            background: var(--ms-surface);
             border-radius: 5px;
             padding: 10px 14px;
-            border: 1px solid #fcd34d;
+            border: 1px solid color-mix(in srgb, var(--ms-warn) 45%, transparent);
         }
 
         .help-item .fn {
-            font-family: 'DM Mono', monospace;
+            font-family: var(--ms-font-mono), monospace;
             font-size: 12px;
-            color: #16a34a;
+            color: var(--ms-good);
             font-weight: 500;
             margin-bottom: 4px;
         }
 
         .help-item p {
             font-size: 12px;
-            color: #78350f;
+            color: var(--ms-warn);
             line-height: 1.5;
         }
 
@@ -518,7 +520,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8fafc;
+            background: var(--ms-surface-2);
         }
 
         .footer p {
@@ -550,7 +552,7 @@
 
         @media print {
             body {
-                background: white;
+                background: var(--ms-surface);
                 padding: 0;
             }
 
@@ -565,40 +567,16 @@
                 break-inside: avoid;
             }
         }
-.site-home-nav {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: #1e293b;
-    padding: 10px 16px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
-  .site-home-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 6px;
-    transition: background 0.15s ease;
-  }
-  .site-home-link:hover,
-  .site-home-link:focus {
-    background: rgba(255, 255, 255, 0.15);
-  }
+  /* Shared design: light title band instead of the dark slab */
+  .header { background: var(--ms-surface-2); color: var(--ms-text); border-bottom: 1px solid var(--ms-line); border-top: 6px solid var(--ks-ks3); }
+  .header h1, .header-meta strong { color: var(--ms-text); }
+  .header-badge, .header-meta { color: var(--ms-muted); }
+  .header h1 span { color: var(--accent); }
+  body > .page { margin: 24px auto; }
+  @media (max-width: 860px) { body > .page { margin: 16px; } }
 </style>
 </head>
 <body>
-
-<nav class="site-home-nav">
-  <a href="https://mxcoad.github.io/" class="site-home-link">
-    <span aria-hidden="true">←</span> Home
-  </a>
-</nav>
 
     <div class="page">
 

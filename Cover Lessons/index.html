@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cover lessons — Mx. Coad</title>
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/site.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-body); font-size: 18px; line-height: 1.55; }
+    :focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
+    main { max-width: 1180px; margin: 0 auto; padding: 56px 20px 80px; }
+    h1 { margin: 0 0 12px; font-family: var(--ms-font-head); font-size: clamp(32px, 4.5vw, 48px); line-height: 1.15; }
+    .intro { margin: 0 0 40px; max-width: 60ch; font-size: 20px; color: var(--ms-muted); }
+    h2 { margin: 40px 0 16px; font-family: var(--ms-font-head); font-size: 26px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+    .card {
+      display: flex; flex-direction: column; gap: 8px; padding: 22px 24px 24px;
+      border-radius: var(--ms-radius); border: 1px solid var(--ms-line); border-top: 6px solid var(--ks-ks3);
+      background: var(--ms-surface); color: var(--ms-text); text-decoration: none;
+    }
+    .card:hover { box-shadow: var(--ms-shadow); color: var(--ms-text); }
+    .card-title { font-family: var(--ms-font-head); font-size: 21px; font-weight: 700; line-height: 1.25; }
+    .card-desc { font-size: 17px; color: var(--ms-muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Spreadsheet cover lessons</h1>
+    <p class="intro">Self-contained lessons that students can work through on their own, with or without a specialist teacher.</p>
+
+    <h2>Year 7</h2>
+    <div class="cards">
+      <a class="card" href="y7-spreadsheets-cover-lesson.html">
+        <span class="card-title">Paws &amp; Claws Animal Rescue</span>
+        <span class="card-desc">Build a spreadsheet from scratch to track the animals at a rescue centre, working from Bronze to Gold tasks.</span>
+      </a>
+    </div>
+
+    <h2>Year 9</h2>
+    <div class="cards">
+      <a class="card" href="Year9.html">
+        <span class="card-title">Velocity FC — start here</span>
+        <span class="card-desc">The Year 9 spreadsheet journey in one place, with links to each lesson.</span>
+      </a>
+      <a class="card" href="y9-spreadsheets-cover-lesson.html">
+        <span class="card-title">Velocity FC — Lesson 1</span>
+        <span class="card-desc">Build a player performance tracker with formulas, IF statements, conditional formatting and charts.</span>
+      </a>
+      <a class="card" href="y9-spreadsheets-cover-lesson-2.html">
+        <span class="card-title">Velocity FC — Lesson 2</span>
+        <span class="card-desc">Absolute cell references and COUNTIF.</span>
+      </a>
+      <a class="card" href="y9-spreadsheets-cover-lesson-3.html">
+        <span class="card-title">VLOOKUP &amp; HLOOKUP</span>
+        <span class="card-desc">Search a table and return related data automatically.</span>
+      </a>
+      <a class="card" href="year9-revision.html">
+        <span class="card-title">End-of-year revision session</span>
+        <span class="card-desc">Recap and mixed challenges across cyber security, data, Python and spreadsheets.</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

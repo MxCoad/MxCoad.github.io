@@ -4,31 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Velocity FC — Year 9 Spreadsheets</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
 <style>
 
 /* ── RESET & BASE ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --pitch:   #081409;
-  --surface: #0f2114;
-  --card:    #122718;
-  --line:    rgba(255,255,255,0.055);
-  --green:   #22c55e;
-  --green-d: #16a34a;
-  --amber:   #f59e0b;
-  --amber-d: #d97706;
-  --white:   #f0fdf4;
-  --muted:   #6b7280;
-  --border:  rgba(255,255,255,0.08);
-  --s1:      #3b82f6;
+  /* Colours come from the shared design (/assets/site.css) */
+  --pitch:   var(--ms-bg);
+  --surface: var(--ms-surface);
+  --card:    var(--ms-surface);
+  --line:    var(--ms-line);
+  --green:   var(--ms-good);
+  --green-d: var(--ms-good);
+  --amber:   var(--ms-warn);
+  --amber-d: var(--ms-warn);
+  --white:   var(--ms-text);
+  --muted:   var(--ms-muted);
+  --border:  var(--ms-line);
+  --s1:      #2563eb;
   --s2:      #f59e0b;
+  --s3:      #7c3aed;
 }
 
 html, body {
   min-height: 100vh;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ms-font-body);
   background: var(--pitch);
   color: var(--white);
   overflow-x: hidden;
@@ -36,6 +39,7 @@ html, body {
 
 /* ── PITCH LINES BACKGROUND ── */
 body::before {
+  display: none;
   content: '';
   position: fixed;
   inset: 0;
@@ -82,17 +86,17 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--ms-font-head);
   font-size: 22px;
-  color: var(--pitch);
+  color: var(--ms-surface);
   letter-spacing: 0.02em;
   flex-shrink: 0;
-  box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 25%, transparent);
 }
 
 .club-info {}
 .club-name {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--ms-font-head);
   font-size: 20px;
   letter-spacing: 0.06em;
   color: var(--green);
@@ -107,10 +111,10 @@ header {
 }
 
 .hero-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--ms-font-head);
   font-size: clamp(48px, 8vw, 86px);
-  letter-spacing: 0.03em;
-  line-height: 0.92;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
   color: var(--white);
   margin-bottom: 16px;
 }
@@ -122,7 +126,7 @@ header {
 
 .hero-desc {
   font-size: 15px;
-  color: rgba(240,253,244,0.6);
+  color: var(--ms-muted);
   max-width: 520px;
   line-height: 1.65;
   font-weight: 300;
@@ -162,7 +166,7 @@ header {
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: rgba(240,253,244,0.5);
+  color: var(--ms-muted);
   font-weight: 500;
 }
 
@@ -198,7 +202,7 @@ header {
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  box-shadow: var(--ms-shadow);
 }
 
 .card.s1:hover { border-color: rgba(59,130,246,0.5); }
@@ -214,7 +218,7 @@ header {
 .card-body { padding: 28px 28px 24px; }
 
 .session-num {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--ms-font-head);
   font-size: 72px;
   line-height: 0.85;
   opacity: 0.07;
@@ -241,20 +245,20 @@ header {
 }
 
 .card.s1 .session-badge {
-  background: rgba(59,130,246,0.15);
-  color: #93c5fd;
+  background: var(--ms-accent-soft);
+  color: var(--ms-accent);
   border: 1px solid rgba(59,130,246,0.25);
 }
 .card.s2 .session-badge {
-  background: rgba(245,158,11,0.15);
-  color: #fcd34d;
+  background: var(--ms-warn-soft);
+  color: var(--ms-warn);
   border: 1px solid rgba(245,158,11,0.25);
 }
 
 .card-title {
-  font-family: 'Bebas Neue', sans-serif;
+  font-family: var(--ms-font-head);
   font-size: 28px;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   color: var(--white);
   line-height: 1.05;
   margin-bottom: 10px;
@@ -262,7 +266,7 @@ header {
 
 .card-desc {
   font-size: 13px;
-  color: rgba(240,253,244,0.5);
+  color: var(--ms-muted);
   line-height: 1.6;
   margin-bottom: 20px;
   font-weight: 300;
@@ -280,9 +284,9 @@ header {
   font-weight: 500;
   padding: 4px 10px;
   border-radius: 6px;
-  background: rgba(255,255,255,0.06);
-  color: rgba(240,253,244,0.65);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--ms-surface-2);
+  color: var(--ms-muted);
+  border: 1px solid var(--ms-line);
   letter-spacing: 0.02em;
 }
 
@@ -292,7 +296,7 @@ header {
   justify-content: space-between;
   padding: 14px 28px;
   border-top: 1px solid var(--border);
-  background: rgba(0,0,0,0.15);
+  background: var(--ms-surface-2);
 }
 
 .tasks-count {
@@ -301,7 +305,7 @@ header {
 }
 
 .tasks-count strong {
-  color: rgba(240,253,244,0.7);
+  color: var(--ms-muted);
   font-weight: 500;
 }
 
@@ -309,7 +313,7 @@ header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--ms-font-body);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -325,7 +329,7 @@ header {
 .open-btn:active { transform: scale(0.98); }
 
 .card.s1 .open-btn { background: var(--s1); color: white; }
-.card.s2 .open-btn { background: var(--s2); color: var(--pitch); }
+.card.s2 .open-btn { background: var(--s2); color: #18202B; }
 
 .open-btn svg {
   width: 14px;
@@ -340,7 +344,7 @@ header {
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  background: rgba(34,197,94,0.15);
+  background: var(--ms-good-soft);
   color: var(--green);
   border: 1px solid rgba(34,197,94,0.3);
   padding: 3px 10px;
@@ -367,21 +371,28 @@ footer {
   color: var(--muted);
 }
 
-.footer-left strong { color: rgba(240,253,244,0.5); font-weight: 500; }
+.footer-left strong { color: var(--ms-muted); font-weight: 500; }
 
 .footer-right {
   font-size: 11px;
-  color: rgba(240,253,244,0.2);
+  color: var(--ms-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
+/* Session 3 (VLOOKUP & HLOOKUP) */
+.card.s3:hover { border-color: color-mix(in srgb, var(--s3) 50%, transparent); }
+.card.s3 .card-accent { background: var(--s3); }
+.card.s3 .session-num { color: var(--s3); opacity: 0.12; }
+.card.s3 .session-badge { background: color-mix(in srgb, var(--s3) 14%, var(--ms-surface)); color: color-mix(in srgb, var(--s3) 70%, var(--ms-text)); border: 1px solid color-mix(in srgb, var(--s3) 30%, transparent); }
+.card.s3 .open-btn { background: var(--s3); color: white; }
+.overlay-session-badge.s3 { background: rgba(124,58,237,0.25); color: #c4b5fd; }
 /* ── OVERLAY ── */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(8,20,9,0.85);
+  background: rgba(0,0,0,0.5);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.25s ease;
@@ -400,7 +411,7 @@ footer {
   width: 100%;
   max-width: 860px;
   height: 100vh;
-  background: #f8fafc;
+  background: var(--ms-bg);
   border-left: 1px solid rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
@@ -475,7 +486,7 @@ footer {
 #lesson-frame {
   flex: 1;
   border: none;
-  background: white;
+  background: var(--ms-bg);
 }
 
 /* ── RESPONSIVE ── */
@@ -499,40 +510,10 @@ footer {
 .journey    { animation: fadeUp 0.5s 0.25s ease both; }
 .card:nth-child(1) { animation: fadeUp 0.5s 0.3s ease both; }
 .card:nth-child(2) { animation: fadeUp 0.5s 0.4s ease both; }
-.site-home-nav {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background: #1e293b;
-    padding: 10px 16px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  }
-  .site-home-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 6px;
-    transition: background 0.15s ease;
-  }
-  .site-home-link:hover,
-  .site-home-link:focus {
-    background: rgba(255, 255, 255, 0.15);
-  }
 </style>
 </head>
 <body>
 
-<nav class="site-home-nav">
-  <a href="https://mxcoad.github.io/" class="site-home-link">
-    <span aria-hidden="true">←</span> Home
-  </a>
-</nav>
 <!-- HEADER -->
 <header>
   <div class="club-row">
