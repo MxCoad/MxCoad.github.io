@@ -7,109 +7,9 @@
 <link rel="stylesheet" href="/assets/site.css">
 <script src="/assets/site.js"></script>
 <meta name="description" content="OCR GCSE Computer Science J277 1.1 Systems architecture: revision notes, a CPU cycle stepper, a performance explorer and exam-style questions.">
+<link rel="stylesheet" href="/assets/topic.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--ms-bg);
-    color: var(--ms-text);
-    font-family: var(--ms-font-body);
-    font-size: 18px;
-    line-height: 1.6;
-    --stage: var(--ks-gcse);
-  }
-  a { color: var(--ms-accent); }
-  a:hover { color: var(--ms-accent-hover); }
-  :focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
-  [hidden] { display: none !important; }
-
-  main { max-width: 860px; margin: 0 auto; padding: 48px 20px 96px; }
-
-  /* ---------- Top of page ---------- */
-  .crumbs { margin: 0 0 14px; font-size: 15px; color: var(--ms-muted); }
-  .crumbs a { color: var(--ms-muted); }
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: 8px;
-    margin: 0 0 10px; padding: 3px 12px; border-radius: 999px;
-    background: var(--stage); color: var(--ms-on-stage);
-    font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-  }
-  h1 { margin: 0 0 12px; font-family: var(--ms-font-head); font-size: clamp(36px, 5vw, 52px); line-height: 1.1; }
-  .intro { margin: 0; max-width: 62ch; font-size: 20px; color: var(--ms-muted); }
-
-  .progress {
-    margin-top: 28px; padding: 18px 20px; border-radius: var(--ms-radius);
-    background: var(--ms-surface); border: 1px solid var(--ms-line); border-top: 5px solid var(--stage);
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px 24px; align-items: center;
-  }
-  .meter-label { display: flex; justify-content: space-between; gap: 12px; font-weight: 700; font-size: 16px; }
-  .meter-label span { font-weight: 400; color: var(--ms-muted); }
-  .meter { margin-top: 6px; height: 10px; border-radius: 999px; background: var(--ms-surface-2); overflow: hidden; }
-  .meter > div { height: 100%; width: 0; background: var(--ms-accent); border-radius: 999px; transition: width .3s; }
-  .progress-note { grid-column: 1 / -1; margin: 0; font-size: 15px; color: var(--ms-muted); display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
-  .linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--ms-accent); text-decoration: underline; cursor: pointer; }
-
-  nav.toc { margin-top: 28px; }
-  nav.toc h2 { margin: 0 0 8px; font-family: var(--ms-font-body); font-size: 16px; text-transform: uppercase; letter-spacing: .06em; color: var(--ms-muted); }
-  nav.toc ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px 20px; }
-  nav.toc a { display: flex; align-items: center; gap: 10px; min-height: 40px; color: var(--ms-text); text-decoration: none; font-weight: 700; }
-  nav.toc a:hover { color: var(--ms-accent); }
-  .tick {
-    flex: none; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--ms-line-strong);
-    display: inline-grid; place-items: center; font-size: 14px; line-height: 1; color: transparent;
-  }
-  .tick.on { background: var(--ms-good); border-color: var(--ms-good); color: var(--ms-surface); }
-
-  /* ---------- Sections ---------- */
-  section.topic { margin-top: 64px; scroll-margin-top: 16px; }
-  .sec-head { display: flex; align-items: baseline; gap: 14px; padding-bottom: 10px; margin-bottom: 18px; border-bottom: 3px solid var(--stage); }
-  .sec-num { font-family: var(--ms-font-mono); font-size: 15px; font-weight: 700; color: var(--ms-muted); }
-  h2 { margin: 0; font-family: var(--ms-font-head); font-size: 32px; line-height: 1.2; }
-  h3 { margin: 28px 0 8px; font-family: var(--ms-font-head); font-size: 22px; line-height: 1.3; }
-  p { margin: 0 0 14px; }
-  ul, ol { margin: 0 0 14px; padding-left: 24px; }
-  li { margin: 4px 0; }
-  strong { font-weight: 700; }
-  .term { font-weight: 700; color: var(--ms-text); background: var(--ms-accent-soft); padding: 0 4px; border-radius: 4px; }
-
-  table.def { width: 100%; border-collapse: collapse; margin: 8px 0 18px; font-size: 17px; background: var(--ms-surface); border: 1px solid var(--ms-line); border-radius: 10px; overflow: hidden; }
-  table.def th, table.def td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--ms-line); }
-  table.def tr:last-child th, table.def tr:last-child td { border-bottom: 0; }
-  table.def th { width: 32%; font-family: var(--ms-font-head); font-size: 18px; background: var(--ms-surface-2); }
-  table.def th small { display: block; font-family: var(--ms-font-body); font-weight: 400; font-size: 14px; color: var(--ms-muted); }
-
-  .box { margin: 18px 0; padding: 14px 18px 4px; border-radius: 12px; border: 1px solid var(--ms-line); }
-  .box-label { margin: 0 0 6px; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
-  .box.mistake { background: var(--ms-warn-soft); border-color: color-mix(in srgb, var(--ms-warn) 40%, transparent); }
-  .box.mistake .box-label { color: var(--ms-warn); }
-  .box.stretch { background: var(--ms-surface); border-style: dashed; border-color: color-mix(in srgb, var(--ks-alevel) 70%, var(--ms-line)); }
-  .box.stretch .box-label { color: var(--ms-text); display: flex; align-items: center; gap: 8px; }
-  .box.stretch .box-label::before { content: ""; width: 10px; height: 10px; border-radius: 3px; background: var(--ks-alevel); }
-  .box.exam { background: var(--ms-accent-soft); border-color: color-mix(in srgb, var(--ms-accent) 30%, transparent); }
-  .box.exam .box-label { color: var(--ms-accent); }
-
-  .done-row { margin-top: 22px; }
-  .done-btn {
-    display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 18px;
-    border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text);
-    font: inherit; font-size: 16px; font-weight: 700; cursor: pointer;
-  }
-  .done-btn:hover { border-color: var(--ms-good); }
-  .done-btn[aria-pressed="true"] { background: var(--ms-good-soft); border-color: var(--ms-good); color: var(--ms-text); }
-
-  /* ---------- Tools ---------- */
-  .tool { margin: 22px 0; padding: 20px; border-radius: var(--ms-radius); background: var(--ms-surface); border: 1px solid var(--ms-line); box-shadow: var(--ms-shadow); }
-  .tool-title { margin: 0 0 4px; font-family: var(--ms-font-head); font-size: 22px; }
-  .tool-sub { margin: 0 0 16px; color: var(--ms-muted); font-size: 16px; }
-  .btn {
-    min-height: 44px; padding: 0 18px; border-radius: 10px; font: inherit; font-size: 16px; font-weight: 700; cursor: pointer;
-    border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text);
-  }
-  .btn:hover { border-color: var(--ms-accent); }
-  .btn.primary { background: var(--ms-accent); border-color: var(--ms-accent); color: var(--ms-on-accent); }
-  .btn:disabled { opacity: .5; cursor: not-allowed; }
-  .btn-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-
+  /* Tools on this page (shared layout is in /assets/topic.css) */
   /* CPU stepper */
   .cpu { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; }
   @media (max-width: 640px) { .cpu { grid-template-columns: 1fr; } }
@@ -131,22 +31,11 @@
   .stage-bar { display: flex; gap: 6px; margin: 16px 0 10px; }
   .stage-pill { flex: 1; text-align: center; padding: 6px 4px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--ms-surface-2); color: var(--ms-muted); }
   .stage-pill.on { background: var(--ms-accent); color: var(--ms-on-accent); }
-  .explain { min-height: 4.8em; margin: 0 0 14px; padding: 12px 14px; border-radius: 10px; background: var(--ms-surface-2); font-size: 17px; }
+  #cpu-explain { min-height: 4.8em; margin: 0 0 14px; }
   .step-count { font-size: 15px; color: var(--ms-muted); margin-left: auto; }
 
   /* Performance explorer */
   .perf-controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px 24px; }
-  .ctl label, .ctl legend { display: flex; justify-content: space-between; font-weight: 700; font-size: 16px; margin-bottom: 6px; padding: 0; }
-  .ctl output { font-family: var(--ms-font-mono); color: var(--ms-accent); }
-  .ctl input[type=range] { width: 100%; accent-color: var(--ms-accent); min-height: 32px; }
-  fieldset.ctl { border: 0; margin: 0; padding: 0; min-width: 0; }
-  .seg { display: flex; border: 1px solid var(--ms-line-strong); border-radius: 10px; overflow: hidden; }
-  .seg label { flex: 1; margin: 0; display: block; }
-  .seg input { position: absolute; opacity: 0; pointer-events: none; }
-  .seg span { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 8px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; background: var(--ms-surface); color: var(--ms-text); }
-  .seg label + label span { border-left: 1px solid var(--ms-line-strong); }
-  .seg input:checked + span { background: var(--ms-accent); color: var(--ms-on-accent); }
-  .seg input:focus-visible + span { outline: 3px solid var(--ms-focus); outline-offset: -3px; }
   .bars { margin-top: 20px; display: grid; gap: 10px; }
   .bar-row { display: grid; grid-template-columns: 120px minmax(0, 1fr) 80px; gap: 10px; align-items: center; font-size: 15px; }
   .bar-track { height: 26px; border-radius: 6px; background: var(--ms-surface-2); overflow: hidden; }
@@ -155,46 +44,7 @@
   .bar-fill.yours { background: var(--ks-gcse); }
   .bar-val { font-family: var(--ms-font-mono); font-weight: 700; text-align: right; }
   .perf-say { margin: 16px 0 0; padding: 12px 14px; border-radius: 10px; background: var(--ms-surface-2); font-size: 17px; }
-  .small { font-size: 14px; color: var(--ms-muted); margin: 10px 0 0; }
 
-  /* Embedded examples */
-  .two-col { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 10px 0 16px; }
-  .mini { padding: 14px 16px; border-radius: 12px; background: var(--ms-surface); border: 1px solid var(--ms-line); }
-  .mini h4 { margin: 0 0 6px; font-size: 17px; }
-  .mini ul { margin: 0; }
-
-  /* Exam questions */
-  .q { margin: 18px 0; padding: 18px 20px; border-radius: var(--ms-radius); background: var(--ms-surface); border: 1px solid var(--ms-line); }
-  .q-head { display: flex; gap: 12px; align-items: baseline; }
-  .q-num { font-family: var(--ms-font-mono); font-weight: 700; color: var(--ms-accent); }
-  .q-text { flex: 1; font-weight: 700; margin: 0; }
-  .q-marks { flex: none; font-size: 14px; font-weight: 700; color: var(--ms-muted); white-space: nowrap; }
-  .q-context { margin: 10px 0 0; font-size: 17px; }
-  .q textarea {
-    display: block; width: 100%; min-height: 110px; margin: 12px 0; padding: 10px 12px; resize: vertical;
-    border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text);
-    font: inherit; font-size: 17px; line-height: 1.5;
-  }
-  .q label.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .ms { margin-top: 14px; padding: 14px 16px; border-radius: 10px; background: var(--ms-surface-2); }
-  .ms h4 { margin: 0 0 8px; font-size: 15px; letter-spacing: .05em; text-transform: uppercase; color: var(--ms-muted); }
-  .ms .pt { display: flex; gap: 12px; align-items: flex-start; padding: 6px 0; cursor: pointer; }
-  .ms .pt input { width: 22px; height: 22px; margin-top: 3px; flex: none; accent-color: var(--ms-good); }
-  .ms .guide { margin: 10px 0 0; font-size: 15px; color: var(--ms-muted); }
-  .ms select { font: inherit; font-size: 16px; min-height: 40px; padding: 0 10px; border-radius: 8px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); }
-  .score-line { margin: 12px 0 0; font-weight: 700; }
-  .levels { margin: 6px 0 10px; font-size: 16px; }
-  .levels dt { font-weight: 700; margin-top: 6px; }
-  .levels dd { margin: 0 0 0 0; color: var(--ms-text); }
-
-  footer.page-foot { margin-top: 64px; padding-top: 20px; border-top: 1px solid var(--ms-line); font-size: 15px; color: var(--ms-muted); }
-
-  @media print {
-    .tool, .done-row, .progress, nav.toc, .btn-row { display: none !important; }
-    .q textarea { min-height: 160px; }
-    .ms { display: block !important; }
-  }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
@@ -204,30 +54,8 @@
   <h1>Systems architecture</h1>
   <p class="intro">What the CPU does, what's inside it, how it runs instructions, what makes it faster, and where embedded systems fit in. Read each section, try the tools, then test yourself with the exam questions at the end.</p>
 
-  <div class="progress" aria-label="Your progress">
-    <div>
-      <div class="meter-label">Sections revised <span id="sec-count">0 of 6</span></div>
-      <div class="meter" aria-hidden="true"><div id="sec-meter"></div></div>
-    </div>
-    <div>
-      <div class="meter-label">Exam questions <span id="mark-count">0 of 25 marks</span></div>
-      <div class="meter" aria-hidden="true"><div id="mark-meter"></div></div>
-    </div>
-    <p class="progress-note">Your progress and answers are saved in this browser only. <button type="button" class="linkbtn" id="reset-all">Clear my progress</button></p>
-  </div>
-
-  <nav class="toc" aria-label="Contents">
-    <h2>Contents</h2>
-    <ol>
-      <li><a href="#cpu"><span class="tick" data-tick="cpu" aria-hidden="true">✓</span>1. The purpose of the CPU</a></li>
-      <li><a href="#components"><span class="tick" data-tick="components" aria-hidden="true">✓</span>2. Components of the CPU</a></li>
-      <li><a href="#von-neumann"><span class="tick" data-tick="von-neumann" aria-hidden="true">✓</span>3. Von Neumann architecture</a></li>
-      <li><a href="#cycle"><span class="tick" data-tick="cycle" aria-hidden="true">✓</span>4. The fetch–execute cycle</a></li>
-      <li><a href="#performance"><span class="tick" data-tick="performance" aria-hidden="true">✓</span>5. CPU performance</a></li>
-      <li><a href="#embedded"><span class="tick" data-tick="embedded" aria-hidden="true">✓</span>6. Embedded systems</a></li>
-      <li><a href="#exam">Exam-style questions</a></li>
-    </ol>
-  </nav>
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
 
   <!-- 1 -->
   <section class="topic" id="cpu">
@@ -249,7 +77,6 @@
       <p class="box-label">Common mistake</p>
       <p>"The CPU is the brain of the computer" gets <strong>no marks</strong> — it doesn't say what the CPU does. And the CPU doesn't <em>store</em> your files; that's secondary storage.</p>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="cpu" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- 2 -->
@@ -279,7 +106,6 @@
       <p class="box-label">Going further · grades 8–9</p>
       <p>Most CPUs have several <strong>levels of cache</strong>. <strong>Level 1 (L1)</strong> is the smallest and fastest, inside each core. <strong>L2</strong> is bigger but a little slower. <strong>L3</strong> is bigger again and often shared between cores. The CPU checks L1 first, then L2, then L3, and only goes to RAM if the data isn't in any of them.</p>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="components" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- 3 -->
@@ -312,7 +138,6 @@
         <li>Because instructions and data share one memory and one bus, they can't be fetched at the same moment. This limit is called the <strong>Von Neumann bottleneck</strong>. Some embedded processors use <strong>Harvard architecture</strong>, which keeps instructions and data in separate memories to get round it.</li>
       </ul>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="von-neumann" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- 4 -->
@@ -372,7 +197,6 @@
       <p class="box-label">In the exam</p>
       <p>For "Describe the fetch stage" questions, always name the registers: <strong>PC → MAR</strong>, <strong>PC incremented</strong>, <strong>instruction fetched from memory into the MDR</strong>. Each step is usually worth a mark.</p>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="cycle" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- 5 -->
@@ -447,7 +271,6 @@
       <p class="box-label">Going further · grades 8–9</p>
       <p>The explorer shows a real limit known as <strong>Amdahl's law</strong>: if part of a task has to be done step by step, that part takes the same time however many cores you add. With 10% step-by-step work, even infinite cores can only make the task 10 times faster. That's why a graphics card (GPU), with thousands of simple cores, is brilliant at tasks that split into many identical pieces, like drawing pixels, but no use for step-by-step ones.</p>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="performance" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- 6 -->
@@ -486,11 +309,10 @@
       <p class="box-label">Common mistake</p>
       <p>A laptop, tablet or smartphone is <strong>not</strong> an embedded system — it's general-purpose. (It does <em>contain</em> embedded systems, though, such as the controller inside its hard drive.)</p>
     </div>
-    <div class="done-row"><button type="button" class="done-btn" data-done="embedded" aria-pressed="false"><span class="tick" aria-hidden="true">✓</span>I've revised this section</button></div>
   </section>
 
   <!-- Exam questions -->
-  <section class="topic" id="exam">
+  <section class="topic no-progress" id="exam">
     <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
     <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Be honest — it only helps you. Your answers are saved as you type.</p>
     <div id="questions"></div>
@@ -503,23 +325,9 @@
 </main>
 
 <script>
-(function () {
-  'use strict';
-  var KEY = 'gcse-1-1-progress';
-  var SECTIONS = ['cpu', 'components', 'von-neumann', 'cycle', 'performance', 'embedded'];
-
-  // ---------- Saved progress ----------
-  function load() {
-    try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
-  }
-  var state = load();
-  state.done = state.done || {};
-  state.answers = state.answers || {};
-  state.marks = state.marks || {};
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
-
-  // ---------- Exam questions ----------
-  var QUESTIONS = [
+window.TOPIC = {
+  key: 'gcse-1-1-progress',
+  questions: [
     { id: 'q1', marks: 2, text: 'State two functions of the control unit.',
       points: ['Decodes instructions', 'Sends control signals (to other components / parts of the CPU)', 'Coordinates / controls the fetch–execute cycle', 'Controls the flow of data within the CPU / between the CPU and other components'],
       guide: 'Any two points, 1 mark each.' },
@@ -541,124 +349,21 @@
     { id: 'q7', marks: 3, text: 'What is an embedded system? Give two examples.',
       points: ['A computer system built into a larger device / system', 'That has a dedicated function / performs one specific task', 'Two valid examples, e.g. washing machine, microwave, car engine management system, traffic lights'],
       guide: '1 mark for each point. Laptops, tablets and phones are not valid examples.' },
-    { id: 'q8', marks: 6, levels: true,
-      text: 'Amira wants a laptop for editing videos. Laptop A has a 3.2 GHz CPU with 4 cores and 8 MB of cache. Laptop B has a 4.0 GHz CPU with 2 cores and 4 MB of cache. Discuss which laptop\'s CPU would be more suitable for Amira.',
+    { id: 'q8', marks: 6,       text: 'Amira wants a laptop for editing videos. Laptop A has a 3.2 GHz CPU with 4 cores and 8 MB of cache. Laptop B has a 4.0 GHz CPU with 2 cores and 4 MB of cache. Discuss which laptop\'s CPU would be more suitable for Amira.',
       points: ['Clock speed is the number of fetch–execute cycles / instructions per second', 'Laptop B\'s higher clock speed means each core executes more instructions per second', 'More cores let more instructions be processed at the same time', 'Video editing / exporting can be split across cores, so Laptop A\'s 4 cores are likely to help', 'A larger cache stores more frequently used data / instructions, so fewer slower fetches from RAM', 'Video uses large amounts of data, so Laptop A\'s bigger cache helps', 'Justified conclusion, e.g. Laptop A overall, because video editing makes good use of extra cores and cache'],
+      levels: [
+        ['5–6 marks', 'Accurate knowledge of clock speed, cores and cache, applied to video editing. A clear conclusion that weighs up both laptops.'],
+        ['3–4 marks', 'Good knowledge of at least two characteristics, with some application to video editing. A conclusion, which may be only partly justified.'],
+        ['1–2 marks', 'Some basic knowledge, with little or no link to Amira\'s needs. No real conclusion.']
+      ],
       guide: 'Levels of response: tick the points you made, then choose your level.' }
-  ];
-  var TOTAL = QUESTIONS.reduce(function (t, q) { return t + q.marks; }, 0);
-
-  var box = document.getElementById('questions');
-  QUESTIONS.forEach(function (q, i) {
-    var div = document.createElement('div');
-    div.className = 'q';
-    var html =
-      '<div class="q-head"><span class="q-num">' + (i + 1) + '</span><p class="q-text" id="' + q.id + '-t"></p><span class="q-marks">[' + q.marks + ' mark' + (q.marks > 1 ? 's' : '') + ']</span></div>' +
-      '<label class="sr" for="' + q.id + '-a">Your answer</label>' +
-      '<textarea id="' + q.id + '-a" placeholder="Write your answer here…"></textarea>' +
-      '<button type="button" class="btn" aria-expanded="false" aria-controls="' + q.id + '-ms">Show mark scheme</button>' +
-      '<div class="ms" id="' + q.id + '-ms" hidden><h4>Mark scheme — tick the points you made</h4><div class="pts"></div>';
-    if (q.levels) {
-      html += '<dl class="levels">' +
-        '<dt>5–6 marks</dt><dd>Accurate knowledge of clock speed, cores <em>and</em> cache, applied to video editing. A clear conclusion that weighs up both laptops.</dd>' +
-        '<dt>3–4 marks</dt><dd>Good knowledge of at least two characteristics, with some application to video editing. A conclusion, which may be only partly justified.</dd>' +
-        '<dt>1–2 marks</dt><dd>Some basic knowledge, with little or no link to Amira\'s needs. No real conclusion.</dd>' +
-        '</dl><label>My mark: <select id="' + q.id + '-lvl"><option value="0">0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>';
-    }
-    html += '<p class="guide"></p><p class="score-line" aria-live="polite"></p></div>';
-    div.innerHTML = html;
-    div.querySelector('.q-text').textContent = q.text;
-    div.querySelector('.guide').textContent = q.guide;
-    var pts = div.querySelector('.pts');
-    var saved = state.marks[q.id] || {};
-    q.points.forEach(function (p, j) {
-      var lab = document.createElement('label');
-      lab.className = 'pt';
-      var cb = document.createElement('input');
-      cb.type = 'checkbox';
-      cb.checked = !!(saved.ticks && saved.ticks[j]);
-      var sp = document.createElement('span');
-      sp.textContent = p;
-      lab.append(cb, sp);
-      pts.appendChild(lab);
-      cb.addEventListener('change', function () { record(q, div); });
-    });
-    var ta = div.querySelector('textarea');
-    ta.value = state.answers[q.id] || '';
-    ta.addEventListener('input', function () { state.answers[q.id] = ta.value; save(); });
-    var btn = div.querySelector('.btn');
-    var ms = div.querySelector('.ms');
-    btn.addEventListener('click', function () {
-      var open = ms.hidden;
-      ms.hidden = !open;
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'Hide mark scheme' : 'Show mark scheme';
-    });
-    if (q.levels) {
-      var sel = div.querySelector('select');
-      if (saved.level != null) sel.value = String(saved.level);
-      sel.addEventListener('change', function () { record(q, div); });
-    }
-    box.appendChild(div);
-    showScore(q, div);
-  });
-
-  function scoreOf(q) {
-    var m = state.marks[q.id];
-    if (!m) return 0;
-    if (q.levels) return Math.min(q.marks, +m.level || 0);
-    var n = (m.ticks || []).filter(Boolean).length;
-    return Math.min(q.marks, n);
-  }
-  function record(q, div) {
-    var ticks = Array.prototype.map.call(div.querySelectorAll('.pts input'), function (c) { return c.checked; });
-    var entry = { ticks: ticks };
-    if (q.levels) entry.level = +div.querySelector('select').value;
-    state.marks[q.id] = entry;
-    save();
-    showScore(q, div);
-    updateProgress();
-  }
-  function showScore(q, div) {
-    var s = scoreOf(q);
-    var m = state.marks[q.id];
-    div.querySelector('.score-line').textContent = m ? 'You scored ' + s + ' out of ' + q.marks + '.' : '';
-  }
-
-  // ---------- Section "revised" buttons ----------
-  document.querySelectorAll('[data-done]').forEach(function (b) {
-    var id = b.getAttribute('data-done');
-    b.addEventListener('click', function () {
-      state.done[id] = !state.done[id];
-      save();
-      updateProgress();
-    });
-  });
-
-  function updateProgress() {
-    var n = SECTIONS.filter(function (s) { return state.done[s]; }).length;
-    document.getElementById('sec-count').textContent = n + ' of ' + SECTIONS.length;
-    document.getElementById('sec-meter').style.width = (n / SECTIONS.length * 100) + '%';
-    var marks = QUESTIONS.reduce(function (t, q) { return t + scoreOf(q); }, 0);
-    document.getElementById('mark-count').textContent = marks + ' of ' + TOTAL + ' marks';
-    document.getElementById('mark-meter').style.width = (marks / TOTAL * 100) + '%';
-    SECTIONS.forEach(function (s) {
-      var on = !!state.done[s];
-      document.querySelectorAll('[data-tick="' + s + '"]').forEach(function (t) { t.classList.toggle('on', on); });
-      var b = document.querySelector('[data-done="' + s + '"]');
-      b.setAttribute('aria-pressed', String(on));
-      b.querySelector('.tick').classList.toggle('on', on);
-    });
-  }
-  updateProgress();
-
-  document.getElementById('reset-all').addEventListener('click', function () {
-    if (!confirm('Clear your ticks, answers and marks for this topic?')) return;
-    state = { done: {}, answers: {}, marks: {} };
-    save();
-    location.reload();
-  });
-
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
   // ---------- CPU stepper ----------
   var PROGRAM = { 0: 'LOAD 5', 1: 'ADD 6', 2: 'STORE 7', 3: 'HALT', 4: '', 5: '12', 6: '30', 7: '0' };
 
