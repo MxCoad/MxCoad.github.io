@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCSE revision notes — Mx. Coad</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<meta name="description" content="OCR GCSE Computer Science J277 revision notes for every topic, with interactive tools and self-marked exam questions.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-body); font-size: 18px; line-height: 1.55; --stage: var(--ks-gcse); }
+  a { color: var(--ms-accent); }
+  :focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 20px 96px; }
+  .crumbs { margin: 0 0 14px; font-size: 15px; color: var(--ms-muted); }
+  .crumbs a { color: var(--ms-muted); }
+  .eyebrow { display: inline-block; margin: 0 0 10px; padding: 3px 12px; border-radius: 999px; background: var(--stage); color: var(--ms-on-stage); font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  h1 { margin: 0 0 12px; font-family: var(--ms-font-head); font-size: clamp(36px, 5vw, 52px); line-height: 1.1; }
+  .intro { margin: 0; max-width: 64ch; font-size: 20px; color: var(--ms-muted); }
+  h2 { margin: 52px 0 6px; font-family: var(--ms-font-head); font-size: 30px; }
+  .paper-sub { margin: 0 0 18px; color: var(--ms-muted); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  .card {
+    display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; border-radius: var(--ms-radius);
+    border: 1px solid var(--ms-line); border-top: 6px solid var(--stage); background: var(--ms-surface);
+    color: var(--ms-text); text-decoration: none; transition: box-shadow .15s, transform .15s;
+  }
+  .card:hover { color: var(--ms-text); box-shadow: var(--ms-shadow); transform: translateY(-2px); }
+  .num { font-family: var(--ms-font-mono); font-weight: 700; color: var(--ms-muted); font-size: 15px; }
+  .title { font-family: var(--ms-font-head); font-size: 22px; font-weight: 700; line-height: 1.25; }
+  .desc { font-size: 16px; color: var(--ms-muted); }
+  .prog { margin-top: auto; padding-top: 8px; font-size: 14px; color: var(--ms-muted); }
+  .bar { height: 8px; border-radius: 999px; background: var(--ms-surface-2); overflow: hidden; margin-top: 6px; }
+  .bar > div { height: 100%; background: var(--ms-good); border-radius: 999px; }
+  .extra { margin-top: 52px; padding: 18px 20px; border-radius: var(--ms-radius); background: var(--ms-surface); border: 1px solid var(--ms-line); }
+  .extra h2 { margin: 0 0 6px; font-size: 22px; }
+  .extra p { margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › GCSE revision notes</p>
+  <p class="eyebrow">OCR J277</p>
+  <h1>GCSE Computer Science revision</h1>
+  <p class="intro">Notes, interactive tools and self-marked exam questions for every topic on the OCR J277 specification. Your progress on each topic is saved in this browser.</p>
+
+  <h2>Paper 1: Computer systems</h2>
+  <p class="paper-sub">1 hour 30 minutes · 80 marks</p>
+  <div class="cards" id="paper1"></div>
+
+  <h2>Paper 2: Computational thinking, algorithms and programming</h2>
+  <p class="paper-sub">1 hour 30 minutes · 80 marks</p>
+  <div class="cards" id="paper2"></div>
+
+  <div class="extra">
+    <h2>More practice</h2>
+    <p><a href="Revision_Console.html">GCSE Revision Console</a> — quick-fire activities on images and sound, protocol layers and storage. · <a href="/Binary_Practice/binary.html">Binary practice tools</a> — binary, hex, negative numbers and floating point.</p>
+  </div>
+</main>
+<script>
+(function () {
+  var TOPICS = [
+    ['1-1', '1.1', 'Systems architecture', 'The CPU, fetch–execute cycle, registers, performance and embedded systems.', 1, 6],
+    ['1-2', '1.2', 'Memory and storage', 'RAM, ROM, secondary storage, units, binary, hex, characters, images, sound and compression.', 1, 7],
+    ['1-3', '1.3', 'Networks, connections and protocols', 'LANs and WANs, hardware, the Internet, topologies, addressing, protocols and layers.', 1, 7],
+    ['1-4', '1.4', 'Network security', 'Malware, social engineering, attacks, SQL injection and how to prevent them.', 1, 5],
+    ['1-5', '1.5', 'Systems software', 'What the operating system does, and utility software.', 1, 5],
+    ['1-6', '1.6', 'Ethical, legal, cultural and environmental impacts', 'Issues raised by technology, the key laws and software licences.', 1, 6],
+    ['2-1', '2.1', 'Algorithms', 'Computational thinking, flowcharts, trace tables, searching and sorting.', 2, 5],
+    ['2-2', '2.2', 'Programming fundamentals', 'Variables, operators, selection, iteration, data types, strings, arrays, files, SQL and subprograms.', 2, 8],
+    ['2-3', '2.3', 'Producing robust programs', 'Defensive design, validation, maintainability and testing.', 2, 5],
+    ['2-4', '2.4', 'Boolean logic', 'AND, OR and NOT gates, logic diagrams and truth tables.', 2, 4],
+    ['2-5', '2.5', 'Programming languages and IDEs', 'High- and low-level languages, compilers, interpreters and IDE tools.', 2, 3]
+  ];
+  var FILES = {
+    '1-1': '1-1-systems-architecture.html', '1-2': '1-2-memory-and-storage.html', '1-3': '1-3-networks.html',
+    '1-4': '1-4-network-security.html', '1-5': '1-5-systems-software.html', '1-6': '1-6-ethical-legal-cultural-environmental.html',
+    '2-1': '2-1-algorithms.html', '2-2': '2-2-programming-fundamentals.html', '2-3': '2-3-producing-robust-programs.html',
+    '2-4': '2-4-boolean-logic.html', '2-5': '2-5-languages-and-ides.html'
+  };
+  TOPICS.forEach(function (t) {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem('gcse-' + t[0] + '-progress')) || {}; } catch (e) {}
+    var done = Object.keys(state.done || {}).filter(function (k) { return state.done[k]; }).length;
+    var marked = Object.keys(state.marks || {}).length;
+    var a = document.createElement('a');
+    a.className = 'card';
+    a.href = FILES[t[0]];
+    var num = document.createElement('span'); num.className = 'num'; num.textContent = t[1];
+    var title = document.createElement('span'); title.className = 'title'; title.textContent = t[2];
+    var desc = document.createElement('span'); desc.className = 'desc'; desc.textContent = t[3];
+    var prog = document.createElement('span'); prog.className = 'prog';
+    prog.textContent = done || marked ? done + ' of ' + t[5] + ' sections revised' + (marked ? ' · ' + marked + ' question' + (marked === 1 ? '' : 's') + ' marked' : '') : 'Not started yet';
+    var bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('aria-hidden', 'true');
+    var fill = document.createElement('div'); fill.style.width = (done / t[5] * 100) + '%'; bar.appendChild(fill);
+    prog.appendChild(bar);
+    a.append(num, title, desc, prog);
+    document.getElementById('paper' + t[4]).appendChild(a);
+  });
+})();
+</script>
+</body>
+</html>
