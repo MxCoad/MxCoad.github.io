@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.5 Programming languages and IDEs — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 2.5 Programming languages and IDEs: high-level and low-level languages, translators, compilers, interpreters, assemblers and IDE features.">
+<style>
+  .levels-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 10px 0 16px; }
+  .levels-grid .mini pre { margin: 6px 0 0; font-size: 14px; }
+  .levels-grid .mini h4 small { display: block; font-weight: 400; color: var(--ms-muted); font-size: 14px; }
+
+  /* Compiler vs interpreter */
+  .ci { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 14px; }
+  @media (max-width: 640px) { .ci { grid-template-columns: 1fr; } }
+  .src { margin: 0; padding: 8px 0; border-radius: 10px; border: 1px solid var(--ms-line); background: var(--ms-bg); font-family: var(--ms-font-mono); font-size: 15px; list-style: none; counter-reset: ln; }
+  .src li { padding: 3px 12px 3px 44px; position: relative; counter-increment: ln; white-space: pre; overflow-x: auto; }
+  .src li::before { content: counter(ln); position: absolute; left: 12px; color: var(--ms-muted); }
+  .src li.cur { background: var(--ms-accent-soft); }
+  .src li.done { color: var(--ms-muted); }
+  .src li.err { background: var(--ms-bad-soft); }
+  .console { margin: 0; min-height: 140px; padding: 10px 12px; border-radius: 10px; background: #10151C; color: #E7EBF0; font-family: var(--ms-font-mono); font-size: 15px; white-space: pre-wrap; }
+  .console .e { color: #FF8A80; }
+  .console .s { color: #5FD39A; }
+  .console .m { color: #A6B0BD; }
+  .ci h4 { margin: 0 0 6px; font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: var(--ms-muted); }
+  .switch { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 700; cursor: pointer; }
+  .switch input { width: 22px; height: 22px; accent-color: var(--ms-good); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 2.5 Programming languages and IDEs</p>
+  <p class="eyebrow">OCR J277 · Paper 2 · Topic 2.5</p>
+  <h1>Programming languages and IDEs</h1>
+  <p class="intro">Why there are different kinds of programming language, how code is translated into something the CPU can run, and the tools programmers use to write and debug their code.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="levels">
+    <div class="sec-head"><span class="sec-num">2.5.1</span><h2>High-level and low-level languages</h2></div>
+    <p>The same instruction — "add two numbers and store the answer" — at three levels:</p>
+    <div class="levels-grid">
+      <div class="mini"><h4>High-level<small>e.g. Python</small></h4><pre><code>total = a + b</code></pre></div>
+      <div class="mini"><h4>Assembly language<small>low-level, uses mnemonics</small></h4><pre><code>LDA a
+ADD b
+STA total</code></pre></div>
+      <div class="mini"><h4>Machine code<small>low-level, binary (illustrative — real CPUs use different codes)</small></h4><pre><code>0001 0101
+0010 0110
+0011 0111</code></pre></div>
+    </div>
+    <table class="def">
+      <tr><th scope="row">High-level languages</th><td>
+        <ul style="margin:0">
+          <li>Written using <strong>English-like keywords</strong>, so easier to <strong>read, write and debug</strong></li>
+          <li>One statement translates into <strong>many</strong> machine code instructions</li>
+          <li><strong>Portable</strong>: the same code can run on different types of CPU</li>
+          <li>Must be <strong>translated</strong> before the CPU can run it</li>
+          <li>Examples: Python, Java, C#, JavaScript</li>
+        </ul></td></tr>
+      <tr><th scope="row">Low-level languages</th><td>
+        <ul style="margin:0">
+          <li><strong>Machine code</strong> is binary that the CPU runs <strong>directly</strong>; <strong>assembly language</strong> uses short <strong>mnemonics</strong> such as <code>LDA</code> and <code>ADD</code>, each matching <strong>one</strong> machine code instruction</li>
+          <li>Written for a <strong>specific type of CPU</strong>, so not portable</li>
+          <li><strong>Hard</strong> to write and debug</li>
+          <li>Gives <strong>direct control of the hardware</strong> and can be very <strong>fast and memory-efficient</strong> — useful for embedded systems and device drivers</li>
+        </ul></td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>"High-level languages are more powerful" isn't a valid answer. Say what's actually different: easier to understand, portable, one line = many machine code instructions.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="translators">
+    <div class="sec-head"><span class="sec-num">2.5.1</span><h2>Translators: compilers and interpreters</h2></div>
+    <p>The CPU can only run <strong>machine code</strong>. A <span class="term">translator</span> converts <strong>source code</strong> written in a high-level language (or assembly) into machine code.</p>
+    <div class="two-col">
+      <div class="mini">
+        <h4>Compiler</h4>
+        <ul>
+          <li>Translates the <strong>whole program at once</strong></li>
+          <li>Produces an <strong>executable file</strong> (machine code)</li>
+          <li>Reports <strong>all errors at the end</strong>; no executable until they're fixed</li>
+          <li>The executable <strong>runs quickly</strong> — it's already translated</li>
+          <li>Users <strong>don't need the compiler</strong> or the source code — so the code stays private</li>
+          <li>✗ Compiling can take time, and must be redone after every change</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4>Interpreter</h4>
+        <ul>
+          <li>Translates and runs the program <strong>one line at a time</strong></li>
+          <li><strong>No executable</strong> file is produced</li>
+          <li><strong>Stops at the first error</strong> and shows where it is — easy to debug</li>
+          <li>Can run code straight away, even part-finished programs</li>
+          <li>✗ Runs <strong>more slowly</strong>, because it's translated every time it runs</li>
+          <li>✗ Users need the <strong>interpreter</strong> and the source code</li>
+        </ul>
+      </div>
+    </div>
+    <p>An <span class="term">assembler</span> translates <strong>assembly language</strong> into machine code.</p>
+
+    <div class="tool" id="ci">
+      <p class="tool-title">Try it: compiler vs interpreter</p>
+      <p class="tool-sub">This program has a mistake on line 4. Run it with each translator and compare what happens — then fix the mistake and try again.</p>
+      <div class="ci">
+        <div><h4>Source code</h4><ol class="src" id="ci-src"></ol></div>
+        <div><h4>Output</h4><pre class="console" id="ci-out" aria-live="polite"></pre></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button type="button" class="btn primary" id="ci-interp">Run with interpreter</button>
+        <button type="button" class="btn primary" id="ci-comp">Compile</button>
+        <button type="button" class="btn" id="ci-exe" hidden>Run game.exe</button>
+        <label class="switch"><input type="checkbox" id="ci-fix">Fix the mistake</label>
+      </div>
+      <p class="explain" id="ci-say" aria-live="polite">Choose a translator.</p>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Link your answer to the scenario. Selling a finished game? <strong>Compiler</strong> — customers get a fast executable and can't see the source code. Developing and testing? An <strong>interpreter</strong> helps, because it stops exactly where an error is.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="ide">
+    <div class="sec-head"><span class="sec-num">2.5.2</span><h2>Integrated development environments (IDEs)</h2></div>
+    <p>An <span class="term">IDE</span> is software that provides <strong>all the tools a programmer needs</strong> to write, test and debug code in one place. Examples include IDLE, Visual Studio Code, Thonny and Replit.</p>
+    <table class="def">
+      <tr><th scope="row">Editor</th><td>Where code is written and changed. Features include <strong>syntax highlighting</strong> (colouring keywords), <strong>automatic indentation</strong>, <strong>auto-complete</strong> and <strong>line numbers</strong> — all making code quicker to write and easier to read.</td></tr>
+      <tr><th scope="row">Error diagnostics</th><td>Help find and fix errors: <strong>highlighting errors</strong> and giving <strong>error messages with line numbers</strong>. <strong>Debugging tools</strong> include <strong>breakpoints</strong> (pause the program at a chosen line), <strong>stepping</strong> through code one line at a time, and <strong>watching the values of variables</strong> as it runs.</td></tr>
+      <tr><th scope="row">Run-time environment</th><td>Lets the programmer <strong>run and test the program inside the IDE</strong> and see its output, without needing to install it or switch to another program.</td></tr>
+      <tr><th scope="row">Translator</th><td>A <strong>built-in compiler or interpreter</strong>, so code can be translated and run with one click.</td></tr>
+    </table>
+    <div class="tool">
+      <p class="tool-title">Try it: which IDE tool?</p>
+      <p class="tool-sub">Choose which part of the IDE each feature belongs to.</p>
+      <div id="sort-ide"></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>For "describe a feature", say what it <strong>does</strong> and how it <strong>helps the programmer</strong>: "Breakpoints pause the program at a chosen line, so the programmer can check the values of variables at that point to find a logic error."</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="2-4-boolean-logic.html">2.4 Boolean logic</a> · <a href="index.html">All GCSE topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-2-5-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe two differences between high-level and low-level languages.',
+      points: ['High-level uses English-like keywords / is easier to read and write; low-level uses binary or mnemonics / is harder', 'High-level is portable / runs on different CPUs; low-level is specific to one type of CPU', 'One high-level statement translates into many machine code instructions; one assembly instruction = one machine code instruction', 'High-level must be translated; machine code can be run directly by the CPU', 'Low-level gives direct control of hardware / can be more efficient'],
+      guide: '2 marks per difference: one mark for each side of the comparison. Maximum 4.' },
+    { id: 'q2', marks: 2, text: 'Explain why a programmer might choose to write part of a program in a low-level language.',
+      points: ['Gives direct control of the hardware / memory', 'Can be faster / more memory-efficient, e.g. for an embedded system or device driver'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 2, text: 'Explain why programs written in a high-level language need to be translated.',
+      points: ['The CPU can only execute machine code (binary)', 'A translator converts the source code into machine code'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'Compare how a compiler and an interpreter translate a program.',
+      points: ['A compiler translates the whole program at once; an interpreter translates one line at a time', 'A compiler produces an executable file; an interpreter does not', 'A compiler reports all errors at the end; an interpreter stops at the first error', 'Compiled programs run faster; interpreted programs run more slowly (translated every time)'],
+      guide: '1 mark per comparison point. Maximum 4.' },
+    { id: 'q5', marks: 3, text: 'A games company is about to sell its new game. Explain why it would use a compiler to translate the final version.',
+      points: ['Produces an executable file, so customers do not need a translator / the source code to run it', 'The source code is not shared, so it cannot easily be copied or changed', 'The game runs faster because it has already been translated'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'Explain why an interpreter can be useful while a program is being developed.',
+      points: ['It stops at the line where an error is found, so errors are easy to locate', 'Code can be run straight away / part-finished programs can be tested, without waiting for a full compile'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'Describe two features of an IDE that help a programmer find and fix errors.',
+      points: ['Names a first feature, e.g. error diagnostics / breakpoints / stepping / variable watch / syntax highlighting', 'Describes how it helps, e.g. breakpoints pause the program so variable values can be checked', 'Names a second, different feature', 'Describes how it helps, e.g. error messages give the line number of the error'],
+      guide: '2 marks per feature: 1 for naming it, 1 for describing how it helps.' },
+    { id: 'q8', marks: 2, text: 'State the purpose of the run-time environment in an IDE.',
+      points: ['Allows the program to be run / tested within the IDE', 'So the programmer can see the output / errors while it runs, without switching programs'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  TopicKit.sorter(document.getElementById('sort-ide'), ['Editor', 'Error diagnostics', 'Run-time environment', 'Translator'], [
+    { text: 'Keywords like if and while are shown in a different colour', answer: 'Editor', why: 'Syntax highlighting makes code easier to read.' },
+    { text: 'The program pauses at line 12 so you can check the value of total', answer: 'Error diagnostics', why: 'A breakpoint — a debugging tool.' },
+    { text: 'A red wavy line appears under a missing bracket, with a message giving the line number', answer: 'Error diagnostics', why: 'Errors are highlighted and explained.' },
+    { text: 'You press Run and the output appears in a panel at the bottom of the window', answer: 'Run-time environment', why: 'The program runs inside the IDE.' },
+    { text: 'Code is automatically indented after you type a colon', answer: 'Editor', why: 'Auto-indentation helps keep the structure clear.' },
+    { text: 'The IDE converts your Python code into machine code when you run it', answer: 'Translator', why: 'A built-in interpreter or compiler.' }
+  ]);
+
+  // ---------- Compiler vs interpreter ----------
+  var BROKEN = ['name = "Sam"', 'print("Hello " + name)', 'score = 10', 'prnt("Score: " + str(score))', 'print("Bye")'];
+  var FIXED = BROKEN.slice(); FIXED[3] = 'print("Score: " + str(score))';
+  var OUTPUTS = { 1: 'Hello Sam', 3: 'Score: 10', 4: 'Bye' };
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var timer = null, compiled = false;
+  var src = document.getElementById('ci-src'), out = document.getElementById('ci-out'), say = document.getElementById('ci-say');
+  function lines() { return document.getElementById('ci-fix').checked ? FIXED : BROKEN; }
+  function renderSrc(cls) {
+    src.innerHTML = '';
+    lines().forEach(function (l, i) { var li = document.createElement('li'); li.textContent = l; if (cls && cls[i]) li.className = cls[i]; src.appendChild(li); });
+  }
+  function print(text, kind) { var s = document.createElement('span'); if (kind) s.className = kind; s.textContent = text + '\n'; out.appendChild(s); }
+  function busy(on) { ['ci-interp', 'ci-comp', 'ci-exe', 'ci-fix'].forEach(function (id) { document.getElementById(id).disabled = on; }); }
+  function stop() { clearInterval(timer); timer = null; }
+  function hasError(i) { return lines()[i].indexOf('prnt(') === 0; }
+  function interpret() {
+    stop(); compiled = false; document.getElementById('ci-exe').hidden = true;
+    out.innerHTML = ''; print('> python game.py', 'm');
+    var L = lines(), i = 0, cls = [];
+    say.textContent = 'The interpreter translates and runs one line at a time…';
+    function step() {
+      if (i >= L.length) { stop(); busy(false); renderSrc(cls); say.textContent = 'Finished. The interpreter translated and ran each line in turn. No executable file was made, so it would have to be translated again next time.'; return; }
+      cls = cls.map(function (c) { return c === 'cur' ? 'done' : c; });
+      if (hasError(i)) {
+        cls[i] = 'err'; renderSrc(cls);
+        print('Line ' + (i + 1) + ': NameError — "prnt" is not recognised', 'e');
+        stop(); busy(false);
+        say.textContent = 'The interpreter ran lines 1–3 (you can see their output), then stopped at the error on line 4. Line 5 never ran. It shows exactly where the error is, which makes debugging easy.';
+        return;
+      }
+      cls[i] = 'cur'; renderSrc(cls);
+      if (OUTPUTS[i]) print(OUTPUTS[i]);
+      i++;
+    }
+    if (reduce) { for (var guard = 0; guard < 20; guard++) { var before = i; step(); if (i === before) break; } return; }
+    busy(true); step(); timer = setInterval(step, 650);
+  }
+  function compile() {
+    stop(); out.innerHTML = ''; print('> compile game.src', 'm');
+    var L = lines(), errs = [];
+    L.forEach(function (_, i) { if (hasError(i)) errs.push(i); });
+    var cls = L.map(function (_, i) { return errs.indexOf(i) >= 0 ? 'err' : 'done'; });
+    function finish() {
+      renderSrc(cls);
+      if (errs.length) {
+        errs.forEach(function (i) { print('Error, line ' + (i + 1) + ': "prnt" is not recognised', 'e'); });
+        print('Compilation failed: ' + errs.length + ' error. No executable created.', 'e');
+        compiled = false; document.getElementById('ci-exe').hidden = true;
+        say.textContent = 'The compiler checked the whole program first and reported the error — but nothing ran at all, not even lines 1–3, and no executable was made.';
+      } else {
+        print('Compiled successfully: game.exe created', 's');
+        compiled = true; document.getElementById('ci-exe').hidden = false;
+        say.textContent = 'The whole program was translated at once into an executable file. Now press "Run game.exe" — it runs straight away with no translation needed, and you could give it to someone without the source code.';
+      }
+      busy(false);
+    }
+    if (reduce) { finish(); return; }
+    busy(true); say.textContent = 'The compiler is translating the whole program…';
+    var k = 0;
+    timer = setInterval(function () {
+      renderSrc(L.map(function (_, i) { return i === k ? 'cur' : i < k ? 'done' : ''; }));
+      k++;
+      if (k > L.length) { stop(); finish(); }
+    }, 220);
+  }
+  function runExe() {
+    if (!compiled) return;
+    out.innerHTML = ''; print('> game.exe', 'm');
+    [1, 3, 4].forEach(function (i) { print(OUTPUTS[i]); });
+    say.textContent = 'The executable ran instantly, all in one go — it was already in machine code.';
+  }
+  document.getElementById('ci-interp').addEventListener('click', interpret);
+  document.getElementById('ci-comp').addEventListener('click', compile);
+  document.getElementById('ci-exe').addEventListener('click', runExe);
+  document.getElementById('ci-fix').addEventListener('change', function () {
+    stop(); compiled = false; document.getElementById('ci-exe').hidden = true; out.innerHTML = ''; renderSrc();
+    say.textContent = document.getElementById('ci-fix').checked ? 'Line 4 now says print. Try both translators again.' : 'The mistake is back on line 4.';
+  });
+  renderSrc();
+})();
+</script>
+</body>
+</html>

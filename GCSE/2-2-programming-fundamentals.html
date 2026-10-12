@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.2 Programming fundamentals — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 2.2 Programming fundamentals: variables, constants, operators, selection, iteration, data types, casting, strings, arrays, records, files, SQL, subprograms and random numbers.">
+<style>
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 14px; cursor: pointer; }
+  .presets button:hover { border-color: var(--ms-accent); }
+  .code-in { font-family: var(--ms-font-mono) !important; }
+  .result-box { margin-top: 12px; padding: 12px 14px; border-radius: 10px; background: var(--ms-surface-2); display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+  .result-box .val { font-family: var(--ms-font-mono); font-size: 24px; font-weight: 700; }
+  .result-box .typ { padding: 2px 10px; border-radius: 999px; background: var(--ms-accent-soft); font-size: 14px; font-weight: 700; }
+  .result-box .err { color: var(--ms-bad); font-weight: 700; }
+  .str-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 12px; }
+  .str-op { padding: 10px 12px; border-radius: 10px; background: var(--ms-surface-2); }
+  .str-op code { background: none; padding: 0; font-size: 15px; }
+  .str-op b { display: block; font-family: var(--ms-font-mono); font-size: 18px; margin-top: 2px; overflow-wrap: anywhere; }
+  .chars { display: flex; flex-wrap: wrap; gap: 3px; margin: 10px 0 4px; }
+  .ch { min-width: 30px; text-align: center; border: 1px solid var(--ms-line-strong); border-radius: 6px; padding: 4px 2px 2px; font-family: var(--ms-font-mono); background: var(--ms-surface); }
+  .ch.sel { background: var(--ms-accent-soft); border-color: var(--ms-accent); }
+  .ch small { display: block; font-size: 11px; color: var(--ms-muted); }
+  .sql-in { width: 100%; min-height: 76px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 16px; resize: vertical; }
+  table.data { border-collapse: collapse; width: 100%; font-size: 16px; }
+  table.data th, table.data td { border-bottom: 1px solid var(--ms-line); padding: 6px 10px; text-align: left; }
+  table.data th { background: var(--ms-surface-2); font-family: var(--ms-font-mono); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 2.2 Programming fundamentals</p>
+  <p class="eyebrow">OCR J277 · Paper 2 · Topic 2.2</p>
+  <h1>Programming fundamentals</h1>
+  <p class="intro">The building blocks every program is made from. Examples use OCR's Exam Reference Language (ERL), which you'll see in the exam, with Python equivalents where they differ. Section B of Paper 2 asks you to write and fix code, so practise with the tools.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="basics">
+    <div class="sec-head"><span class="sec-num">2.2.1</span><h2>Variables, constants, input and output</h2></div>
+    <table class="def">
+      <tr><th scope="row">Variable</th><td>A <strong>named location in memory</strong> that stores a value which <strong>can change</strong> while the program runs.</td></tr>
+      <tr><th scope="row">Constant</th><td>A named value that <strong>cannot change</strong> while the program runs, e.g. <code>const VAT = 0.2</code>. If it needs updating, it only has to be changed in <strong>one place</strong>, and it can't be changed by accident.</td></tr>
+      <tr><th scope="row">Assignment</th><td>Giving a variable a value: <code>score = 0</code>, <code>score = score + 10</code></td></tr>
+      <tr><th scope="row">Input</th><td>Data entered by the user: <code>name = input("Enter your name")</code></td></tr>
+      <tr><th scope="row">Output</th><td>Data shown to the user: <code>print("Hello " + name)</code></td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p><code>=</code> <strong>assigns</strong> a value; <code>==</code> <strong>compares</strong> two values. <code>if score = 10</code> is wrong; <code>if score == 10</code> is right.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="operators">
+    <div class="sec-head"><span class="sec-num">2.2.1</span><h2>Operators</h2></div>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">Type</th><th scope="col">Operators</th><th scope="col">Examples</th></tr></thead>
+      <tr><th scope="row">Arithmetic</th><td><code>+ - * /</code> and <code>^</code> (exponent)<br><code>MOD</code> — remainder after division<br><code>DIV</code> — whole-number division</td><td><code>2 ^ 3</code> = 8<br><code>17 MOD 5</code> = 2<br><code>17 DIV 5</code> = 3</td></tr>
+      <tr><th scope="row">Comparison</th><td><code>==</code> equal to, <code>!=</code> not equal to, <code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td><code>age &gt;= 18</code></td></tr>
+      <tr><th scope="row">Boolean</th><td><code>AND</code> both must be true<br><code>OR</code> at least one true<br><code>NOT</code> reverses true/false</td><td><code>age &gt;= 13 AND age &lt;= 19</code></td></tr>
+    </table></div>
+    <p>In Python, <code>MOD</code> is <code>%</code>, <code>DIV</code> is <code>//</code> and <code>^</code> is <code>**</code>.</p>
+    <div class="tool" id="calc">
+      <p class="tool-title">Try it: expression calculator</p>
+      <p class="tool-sub">Type an expression using ERL operators, or pick an example. It shows the result and its data type.</p>
+      <div class="presets" id="calc-presets"></div>
+      <div class="ctl"><label for="calc-in" class="sr">Expression</label><input class="field code-in" type="text" id="calc-in" value="17 MOD 5" autocomplete="off" spellcheck="false"></div>
+      <div class="result-box" id="calc-out" aria-live="polite"></div>
+    </div>
+    <div class="box worked">
+      <p class="box-label">Useful trick</p>
+      <p><code>number MOD 2 == 0</code> tests whether a number is <strong>even</strong>. <code>minutes DIV 60</code> and <code>minutes MOD 60</code> turn 135 minutes into 2 hours and 15 minutes.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="constructs">
+    <div class="sec-head"><span class="sec-num">2.2.1</span><h2>Sequence, selection and iteration</h2></div>
+    <p>Every program is built from three <span class="term">programming constructs</span>:</p>
+    <ul>
+      <li><strong>Sequence</strong> — instructions carried out <strong>one after another</strong>, in order.</li>
+      <li><strong>Selection</strong> — a <strong>decision</strong> chooses which code runs (<code>if</code>, <code>switch</code>).</li>
+      <li><strong>Iteration</strong> — code is <strong>repeated</strong> (loops).</li>
+    </ul>
+    <h3>Selection</h3>
+<pre><code>if mark &gt;= 70 then
+    print("Distinction")
+elseif mark &gt;= 50 then
+    print("Pass")
+else
+    print("Fail")
+endif
+
+switch day:
+    case "Sat":
+        print("Weekend")
+    case "Sun":
+        print("Weekend")
+    default:
+        print("School day")
+endswitch</code></pre>
+    <h3>Iteration</h3>
+    <p><strong>Count-controlled</strong> loops repeat a <strong>set number of times</strong>. <strong>Condition-controlled</strong> loops repeat <strong>until (or while) a condition</strong> is met, so you don't need to know in advance how many times.</p>
+<pre><code>// count-controlled: prints 0 to 9
+for i = 0 to 9
+    print(i)
+next i
+
+// condition-controlled: checked at the START (may run 0 times)
+while answer != "yes"
+    answer = input("Ready?")
+endwhile
+
+// condition-controlled: checked at the END (always runs at least once)
+do
+    guess = int(input("Guess"))
+until guess == 7</code></pre>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p><code>for i = 0 to 9</code> runs <strong>10</strong> times, not 9 — ERL includes both ends. (Python's <code>range(0, 10)</code> stops <em>before</em> 10.)</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="types">
+    <div class="sec-head"><span class="sec-num">2.2.2</span><h2>Data types and casting</h2></div>
+    <table class="def">
+      <tr><th scope="row">Integer</th><td>A whole number: <code>42</code>, <code>-7</code></td></tr>
+      <tr><th scope="row">Real (float)</th><td>A number with a decimal part: <code>3.14</code>, <code>-0.5</code></td></tr>
+      <tr><th scope="row">Boolean</th><td>One of two values: <code>true</code> or <code>false</code></td></tr>
+      <tr><th scope="row">Character</th><td>A single letter, digit or symbol: <code>"A"</code>, <code>"7"</code>, <code>"?"</code></td></tr>
+      <tr><th scope="row">String</th><td>A sequence of characters: <code>"Hello"</code>, <code>"SW17 0AQ"</code></td></tr>
+    </table>
+    <p><span class="term">Casting</span> converts a value from one data type to another: <code>int("42")</code> → 42, <code>str(42)</code> → "42", <code>real("3.5")</code> → 3.5 (Python: <code>float</code>), <code>bool</code> → Boolean.</p>
+    <p>It matters because <code>input()</code> always returns a <strong>string</strong>. To do maths with what the user types, cast it first: <code>age = int(input("Age?"))</code>.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Phone numbers and postcodes should be <strong>strings</strong>, not integers — you never do maths with them, and an integer would lose a leading 0.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="strings">
+    <div class="sec-head"><span class="sec-num">2.2.3</span><h2>String manipulation</h2></div>
+    <p>Characters in a string are numbered from <strong>0</strong>. Joining strings with <code>+</code> is called <span class="term">concatenation</span>.</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">ERL</th><th scope="col">What it does</th><th scope="col">Python</th></tr></thead>
+      <tr><td><code>word.length</code></td><td>Number of characters</td><td><code>len(word)</code></td></tr>
+      <tr><td><code>word.upper</code> / <code>word.lower</code></td><td>Upper / lower case</td><td><code>word.upper()</code></td></tr>
+      <tr><td><code>word.substring(start, n)</code></td><td><code>n</code> characters starting at position <code>start</code></td><td><code>word[start:start+n]</code></td></tr>
+      <tr><td><code>word.left(n)</code> / <code>word.right(n)</code></td><td>First / last <code>n</code> characters</td><td><code>word[:n]</code> / <code>word[-n:]</code></td></tr>
+      <tr><td><code>ASC("A")</code> / <code>CHR(65)</code></td><td>Character → ASCII code / code → character</td><td><code>ord()</code> / <code>chr()</code></td></tr>
+    </table></div>
+    <div class="tool" id="strtool">
+      <p class="tool-title">Try it: string explorer</p>
+      <p class="tool-sub">Type a string and change the substring settings.</p>
+      <div class="controls">
+        <div class="ctl"><label for="st-in">word =</label><input class="field code-in" type="text" id="st-in" value="Computer Science" maxlength="30" spellcheck="false"></div>
+        <div class="ctl"><label for="st-start">Start position <output id="st-start-o">0</output></label><input type="range" id="st-start" min="0" max="15" value="0"></div>
+        <div class="ctl"><label for="st-n">Number of characters <output id="st-n-o">4</output></label><input type="range" id="st-n" min="1" max="16" value="4"></div>
+      </div>
+      <div class="chars" id="st-chars" aria-hidden="true"></div>
+      <div class="str-grid" id="st-out"></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="arrays-records">
+    <div class="sec-head"><span class="sec-num">2.2.3</span><h2>Arrays and records</h2></div>
+    <p>An <span class="term">array</span> stores <strong>several values of the same data type</strong> under <strong>one name</strong>. Each value is accessed by its <strong>index</strong>, starting at <strong>0</strong>. Arrays have a fixed size.</p>
+<pre><code>array colours[3]
+colours[0] = "Red"
+colours[1] = "Green"
+colours[2] = "Blue"
+print(colours[1])        // Green
+
+// 2D array: like a table, [row, column]
+array board[3, 3]
+board[0, 2] = "X"</code></pre>
+    <p>Arrays are usually processed with a <strong>for loop</strong>:</p>
+<pre><code>total = 0
+for i = 0 to scores.length - 1
+    total = total + scores[i]
+next i</code></pre>
+    <p>A <span class="term">record</span> groups together <strong>related data of different types</strong> about one item — e.g. a pupil's name (string), age (integer) and whether they have a bus pass (Boolean). Each item of data is a <strong>field</strong>. In a database, each row of a table is a record.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>The last index of an array of 10 items is <strong>9</strong>, not 10. Looping to <code>scores.length</code> instead of <code>scores.length - 1</code> goes past the end.</p>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="topic" id="files-sql">
+    <div class="sec-head"><span class="sec-num">2.2.3</span><h2>File handling and SQL</h2></div>
+    <h3>File handling</h3>
+    <p>Files let a program <strong>save data permanently</strong> so it isn't lost when the program closes. Always <strong>open</strong>, then <strong>read or write</strong>, then <strong>close</strong>.</p>
+<pre><code>// reading every line
+myFile = open("scores.txt")
+while NOT myFile.endOfFile()
+    print(myFile.readLine())
+endwhile
+myFile.close()
+
+// writing
+newFile("log.txt")
+logFile = open("log.txt")
+logFile.writeLine("Game over")
+logFile.close()</code></pre>
+    <h3>SQL</h3>
+    <p><span class="term">SQL</span> (Structured Query Language) is used to <strong>search a database</strong>. You need three keywords:</p>
+    <ul>
+      <li><code>SELECT</code> — which <strong>fields</strong> to show (<code>*</code> means all fields)</li>
+      <li><code>FROM</code> — which <strong>table</strong></li>
+      <li><code>WHERE</code> — the <strong>conditions</strong> records must meet (optional)</li>
+    </ul>
+<pre><code>SELECT name, score
+FROM pupils
+WHERE house = "Red" AND score &gt; 50</code></pre>
+    <div class="tool" id="sql">
+      <p class="tool-title">Try it: SQL playground</p>
+      <p class="tool-sub">Write a query on the <code>pupils</code> table below, then run it.</p>
+      <div class="presets" id="sql-presets"></div>
+      <label for="sql-in" class="sr">SQL query</label>
+      <textarea class="sql-in" id="sql-in" spellcheck="false">SELECT name, score
+FROM pupils
+WHERE house = "Red" AND score &gt; 50</textarea>
+      <div class="btn-row" style="margin-top:8px"><button type="button" class="btn primary" id="sql-run">Run query</button></div>
+      <p class="explain" id="sql-say" aria-live="polite"></p>
+      <div class="table-wrap" id="sql-out"></div>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="topic" id="subprograms">
+    <div class="sec-head"><span class="sec-num">2.2.3</span><h2>Subprograms and random numbers</h2></div>
+    <p>A <span class="term">subprogram</span> is a named block of code that does one task and can be <strong>called</strong> from anywhere in the program. Data can be passed in as <strong>parameters</strong>.</p>
+    <div class="two-col">
+      <div class="mini"><h4>Function — returns a value</h4>
+<pre><code>function triple(n)
+    return n * 3
+endfunction
+
+x = triple(5)   // x is 15</code></pre></div>
+      <div class="mini"><h4>Procedure — doesn't return a value</h4>
+<pre><code>procedure greet(name)
+    print("Hello " + name)
+endprocedure
+
+greet("Sam")</code></pre></div>
+    </div>
+    <p><strong>Why use subprograms?</strong> The code can be <strong>reused</strong> without rewriting it; programs are <strong>shorter and easier to read</strong>; each subprogram can be <strong>tested separately</strong>; a large program can be <strong>decomposed</strong> and shared between programmers; and a fix only needs making in <strong>one place</strong>.</p>
+    <h3>Random numbers</h3>
+    <p><code>roll = random(1, 6)</code> gives a random integer from 1 to 6 (inclusive) — useful for games and simulations. In Python: <code>import random</code> then <code>random.randint(1, 6)</code>.</p>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>A <strong>local variable</strong> is created inside a subprogram and only exists while it runs. A <strong>global variable</strong> (<code>global score = 0</code>) can be used anywhere. Local variables are safer: another part of the program can't change them by accident, and the same name can be reused in different subprograms.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers. For code answers, accept any correct ERL, pseudocode or Python.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="2-1-algorithms.html">2.1 Algorithms</a> · Next: <a href="2-3-producing-robust-programs.html">2.3 Producing robust programs</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-2-2-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Explain the difference between a variable and a constant.',
+      points: ['The value of a variable can change while the program is running', 'The value of a constant cannot change while the program is running'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 3, text: 'State the result of each expression:\n(a) 17 MOD 5   (b) 17 DIV 5   (c) 2 ^ 4',
+      points: ['(a) 2', '(b) 3', '(c) 16'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 4, text: 'State the most suitable data type for each item:\n(a) a person\'s age in whole years\n(b) the price of a meal\n(c) whether a customer is a member\n(d) a postcode',
+      points: ['(a) Integer', '(b) Real / float', '(c) Boolean', '(d) String'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Explain what is meant by casting, using an example.',
+      points: ['Converting a value from one data type to another', 'Example, e.g. int(input()) to turn the string typed by the user into an integer / str(score) to join a number to a string'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 4, text: 'Write an algorithm that asks the user to enter numbers until they enter 0. It should then output the total of the numbers entered.',
+      points: ['Sets a total to 0 before the loop', 'Uses a condition-controlled loop (while / do…until) that stops when 0 is entered', 'Inputs a number inside the loop (cast to integer)', 'Adds each number to the total', 'Outputs the total after the loop'],
+      guide: 'Any four points, 1 mark each. Example:\ntotal = 0\nnum = int(input("Number"))\nwhile num != 0\n    total = total + num\n    num = int(input("Number"))\nendwhile\nprint(total)' },
+    { id: 'q6', marks: 3, text: 'word = "Computer"\nState the output of:\n(a) print(word.length)\n(b) print(word.substring(0, 3))\n(c) print(word.upper)',
+      points: ['(a) 8', '(b) Com', '(c) COMPUTER'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 3, text: 'A table called pupils has the fields name, form, house and score. Write an SQL statement to show the name and score of every pupil in the house "Red" who scored more than 50.',
+      points: ['SELECT name, score', 'FROM pupils', 'WHERE house = "Red" AND score > 50'],
+      guide: '1 mark for each correct line.' },
+    { id: 'q8', marks: 3, text: 'Explain the difference between a function and a procedure, and give one benefit of using subprograms.',
+      points: ['A function returns a value', 'A procedure does not return a value', 'Benefit, e.g. code can be reused / easier to test / easier to maintain / program can be split between programmers'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 2, text: 'scores = [12, 5, 9, 20]\nState the value of scores[2] and explain why.',
+      points: ['9', 'Array indexes start at 0 (so index 2 is the third item)'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- A tiny, safe expression evaluator (no eval) ----------
+  // Values are { v: value, t: 'integer' | 'real' | 'string' | 'Boolean' }
+  function tokenize(src) {
+    var toks = [], i = 0, m;
+    var re = /\s*(?:(\d+\.\d+|\d+)|("[^"]*"|'[^']*')|(<=|>=|==|!=|<>|[-+*\/^()<>=,])|([A-Za-z_][A-Za-z_0-9]*))/y;
+    while (i < src.length) {
+      if (/^\s*$/.test(src.slice(i))) break;
+      re.lastIndex = i;
+      m = re.exec(src);
+      if (!m) throw new Error('I don\'t understand "' + src.slice(i).trim().slice(0, 12) + '"');
+      i = re.lastIndex;
+      if (m[1]) toks.push({ k: 'num', v: m[1] });
+      else if (m[2]) toks.push({ k: 'str', v: m[2].slice(1, -1) });
+      else if (m[3]) toks.push({ k: 'op', v: m[3] });
+      else {
+        var w = m[4], up = w.toUpperCase();
+        if (['AND', 'OR', 'NOT', 'MOD', 'DIV'].indexOf(up) >= 0) toks.push({ k: 'op', v: up });
+        else if (up === 'TRUE' || up === 'FALSE') toks.push({ k: 'bool', v: up === 'TRUE' });
+        else toks.push({ k: 'id', v: w });
+      }
+    }
+    return toks;
+  }
+  function parse(src, opts) {
+    opts = opts || {};
+    var toks = tokenize(src), p = 0;
+    function peek(v) { return toks[p] && toks[p].k === 'op' && toks[p].v === v; }
+    function eat(v) { if (peek(v)) { p++; return true; } return false; }
+    function num(x) { return typeof x.v === 'number' && (x.t === 'integer' || x.t === 'real'); }
+    function needNums(a, b, op) { if (!num(a) || !num(b)) throw new Error('"' + op + '" needs two numbers — you may need to cast with int() or real()'); }
+    function mk(v, isInt) { return { v: v, t: isInt && Number.isInteger(v) ? 'integer' : 'real' }; }
+    function bool(x, op) { if (x.t !== 'Boolean') throw new Error(op + ' needs true/false values on both sides'); return x.v; }
+    function orE() { var a = andE(); while (eat('OR')) { var b = andE(); a = { v: bool(a, 'OR') || bool(b, 'OR'), t: 'Boolean' }; } return a; }
+    function andE() { var a = notE(); while (eat('AND')) { var b = notE(); a = { v: bool(a, 'AND') && bool(b, 'AND'), t: 'Boolean' }; } return a; }
+    function notE() { if (eat('NOT')) { var a = notE(); return { v: !bool(a, 'NOT'), t: 'Boolean' }; } return cmpE(); }
+    function cmpE() {
+      var a = addE();
+      var ops = ['==', '!=', '<=', '>=', '<', '>', '=', '<>'];
+      for (var i = 0; i < ops.length; i++) if (peek(ops[i])) {
+        var op = ops[i]; p++;
+        if (op === '=' && !opts.sql) throw new Error('Use == to compare. A single = means assignment.');
+        if (op === '<>' && !opts.sql) throw new Error('Use != for "not equal to" in ERL.');
+        var b = addE();
+        if ((a.t === 'string') !== (b.t === 'string')) throw new Error('Can\'t compare a string with a number');
+        var x = a.v, y = b.v, r;
+        if (op === '==' || op === '=') r = x === y; else if (op === '!=' || op === '<>') r = x !== y;
+        else if (op === '<') r = x < y; else if (op === '>') r = x > y; else if (op === '<=') r = x <= y; else r = x >= y;
+        return { v: r, t: 'Boolean' };
+      }
+      return a;
+    }
+    function addE() {
+      var a = mulE();
+      while (peek('+') || peek('-')) {
+        var op = toks[p++].v, b = mulE();
+        if (op === '+' && (a.t === 'string' || b.t === 'string')) {
+          if (a.t !== 'string' || b.t !== 'string') throw new Error('Can\'t join a string and a number with + — cast the number first with str()');
+          a = { v: a.v + b.v, t: 'string' };
+        } else { needNums(a, b, op); a = mk(op === '+' ? a.v + b.v : a.v - b.v, a.t === 'integer' && b.t === 'integer'); }
+      }
+      return a;
+    }
+    function mulE() {
+      var a = powE();
+      while (peek('*') || peek('/') || peek('MOD') || peek('DIV')) {
+        var op = toks[p++].v, b = powE();
+        needNums(a, b, op);
+        if ((op === '/' || op === 'MOD' || op === 'DIV') && b.v === 0) throw new Error('Division by zero');
+        if (op === '*') a = mk(a.v * b.v, a.t === 'integer' && b.t === 'integer');
+        else if (op === '/') a = { v: a.v / b.v, t: 'real' };
+        else if (op === 'DIV') a = mk(Math.trunc(a.v / b.v), a.t === 'integer' && b.t === 'integer');
+        else a = mk(a.v - b.v * Math.trunc(a.v / b.v), a.t === 'integer' && b.t === 'integer');
+      }
+      return a;
+    }
+    function powE() { var a = unary(); if (eat('^')) { var b = powE(); needNums(a, b, '^'); a = mk(Math.pow(a.v, b.v), a.t === 'integer' && b.t === 'integer' && b.v >= 0); } return a; }
+    function unary() { if (eat('-')) { var a = unary(); if (!num(a)) throw new Error('Can\'t make a string negative'); return { v: -a.v, t: a.t }; } return prim(); }
+    function prim() {
+      var t = toks[p];
+      if (!t) throw new Error('The expression ends too early');
+      p++;
+      if (t.k === 'num') return t.v.indexOf('.') >= 0 ? { v: parseFloat(t.v), t: 'real' } : { v: parseInt(t.v, 10), t: 'integer' };
+      if (t.k === 'str') return { v: t.v, t: 'string' };
+      if (t.k === 'bool') return { v: t.v, t: 'Boolean' };
+      if (t.k === 'op' && t.v === '(') { var e = orE(); if (!eat(')')) throw new Error('Missing a closing bracket )'); return e; }
+      if (t.k === 'id') {
+        if (opts.lookup) return opts.lookup(t.v);
+        if (peek('=')) throw new Error('"' + t.v + ' = …" is an assignment (it stores a value). This calculator works out expressions — and to compare, use ==.');
+        throw new Error('"' + t.v + '" isn\'t a value. Put text in quotes, e.g. "' + t.v + '"');
+      }
+      throw new Error('Unexpected "' + t.v + '"');
+    }
+    var result = orE();
+    if (p < toks.length) throw new Error('Unexpected "' + toks[p].v + '"');
+    return result;
+  }
+  function show(r) {
+    if (r.t === 'string') return '"' + r.v + '"';
+    if (r.t === 'Boolean') return r.v ? 'true' : 'false';
+    if (r.t === 'real') return Number.isInteger(r.v) ? r.v.toFixed(1) : String(Math.round(r.v * 1e10) / 1e10);
+    return String(r.v);
+  }
+
+  // ---------- Expression calculator ----------
+  var PRESETS = ['17 MOD 5', '17 DIV 5', '7 / 2', '2 ^ 10', '3 + 4 * 2', '(3 + 4) * 2', '"Hello " + "world"', '"Score: " + 10', '15 MOD 2 == 0', '(5 > 3) AND NOT (2 == 2)'];
+  var calcIn = document.getElementById('calc-in');
+  PRESETS.forEach(function (s) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = s;
+    b.addEventListener('click', function () { calcIn.value = s; runCalc(); });
+    document.getElementById('calc-presets').appendChild(b);
+  });
+  function runCalc() {
+    var out = document.getElementById('calc-out');
+    out.innerHTML = '';
+    var src = calcIn.value.trim();
+    if (!src) return;
+    try {
+      var r = parse(src);
+      var v = document.createElement('span'); v.className = 'val'; v.textContent = show(r);
+      var t = document.createElement('span'); t.className = 'typ'; t.textContent = r.t;
+      out.append(v, t);
+    } catch (e) {
+      var er = document.createElement('span'); er.className = 'err'; er.textContent = e.message;
+      out.appendChild(er);
+    }
+  }
+  calcIn.addEventListener('input', runCalc);
+  runCalc();
+
+  // ---------- String explorer ----------
+  function runStr() {
+    var w = document.getElementById('st-in').value;
+    var startR = document.getElementById('st-start'), nR = document.getElementById('st-n');
+    startR.max = Math.max(0, w.length - 1);
+    if (+startR.value > +startR.max) startR.value = startR.max;
+    var start = +startR.value;
+    nR.max = Math.max(1, w.length - start);
+    if (+nR.value > +nR.max) nR.value = nR.max;
+    var n = +nR.value;
+    document.getElementById('st-start-o').textContent = start;
+    document.getElementById('st-n-o').textContent = n;
+    var chars = document.getElementById('st-chars'); chars.innerHTML = '';
+    for (var i = 0; i < w.length; i++) {
+      var c = document.createElement('div'); c.className = 'ch' + (i >= start && i < start + n ? ' sel' : '');
+      c.textContent = w[i] === ' ' ? '␣' : w[i];
+      var s = document.createElement('small'); s.textContent = i; c.appendChild(s);
+      chars.appendChild(c);
+    }
+    var first = w.charAt(0) || ' ';
+    var rows = [
+      ['word.length', String(w.length)],
+      ['word.upper', '"' + w.toUpperCase() + '"'],
+      ['word.lower', '"' + w.toLowerCase() + '"'],
+      ['word.substring(' + start + ', ' + n + ')', '"' + w.substr(start, n) + '"'],
+      ['word.left(3)', '"' + w.slice(0, 3) + '"'],
+      ['word.right(3)', '"' + w.slice(-3) + '"'],
+      ['ASC("' + first + '")', w.length ? String(first.charCodeAt(0)) : '—'],
+      ['CHR(' + (first.charCodeAt(0) + 1) + ')', w.length ? '"' + String.fromCharCode(first.charCodeAt(0) + 1) + '"' : '—']
+    ];
+    var out = document.getElementById('st-out'); out.innerHTML = '';
+    rows.forEach(function (r) {
+      var d = document.createElement('div'); d.className = 'str-op';
+      var c = document.createElement('code'); c.textContent = r[0];
+      var b = document.createElement('b'); b.textContent = r[1];
+      d.append(c, b); out.appendChild(d);
+    });
+  }
+  document.querySelectorAll('#strtool input').forEach(function (i) { i.addEventListener('input', runStr); });
+  runStr();
+
+  // ---------- SQL playground ----------
+  var FIELDS = ['name', 'form', 'age', 'house', 'score'];
+  var ROWS = [
+    ['Amira', '10A', 15, 'Red', 72], ['Ben', '10B', 14, 'Blue', 48], ['Chloe', '10A', 15, 'Green', 91],
+    ['Dev', '10C', 14, 'Red', 55], ['Ella', '10B', 15, 'Blue', 67], ['Femi', '10C', 15, 'Red', 39],
+    ['Grace', '10A', 14, 'Green', 58], ['Harry', '10B', 15, 'Red', 84]
+  ];
+  var SQL_PRESETS = [
+    ['All pupils', 'SELECT *\nFROM pupils'],
+    ['Names in 10A', 'SELECT name\nFROM pupils\nWHERE form = "10A"'],
+    ['Red, over 50', 'SELECT name, score\nFROM pupils\nWHERE house = "Red" AND score > 50'],
+    ['Blue or Green', 'SELECT name, house\nFROM pupils\nWHERE house = "Blue" OR house = "Green"']
+  ];
+  var sqlIn = document.getElementById('sql-in');
+  SQL_PRESETS.forEach(function (s) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = s[0];
+    b.addEventListener('click', function () { sqlIn.value = s[1]; runSql(); });
+    document.getElementById('sql-presets').appendChild(b);
+  });
+  function table(fields, rows) {
+    var t = document.createElement('table'); t.className = 'data';
+    var tr = document.createElement('tr');
+    fields.forEach(function (f) { var th = document.createElement('th'); th.scope = 'col'; th.textContent = f; tr.appendChild(th); });
+    var thead = document.createElement('thead'); thead.appendChild(tr); t.appendChild(thead);
+    var tb = document.createElement('tbody');
+    rows.forEach(function (r) { var row = document.createElement('tr'); r.forEach(function (v) { var td = document.createElement('td'); td.textContent = v; row.appendChild(td); }); tb.appendChild(row); });
+    t.appendChild(tb);
+    return t;
+  }
+  function runSql() {
+    var say = document.getElementById('sql-say'), out = document.getElementById('sql-out');
+    out.innerHTML = '';
+    try {
+      var src = sqlIn.value.trim().replace(/;\s*$/, '');
+      var m = /^SELECT\s+([\s\S]+?)\s+FROM\s+(\w+)(?:\s+WHERE\s+([\s\S]+))?$/i.exec(src);
+      if (!m) throw new Error('A query needs SELECT fields, FROM a table, and optionally WHERE conditions — in that order.');
+      if (m[2].toLowerCase() !== 'pupils') throw new Error('There is no table called "' + m[2] + '". The table is called pupils.');
+      var cols;
+      if (m[1].trim() === '*') cols = FIELDS.slice();
+      else cols = m[1].split(',').map(function (c) {
+        var f = c.trim().toLowerCase();
+        if (FIELDS.indexOf(f) < 0) throw new Error('There is no field called "' + c.trim() + '". The fields are: ' + FIELDS.join(', ') + '.');
+        return f;
+      });
+      var rows = ROWS.filter(function (r) {
+        if (!m[3]) return true;
+        var res = parse(m[3], { sql: true, lookup: function (id) {
+          var i = FIELDS.indexOf(id.toLowerCase());
+          if (i < 0) throw new Error('There is no field called "' + id + '". Put text values in quotes, e.g. house = "Red".');
+          return typeof r[i] === 'number' ? { v: r[i], t: 'integer' } : { v: r[i], t: 'string' };
+        } });
+        if (res.t !== 'Boolean') throw new Error('The WHERE part must be a condition, e.g. score > 50');
+        return res.v;
+      }).map(function (r) { return cols.map(function (c) { return r[FIELDS.indexOf(c)]; }); });
+      say.textContent = rows.length + ' record' + (rows.length === 1 ? '' : 's') + ' found.';
+      if (rows.length) out.appendChild(table(cols, rows));
+    } catch (e) {
+      say.innerHTML = '';
+      var s = document.createElement('span'); s.className = 'result-bad'; s.textContent = e.message; say.appendChild(s);
+      var note = document.createElement('p'); note.className = 'small'; note.textContent = 'The full pupils table:';
+      out.append(note, table(FIELDS, ROWS));
+    }
+  }
+  document.getElementById('sql-run').addEventListener('click', runSql);
+  runSql();
+})();
+</script>
+</body>
+</html>

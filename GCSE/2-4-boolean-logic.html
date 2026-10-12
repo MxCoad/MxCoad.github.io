@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.4 Boolean logic — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 2.4 Boolean logic: AND, OR and NOT gates, logic diagrams, truth tables and combining operators, with a gate simulator and truth table builder.">
+<style>
+  /* Gate drawings */
+  svg.gates { width: 100%; height: auto; display: block; }
+  .gate-body { fill: var(--ms-surface); stroke: var(--ms-text); stroke-width: 2.5; }
+  .wire { stroke: var(--ms-line-strong); stroke-width: 3; fill: none; }
+  .wire.on { stroke: var(--ms-accent); }
+  .pin-label { fill: var(--ms-text); font-family: var(--ms-font-mono); font-weight: 700; font-size: 16px; }
+  .gate-label { fill: var(--ms-muted); font-family: var(--ms-font-body); font-weight: 700; font-size: 13px; text-anchor: middle; }
+  .lamp { stroke: var(--ms-text); stroke-width: 2.5; fill: var(--ms-surface-2); }
+  .lamp.on { fill: var(--ks-ks3); }
+
+  .gate-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .gate-card { padding: 14px; border-radius: 12px; border: 1px solid var(--ms-line); background: var(--ms-bg); }
+  .gate-card h4 { margin: 0 0 6px; font-size: 18px; }
+  .gate-card .rule { margin: 8px 0 0; font-size: 15px; color: var(--ms-muted); }
+  .toggles { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .tog {
+    min-height: 44px; min-width: 64px; padding: 0 12px; border-radius: 10px; border: 2px solid var(--ms-line-strong);
+    background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 17px; font-weight: 700; cursor: pointer;
+  }
+  .tog[aria-pressed="true"] { border-color: var(--ms-accent); background: var(--ms-accent-soft); }
+
+  table.tt { border-collapse: collapse; font-family: var(--ms-font-mono); font-size: 16px; margin: 8px 0 16px; }
+  table.tt th, table.tt td { border: 1px solid var(--ms-line-strong); padding: 6px 14px; text-align: center; }
+  table.tt th { background: var(--ms-surface-2); font-size: 14px; }
+  table.tt td.out { font-weight: 700; }
+  table.tt button.cellbtn { min-width: 44px; min-height: 36px; border-radius: 6px; border: 1px dashed var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font: inherit; font-weight: 700; cursor: pointer; }
+  table.tt button.cellbtn.ok { border: 2px solid var(--ms-good); background: var(--ms-good-soft); }
+  table.tt button.cellbtn.no { border: 2px solid var(--ms-bad); background: var(--ms-bad-soft); }
+  .tt-wrap { overflow-x: auto; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 14px; cursor: pointer; }
+  .mini-tts { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 2.4 Boolean logic</p>
+  <p class="eyebrow">OCR J277 · Paper 2 · Topic 2.4</p>
+  <h1>Boolean logic</h1>
+  <p class="intro">Computers are built from billions of tiny logic gates that work with just two values: 1 (true) and 0 (false). Learn the three gates, how to combine them into circuits, and how to complete truth tables.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="gates">
+    <div class="sec-head"><span class="sec-num">2.4.1</span><h2>AND, OR and NOT gates</h2></div>
+    <p>A <span class="term">logic gate</span> takes one or more binary inputs and produces a single binary output. A <span class="term">truth table</span> shows the output for <strong>every possible combination</strong> of inputs.</p>
+    <div class="mini-tts">
+      <div class="mini">
+        <h4>AND</h4>
+        <p>Output is 1 only if <strong>both</strong> inputs are 1.</p>
+        <table class="tt"><tr><th>A</th><th>B</th><th>A AND B</th></tr><tr><td>0</td><td>0</td><td class="out">0</td></tr><tr><td>0</td><td>1</td><td class="out">0</td></tr><tr><td>1</td><td>0</td><td class="out">0</td></tr><tr><td>1</td><td>1</td><td class="out">1</td></tr></table>
+      </div>
+      <div class="mini">
+        <h4>OR</h4>
+        <p>Output is 1 if <strong>at least one</strong> input is 1.</p>
+        <table class="tt"><tr><th>A</th><th>B</th><th>A OR B</th></tr><tr><td>0</td><td>0</td><td class="out">0</td></tr><tr><td>0</td><td>1</td><td class="out">1</td></tr><tr><td>1</td><td>0</td><td class="out">1</td></tr><tr><td>1</td><td>1</td><td class="out">1</td></tr></table>
+      </div>
+      <div class="mini">
+        <h4>NOT</h4>
+        <p>Has <strong>one</strong> input and <strong>reverses</strong> it.</p>
+        <table class="tt"><tr><th>A</th><th>NOT A</th></tr><tr><td>0</td><td class="out">1</td></tr><tr><td>1</td><td class="out">0</td></tr></table>
+      </div>
+    </div>
+    <p>OCR may also write these with symbols: AND as <code>∧</code>, OR as <code>∨</code> and NOT as <code>¬</code>. So <code>A ∧ B</code> means <code>A AND B</code>.</p>
+
+    <div class="tool" id="gate-play">
+      <p class="tool-title">Try it: switch the inputs</p>
+      <p class="tool-sub">Press the input buttons to change them between 0 and 1. The lamp lights up when the output is 1, and wires carrying 1 are highlighted.</p>
+      <div class="gate-cards" id="gate-cards"></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="combining">
+    <div class="sec-head"><span class="sec-num">2.4.1</span><h2>Combining gates: logic diagrams</h2></div>
+    <p>Gates can be joined so that the <strong>output of one gate is the input to another</strong>. A <span class="term">logic diagram</span> shows the circuit; a <strong>Boolean expression</strong> describes it in words, using brackets to show which gate happens first.</p>
+    <p>For example, <code>Q = (A AND B) OR NOT C</code>: A and B go into an AND gate; C goes through a NOT gate; the two outputs go into an OR gate.</p>
+
+    <div class="tool" id="circuit">
+      <p class="tool-title">Try it: Q = (A AND B) OR NOT C</p>
+      <p class="tool-sub">Switch the inputs and follow the signal through the circuit.</p>
+      <div class="toggles" id="c-toggles"></div>
+      <svg class="gates" id="c-svg" viewBox="0 0 400 210" role="img" aria-labelledby="c-say"></svg>
+      <p class="explain" id="c-say" aria-live="polite"></p>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>When drawing a logic diagram, use the <strong>correct shape</strong> for each gate (they can't be just labelled boxes), connect each output to the right input, and label the inputs and the final output.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="truth-tables">
+    <div class="sec-head"><span class="sec-num">2.4.1</span><h2>Truth tables for combined expressions</h2></div>
+    <ol>
+      <li><strong>Count the inputs.</strong> With <em>n</em> inputs there are 2<sup><em>n</em></sup> rows: 2 inputs → 4 rows, 3 inputs → 8 rows.</li>
+      <li><strong>List every combination</strong> by counting up in binary: 000, 001, 010, 011, 100…</li>
+      <li><strong>Add a column for each part</strong> of the expression (e.g. <code>A AND B</code>, then <code>NOT C</code>), working from the inside of the brackets outwards.</li>
+      <li><strong>Combine the columns</strong> to get the final output.</li>
+    </ol>
+
+    <div class="tool" id="ttb">
+      <p class="tool-title">Try it: truth table builder</p>
+      <p class="tool-sub">Type an expression using A, B and C with AND, OR, NOT and brackets — or pick one. Practise filling in the table, or just see the answers.</p>
+      <div class="presets" id="tt-presets"></div>
+      <div class="ctl"><label for="tt-in" class="sr">Boolean expression</label><input class="field" style="font-family:var(--ms-font-mono)" type="text" id="tt-in" value="(A AND B) OR NOT C" autocomplete="off" spellcheck="false"></div>
+      <fieldset class="ctl" style="margin:12px 0"><legend class="sr">Mode</legend>
+        <div class="seg">
+          <label><input type="radio" name="tt-mode" value="practice" checked><span>Fill it in</span></label>
+          <label><input type="radio" name="tt-mode" value="show"><span>Show answers</span></label>
+        </div>
+      </fieldset>
+      <div class="tt-wrap" id="tt-out"></div>
+      <div class="btn-row" id="tt-btns"><button type="button" class="btn primary" id="tt-check">Check my table</button></div>
+      <p class="explain" id="tt-say" aria-live="polite"></p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>Missing rows — always check you have 2<sup><em>n</em></sup> different combinations.</li>
+        <li>Ignoring brackets: <code>NOT (A OR B)</code> is not the same as <code>NOT A OR B</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="problems">
+    <div class="sec-head"><span class="sec-num">2.4.1</span><h2>Solving problems with logic</h2></div>
+    <p>Exam questions often describe a real situation. Turn each condition into an input letter, then link them with AND, OR and NOT.</p>
+    <div class="box worked">
+      <p class="box-label">Worked example</p>
+      <p>A security light (<strong>Q</strong>) turns on if it is dark (<strong>A</strong>) and movement is detected (<strong>B</strong>), or if the override switch (<strong>C</strong>) is on.</p>
+      <p>"Dark <em>and</em> movement" → <code>A AND B</code>. "…<em>or</em> the override" → <code>OR C</code>. So <code>Q = (A AND B) OR C</code>.</p>
+      <p>Check one row: dark (A = 1), no movement (B = 0), override on (C = 1) → (1 AND 0) OR 1 = 0 OR 1 = <strong>1</strong>, so the light is on. ✓</p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>Different expressions can give identical truth tables. <code>NOT (A AND B)</code> gives exactly the same outputs as <code>NOT A OR NOT B</code> — try both in the truth table builder. This rule is called <strong>De Morgan's law</strong>, and engineers use rules like it to build circuits from fewer gates.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="2-3-producing-robust-programs.html">2.3 Producing robust programs</a> · Next: <a href="2-5-languages-and-ides.html">2.5 Programming languages and IDEs</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-2-4-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Complete the truth table for A OR B.',
+      points: ['All four input combinations listed: 00, 01, 10, 11', 'Outputs correct: 0, 1, 1, 1'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'Complete the truth table for Q = NOT (A AND B).',
+      points: ['A = 0, B = 0 → Q = 1', 'A = 0, B = 1 → Q = 1', 'A = 1, B = 0 → Q = 1', 'A = 1, B = 1 → Q = 0'],
+      guide: '1 mark per correct row.' },
+    { id: 'q3', marks: 3, text: 'In a logic circuit, inputs A and B go into an AND gate. The output of the AND gate and input C go into an OR gate, which gives output Q. Write the Boolean expression for Q.',
+      points: ['A AND B', '… OR C', 'Brackets / order correct: Q = (A AND B) OR C'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'An alarm (Q) sounds if the door is open (A) and the system is armed (B), or if the panic button (C) is pressed.\n(a) Write a Boolean expression for Q.\n(b) State the value of Q when A = 1, B = 0 and C = 1, and explain why.',
+      points: ['(a) A AND B', '(a) … OR C, giving Q = (A AND B) OR C', '(b) Q = 1', '(b) Because C (the panic button) is 1, and anything OR 1 is 1'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 2, text: 'State how many rows are needed in a truth table with three inputs, and explain why.',
+      points: ['8', 'Each input can be 0 or 1, so there are 2 × 2 × 2 = 2³ combinations'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 4, text: 'Complete the truth table for Q = A AND (B OR C).',
+      points: ['All 8 input combinations listed', 'Every row where A = 0 gives Q = 0', 'A = 1, B = 0, C = 0 gives Q = 0', 'The three rows where A = 1 and B or C is 1 give Q = 1'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'Describe the logic diagram for Q = NOT A OR B.',
+      points: ['Input A goes into a NOT gate', 'The output of the NOT gate and input B go into an OR gate, which outputs Q'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 3, text: 'For Q = (A OR B) AND NOT C, state the output when:\n(a) A = 1, B = 0, C = 0\n(b) A = 0, B = 0, C = 1\n(c) A = 1, B = 1, C = 1',
+      points: ['(a) 1', '(b) 0', '(c) 0'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs, parent) { var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+  function txt(x, y, s, cls, parent, anchor) { var t = el('text', { x: x, y: y, class: cls, 'dominant-baseline': 'central' }, parent); if (anchor) t.setAttribute('text-anchor', anchor); t.textContent = s; return t; }
+  // gate shapes, with the gate's left edge at x and top at y (height 40)
+  function andGate(x, y, p) { el('path', { d: 'M' + x + ' ' + y + ' H' + (x + 30) + ' A20 20 0 0 1 ' + (x + 30) + ' ' + (y + 40) + ' H' + x + ' Z', class: 'gate-body' }, p); return x + 50; }
+  function orGate(x, y, p) { el('path', { d: 'M' + x + ' ' + y + ' Q' + (x + 14) + ' ' + (y + 20) + ' ' + x + ' ' + (y + 40) + ' Q' + (x + 38) + ' ' + (y + 40) + ' ' + (x + 56) + ' ' + (y + 20) + ' Q' + (x + 38) + ' ' + y + ' ' + x + ' ' + y + ' Z', class: 'gate-body' }, p); return x + 56; }
+  function notGate(x, y, p) { el('path', { d: 'M' + x + ' ' + y + ' L' + (x + 36) + ' ' + (y + 20) + ' L' + x + ' ' + (y + 40) + ' Z', class: 'gate-body' }, p); el('circle', { cx: x + 41, cy: y + 20, r: 5, class: 'gate-body' }, p); return x + 46; }
+  function wire(points, on, p) { el('polyline', { points: points.map(function (q) { return q.join(','); }).join(' '), class: 'wire' + (on ? ' on' : '') }, p); }
+
+  // ---------- Single gates ----------
+  var GATES = [
+    { name: 'AND', inputs: ['A', 'B'], f: function (a, b) { return a & b; }, rule: 'Output is 1 only when A and B are both 1.' },
+    { name: 'OR', inputs: ['A', 'B'], f: function (a, b) { return a | b; }, rule: 'Output is 1 when A or B (or both) is 1.' },
+    { name: 'NOT', inputs: ['A'], f: function (a) { return a ? 0 : 1; }, rule: 'Output is the opposite of A.' }
+  ];
+  var cards = document.getElementById('gate-cards');
+  GATES.forEach(function (g) {
+    var vals = g.inputs.map(function () { return 0; });
+    var card = document.createElement('div'); card.className = 'gate-card';
+    var h = document.createElement('h4'); h.textContent = g.name + ' gate'; card.appendChild(h);
+    var svg = el('svg', { viewBox: '0 0 220 90', class: 'gates', role: 'img' });
+    card.appendChild(svg);
+    var tg = document.createElement('div'); tg.className = 'toggles'; card.appendChild(tg);
+    var rule = document.createElement('p'); rule.className = 'rule'; rule.textContent = g.rule; card.appendChild(rule);
+    function draw() {
+      svg.innerHTML = '';
+      var out = g.f.apply(null, vals);
+      var gx = 80, gy = 25;
+      if (g.inputs.length === 2) {
+        wire([[30, 35], [gx + (g.name === 'OR' ? 6 : 0), 35]], vals[0], svg);
+        wire([[30, 55], [gx + (g.name === 'OR' ? 6 : 0), 55]], vals[1], svg);
+        txt(12, 35, g.inputs[0] + '=' + vals[0], 'pin-label', svg).setAttribute('font-size', '13');
+        txt(12, 55, g.inputs[1] + '=' + vals[1], 'pin-label', svg).setAttribute('font-size', '13');
+      } else {
+        wire([[30, 45], [gx, 45]], vals[0], svg);
+        txt(12, 45, 'A=' + vals[0], 'pin-label', svg).setAttribute('font-size', '13');
+      }
+      var ox = g.name === 'AND' ? andGate(gx, gy, svg) : g.name === 'OR' ? orGate(gx, gy, svg) : notGate(gx, gy, svg);
+      wire([[ox, 45], [175, 45]], out, svg);
+      el('circle', { cx: 190, cy: 45, r: 14, class: 'lamp' + (out ? ' on' : '') }, svg);
+      txt(190, 78, 'Q=' + out, 'gate-label', svg);
+      svg.setAttribute('aria-label', g.name + ' gate: ' + g.inputs.map(function (n, i) { return n + ' = ' + vals[i]; }).join(', ') + ', output Q = ' + out);
+      tg.innerHTML = '';
+      g.inputs.forEach(function (n, i) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'tog';
+        b.textContent = n + ' = ' + vals[i];
+        b.setAttribute('aria-pressed', vals[i] ? 'true' : 'false');
+        b.setAttribute('aria-label', 'Input ' + n + ' of the ' + g.name + ' gate, currently ' + vals[i]);
+        b.addEventListener('click', function () { vals[i] = vals[i] ? 0 : 1; draw(); tg.querySelectorAll('button')[i].focus(); });
+        tg.appendChild(b);
+      });
+    }
+    draw();
+    cards.appendChild(card);
+  });
+
+  // ---------- Combined circuit: Q = (A AND B) OR NOT C ----------
+  var cv = { A: 0, B: 0, C: 0 };
+  function drawCircuit() {
+    var svg = document.getElementById('c-svg'); svg.innerHTML = '';
+    var and = cv.A & cv.B, notc = cv.C ? 0 : 1, q = and | notc;
+    txt(18, 40, 'A', 'pin-label', svg); txt(18, 80, 'B', 'pin-label', svg); txt(18, 165, 'C', 'pin-label', svg);
+    wire([[32, 40], [90, 40], [90, 50], [120, 50]], cv.A, svg);
+    wire([[32, 80], [90, 80], [90, 70], [120, 70]], cv.B, svg);
+    wire([[32, 165], [120, 165]], cv.C, svg);
+    andGate(120, 40, svg); txt(145, 30, 'AND', 'gate-label', svg);
+    notGate(120, 145, svg); txt(140, 135, 'NOT', 'gate-label', svg);
+    wire([[170, 60], [215, 60], [215, 95], [258, 95]], and, svg);
+    wire([[166, 165], [215, 165], [215, 125], [258, 125]], notc, svg);
+    orGate(250, 90, svg); txt(278, 80, 'OR', 'gate-label', svg);
+    wire([[306, 110], [345, 110]], q, svg);
+    el('circle', { cx: 362, cy: 110, r: 16, class: 'lamp' + (q ? ' on' : '') }, svg);
+    txt(362, 144, 'Q = ' + q, 'pin-label', svg, 'middle');
+    txt(196, 50, String(and), 'gate-label', svg); txt(196, 155, String(notc), 'gate-label', svg);
+    var tg = document.getElementById('c-toggles'); tg.innerHTML = '';
+    ['A', 'B', 'C'].forEach(function (n, i) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'tog';
+      b.textContent = n + ' = ' + cv[n]; b.setAttribute('aria-pressed', cv[n] ? 'true' : 'false');
+      b.addEventListener('click', function () { cv[n] = cv[n] ? 0 : 1; drawCircuit(); document.querySelectorAll('#c-toggles button')[i].focus(); });
+      tg.appendChild(b);
+    });
+    document.getElementById('c-say').textContent = 'A AND B = ' + cv.A + ' AND ' + cv.B + ' = ' + and + '.  NOT C = NOT ' + cv.C + ' = ' + notc + '.  Q = ' + and + ' OR ' + notc + ' = ' + q + '.';
+  }
+  drawCircuit();
+
+  // ---------- Truth table builder ----------
+  function tokenize(s) {
+    var out = [], re = /\s*(\(|\)|AND|OR|NOT|∧|∨|¬|[ABC]|[01])\s*/iy, i = 0, m;
+    s = s.trim();
+    while (i < s.length) {
+      re.lastIndex = i; m = re.exec(s);
+      if (!m) throw new Error('I don\'t understand "' + s.slice(i, i + 8) + '". Use A, B, C, AND, OR, NOT and brackets.');
+      var t = m[1].toUpperCase(); if (t === '∧') t = 'AND'; if (t === '∨') t = 'OR'; if (t === '¬') t = 'NOT';
+      out.push(t); i = re.lastIndex;
+    }
+    return out;
+  }
+  function parse(s) {
+    var t = tokenize(s), p = 0;
+    function or() { var a = and(); while (t[p] === 'OR') { p++; a = { op: 'OR', l: a, r: and() }; } return a; }
+    function and() { var a = not(); while (t[p] === 'AND') { p++; a = { op: 'AND', l: a, r: not() }; } return a; }
+    function not() { if (t[p] === 'NOT') { p++; return { op: 'NOT', l: not() }; } return prim(); }
+    function prim() {
+      var x = t[p++];
+      if (x === '(') { var e = or(); if (t[p++] !== ')') throw new Error('Missing a closing bracket )'); e.br = true; return e; }
+      if (x === 'A' || x === 'B' || x === 'C') return { v: x };
+      if (x === '0' || x === '1') return { k: +x };
+      throw new Error(x ? 'Unexpected "' + x + '"' : 'The expression ends too early');
+    }
+    var e = or();
+    if (p < t.length) throw new Error('Unexpected "' + t[p] + '"');
+    return e;
+  }
+  function show(n, top) {
+    if (n.v) return n.v;
+    if (n.k != null) return String(n.k);
+    var s = n.op === 'NOT' ? 'NOT ' + show(n.l) : show(n.l) + ' ' + n.op + ' ' + show(n.r);
+    return (!top && (n.br || n.op !== 'NOT')) ? '(' + s + ')' : s;
+  }
+  function evaln(n, env) { if (n.v) return env[n.v]; if (n.k != null) return n.k; if (n.op === 'NOT') return evaln(n.l, env) ? 0 : 1; var a = evaln(n.l, env), b = evaln(n.r, env); return n.op === 'AND' ? a & b : a | b; }
+  function vars(n, set) { if (n.v) set[n.v] = 1; if (n.l) vars(n.l, set); if (n.r) vars(n.r, set); return set; }
+  function subs(n, list) { if (n.l) subs(n.l, list); if (n.r) subs(n.r, list); if (n.op) list.push(n); return list; }
+
+  var PRE = ['A AND B', 'NOT (A OR B)', '(A AND B) OR NOT C', 'A AND (B OR C)', 'NOT (A AND B)', 'NOT A OR NOT B'];
+  var ttIn = document.getElementById('tt-in');
+  PRE.forEach(function (s) { var b = document.createElement('button'); b.type = 'button'; b.textContent = s; b.addEventListener('click', function () { ttIn.value = s; buildTT(); }); document.getElementById('tt-presets').appendChild(b); });
+  var current = null;
+  function buildTT() {
+    var out = document.getElementById('tt-out'), say = document.getElementById('tt-say');
+    out.innerHTML = ''; say.textContent = '';
+    var practice = document.querySelector('input[name="tt-mode"]:checked').value === 'practice';
+    document.getElementById('tt-btns').hidden = !practice;
+    var tree;
+    try { tree = parse(ttIn.value); } catch (e) { current = null; say.textContent = e.message; document.getElementById('tt-btns').hidden = true; return; }
+    var vs = Object.keys(vars(tree, {})).sort();
+    var cols = subs(tree, []);
+    var seen = {}; cols = cols.filter(function (c) { var k = show(c, true); if (seen[k]) return false; seen[k] = 1; return true; });
+    var table = document.createElement('table'); table.className = 'tt';
+    var hr = document.createElement('tr');
+    vs.concat(cols.map(function (c, i) { return i === cols.length - 1 ? 'Q = ' + show(c, true) : show(c, true); })).forEach(function (h) { var th = document.createElement('th'); th.scope = 'col'; th.textContent = h; hr.appendChild(th); });
+    var thead = document.createElement('thead'); thead.appendChild(hr); table.appendChild(thead);
+    var tb = document.createElement('tbody');
+    var rows = 1 << vs.length;
+    for (var r = 0; r < rows; r++) {
+      var env = {}; vs.forEach(function (v, i) { env[v] = (r >> (vs.length - 1 - i)) & 1; });
+      var tr = document.createElement('tr');
+      vs.forEach(function (v) { var td = document.createElement('td'); td.textContent = env[v]; tr.appendChild(td); });
+      cols.forEach(function (c, ci) {
+        var td = document.createElement('td'); td.className = 'out';
+        var ans = evaln(c, env);
+        if (practice) {
+          var b = document.createElement('button'); b.type = 'button'; b.className = 'cellbtn'; b.textContent = '?';
+          b.dataset.ans = ans;
+          b.setAttribute('aria-label', show(c, true) + ', row ' + (r + 1) + ': not filled in');
+          b.addEventListener('click', function () { var n = b.textContent === '1' ? '0' : '1'; b.textContent = n; b.classList.remove('ok', 'no'); b.setAttribute('aria-label', b.getAttribute('aria-label').replace(/: .*$/, ': ' + n)); });
+          td.appendChild(b);
+        } else td.textContent = ans;
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    }
+    table.appendChild(tb); out.appendChild(table);
+    say.textContent = vs.length + ' input' + (vs.length === 1 ? '' : 's') + ', so ' + rows + ' rows. ' + (practice ? 'Click each ? to set it to 1 or 0, working left to right, then check.' : 'Each middle column is one part of the expression; the last column is the final output.');
+  }
+  document.getElementById('tt-check').addEventListener('click', function () {
+    var btns = document.querySelectorAll('#tt-out .cellbtn'), right = 0, blank = 0;
+    btns.forEach(function (b) { if (b.textContent === '?') { blank++; b.classList.remove('ok', 'no'); return; } var ok = b.textContent === b.dataset.ans; b.classList.toggle('ok', ok); b.classList.toggle('no', !ok); if (ok) right++; });
+    document.getElementById('tt-say').textContent = right === btns.length ? 'Perfect — every cell is correct!' : right + ' of ' + btns.length + ' cells correct' + (blank ? ', ' + blank + ' still blank' : '') + '. Red cells are wrong.';
+  });
+  ttIn.addEventListener('input', buildTT);
+  document.querySelectorAll('input[name="tt-mode"]').forEach(function (r) { r.addEventListener('change', buildTT); });
+  buildTT();
+})();
+</script>
+</body>
+</html>

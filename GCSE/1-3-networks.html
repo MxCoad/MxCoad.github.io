@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3 Networks — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 1.3 Computer networks, connections and protocols: LAN and WAN, client-server and peer-to-peer, hardware, the Internet, DNS, topologies, wired and wireless, addressing, protocols and layers.">
+<style>
+  /* DNS journey */
+  .journey { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-bottom: 6px; }
+  @media (max-width: 560px) { .journey { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .node {
+    border: 2px solid var(--ms-line); border-radius: 12px; padding: 12px 10px; text-align: center; background: var(--ms-bg);
+    font-weight: 700; font-size: 15px; transition: border-color .2s, background .2s;
+  }
+  .node small { display: block; font-weight: 400; font-size: 13px; color: var(--ms-muted); }
+  .node.active { border-color: var(--ks-gcse); background: color-mix(in srgb, var(--ks-gcse) 22%, var(--ms-surface)); }
+  .node .icon { display: block; width: 32px; height: 32px; margin: 0 auto 6px; color: var(--ms-muted); }
+  .node.active .icon { color: var(--ms-text); }
+  .node .icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .msg { font-family: var(--ms-font-mono); font-size: 15px; padding: 2px 8px; border-radius: 6px; background: var(--ms-accent-soft); }
+
+  /* Topology simulator */
+  .topo { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  @media (max-width: 640px) { .topo { grid-template-columns: 1fr; } }
+  .topo svg { width: 100%; height: auto; display: block; background: var(--ms-bg); border: 1px solid var(--ms-line); border-radius: 12px; }
+  .topo .link { stroke: var(--ms-muted); stroke-width: 3; }
+  .topo .link.broken { stroke: var(--ms-bad); stroke-dasharray: 6 6; }
+  .topo .dev circle, .topo .dev rect { fill: var(--ms-surface); stroke: var(--ms-text); stroke-width: 2.5; }
+  .topo .dev.down circle, .topo .dev.down rect { stroke: var(--ms-bad); fill: var(--ms-bad-soft); }
+  .topo .dev.cut circle, .topo .dev.cut rect { stroke: var(--ms-warn); fill: var(--ms-warn-soft); }
+  .topo .dev text { fill: var(--ms-text); font-family: var(--ms-font-body); font-weight: 700; font-size: 15px; text-anchor: middle; dominant-baseline: central; }
+  .break-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+  .break-list button {
+    min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface);
+    color: var(--ms-text); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .break-list button[aria-pressed="true"] { background: var(--ms-bad-soft); border-color: var(--ms-bad); text-decoration: line-through; }
+  .topo h4 { margin: 0 0 4px; font-size: 15px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 1.3 Networks</p>
+  <p class="eyebrow">OCR J277 · Paper 1 · Topic 1.3</p>
+  <h1>Networks, connections and protocols</h1>
+  <p class="intro">How computers are linked together, the hardware that does it, how the Internet finds websites, network layouts, and the rules (protocols) that let devices talk to each other.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="types">
+    <div class="sec-head"><span class="sec-num">1.3.1</span><h2>LANs, WANs and performance</h2></div>
+    <p>A <span class="term">network</span> is two or more computers connected together so they can share data and resources such as files, printers and an Internet connection.</p>
+    <table class="def">
+      <tr><th scope="row">LAN<small>Local area network</small></th><td>Covers a <strong>small geographical area</strong>, such as one building or site (a school, an office, a home). The hardware is usually <strong>owned and managed by the organisation</strong> that uses it.</td></tr>
+      <tr><th scope="row">WAN<small>Wide area network</small></th><td>Covers a <strong>large geographical area</strong>, connecting LANs in different places — across a country or the world. It uses infrastructure (cables, satellites) <strong>owned by third parties</strong> such as telecoms companies. The Internet is the biggest WAN.</td></tr>
+    </table>
+    <h3>Factors that affect network performance</h3>
+    <ul>
+      <li><strong>Bandwidth</strong> — the amount of data that can be sent per second. More bandwidth, faster network.</li>
+      <li><strong>Number of users</strong> — more devices sharing the same bandwidth means less each, so it's slower.</li>
+      <li><strong>Transmission media</strong> — fibre optic is faster than copper cable; wired is usually faster than wireless.</li>
+      <li><strong>Error rate</strong> — data that arrives damaged has to be sent again, which slows things down.</li>
+      <li><strong>Latency</strong> — the delay before data starts to arrive, e.g. because it has a long way to travel.</li>
+      <li><strong>Interference</strong> — walls, distance and other devices can disrupt wireless signals.</li>
+    </ul>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>A LAN isn't defined by the number of computers — a LAN can have thousands. It's about <strong>geographical area</strong> (and who owns the hardware).</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="models">
+    <div class="sec-head"><span class="sec-num">1.3.1</span><h2>Client–server and peer-to-peer</h2></div>
+    <div class="two-col">
+      <div class="mini">
+        <h4>Client–server</h4>
+        <p>One or more powerful <strong>servers</strong> provide services (files, email, websites, log-ins) and <strong>clients</strong> request them.</p>
+        <ul>
+          <li>✓ Files, back-ups and security <strong>managed centrally</strong></li>
+          <li>✓ Users can log in from any client</li>
+          <li>✗ Servers are <strong>expensive</strong> and need a specialist to manage</li>
+          <li>✗ If the server fails, clients lose access</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4>Peer-to-peer (P2P)</h4>
+        <p>All computers are <strong>equal</strong>. Each one stores its own files and <strong>shares them directly</strong> with the others.</p>
+        <ul>
+          <li>✓ <strong>Cheap</strong> and easy to set up — no server needed</li>
+          <li>✓ No single point of failure</li>
+          <li>✗ No central back-up or security; each user has to manage their own</li>
+          <li>✗ Files are spread out and harder to find; a peer may be switched off</li>
+        </ul>
+      </div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Choose based on the scenario. A small business with three computers: peer-to-peer (cheap, simple). A school with hundreds of users: client–server (central log-ins, back-ups and security).</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="hardware">
+    <div class="sec-head"><span class="sec-num">1.3.1</span><h2>Network hardware</h2></div>
+    <table class="def">
+      <tr><th scope="row">NIC<small>Network interface card</small></th><td>Lets a device <strong>connect to a network</strong> (wired or wireless). Each NIC has a unique <strong>MAC address</strong>.</td></tr>
+      <tr><th scope="row">Switch</th><td>Connects devices <strong>within a LAN</strong>. It receives data and sends it only to the <strong>device it's meant for</strong>, using the MAC address.</td></tr>
+      <tr><th scope="row">Router</th><td>Connects <strong>different networks</strong> together, e.g. a LAN to the Internet. It <strong>forwards packets towards their destination</strong> using <strong>IP addresses</strong>.</td></tr>
+      <tr><th scope="row">WAP<small>Wireless access point</small></th><td>Lets <strong>wireless devices connect</strong> to a wired network. (A home "router" is really a router, switch and WAP in one box.)</td></tr>
+      <tr><th scope="row">Transmission media</th><td>What the data travels through: <strong>copper (Ethernet) cable</strong> — cheap, good for LANs; <strong>fibre optic cable</strong> — uses light, very fast, long distances, more expensive; <strong>radio waves</strong> for wireless.</td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Mixing up switches and routers. <strong>Switch</strong>: inside one network, uses <strong>MAC</strong> addresses. <strong>Router</strong>: between networks, uses <strong>IP</strong> addresses.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="internet">
+    <div class="sec-head"><span class="sec-num">1.3.1</span><h2>The Internet</h2></div>
+    <p>The <span class="term">Internet</span> is a <strong>worldwide collection of computer networks</strong> joined together. (The World Wide Web is the collection of websites you can reach <em>over</em> the Internet.)</p>
+    <table class="def">
+      <tr><th scope="row">DNS<small>Domain name system</small></th><td>Converts a <strong>domain name</strong> (e.g. bbc.co.uk) into the <strong>IP address</strong> of the server that holds the website, because computers need the IP address to connect.</td></tr>
+      <tr><th scope="row">Hosting</th><td>Storing a website or files on a <strong>server connected to the Internet</strong> so others can access them, usually by paying a hosting company.</td></tr>
+      <tr><th scope="row">Web server &amp; client</th><td>A <strong>web server</strong> stores web pages and sends them when asked. The <strong>client</strong> is the web browser that requests them.</td></tr>
+      <tr><th scope="row">The cloud</th><td>Using <strong>remote servers accessed over the Internet</strong> to store files or run software and services, instead of your own computer.</td></tr>
+    </table>
+    <div class="two-col">
+      <div class="mini"><h4>Cloud: advantages</h4><ul><li>Access files from anywhere, on any device</li><li>No need to buy or maintain your own servers</li><li>Easy to get more storage when needed</li><li>Back-ups and updates handled by the provider</li></ul></div>
+      <div class="mini"><h4>Cloud: disadvantages</h4><ul><li>Needs an Internet connection</li><li>Data is stored by a third party — security and privacy concerns</li><li>Ongoing subscription costs</li><li>Less control over your data</li></ul></div>
+    </div>
+
+    <div class="tool" id="dns">
+      <p class="tool-title">Try it: what happens when you visit a website?</p>
+      <p class="tool-sub">Step through how a browser finds and loads <span class="msg">www.example.com</span>.</p>
+      <div class="journey">
+        <div class="node" data-node="you"><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span>Your browser<small>the client</small></div>
+        <div class="node" data-node="dns"><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>DNS server<small>names → IP addresses</small></div>
+        <div class="node" data-node="router"><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>The Internet<small>routers forward packets</small></div>
+        <div class="node" data-node="web"><span class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/><path d="M8 6.5h.01M8 17.5h.01"/></svg></span>Web server<small>hosts the website</small></div>
+      </div>
+      <p class="explain" id="dns-say" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="dns-next">Next step</button>
+        <button type="button" class="btn" id="dns-reset">Start again</button>
+        <span class="small" id="dns-count" style="margin:0 0 0 auto"></span>
+      </div>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p>No single DNS server knows every address. If yours doesn't have the answer, it asks other DNS servers in a hierarchy — starting with a root server, then the server for <code>.com</code>, then the one for <code>example.com</code>. Answers are <strong>cached</strong> for a while so the next look-up is faster.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="topologies">
+    <div class="sec-head"><span class="sec-num">1.3.1</span><h2>Star and mesh topologies</h2></div>
+    <p>A <span class="term">topology</span> is the way the devices in a network are arranged and connected.</p>
+    <div class="two-col">
+      <div class="mini">
+        <h4>Star</h4>
+        <p>Every device connects to a <strong>central switch</strong>.</p>
+        <ul>
+          <li>✓ If one cable or device fails, the rest of the network keeps working</li>
+          <li>✓ Easy to add new devices</li>
+          <li>✓ Fast: the switch sends data only to the right device</li>
+          <li>✗ If the <strong>central switch fails</strong>, the whole network goes down</li>
+          <li>✗ Needs a lot of cable</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4>Mesh</h4>
+        <p>Each device connects to <strong>several or all other devices</strong> (a full mesh connects every pair).</p>
+        <ul>
+          <li>✓ <strong>Many routes</strong> for data: if one link fails, data takes another route</li>
+          <li>✓ No single point of failure</li>
+          <li>✗ Lots of cable (in a wired mesh), so expensive</li>
+          <li>✗ Complex to set up and manage</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tool" id="topo">
+      <p class="tool-title">Try it: break the network</p>
+      <p class="tool-sub">Choose a topology, then break cables or devices and see who can still communicate.</p>
+      <fieldset class="ctl" style="margin-bottom:12px">
+        <legend>Topology</legend>
+        <div class="seg">
+          <label><input type="radio" name="tp" value="star" checked><span>Star</span></label>
+          <label><input type="radio" name="tp" value="mesh"><span>Mesh</span></label>
+        </div>
+      </fieldset>
+      <div class="topo">
+        <svg id="topo-svg" viewBox="0 0 360 300" role="img" aria-labelledby="topo-say"></svg>
+        <div>
+          <h4>Break a device</h4>
+          <div class="break-list" id="break-devs"></div>
+          <h4>Break a cable</h4>
+          <div class="break-list" id="break-links"></div>
+          <button type="button" class="btn" id="topo-fix">Repair everything</button>
+        </div>
+      </div>
+      <p class="explain" id="topo-say" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="wired-wireless">
+    <div class="sec-head"><span class="sec-num">1.3.2</span><h2>Wired and wireless connections</h2></div>
+    <table class="def">
+      <tr><th scope="row">Ethernet<small>wired</small></th><td>Uses cables. <strong>Fast, reliable and secure</strong> — it's hard to intercept data without physical access. But devices are <strong>tied to a cable</strong>, and cabling a building costs money.</td></tr>
+      <tr><th scope="row">Wi-Fi<small>wireless</small></th><td>Uses radio waves. Devices can <strong>move around</strong> and it's easy to add new ones. But it's usually <strong>slower</strong>, affected by <strong>range and interference</strong>, and data can be <strong>intercepted</strong> more easily.</td></tr>
+      <tr><th scope="row">Bluetooth<small>wireless</small></th><td>Connects devices <strong>directly over a short range</strong> (about 10 m), using little power — e.g. headphones, keyboards and speakers. Low bandwidth.</td></tr>
+    </table>
+    <h3>Encryption</h3>
+    <p>Wireless signals can be picked up by anyone in range, so data is <span class="term">encrypted</span>: it's scrambled using a key, so if it's intercepted it <strong>can't be understood</strong> without the key. Wi-Fi uses encryption standards such as WPA2 and WPA3.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Encryption doesn't <strong>stop</strong> data being intercepted — it makes intercepted data <strong>unreadable</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="topic" id="protocols">
+    <div class="sec-head"><span class="sec-num">1.3.2</span><h2>Addresses, standards, protocols and layers</h2></div>
+    <h3>IP and MAC addresses</h3>
+    <table class="def">
+      <tr><th scope="row">IP address</th><td>Assigned to a device by the <strong>network</strong> it joins, so it <strong>can change</strong>. Used to <strong>route data across networks and the Internet</strong>. IPv4: 32 bits, written as four numbers 0–255 (e.g. <code>192.168.1.24</code>). IPv6: 128 bits, written in hex, because the world was running out of IPv4 addresses.</td></tr>
+      <tr><th scope="row">MAC address</th><td>A <strong>unique</strong> address <strong>assigned to the NIC when it's made</strong>, so it <strong>doesn't change</strong>. 48 bits, written as 12 hex digits (e.g. <code>3C:22:FB:9A:01:7E</code>). Used to send data to the right device <strong>within a LAN</strong>.</td></tr>
+    </table>
+    <h3>Standards</h3>
+    <p><span class="term">Standards</span> are agreed sets of rules for hardware and software. They mean products made by <strong>different manufacturers can work together</strong> — any Wi-Fi laptop can join any Wi-Fi network.</p>
+    <h3>Protocols</h3>
+    <p>A <span class="term">protocol</span> is a set of rules for how data is sent between devices.</p>
+    <table class="def">
+      <tr><th scope="row">TCP/IP</th><td><strong>TCP</strong> splits data into <strong>packets</strong>, numbers them, checks they all arrive and puts them back in order (asking for missing ones to be resent). <strong>IP</strong> addresses the packets and routes them to the right destination.</td></tr>
+      <tr><th scope="row">HTTP</th><td>Used by web browsers to <strong>request and receive web pages</strong> from web servers.</td></tr>
+      <tr><th scope="row">HTTPS</th><td>HTTP with <strong>encryption</strong>, so web pages and data (like passwords and card details) are sent securely.</td></tr>
+      <tr><th scope="row">FTP</th><td>Used to <strong>transfer files</strong> between computers, e.g. uploading a website's files to a web server.</td></tr>
+      <tr><th scope="row">SMTP</th><td>Used to <strong>send email</strong> to a mail server, and between mail servers.</td></tr>
+      <tr><th scope="row">POP</th><td>Used to <strong>download email</strong> from a mail server to one device; it's then usually <strong>deleted from the server</strong>.</td></tr>
+      <tr><th scope="row">IMAP</th><td>Used to <strong>access email</strong> that <strong>stays on the server</strong>, so it's the same on every device.</td></tr>
+    </table>
+
+    <div class="tool">
+      <p class="tool-title">Try it: which protocol?</p>
+      <p class="tool-sub">Choose the protocol used in each situation.</p>
+      <div id="sort-protocols"></div>
+    </div>
+
+    <h3>Layers</h3>
+    <p>Network communication is split into <span class="term">layers</span>. Each layer is a group of related protocols that does <strong>one part of the job</strong> and passes data to the layer above or below.</p>
+    <table class="def">
+      <tr><th scope="row">Application</th><td>Protocols that apps use: HTTP, HTTPS, FTP, SMTP, IMAP, POP</td></tr>
+      <tr><th scope="row">Transport</th><td>Splitting data into packets and reassembling them: TCP</td></tr>
+      <tr><th scope="row">Internet</th><td>Addressing and routing packets between networks: IP</td></tr>
+      <tr><th scope="row">Link</th><td>Sending data over the physical connection: Ethernet, Wi-Fi</td></tr>
+    </table>
+    <p><strong>Why use layers?</strong></p>
+    <ul>
+      <li>Each layer is <strong>self-contained</strong>, so it can be developed or changed <strong>without affecting the others</strong>.</li>
+      <li>Developers can <strong>focus on one layer</strong> without needing to understand them all.</li>
+      <li>Problems are <strong>easier to find and fix</strong>.</li>
+      <li>Standards for each layer let <strong>hardware and software from different manufacturers</strong> work together.</li>
+    </ul>
+    <p>The <a href="Revision_Console.html">GCSE Revision Console</a> has more practice on protocol layers.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>SMTP <strong>sends</strong> email; POP and IMAP <strong>receive</strong> it. And "HTTPS is secure" isn't enough — say it <strong>encrypts</strong> the data.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-2-memory-and-storage.html">1.2 Memory and storage</a> · Next: <a href="1-4-network-security.html">1.4 Network security</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-1-3-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Describe two differences between a LAN and a WAN.',
+      points: ['A LAN covers a small geographical area (e.g. one building / site); a WAN covers a large geographical area', 'LAN hardware is usually owned by the organisation; a WAN uses infrastructure owned by third parties / telecoms companies'],
+      guide: '1 mark for each difference.' },
+    { id: 'q2', marks: 3, text: 'State three factors that can affect the performance of a network.',
+      points: ['Bandwidth', 'Number of users / devices', 'Transmission media (e.g. fibre vs copper vs wireless)', 'Error rate', 'Latency', 'Interference'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q3', marks: 4, text: 'A small charity has four computers in one office. Explain whether a client–server or peer-to-peer network would be more suitable.',
+      points: ['Peer-to-peer is likely to be more suitable', 'It is cheaper / no need to buy a server', 'It is easier to set up / no specialist needed to manage a server', 'With only four computers, central management / back-up is less important', 'Drawback of P2P: each user must back up their own files / no central security'],
+      guide: 'Award marks for a justified choice. Accept client–server if well justified (e.g. central back-ups of sensitive data). Maximum 4.' },
+    { id: 'q4', marks: 2, text: 'Describe the role of a router.',
+      points: ['Connects different networks together (e.g. a LAN to the Internet / WAN)', 'Forwards / directs packets towards their destination using IP addresses'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 4, text: 'A user types www.example.com into a web browser. Describe how DNS is used to load the web page.',
+      points: ['The browser sends the domain name to a DNS server', 'The DNS server looks up the IP address that matches the domain name', 'If it does not know it, it asks another DNS server', 'The IP address is sent back to the browser', 'The browser uses the IP address to request the page from the web server'],
+      guide: 'Any four points, 1 mark each.' },
+    { id: 'q6', marks: 4, text: 'A school uses a star topology. Explain one advantage and one disadvantage of a star topology.',
+      points: ['Advantage: if one cable / device fails, the rest of the network still works', '…because each device has its own connection to the central switch', 'Disadvantage: if the central switch fails, the whole network fails', '…because all data passes through the switch (or: lots of cable is needed, so it is expensive)'],
+      guide: '2 marks for the advantage (point + explanation) and 2 for the disadvantage.' },
+    { id: 'q7', marks: 2, text: 'Give two differences between an IP address and a MAC address.',
+      points: ['A MAC address is assigned when the NIC is made and does not change; an IP address is assigned by the network and can change', 'An IP address is used to route data across networks / the Internet; a MAC address is used within a LAN', 'An IPv4 address is 32 bits (denary); a MAC address is 48 bits (hex)'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q8', marks: 2, text: 'Identify the protocol used for:\n(a) sending an email from a laptop to a mail server\n(b) securely sending card details to an online shop',
+      points: ['(a) SMTP', '(b) HTTPS'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 3, text: 'Explain the benefits of dividing network communication into layers.',
+      points: ['Each layer can be developed / changed without affecting the other layers', 'Developers can focus on one layer', 'Problems are easier to identify and fix', 'Standards for each layer mean hardware / software from different manufacturers can work together'],
+      guide: 'Any three, 1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Protocol sorter ----------
+  TopicKit.sorter(document.getElementById('sort-protocols'), ['HTTP', 'HTTPS', 'FTP', 'SMTP', 'IMAP', 'POP'], [
+    { text: 'Uploading the files for a new website onto a web server', answer: 'FTP', why: 'FTP transfers files between computers.' },
+    { text: 'Paying for a concert ticket on a website', answer: 'HTTPS', why: 'Card details must be encrypted.' },
+    { text: 'Sending an email you have just written', answer: 'SMTP', why: 'SMTP sends email to the mail server.' },
+    { text: 'Reading your school email on your phone and laptop, and seeing the same messages on both', answer: 'IMAP', why: 'IMAP keeps email on the server.' },
+    { text: 'Downloading email to one computer and removing it from the server', answer: 'POP', why: 'POP downloads email and usually deletes it from the server.' },
+    { text: 'Loading a public web page about the weather that needs no log-in', answer: 'HTTP', why: 'HTTP requests web pages (HTTPS would also work, and most sites now use it).' }
+  ]);
+
+  // ---------- DNS journey ----------
+  var STEPS = [
+    ['you', 'You type www.example.com into the browser. Computers find each other using IP addresses, so the browser needs to find this website\'s IP address.'],
+    ['dns', 'The browser sends the domain name to a DNS server and asks: "What is the IP address of www.example.com?"'],
+    ['dns', 'The DNS server looks the name up and finds the matching IP address, for example 93.184.215.14. (If it didn\'t know, it would ask another DNS server.)'],
+    ['you', 'The DNS server sends the IP address back to the browser.'],
+    ['router', 'The browser sends an HTTP (or HTTPS) request for the page to that IP address. TCP splits it into packets, and routers forward the packets across the Internet using the IP address.'],
+    ['web', 'The web server that hosts the website receives the request and sends the web page back, again as packets.'],
+    ['you', 'TCP puts the packets back in order and the browser displays the page. All of this usually takes less than a second.']
+  ];
+  var at = 0;
+  function renderDns() {
+    document.querySelectorAll('#dns .node').forEach(function (n) { n.classList.toggle('active', n.getAttribute('data-node') === STEPS[at][0]); });
+    document.getElementById('dns-say').textContent = STEPS[at][1];
+    document.getElementById('dns-count').textContent = 'Step ' + (at + 1) + ' of ' + STEPS.length;
+    document.getElementById('dns-next').disabled = at === STEPS.length - 1;
+  }
+  document.getElementById('dns-next').addEventListener('click', function () { if (at < STEPS.length - 1) { at++; renderDns(); } });
+  document.getElementById('dns-reset').addEventListener('click', function () { at = 0; renderDns(); });
+  renderDns();
+
+  // ---------- Topology simulator ----------
+  var NS = 'http://www.w3.org/2000/svg';
+  var LAYOUTS = {
+    star: {
+      devices: { S: [180, 150, 'Switch'], A: [180, 40], B: [290, 110], C: [250, 250], D: [110, 250], E: [70, 110] },
+      links: [['S', 'A'], ['S', 'B'], ['S', 'C'], ['S', 'D'], ['S', 'E']]
+    },
+    mesh: {
+      devices: { A: [180, 40], B: [300, 120], C: [255, 255], D: [105, 255], E: [60, 120] },
+      links: [['A', 'B'], ['A', 'C'], ['A', 'D'], ['A', 'E'], ['B', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'D'], ['C', 'E'], ['D', 'E']]
+    }
+  };
+  var brokenDev = {}, brokenLink = {};
+  function topo() { return document.querySelector('input[name="tp"]:checked').value; }
+  function linkKey(l) { return l[0] + '–' + l[1]; }
+  function computers(L) { return Object.keys(L.devices).filter(function (d) { return d !== 'S'; }); }
+  function reachable(L, from) {
+    var seen = {}; seen[from] = true;
+    var q = [from];
+    while (q.length) {
+      var x = q.shift();
+      L.links.forEach(function (l) {
+        if (brokenLink[linkKey(l)]) return;
+        var other = l[0] === x ? l[1] : l[1] === x ? l[0] : null;
+        if (other && !seen[other] && !brokenDev[other]) { seen[other] = true; q.push(other); }
+      });
+    }
+    return seen;
+  }
+  function renderTopo() {
+    var L = LAYOUTS[topo()];
+    var svg = document.getElementById('topo-svg');
+    svg.innerHTML = '';
+    L.links.forEach(function (l) {
+      var a = L.devices[l[0]], b = L.devices[l[1]];
+      var line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', a[0]); line.setAttribute('y1', a[1]); line.setAttribute('x2', b[0]); line.setAttribute('y2', b[1]);
+      line.setAttribute('class', 'link' + (brokenLink[linkKey(l)] ? ' broken' : ''));
+      svg.appendChild(line);
+    });
+    var comps = computers(L);
+    // how many other computers each computer can reach
+    var reach = {};
+    comps.forEach(function (c) { reach[c] = brokenDev[c] ? 0 : comps.filter(function (o) { return o !== c && reachable(L, c)[o]; }).length; });
+    Object.keys(L.devices).forEach(function (d) {
+      var p = L.devices[d];
+      var g = document.createElementNS(NS, 'g');
+      var cls = 'dev';
+      if (brokenDev[d]) cls += ' down';
+      else if (d !== 'S' && reach[d] === 0) cls += ' cut';
+      g.setAttribute('class', cls);
+      var shape;
+      if (d === 'S') { shape = document.createElementNS(NS, 'rect'); shape.setAttribute('x', p[0] - 36); shape.setAttribute('y', p[1] - 20); shape.setAttribute('width', 72); shape.setAttribute('height', 40); shape.setAttribute('rx', 8); }
+      else { shape = document.createElementNS(NS, 'circle'); shape.setAttribute('cx', p[0]); shape.setAttribute('cy', p[1]); shape.setAttribute('r', 24); }
+      var t = document.createElementNS(NS, 'text');
+      t.setAttribute('x', p[0]); t.setAttribute('y', p[1]);
+      t.textContent = p[2] || d;
+      g.append(shape, t);
+      svg.appendChild(g);
+    });
+    // controls
+    var devBox = document.getElementById('break-devs'), linkBox = document.getElementById('break-links');
+    devBox.innerHTML = ''; linkBox.innerHTML = '';
+    Object.keys(L.devices).forEach(function (d) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = L.devices[d][2] || 'Computer ' + d;
+      b.setAttribute('aria-pressed', brokenDev[d] ? 'true' : 'false');
+      b.addEventListener('click', function () { brokenDev[d] = !brokenDev[d]; renderTopo(); });
+      devBox.appendChild(b);
+    });
+    L.links.forEach(function (l) {
+      var k = linkKey(l);
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = (l[0] === 'S' ? 'Switch' : l[0]) + '–' + l[1];
+      b.setAttribute('aria-pressed', brokenLink[k] ? 'true' : 'false');
+      b.addEventListener('click', function () { brokenLink[k] = !brokenLink[k]; renderTopo(); });
+      linkBox.appendChild(b);
+    });
+    // summary
+    var working = comps.filter(function (c) { return !brokenDev[c]; });
+    var pairs = 0, ok = 0;
+    for (var i = 0; i < working.length; i++) for (var j = i + 1; j < working.length; j++) { pairs++; if (reachable(L, working[i])[working[j]]) ok++; }
+    var cut = working.filter(function (c) { return reach[c] === 0; });
+    var say;
+    if (!Object.keys(brokenDev).some(function (k) { return brokenDev[k]; }) && !Object.keys(brokenLink).some(function (k) { return brokenLink[k]; })) {
+      say = topo() === 'star' ? 'Every computer is connected through the central switch. Try breaking a cable, then try breaking the switch.' : 'Every computer is connected directly to every other one. Try breaking several cables — data finds another route.';
+    } else if (topo() === 'star' && brokenDev.S) {
+      say = 'The switch is down, so no computer can communicate with any other. This is the big weakness of a star topology: the switch is a single point of failure.';
+    } else {
+      say = ok + ' of ' + pairs + ' pairs of working computers can still communicate.';
+      if (cut.length) say += ' Cut off: ' + cut.map(function (c) { return 'computer ' + c; }).join(', ') + '.';
+      if (topo() === 'star' && cut.length) say += ' Only the computer' + (cut.length > 1 ? 's' : '') + ' on the broken cable' + (cut.length > 1 ? 's are' : ' is') + ' affected — everyone else carries on.';
+      if (topo() === 'mesh' && ok === pairs) say += ' Data simply takes another route — no single cable failure can split a full mesh.';
+    }
+    document.getElementById('topo-say').textContent = say;
+  }
+  document.querySelectorAll('input[name="tp"]').forEach(function (r) { r.addEventListener('change', function () { brokenDev = {}; brokenLink = {}; renderTopo(); }); });
+  document.getElementById('topo-fix').addEventListener('click', function () { brokenDev = {}; brokenLink = {}; renderTopo(); });
+  renderTopo();
+})();
+</script>
+</body>
+</html>

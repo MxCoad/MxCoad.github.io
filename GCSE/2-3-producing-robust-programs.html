@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.3 Producing robust programs — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 2.3 Producing robust programs: defensive design, anticipating misuse, authentication, input validation, maintainability, testing and test data.">
+<style>
+  .checks-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; }
+  .checks-list li { display: flex; gap: 10px; align-items: baseline; padding: 8px 12px; border-radius: 8px; background: var(--ms-surface-2); font-size: 16px; }
+  .checks-list .mark { font-weight: 700; width: 20px; flex: none; }
+  .checks-list .pass .mark { color: var(--ms-good); }
+  .checks-list .fail .mark { color: var(--ms-bad); }
+  .checks-list .skip { opacity: .55; }
+  .verdict { margin-top: 10px; font-weight: 700; font-size: 18px; }
+  .code-compare pre { margin-top: 0; }
+  .notes-list { margin: 8px 0 0; padding-left: 22px; font-size: 16px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 2.3 Producing robust programs</p>
+  <p class="eyebrow">OCR J277 · Paper 2 · Topic 2.3</p>
+  <h1>Producing robust programs</h1>
+  <p class="intro">A robust program keeps working whatever users throw at it, and is easy for other programmers to understand and fix. This topic covers designing programs defensively, and testing them properly.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="defensive">
+    <div class="sec-head"><span class="sec-num">2.3.1</span><h2>Defensive design</h2></div>
+    <p><span class="term">Defensive design</span> means planning for things going wrong, so the program <strong>doesn't crash or produce wrong results</strong> and can't easily be misused.</p>
+    <h3>Anticipating misuse</h3>
+    <p>Programmers think about everything a user might do — by <strong>accident or on purpose</strong> — and make sure the program copes:</p>
+    <ul>
+      <li>Typing <strong>text where a number is expected</strong>, or leaving a box empty</li>
+      <li>Entering <strong>very large, negative or very long</strong> values</li>
+      <li>Trying to <strong>guess passwords</strong> again and again</li>
+      <li>Typing code into input boxes, as in an <a href="1-4-network-security.html#interception-sql">SQL injection</a> attack</li>
+    </ul>
+    <p>The program should check input, show a helpful message and let the user try again, rather than crashing.</p>
+    <h3>Authentication</h3>
+    <p><span class="term">Authentication</span> is <strong>confirming the identity of a user</strong> before giving them access — usually with a <strong>username and password</strong>. It can be made stronger with:</p>
+    <ul>
+      <li>rules for <strong>strong passwords</strong></li>
+      <li><strong>locking the account</strong> after a number of failed attempts</li>
+      <li><strong>two-factor authentication</strong> (e.g. a code sent to a phone)</li>
+      <li><strong>biometrics</strong> such as a fingerprint or face scan</li>
+    </ul>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="validation">
+    <div class="sec-head"><span class="sec-num">2.3.1</span><h2>Input validation</h2></div>
+    <p><span class="term">Validation</span> checks that input data is <strong>sensible and follows the rules</strong> before the program uses it. If it doesn't, the data is <strong>rejected</strong> and the user is asked to enter it again.</p>
+    <table class="def">
+      <tr><th scope="row">Presence check</th><td>Something has been entered — the field isn't empty</td></tr>
+      <tr><th scope="row">Type check</th><td>The data is the right <strong>data type</strong>, e.g. a whole number, not text</td></tr>
+      <tr><th scope="row">Range check</th><td>A number is <strong>between a lower and upper limit</strong>, e.g. an age from 11 to 18</td></tr>
+      <tr><th scope="row">Length check</th><td>Text has an acceptable <strong>number of characters</strong>, e.g. a password of at least 8</td></tr>
+      <tr><th scope="row">Format check</th><td>Data follows a <strong>pattern</strong>, e.g. a postcode, or an email address containing an @</td></tr>
+    </table>
+<pre><code>age = int(input("Enter your age"))
+while age &lt; 11 OR age &gt; 18
+    print("Age must be from 11 to 18")
+    age = int(input("Enter your age"))
+endwhile</code></pre>
+
+    <div class="tool" id="valtool">
+      <p class="tool-title">Try it: validation checker</p>
+      <p class="tool-sub">Pick a field, type something in, and see which checks it passes.</p>
+      <div class="controls">
+        <div class="ctl"><label for="v-field">Field</label>
+          <select class="field" id="v-field">
+            <option value="age">Age (11 to 18)</option>
+            <option value="user">Username</option>
+            <option value="email">Email address</option>
+            <option value="post">Postcode</option>
+          </select>
+        </div>
+        <div class="ctl"><label for="v-in">Input</label><input class="field" type="text" id="v-in" value="15" autocomplete="off" spellcheck="false"></div>
+      </div>
+      <ul class="checks-list" id="v-checks"></ul>
+      <p class="verdict" id="v-verdict" aria-live="polite"></p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Validation <strong>doesn't</strong> check that data is <strong>correct</strong> — only that it's <strong>reasonable</strong>. An age of 14 passes a range check even if the person is really 15.</p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p><strong>Verification</strong> is different: it checks data has been <strong>entered or copied accurately</strong>, e.g. typing a new password twice (double entry), or proofreading against the original. Validation and verification together reduce errors, but neither can guarantee the data is true.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="maintainability">
+    <div class="sec-head"><span class="sec-num">2.3.1</span><h2>Maintainability</h2></div>
+    <p>Programs are changed and fixed for years after they're written, often by different people. <span class="term">Maintainable</span> code is <strong>easy to read, understand and update</strong>.</p>
+    <table class="def">
+      <tr><th scope="row">Subprograms</th><td>Split code into <strong>functions and procedures</strong>, each doing one job. Easier to read, test and reuse, and a fix only needs making once.</td></tr>
+      <tr><th scope="row">Naming conventions</th><td>Use <strong>meaningful names</strong> for variables and subprograms (<code>totalScore</code>, not <code>x</code>) in a <strong>consistent style</strong>, so it's clear what each one holds or does.</td></tr>
+      <tr><th scope="row">Indentation</th><td>Indent code inside selection, loops and subprograms so the <strong>structure is easy to see</strong> — which lines belong to which block.</td></tr>
+      <tr><th scope="row">Comments</th><td>Notes in the code that <strong>explain what it does and why</strong>. They're ignored by the computer.</td></tr>
+    </table>
+    <div class="tool code-compare" id="tidy">
+      <p class="tool-title">Try it: make it maintainable</p>
+      <p class="tool-sub">Both versions do exactly the same thing. Switch between them.</p>
+      <fieldset class="ctl" style="margin-bottom:12px"><legend class="sr">Version</legend>
+        <div class="seg">
+          <label><input type="radio" name="tidy" value="bad" checked><span>Hard to maintain</span></label>
+          <label><input type="radio" name="tidy" value="good"><span>Easy to maintain</span></label>
+        </div>
+      </fieldset>
+<pre data-v="bad"><code>function c(a, b)
+x = a * b
+if x &gt; 100 then
+x = x * 0.9
+endif
+return x
+endfunction
+t = c(int(input("?")), 4.5)
+print(t)</code></pre>
+<pre data-v="good" hidden><code>// Works out the cost of a ticket order,
+// with 10% off orders over £100
+const PRICE = 4.5
+const DISCOUNT_LIMIT = 100
+
+function orderCost(numTickets, price)
+    cost = numTickets * price
+    if cost &gt; DISCOUNT_LIMIT then
+        cost = cost * 0.9    // apply 10% discount
+    endif
+    return cost
+endfunction
+
+tickets = int(input("How many tickets?"))
+print(orderCost(tickets, PRICE))</code></pre>
+      <ul class="notes-list" data-v="good" hidden>
+        <li><strong>Comments</strong> explain the purpose and the discount</li>
+        <li><strong>Meaningful names</strong>: <code>orderCost</code>, <code>numTickets</code>, <code>cost</code> instead of <code>c</code>, <code>a</code>, <code>x</code></li>
+        <li><strong>Indentation</strong> shows what's inside the function and the <code>if</code></li>
+        <li><strong>Constants</strong> for the price and limit — easy to change in one place</li>
+        <li>A clear <strong>input prompt</strong> for the user</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="testing">
+    <div class="sec-head"><span class="sec-num">2.3.2</span><h2>Testing</h2></div>
+    <p>Programs are tested to <strong>find and fix errors</strong>, check the program <strong>meets its requirements</strong>, and make sure it <strong>doesn't crash</strong> with unexpected input.</p>
+    <table class="def">
+      <tr><th scope="row">Iterative testing</th><td>Testing <strong>during development</strong>: each part (module) is tested as it's written, errors are fixed, and it's tested again — repeated many times.</td></tr>
+      <tr><th scope="row">Final (terminal) testing</th><td>Testing the <strong>whole program at the end</strong> of development, to check all the parts work together and the program meets all its requirements. Often done by, or with, the users.</td></tr>
+    </table>
+    <h3>Types of error</h3>
+    <table class="def">
+      <tr><th scope="row">Syntax error</th><td>Breaks the <strong>rules (grammar) of the language</strong>, so the program won't translate or run. Example: <code>print("Hello"</code> (missing bracket), <code>whle</code> instead of <code>while</code>.</td></tr>
+      <tr><th scope="row">Logic error</th><td>The program <strong>runs</strong> but does the <strong>wrong thing</strong>. Example: <code>if age &gt; 18</code> when 18-year-olds should be allowed (should be <code>&gt;=</code>).</td></tr>
+    </table>
+    <p>After testing, programmers <strong>refine</strong> the algorithm: fixing the errors found, and making the program more efficient or more robust.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Logic errors are harder to find than syntax errors, because the program <strong>runs without an error message</strong>. That's why trace tables and good test data matter.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="test-data">
+    <div class="sec-head"><span class="sec-num">2.3.2</span><h2>Test data and test plans</h2></div>
+    <p>Good testing uses four kinds of <span class="term">test data</span>. For an input that should accept <strong>whole numbers from 1 to 10</strong>:</p>
+    <table class="def">
+      <tr><th scope="row">Normal</th><td>Typical data that <strong>should be accepted</strong>: e.g. <code>5</code></td></tr>
+      <tr><th scope="row">Boundary</th><td>Data at the <strong>very edge</strong> of what's allowed, which should be accepted: <code>1</code> and <code>10</code>. Testers also try values <strong>just outside</strong> (0 and 11), which should be rejected, to check the limits are in exactly the right place.</td></tr>
+      <tr><th scope="row">Invalid</th><td>The <strong>right data type</strong> but <strong>outside the allowed range</strong>, so it should be rejected: e.g. <code>25</code>, <code>-3</code></td></tr>
+      <tr><th scope="row">Erroneous</th><td>The <strong>wrong data type</strong> altogether, so it should be rejected: e.g. <code>"seven"</code>, <code>4.5</code></td></tr>
+    </table>
+    <div class="tool">
+      <p class="tool-title">Try it: what kind of test data?</p>
+      <p class="tool-sub">The input should accept <strong>whole numbers from 1 to 10</strong>. Choose the type for each piece of test data.</p>
+      <div id="sort-testdata"></div>
+    </div>
+    <h3>Test plans</h3>
+    <p>A <span class="term">test plan</span> lists the tests to carry out. For each test it records:</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">Test</th><th scope="col">Description</th><th scope="col">Test data</th><th scope="col">Type</th><th scope="col">Expected result</th><th scope="col">Actual result</th></tr></thead>
+      <tr><td>1</td><td>Typical score</td><td>5</td><td>Normal</td><td>Accepted</td><td>Accepted ✓</td></tr>
+      <tr><td>2</td><td>Top of range</td><td>10</td><td>Boundary</td><td>Accepted</td><td>Rejected ✗</td></tr>
+      <tr><td>3</td><td>Above range</td><td>11</td><td>Invalid</td><td>Error message, asked again</td><td>Error message ✓</td></tr>
+      <tr><td>4</td><td>Text instead of number</td><td>"ten"</td><td>Erroneous</td><td>Error message, asked again</td><td>Program crashed ✗</td></tr>
+    </table></div>
+    <p>Tests 2 and 4 failed, so the program needs fixing: the range check probably uses <code>&lt; 10</code> instead of <code>&lt;= 10</code>, and there's no type check.</p>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="2-2-programming-fundamentals.html">2.2 Programming fundamentals</a> · Next: <a href="2-4-boolean-logic.html">2.4 Boolean logic</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-2-3-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe two ways a programmer can make their code easier to maintain.',
+      points: ['Names a first method, e.g. comments / meaningful variable names / indentation / subprograms', 'Explains how it helps, e.g. comments explain what the code does so others can understand it', 'Names a second, different method', 'Explains how it helps, e.g. indentation shows which code is inside loops and selection'],
+      guide: '2 marks per method: 1 for identifying it, 1 for explaining how it helps.' },
+    { id: 'q2', marks: 2, text: 'Define the term authentication and give one example.',
+      points: ['Confirming / checking the identity of a user', 'Example, e.g. username and password / two-factor authentication / fingerprint'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'A program asks a student to enter their age, which must be a whole number from 11 to 18. Describe three validation checks that could be used.',
+      points: ['Presence check: something has been entered', 'Type check: the input is an integer / whole number', 'Range check: the age is between 11 and 18 (inclusive)'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'An input should accept whole numbers from 1 to 100. Give one example of each type of test data:\n(a) normal (b) boundary (c) invalid (d) erroneous',
+      points: ['(a) Normal: any whole number from 2 to 99, e.g. 50', '(b) Boundary: 1 or 100', '(c) Invalid: a whole number outside the range, e.g. 0, 150, -5', '(d) Erroneous: the wrong data type, e.g. "fifty", 7.5'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 2, text: 'Explain the difference between iterative testing and final testing.',
+      points: ['Iterative testing: each part is tested during development, fixed and retested', 'Final testing: the whole program is tested at the end, to check it works together / meets the requirements'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'Explain why input validation cannot guarantee that the data entered is correct.',
+      points: ['Validation only checks that data is reasonable / follows the rules', 'Data can be valid but still wrong, e.g. someone enters 14 as their age when they are 15'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 3, text: 'Describe how a programmer could anticipate misuse when designing a log-in system.',
+      points: ['Validate inputs, e.g. limit the length / reject unexpected characters', 'Lock the account after a number of failed attempts', 'Do not reveal whether the username or password was wrong', 'Handle errors without crashing', 'Use parameterised queries to prevent SQL injection'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q8', marks: 3, text: 'Identify three ways this code could be made more maintainable.',
+      code: 'function c(a, b)\nx = a * b\nif x > 100 then\nx = x * 0.9\nendif\nreturn x\nendfunction',
+      points: ['Use meaningful names for the function / variables (instead of c, a, b, x)', 'Indent the code inside the function and the if statement', 'Add comments to explain what the code does', 'Use a constant for the values 100 / 0.9'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q9', marks: 2, text: 'State two items of information that should be recorded for each test in a test plan.',
+      points: ['Test data used', 'Type of test data (normal / boundary / invalid / erroneous)', 'Expected result', 'Actual result', 'Description / purpose of the test'],
+      guide: 'Any two, 1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  TopicKit.sorter(document.getElementById('sort-testdata'), ['Normal', 'Boundary', 'Invalid', 'Erroneous'], [
+    { text: '6', answer: 'Normal', why: 'A typical value inside the range.' },
+    { text: '1', answer: 'Boundary', why: 'The lowest value that should be accepted.' },
+    { text: '10', answer: 'Boundary', why: 'The highest value that should be accepted.' },
+    { text: '25', answer: 'Invalid', why: 'A whole number, but outside the range.' },
+    { text: '0', answer: 'Invalid', why: 'Just outside the range — it should be rejected. Testers use it to check the boundary is in the right place.' },
+    { text: '"seven"', answer: 'Erroneous', why: 'Text is the wrong data type.' },
+    { text: '4.5', answer: 'Erroneous', why: 'Not a whole number, so the wrong data type.' }
+  ]);
+
+  // ---------- Validation checker ----------
+  var RULES = {
+    age: { example: '15', checks: [
+      ['Presence', 'Something has been entered', function (v) { return v.length > 0; }],
+      ['Type', 'It is a whole number', function (v) { return /^-?\d+$/.test(v); }],
+      ['Range', 'It is from 11 to 18', function (v) { return +v >= 11 && +v <= 18; }] ] },
+    user: { example: 'gamer_99', checks: [
+      ['Presence', 'Something has been entered', function (v) { return v.length > 0; }],
+      ['Length', 'It is 3 to 12 characters long', function (v) { return v.length >= 3 && v.length <= 12; }],
+      ['Format', 'It only uses letters, digits and _', function (v) { return /^[A-Za-z0-9_]+$/.test(v); }] ] },
+    email: { example: 'sam@example.com', checks: [
+      ['Presence', 'Something has been entered', function (v) { return v.length > 0; }],
+      ['Format', 'It has one @ with text before it', function (v) { return /^[^@\s]+@[^@\s]*$/.test(v); }],
+      ['Format', 'There is a full stop after the @, followed by more text', function (v) { return /@[^@\s]+\.[^@\s.]+$/.test(v); }] ] },
+    post: { example: 'SW17 0AQ', checks: [
+      ['Presence', 'Something has been entered', function (v) { return v.length > 0; }],
+      ['Length', 'It is 5 to 8 characters long', function (v) { return v.length >= 5 && v.length <= 8; }],
+      ['Format', 'It matches the UK postcode pattern, e.g. SW17 0AQ', function (v) { return /^[A-Za-z]{1,2}\d[A-Za-z\d]? ?\d[A-Za-z]{2}$/.test(v); }] ] }
+  };
+  var field = document.getElementById('v-field'), inp = document.getElementById('v-in');
+  function runVal() {
+    var rule = RULES[field.value], v = inp.value.trim();
+    var list = document.getElementById('v-checks'); list.innerHTML = '';
+    var failed = false;
+    rule.checks.forEach(function (c) {
+      var li = document.createElement('li');
+      var mark = document.createElement('span'); mark.className = 'mark';
+      var text = document.createElement('span');
+      if (failed) { li.className = 'skip'; mark.textContent = '–'; text.textContent = c[0] + ' check: ' + c[1] + ' (not checked — an earlier check failed)'; }
+      else {
+        var ok = c[2](v);
+        li.className = ok ? 'pass' : 'fail';
+        mark.textContent = ok ? '✓' : '✗';
+        mark.setAttribute('aria-label', ok ? 'passed' : 'failed');
+        text.textContent = c[0] + ' check: ' + c[1];
+        if (!ok) failed = true;
+      }
+      li.append(mark, text); list.appendChild(li);
+    });
+    var verdict = document.getElementById('v-verdict');
+    verdict.textContent = failed ? '✗ Rejected — the user would be shown a message and asked again.' : '✓ Accepted — the input is valid (though it might still be wrong!).';
+    verdict.className = 'verdict ' + (failed ? 'result-bad' : 'result-good');
+  }
+  field.addEventListener('change', function () { inp.value = RULES[field.value].example; runVal(); });
+  inp.addEventListener('input', runVal);
+  runVal();
+
+  // ---------- Maintainability toggle ----------
+  document.querySelectorAll('input[name="tidy"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      var v = document.querySelector('input[name="tidy"]:checked').value;
+      document.querySelectorAll('#tidy [data-v]').forEach(function (el) { el.hidden = el.getAttribute('data-v') !== v; });
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.5 Systems software — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 1.5 Systems software: the operating system (user interface, memory management, multitasking, peripherals and drivers, user and file management) and utility software (encryption, defragmentation, compression).">
+<style>
+  /* Memory manager */
+  .apps { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .app-btn {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 10px;
+    border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .app-btn .sw { width: 14px; height: 14px; border-radius: 4px; flex: none; }
+  .app-btn small { font-weight: 400; color: var(--ms-muted); }
+  .mem-label { font-size: 14px; font-weight: 700; color: var(--ms-muted); margin: 10px 0 6px; text-transform: uppercase; letter-spacing: .05em; }
+  .ram { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; }
+  .slot { height: 54px; border-radius: 8px; border: 2px dashed var(--ms-line-strong); display: grid; place-items: center; font-size: 13px; font-weight: 700; color: #18202B; text-align: center; line-height: 1.1; padding: 2px; overflow: hidden; }
+  .slot.used { border-style: solid; border-color: transparent; }
+  .vm { display: flex; flex-wrap: wrap; gap: 6px; min-height: 44px; padding: 6px; border-radius: 10px; border: 2px dashed var(--ms-line-strong); background: var(--ms-bg); }
+  .vm .chip { padding: 6px 10px; border-radius: 8px; font-size: 14px; font-weight: 700; color: #18202B; }
+  .vm .empty { color: var(--ms-muted); font-size: 14px; align-self: center; padding: 0 6px; }
+  .running { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 15px; }
+  .running button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+  /* Defragmenter */
+  .disk { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; max-width: 520px; }
+  .blk { aspect-ratio: 1; border-radius: 6px; display: grid; place-items: center; font-family: var(--ms-font-mono); font-weight: 700; font-size: 15px; color: #18202B; transition: background .15s; }
+  .blk.free { background: var(--ms-surface-2); border: 1px dashed var(--ms-line-strong); }
+  .blk.read { outline: 3px solid var(--ms-text); outline-offset: -3px; }
+  .disk-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 14px 0 4px; }
+  .disk-stats div { padding: 10px 12px; border-radius: 10px; background: var(--ms-surface-2); font-size: 15px; }
+  .disk-stats b { display: block; font-family: var(--ms-font-mono); font-size: 20px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/GCSE/">GCSE</a> › 1.5 Systems software</p>
+  <p class="eyebrow">OCR J277 · Paper 1 · Topic 1.5</p>
+  <h1>Systems software</h1>
+  <p class="intro">The software that runs the computer itself rather than doing a job for the user: the operating system, which manages the hardware, and utility software, which keeps the computer running well.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="os-ui">
+    <div class="sec-head"><span class="sec-num">1.5.1</span><h2>The operating system and user interface</h2></div>
+    <p>An <span class="term">operating system (OS)</span> is software that <strong>manages the computer's hardware and software</strong>, and provides a <strong>platform for applications to run on</strong>. Windows, macOS, Linux, Android and iOS are all operating systems. You need to know five functions:</p>
+    <ol>
+      <li>Providing a <strong>user interface</strong></li>
+      <li><strong>Memory management</strong> and <strong>multitasking</strong></li>
+      <li><strong>Peripheral management</strong> and <strong>drivers</strong></li>
+      <li><strong>User management</strong></li>
+      <li><strong>File management</strong></li>
+    </ol>
+    <h3>User interface</h3>
+    <p>The OS provides a way for the user to <strong>interact with the computer</strong>.</p>
+    <table class="def">
+      <tr><th scope="row">GUI<small>Graphical user interface</small></th><td>Windows, icons, menus and a pointer. <strong>Easy to learn and use</strong>, so it suits most users and beginners. Uses more memory and processing power.</td></tr>
+      <tr><th scope="row">CLI<small>Command-line interface</small></th><td>The user <strong>types commands</strong>. Hard to learn because you must remember the commands, but <strong>fast and powerful</strong> for experts (e.g. network technicians) and uses very few resources.</td></tr>
+      <tr><th scope="row">Menu-driven</th><td>The user picks from a series of simple menus, e.g. a cash machine or a car's settings screen. Very easy, but limited options.</td></tr>
+    </table>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="memory">
+    <div class="sec-head"><span class="sec-num">1.5.1</span><h2>Memory management and multitasking</h2></div>
+    <p>When a program runs, it must be loaded into RAM. The OS's <span class="term">memory management</span>:</p>
+    <ul>
+      <li><strong>Allocates</strong> space in RAM to each program and its data</li>
+      <li><strong>Keeps track</strong> of which parts of memory are being used by which program</li>
+      <li><strong>Stops programs overwriting</strong> each other's memory</li>
+      <li><strong>Frees up</strong> memory when a program closes</li>
+      <li>Moves data between RAM and <strong>virtual memory</strong> when RAM is full (see <a href="1-2-memory-and-storage.html#primary">1.2</a>)</li>
+    </ul>
+    <p><span class="term">Multitasking</span> means running <strong>more than one program at the same time</strong>. A CPU core can only process one instruction at a time, so the OS <strong>switches between programs very quickly</strong>, giving each a short slice of CPU time. This happens so fast that the programs appear to run simultaneously.</p>
+
+    <div class="tool" id="memtool">
+      <p class="tool-title">Try it: be the memory manager</p>
+      <p class="tool-sub">This computer has 8 GB of RAM. Open programs and watch where the OS puts them. If RAM fills up, the program you used least recently is moved to virtual memory.</p>
+      <div class="apps" id="mm-apps"></div>
+      <p class="mem-label">RAM (8 GB)</p>
+      <div class="ram" id="mm-ram"></div>
+      <p class="mem-label">Virtual memory (on secondary storage)</p>
+      <div class="vm" id="mm-vm"></div>
+      <div class="running" id="mm-running"></div>
+      <p class="explain" id="mm-say" aria-live="polite"></p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Multitasking on one core doesn't run programs at exactly the same instant — the OS <strong>switches between them</strong> so quickly that it looks that way.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="peripherals">
+    <div class="sec-head"><span class="sec-num">1.5.1</span><h2>Peripheral management and drivers</h2></div>
+    <p><span class="term">Peripherals</span> are devices connected to the computer, such as keyboards, mice, printers, webcams and speakers. The OS manages communication with them: sending data to output devices, receiving data from input devices, and handling things like the <strong>print queue</strong>.</p>
+    <p>Every model of printer or graphics card works slightly differently, so the OS uses <span class="term">device drivers</span>. A driver is a small piece of software that <strong>translates the OS's general instructions into the specific commands that a particular device understands</strong> (and translates the device's signals back for the OS).</p>
+    <p>This means the OS doesn't need to know how every device works: it can use <strong>hardware from any manufacturer</strong> as long as there's a driver. When you plug in a new device, the OS installs its driver; drivers are updated to fix bugs or add features.</p>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>"A driver lets the computer use the printer" isn't enough. Say it <strong>translates instructions</strong> between the <strong>operating system</strong> and the <strong>device</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="users-files">
+    <div class="sec-head"><span class="sec-num">1.5.1</span><h2>User management and file management</h2></div>
+    <h3>User management</h3>
+    <ul>
+      <li>Creates and deletes <strong>user accounts</strong>, each with a <strong>username and password</strong> to log in (authentication)</li>
+      <li>Sets <strong>access rights</strong> (permissions): which files, folders and programs each user can read, change or delete</li>
+      <li>Keeps each user's files and settings separate (their own <strong>profile</strong>)</li>
+      <li>Can <strong>monitor log-ins</strong> and lock accounts after repeated failed attempts</li>
+    </ul>
+    <h3>File management</h3>
+    <ul>
+      <li>Organises files into <strong>folders (directories)</strong> in a hierarchy, so they're easy to find</li>
+      <li>Lets users <strong>create, name, rename, open, save, copy, move and delete</strong> files</li>
+      <li>Keeps track of <strong>where each file is stored</strong> on the storage device</li>
+      <li>Applies <strong>file permissions</strong>, e.g. making a file read-only</li>
+    </ul>
+    <div class="tool">
+      <p class="tool-title">Try it: which OS function?</p>
+      <p class="tool-sub">Choose the function of the operating system being used in each situation.</p>
+      <div id="sort-os"></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="utilities">
+    <div class="sec-head"><span class="sec-num">1.5.2</span><h2>Utility software</h2></div>
+    <p><span class="term">Utility software</span> performs specific tasks to help <strong>maintain, protect or improve the performance</strong> of the computer.</p>
+    <table class="def">
+      <tr><th scope="row">Encryption software</th><td><strong>Scrambles</strong> files or whole drives using a key, so that if a device is lost or stolen the data <strong>can't be read</strong> without the key.</td></tr>
+      <tr><th scope="row">Defragmentation</th><td>Reorganises files on a <strong>hard disk drive</strong> so that each file's parts are stored <strong>next to each other</strong>, which makes files faster to read.</td></tr>
+      <tr><th scope="row">Data compression</th><td><strong>Reduces the size of files</strong> so they take up less storage space and are quicker to send (see <a href="1-2-memory-and-storage.html#compression">lossy and lossless</a> in 1.2).</td></tr>
+    </table>
+    <h3>How fragmentation happens</h3>
+    <p>When files are saved, deleted and made bigger, the gaps left on a hard disk are different sizes. A new file may not fit in one gap, so it's split into <strong>fragments</strong> stored in different places. To read the file, the disk's <strong>read/write head has to move</strong> to each fragment in turn, which takes time.</p>
+    <p><span class="term">Defragmentation</span> moves the fragments so <strong>each file is stored in one continuous block</strong>, and gathers the <strong>free space together</strong>. The head moves less, so files <strong>load faster</strong>.</p>
+
+    <div class="tool" id="defrag">
+      <p class="tool-title">Try it: defragment a hard disk</p>
+      <p class="tool-sub">Each square is a block on the disk. Files A, B and C have become fragmented. Read a file, then defragment and read it again.</p>
+      <div class="disk" id="dg-disk" role="img" aria-label="Disk blocks"></div>
+      <div class="disk-stats">
+        <div>File A pieces<b id="dg-a"></b></div>
+        <div>File B pieces<b id="dg-b"></b></div>
+        <div>File C pieces<b id="dg-c"></b></div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button type="button" class="btn" data-read="B">Read file B</button>
+        <button type="button" class="btn primary" id="dg-go">Defragment</button>
+        <button type="button" class="btn" id="dg-reset">Start again</button>
+      </div>
+      <p class="explain" id="dg-say" aria-live="polite"></p>
+    </div>
+
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>Defragmentation doesn't create more storage space or delete files — it <strong>rearranges</strong> them.</li>
+        <li><strong>SSDs should not be defragmented.</strong> They have no moving parts, so data can be read equally fast wherever it's stored — there's no benefit — and the extra writing wears out their memory cells, which have a limited number of write cycles.</li>
+      </ul>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further · grades 8–9</p>
+      <p><strong>Backup software</strong> is another common utility. A <strong>full backup</strong> copies everything, which is simple to restore but slow and uses lots of space. An <strong>incremental backup</strong> copies only what has changed since the last backup, which is quick and small, but restoring needs the full backup plus every incremental one since.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-4-network-security.html">1.4 Network security</a> · Next: <a href="1-6-ethical-legal-cultural-environmental.html">1.6 Ethical, legal, cultural and environmental impacts</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-1-5-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'State four functions of an operating system.',
+      points: ['Provides a user interface', 'Memory management / multitasking', 'Peripheral management / device drivers', 'User management', 'File management'],
+      guide: 'Any four, 1 mark each.' },
+    { id: 'q2', marks: 3, text: 'Describe how an operating system manages memory.',
+      points: ['Allocates memory / RAM to programs and data', 'Keeps track of which memory is being used by each program', 'Prevents programs from overwriting each other\'s memory', 'Frees memory when a program is closed', 'Moves data to / from virtual memory when RAM is full'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q3', marks: 2, text: 'Explain how an operating system allows a user to multitask on a single-core CPU.',
+      points: ['Multitasking means running more than one program at once', 'The OS switches the CPU between programs very quickly / gives each program a slice of CPU time'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Explain the purpose of a device driver.',
+      points: ['Translates instructions / commands from the OS into instructions the device understands (and back)', 'Allows the OS to communicate with / use hardware from different manufacturers'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Describe how an operating system provides user management.',
+      points: ['Creates user accounts with usernames and passwords', 'Sets access rights / permissions for files and folders', 'Keeps users\' files and settings separate / user profiles', 'Monitors log-ins / locks accounts after failed attempts'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q6', marks: 2, text: 'A primary school is choosing between a GUI and a command-line interface for its pupils. Recommend one and justify your choice.',
+      points: ['Recommends a GUI', 'Justification, e.g. easy to learn / uses icons and menus / pupils do not need to remember commands'],
+      guide: '1 mark for the recommendation, 1 for the justification.' },
+    { id: 'q7', marks: 4, text: 'Explain how defragmentation software can improve the performance of a computer with a hard disk drive.',
+      points: ['Over time, files are split into fragments stored in different places on the disk', 'Defragmentation moves the fragments so each file is stored in one continuous block', 'Free space is grouped together', 'The read/write head moves less to read a file', 'So files can be opened / loaded more quickly'],
+      guide: 'Any four, 1 mark each.' },
+    { id: 'q8', marks: 2, text: 'Explain why a solid state drive (SSD) should not be defragmented.',
+      points: ['It has no moving parts, so access time is the same wherever data is stored / no performance benefit', 'The extra write operations reduce its lifespan / it has a limited number of write cycles'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 2, text: 'Describe the purpose of encryption software.',
+      points: ['Scrambles / encodes data using a key / algorithm', 'So it cannot be read / understood if it is accessed or stolen without the key'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- OS function sorter ----------
+  TopicKit.sorter(document.getElementById('sort-os'), ['User interface', 'Memory', 'Peripherals', 'Users', 'Files'], [
+    { text: 'You plug in a new webcam and a message says "Installing device software…"', answer: 'Peripherals', why: 'The OS is installing the webcam\'s driver.' },
+    { text: 'A student can open the class folder but cannot delete anything in it', answer: 'Users', why: 'Access rights (permissions) are set per user.' },
+    { text: 'You drag a document into a folder called "Homework"', answer: 'Files', why: 'Organising files into folders is file management.' },
+    { text: 'You close a game and the RAM it was using becomes free', answer: 'Memory', why: 'The OS frees memory when a program closes.' },
+    { text: 'You double-click an icon to open a program', answer: 'User interface', why: 'Icons and a pointer are part of the GUI.' },
+    { text: 'Five documents are waiting in the print queue', answer: 'Peripherals', why: 'The OS manages communication with the printer, including queuing jobs.' }
+  ]);
+
+  // ---------- Memory manager ----------
+  var APPS = [
+    { id: 'web', name: 'Web browser', size: 3, color: 'var(--ks-gcse)' },
+    { id: 'game', name: 'Game', size: 4, color: 'var(--ks-alevel)' },
+    { id: 'word', name: 'Word processor', size: 2, color: 'var(--ks-btec)' },
+    { id: 'music', name: 'Music player', size: 1, color: 'var(--ks-tools)' },
+    { id: 'photo', name: 'Photo editor', size: 3, color: 'var(--ks-ks3)' }
+  ];
+  var RAM = 8;
+  var open = [];         // least recently used first
+  var inRam = {};
+  function app(id) { return APPS.filter(function (a) { return a.id === id; })[0]; }
+  function used() { return open.filter(function (id) { return inRam[id]; }).reduce(function (t, id) { return t + app(id).size; }, 0); }
+  function makeRoom(size, keep) {
+    var moved = [];
+    for (var i = 0; i < open.length && RAM - used() < size; i++) {
+      var id = open[i];
+      if (id !== keep && inRam[id]) { inRam[id] = false; moved.push(app(id).name); }
+    }
+    return moved;
+  }
+  function touch(id) { open = open.filter(function (x) { return x !== id; }); open.push(id); }
+  var say = '';
+  function openApp(id) {
+    var a = app(id);
+    if (open.indexOf(id) >= 0) { useApp(id); return; }
+    touch(id);
+    var moved = makeRoom(a.size, id);
+    inRam[id] = true;
+    say = 'The OS allocated ' + a.size + ' GB of RAM to the ' + a.name.toLowerCase() + '.';
+    if (moved.length) say += ' RAM was full, so it moved the least recently used program (' + moved.join(', ') + ') out to virtual memory to make room.';
+    render();
+  }
+  function useApp(id) {
+    var a = app(id);
+    touch(id);
+    if (!inRam[id]) {
+      var moved = makeRoom(a.size, id);
+      inRam[id] = true;
+      say = 'You switched back to the ' + a.name.toLowerCase() + ', which was in virtual memory. The OS swapped it back into RAM' + (moved.length ? ' (moving ' + moved.join(', ') + ' out)' : '') + '. This takes a moment, because secondary storage is much slower than RAM.';
+    } else {
+      say = 'The ' + a.name.toLowerCase() + ' is already in RAM, so switching to it is instant.';
+    }
+    render();
+  }
+  function closeApp(id) {
+    open = open.filter(function (x) { return x !== id; });
+    inRam[id] = false;
+    say = 'The ' + app(id).name.toLowerCase() + ' closed, and the OS freed the memory it was using.';
+    render();
+  }
+  function render() {
+    var appsBox = document.getElementById('mm-apps');
+    appsBox.innerHTML = '';
+    APPS.forEach(function (a) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'app-btn';
+      var sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = a.color;
+      var sm = document.createElement('small'); sm.textContent = a.size + ' GB';
+      b.append(sw, document.createTextNode((open.indexOf(a.id) >= 0 ? 'Use ' : 'Open ') + a.name + ' '), sm);
+      b.addEventListener('click', function () { openApp(a.id); });
+      appsBox.appendChild(b);
+    });
+    var ram = document.getElementById('mm-ram');
+    ram.innerHTML = '';
+    var slots = [];
+    open.forEach(function (id) { if (inRam[id]) for (var i = 0; i < app(id).size; i++) slots.push(id); });
+    for (var i = 0; i < RAM; i++) {
+      var d = document.createElement('div');
+      d.className = 'slot' + (slots[i] ? ' used' : '');
+      if (slots[i]) {
+        d.style.background = app(slots[i]).color;
+        if (i === 0 || slots[i - 1] !== slots[i]) d.textContent = app(slots[i]).name;
+      }
+      ram.appendChild(d);
+    }
+    var vm = document.getElementById('mm-vm');
+    vm.innerHTML = '';
+    var swapped = open.filter(function (id) { return !inRam[id]; });
+    if (!swapped.length) { var e = document.createElement('span'); e.className = 'empty'; e.textContent = 'Empty'; vm.appendChild(e); }
+    swapped.forEach(function (id) { var c = document.createElement('span'); c.className = 'chip'; c.style.background = app(id).color; c.textContent = app(id).name + ' (' + app(id).size + ' GB)'; vm.appendChild(c); });
+    var run = document.getElementById('mm-running');
+    run.innerHTML = '';
+    if (open.length) {
+      run.appendChild(document.createTextNode('Close: '));
+      open.slice().reverse().forEach(function (id) {
+        var b = document.createElement('button'); b.type = 'button'; b.textContent = app(id).name;
+        b.setAttribute('aria-label', 'Close ' + app(id).name);
+        b.addEventListener('click', function () { closeApp(id); });
+        run.appendChild(b);
+      });
+    }
+    document.getElementById('mm-say').textContent = say || 'Nothing is running yet. Open some programs — try opening them all.';
+    document.getElementById('mm-ram').setAttribute('aria-label', 'RAM: ' + used() + ' of ' + RAM + ' GB used');
+  }
+  render();
+
+  // ---------- Defragmenter ----------
+  var START = ['A', 'B', '', 'C', 'A', '', 'B', 'B', '', 'C', '', 'A', 'B', '', '', 'C', 'A', '', 'B', '', '', 'C', '', 'A', '', 'B', '', '', '', ''];
+  var COLORS = { A: 'var(--ks-gcse)', B: 'var(--ks-ks3)', C: 'var(--ks-btec)' };
+  var disk = START.slice(), reading = -1, timer = null;
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function pieces(f) {
+    var n = 0;
+    for (var i = 0; i < disk.length; i++) if (disk[i] === f && disk[i - 1] !== f) n++;
+    return n;
+  }
+  function renderDisk() {
+    var box = document.getElementById('dg-disk');
+    box.innerHTML = '';
+    disk.forEach(function (f, i) {
+      var b = document.createElement('div');
+      b.className = 'blk' + (f ? '' : ' free') + (i === reading ? ' read' : '');
+      if (f) { b.style.background = COLORS[f]; b.textContent = f; }
+      box.appendChild(b);
+    });
+    document.getElementById('dg-a').textContent = pieces('A');
+    document.getElementById('dg-b').textContent = pieces('B');
+    document.getElementById('dg-c').textContent = pieces('C');
+    document.getElementById('dg-disk').setAttribute('aria-label', 'Disk: file A in ' + pieces('A') + ' pieces, file B in ' + pieces('B') + ', file C in ' + pieces('C'));
+  }
+  function setButtons(on) { document.querySelectorAll('#defrag button').forEach(function (b) { b.disabled = !on; }); }
+  function readFile(f) {
+    var positions = [];
+    disk.forEach(function (x, i) { if (x === f) positions.push(i); });
+    var jumps = 0;
+    for (var i = 1; i < positions.length; i++) if (positions[i] !== positions[i - 1] + 1) jumps++;
+    var msg = 'Reading file ' + f + ': it is stored in ' + pieces(f) + ' piece' + (pieces(f) > 1 ? 's' : '') + ', so the read/write head had to jump to a new position ' + jumps + ' time' + (jumps === 1 ? '' : 's') + '.';
+    msg += jumps ? ' Each jump costs time.' : ' The whole file is in one block, so it reads in one smooth sweep — much faster.';
+    if (reduce) { document.getElementById('dg-say').textContent = msg; return; }
+    setButtons(false);
+    var k = 0;
+    timer = setInterval(function () {
+      reading = positions[k++];
+      renderDisk();
+      if (k >= positions.length) { clearInterval(timer); setTimeout(function () { reading = -1; renderDisk(); setButtons(true); }, 400); document.getElementById('dg-say').textContent = msg; }
+    }, 280);
+  }
+  function defrag() {
+    var target = [];
+    ['A', 'B', 'C'].forEach(function (f) { disk.forEach(function (x) { if (x === f) target.push(f); }); });
+    while (target.length < disk.length) target.push('');
+    var msg = 'Defragmented! Each file is now stored in one continuous block, and all the free space is together at the end. Try reading file B again.';
+    if (reduce) { disk = target; renderDisk(); document.getElementById('dg-say').textContent = msg; return; }
+    setButtons(false);
+    var i = 0;
+    timer = setInterval(function () {
+      while (i < disk.length && disk[i] === target[i]) i++;
+      if (i >= disk.length) { clearInterval(timer); setButtons(true); document.getElementById('dg-say').textContent = msg; return; }
+      // find the block that should go here, swap it in
+      var j = disk.indexOf(target[i], i + 1);
+      var tmp = disk[i]; disk[i] = disk[j]; disk[j] = tmp;
+      renderDisk();
+    }, 140);
+  }
+  document.querySelector('[data-read="B"]').addEventListener('click', function () { readFile('B'); });
+  document.getElementById('dg-go').addEventListener('click', defrag);
+  document.getElementById('dg-reset').addEventListener('click', function () {
+    clearInterval(timer); disk = START.slice(); reading = -1; renderDisk(); setButtons(true);
+    document.getElementById('dg-say').textContent = 'The disk is fragmented again. Press "Read file B" to see how many times the head has to jump.';
+  });
+  renderDisk();
+  document.getElementById('dg-say').textContent = 'Press "Read file B" to see how many times the head has to jump.';
+})();
+</script>
+</body>
+</html>
