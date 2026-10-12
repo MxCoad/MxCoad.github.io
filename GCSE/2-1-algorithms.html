@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2.1 Algorithms — GCSE revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR GCSE Computer Science J277 2.1 Algorithms: computational thinking, flowcharts, pseudocode, trace tables, linear and binary search, bubble, insertion and merge sort.">
+<style>
+  /* Flowchart symbol table */
+  .sym { width: 90px; height: 50px; display: block; }
+  .sym * { fill: var(--ms-surface); stroke: var(--ms-text); stroke-width: 2.5; }
+
+  /* Array boxes used by search and sort tools */
+  .arr { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-end; margin: 10px 0; }
+  .group { display: flex; gap: 4px; padding: 4px; border-radius: 10px; border: 2px solid var(--ms-line-strong); }
+  .cellv {
+    min-width: 44px; height: 48px; padding: 0 4px; border-radius: 8px; display: grid; place-items: center;
+    font-family: var(--ms-font-mono); font-size: 18px; font-weight: 700;
+    background: var(--ms-surface); border: 2px solid var(--ms-line-strong); color: var(--ms-text); position: relative;
+  }
+  .cellv small { position: absolute; top: -18px; font-size: 11px; color: var(--ms-muted); font-weight: 400; }
+  .cellv.hi { border-color: var(--ms-accent); background: var(--ms-accent-soft); }
+  .cellv.found { border-color: var(--ms-good); background: var(--ms-good-soft); }
+  .cellv.out { opacity: .35; }
+  .cellv.done { border-color: var(--ms-good); }
+  .arr.indexed { margin-top: 26px; }
+  .count { font-family: var(--ms-font-mono); font-weight: 700; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 4px; }
+  .pill-row select { min-height: 44px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font: inherit; padding: 0 10px; }
+
+  /* Trace table exercise */
+  table.trace { border-collapse: collapse; margin: 10px 0; font-family: var(--ms-font-mono); }
+  table.trace th, table.trace td { border: 1px solid var(--ms-line-strong); padding: 4px 6px; text-align: center; }
+  table.trace th { background: var(--ms-surface-2); font-size: 15px; padding: 8px 12px; }
+  table.trace input { width: 64px; min-height: 38px; text-align: center; border: 1px solid var(--ms-line); border-radius: 6px; background: var(--ms-bg); color: var(--ms-text); font: inherit; font-size: 17px; }
+  table.trace input.ok { border-color: var(--ms-good); background: var(--ms-good-soft); }
+  table.trace input.no { border-color: var(--ms-bad); background: var(--ms-bad-soft); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/#gcse">GCSE</a> › 2.1 Algorithms</p>
+  <p class="eyebrow">OCR J277 · Paper 2 · Topic 2.1</p>
+  <h1>Algorithms</h1>
+  <p class="intro">How to think about problems like a computer scientist, how to design and check algorithms, and the standard searching and sorting algorithms you need to know step by step.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="thinking">
+    <div class="sec-head"><span class="sec-num">2.1.1</span><h2>Computational thinking</h2></div>
+    <p>An <span class="term">algorithm</span> is a <strong>sequence of steps</strong> that can be followed to solve a problem or complete a task. Computational thinking is the set of skills used to design one.</p>
+    <table class="def">
+      <tr><th scope="row">Abstraction</th><td><strong>Removing unnecessary detail</strong> from a problem so you can focus on the parts that matter. Example: a London Underground map shows stations and connections, but not real distances, streets or buildings.</td></tr>
+      <tr><th scope="row">Decomposition</th><td><strong>Breaking a problem down into smaller sub-problems</strong> that are easier to understand and solve. Each part can be worked on separately, even by different people. Example: a game splits into graphics, controls, scoring and saving.</td></tr>
+      <tr><th scope="row">Algorithmic thinking</th><td>Working out the <strong>steps and their order</strong> needed to solve a problem, so that the solution can be followed — and reused for similar problems.</td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Abstraction isn't "making it simpler" in general — say what detail is being <strong>removed</strong> and why it isn't needed.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="designing">
+    <div class="sec-head"><span class="sec-num">2.1.2</span><h2>Designing algorithms</h2></div>
+    <h3>Inputs, processes and outputs</h3>
+    <p>Before designing an algorithm, identify its <strong>inputs</strong> (data going in), <strong>processes</strong> (what is done to it) and <strong>outputs</strong> (results). For a program that works out the area of a rectangle: inputs are the width and height; the process is width × height; the output is the area.</p>
+    <h3>Structure diagrams</h3>
+    <p>A <span class="term">structure diagram</span> shows <strong>decomposition</strong>: the main problem at the top, broken down into smaller sub-problems below it, and so on.</p>
+    <h3>Flowchart symbols</h3>
+    <table class="def">
+      <tr><th scope="row"><svg class="sym" viewBox="0 0 90 50" aria-hidden="true"><rect x="5" y="10" width="80" height="30" rx="15"/></svg>Terminal</th><td>Start or end of the algorithm</td></tr>
+      <tr><th scope="row"><svg class="sym" viewBox="0 0 90 50" aria-hidden="true"><path d="M20 10 H85 L70 40 H5 Z"/></svg>Input / output</th><td>Data coming in (e.g. from the user) or going out (e.g. printed on screen)</td></tr>
+      <tr><th scope="row"><svg class="sym" viewBox="0 0 90 50" aria-hidden="true"><rect x="5" y="10" width="80" height="30"/></svg>Process</th><td>A calculation or action, e.g. <code>total = total + 1</code></td></tr>
+      <tr><th scope="row"><svg class="sym" viewBox="0 0 90 50" aria-hidden="true"><path d="M45 3 L85 25 L45 47 L5 25 Z"/></svg>Decision</th><td>A yes/no question with two exits, e.g. <code>Is score &gt; 10?</code></td></tr>
+      <tr><th scope="row"><svg class="sym" viewBox="0 0 90 50" aria-hidden="true"><rect x="5" y="10" width="80" height="30"/><path d="M15 10 V40 M75 10 V40"/></svg>Subroutine</th><td>A call to a separate procedure or function</td></tr>
+    </table>
+    <p>Arrows (lines) show the direction of flow.</p>
+    <h3>Pseudocode</h3>
+    <p>Pseudocode describes an algorithm in a structured, code-like way without worrying about the exact syntax of a programming language. In the exam, OCR uses its <strong>Exam Reference Language (ERL)</strong>; you can answer in ERL, pseudocode or a high-level language such as Python.</p>
+    <pre><code>score = int(input("Enter score"))
+if score &gt;= 50 then
+    print("Pass")
+else
+    print("Try again")
+endif</code></pre>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="errors-trace">
+    <div class="sec-head"><span class="sec-num">2.1.2</span><h2>Errors and trace tables</h2></div>
+    <table class="def">
+      <tr><th scope="row">Syntax error</th><td>Code that <strong>breaks the rules of the language</strong>, so it can't be translated or run — e.g. a missing bracket, misspelt keyword or missing colon.</td></tr>
+      <tr><th scope="row">Logic error</th><td>The program <strong>runs</strong> but gives the <strong>wrong result</strong> — e.g. using <code>&lt;</code> instead of <code>&lt;=</code>, or dividing by the wrong number.</td></tr>
+    </table>
+    <p>A <span class="term">trace table</span> is used to <strong>follow an algorithm step by step</strong>, recording the value of each variable as it changes. It's used to find logic errors and to work out what an algorithm does. Each column is a variable (or the output); add a new row each time a value changes.</p>
+
+    <div class="tool" id="trace">
+      <p class="tool-title">Try it: complete the trace table</p>
+      <p class="tool-sub">Trace this algorithm and fill in the table, then check your answers.</p>
+      <pre><code>total = 0
+for i = 1 to 4
+    total = total + i * 2
+next i
+print(total)</code></pre>
+      <table class="trace" aria-label="Trace table">
+        <thead><tr><th scope="col">i</th><th scope="col">total</th><th scope="col">output</th></tr></thead>
+        <tbody id="tr-body"></tbody>
+      </table>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="tr-check">Check</button>
+        <button type="button" class="btn" id="tr-show">Show answers</button>
+        <button type="button" class="btn" id="tr-clear">Clear</button>
+      </div>
+      <p class="explain" id="tr-say" aria-live="polite">Hint: the first row is the starting value of total, before the loop runs.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="searching">
+    <div class="sec-head"><span class="sec-num">2.1.3</span><h2>Searching algorithms</h2></div>
+    <table class="def">
+      <tr><th scope="row">Linear search</th><td>Check each item <strong>in turn from the start</strong> until the item is found or the end of the list is reached.<br>✓ Simple; works on an <strong>unsorted</strong> list. ✗ Slow on large lists.</td></tr>
+      <tr><th scope="row">Binary search</th><td>The list must be <strong>sorted</strong>. Check the <strong>middle item</strong>. If it's the target, stop. If the target is smaller, discard the middle item and everything after it; if bigger, discard the middle item and everything before it. Repeat on the remaining half until found or no items are left.<br>✓ Much <strong>faster</strong> on large lists — each check halves the search. ✗ Only works on sorted data.</td></tr>
+    </table>
+    <pre><code>// Binary search in OCR Exam Reference Language
+low = 0
+high = items.length - 1
+found = false
+while found == false AND low &lt;= high
+    mid = (low + high) DIV 2
+    if items[mid] == target then
+        found = true
+    elseif items[mid] &lt; target then
+        low = mid + 1
+    else
+        high = mid - 1
+    endif
+endwhile</code></pre>
+
+    <div class="tool" id="search">
+      <p class="tool-title">Try it: linear vs binary search</p>
+      <p class="tool-sub">Pick a target and a method, then step through. Compare how many items each method checks.</p>
+      <div class="controls" style="margin-bottom:6px">
+        <fieldset class="ctl"><legend>Method</legend>
+          <div class="seg">
+            <label><input type="radio" name="s-m" value="linear" checked><span>Linear</span></label>
+            <label><input type="radio" name="s-m" value="binary"><span>Binary</span></label>
+          </div>
+        </fieldset>
+        <div class="ctl"><label for="s-t">Find</label>
+          <select class="field" id="s-t"><option>41</option><option>7</option><option>62</option><option value="30">30 (not in the list)</option></select>
+        </div>
+      </div>
+      <div class="arr indexed" id="s-arr"></div>
+      <p class="explain" id="s-say" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="s-next">Next step</button>
+        <button type="button" class="btn" id="s-reset">Start again</button>
+        <span>Items checked: <span class="count" id="s-count">0</span></span>
+      </div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>When describing a binary search, name the actual values: "The middle item is 29. 41 is greater than 29, so 29 and everything before it is discarded…" That earns the marks.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="sorting">
+    <div class="sec-head"><span class="sec-num">2.1.3</span><h2>Sorting algorithms</h2></div>
+    <table class="def">
+      <tr><th scope="row">Bubble sort</th><td>Go through the list <strong>comparing each pair of adjacent items</strong>, swapping them if they're in the wrong order. That's one <strong>pass</strong>: the largest item "bubbles" to the end. Repeat passes until a <strong>pass with no swaps</strong>.<br>✓ Simple to code. ✗ Very slow on large lists.</td></tr>
+      <tr><th scope="row">Insertion sort</th><td>Take each item in turn (from the second) and <strong>insert it into the correct place</strong> in the sorted part at the start of the list, shifting bigger items along.<br>✓ Simple; quick for small or nearly-sorted lists. ✗ Slow on large unsorted lists.</td></tr>
+      <tr><th scope="row">Merge sort</th><td><strong>Divide</strong> the list in half repeatedly until each sub-list has one item. Then <strong>merge</strong> pairs of sub-lists, putting items in order, until there is one sorted list.<br>✓ Much faster on large lists. ✗ More complex, and uses extra memory for the sub-lists.</td></tr>
+    </table>
+
+    <div class="tool" id="sort">
+      <p class="tool-title">Try it: watch the sorts</p>
+      <p class="tool-sub">Choose an algorithm and step through it on the same list.</p>
+      <fieldset class="ctl" style="margin-bottom:6px"><legend>Algorithm</legend>
+        <div class="seg">
+          <label><input type="radio" name="so-a" value="bubble" checked><span>Bubble</span></label>
+          <label><input type="radio" name="so-a" value="insertion"><span>Insertion</span></label>
+          <label><input type="radio" name="so-a" value="merge"><span>Merge</span></label>
+        </div>
+      </fieldset>
+      <div class="arr" id="so-arr"></div>
+      <p class="explain" id="so-say" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="so-next">Next step</button>
+        <button type="button" class="btn" id="so-reset">Start again</button>
+        <span class="small" id="so-count" style="margin:0 0 0 auto"></span>
+      </div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>Bubble sort: forgetting that it only stops after a <strong>whole pass with no swaps</strong>.</li>
+        <li>Merge sort: in the exam, show <strong>every stage</strong> of splitting and merging, not just the final list.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR J277 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-6-ethical-legal-cultural-environmental.html">1.6 Ethical, legal, cultural and environmental impacts</a> · Next: <a href="2-2-programming-fundamentals.html">2.2 Programming fundamentals</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'gcse-2-1-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Define the terms abstraction and decomposition.',
+      points: ['Abstraction: removing unnecessary detail to focus on the important parts of a problem', 'Decomposition: breaking a problem down into smaller sub-problems'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 2, text: 'A sat-nav app shows a simplified map of roads. Explain how abstraction has been used.',
+      points: ['Unnecessary details are removed, e.g. buildings / trees / exact road shapes', 'Only the details needed are kept, e.g. roads, junctions, the route'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'The list below is sorted:\n3, 9, 14, 20, 27, 31, 40\nDescribe how a binary search would find the number 31.',
+      points: ['The middle item (20) is compared with 31', '31 is greater than 20, so 20 and the items before it are discarded / search the right half', 'The middle of the remaining items (31) is compared, and the item is found'],
+      guide: '1 mark each. The values must be used.' },
+    { id: 'q4', marks: 2, text: 'Give one advantage of a binary search compared with a linear search, and one situation where a linear search must be used.',
+      points: ['Binary search is faster / needs fewer comparisons (on large lists)', 'Linear search must be used when the list is not sorted'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 4, text: 'Show the first pass of a bubble sort on this list, sorting into ascending order:\n6, 2, 8, 3',
+      points: ['6 and 2 are compared and swapped → 2, 6, 8, 3', '6 and 8 are compared and not swapped', '8 and 3 are compared and swapped → 2, 6, 3, 8', 'A further pass is needed because swaps were made / 8 is now in its final position'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Show how a merge sort would sort this list into ascending order:\n7, 3, 9, 1',
+      points: ['Split into [7, 3] and [9, 1], then into [7] [3] [9] [1]', 'Merge into [3, 7] and [1, 9]', 'Merge into [1, 3, 7, 9]'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'Complete a trace table for this algorithm.',
+      code: 'x = 3\ny = 1\nwhile x > 0\n    y = y * 2\n    x = x - 1\nendwhile\nprint(y)',
+      points: ['Starting values x = 3, y = 1', 'y takes the values 2, 4, 8', 'x takes the values 2, 1, 0', 'Output is 8'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 3, text: 'This algorithm should output the average of five marks. Identify the error, say what type of error it is, and correct it.',
+      code: 'total = 0\nfor i = 1 to 5\n    total = total + int(input("Enter mark"))\nnext i\naverage = total / 4\nprint(average)',
+      points: ['The error is on the line average = total / 4', 'It is a logic error (the program runs but gives the wrong answer)', 'Correction: average = total / 5'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 2, text: 'State what each of these flowchart symbols is used for: (a) a diamond (b) a parallelogram.',
+      points: ['(a) A decision', '(b) Input or output'],
+      guide: '1 mark each.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function cell(v, cls, idx) {
+    var d = document.createElement('div');
+    d.className = 'cellv' + (cls ? ' ' + cls : '');
+    d.textContent = v;
+    if (idx != null) { var s = document.createElement('small'); s.textContent = idx; d.appendChild(s); }
+    return d;
+  }
+
+  // ---------- Trace table ----------
+  var ROWS = [['', '0', ''], ['1', '2', ''], ['2', '6', ''], ['3', '12', ''], ['4', '20', ''], ['', '', '20']];
+  var tbody = document.getElementById('tr-body');
+  ROWS.forEach(function (r, i) {
+    var tr = document.createElement('tr');
+    r.forEach(function (v, j) {
+      var td = document.createElement('td');
+      var inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'numeric';
+      inp.setAttribute('aria-label', ['i', 'total', 'output'][j] + ', row ' + (i + 1));
+      inp.dataset.ans = v;
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  var inputs = tbody.querySelectorAll('input');
+  document.getElementById('tr-check').addEventListener('click', function () {
+    var right = 0;
+    inputs.forEach(function (inp) {
+      var ok = inp.value.trim() === inp.dataset.ans;
+      inp.classList.toggle('ok', ok); inp.classList.toggle('no', !ok);
+      if (ok) right++;
+    });
+    document.getElementById('tr-say').textContent = right === inputs.length ? 'All correct! Each time round the loop, total goes up by i × 2: 0 → 2 → 6 → 12 → 20, and 20 is printed at the end.' :
+      right + ' of ' + inputs.length + ' cells correct. Red cells are wrong — remember empty cells should stay empty (a variable only gets a new value when it changes).';
+  });
+  document.getElementById('tr-show').addEventListener('click', function () { inputs.forEach(function (i) { i.value = i.dataset.ans; i.classList.remove('no'); i.classList.add('ok'); }); document.getElementById('tr-say').textContent = 'total starts at 0, then the loop adds 2, 4, 6 and 8. The output, 20, happens once, after the loop.'; });
+  document.getElementById('tr-clear').addEventListener('click', function () { inputs.forEach(function (i) { i.value = ''; i.classList.remove('ok', 'no'); }); });
+
+  // ---------- Search ----------
+  var LIST = [3, 7, 11, 14, 18, 22, 25, 29, 33, 38, 41, 45, 50, 56, 62];
+  var sSteps = [], sAt = 0;
+  function buildSearch() {
+    var target = +document.getElementById('s-t').value;
+    var m = document.querySelector('input[name="s-m"]:checked').value;
+    var steps = [{ hi: -1, out: [], found: -1, checked: 0, text: (m === 'linear' ? 'Linear search for ' : 'Binary search for ') + target + '. Press Next step.' }];
+    var checked = 0;
+    if (m === 'linear') {
+      for (var i = 0; i < LIST.length; i++) {
+        checked++;
+        var out = []; for (var k = 0; k < i; k++) out.push(k);
+        if (LIST[i] === target) { steps.push({ hi: i, out: out, found: i, checked: checked, text: 'Check position ' + i + ': ' + LIST[i] + ' = ' + target + '. Found it after checking ' + checked + ' items.' }); return steps; }
+        steps.push({ hi: i, out: out, found: -1, checked: checked, text: 'Check position ' + i + ': ' + LIST[i] + ' is not ' + target + '. Move on to the next item.' });
+      }
+      steps.push({ hi: -1, out: LIST.map(function (_, j) { return j; }), found: -1, checked: checked, text: 'Reached the end of the list: ' + target + ' is not in it. That took ' + checked + ' checks — every single item.' });
+    } else {
+      var low = 0, high = LIST.length - 1;
+      while (low <= high) {
+        var mid = Math.floor((low + high) / 2);
+        checked++;
+        var outB = []; for (var j = 0; j < LIST.length; j++) if (j < low || j > high) outB.push(j);
+        var base = 'low = ' + low + ', high = ' + high + ', mid = (' + low + ' + ' + high + ') DIV 2 = ' + mid + '. ';
+        if (LIST[mid] === target) { steps.push({ hi: mid, out: outB, found: mid, checked: checked, text: base + 'items[' + mid + '] is ' + LIST[mid] + ' — found it after only ' + checked + ' checks!' }); return steps; }
+        if (LIST[mid] < target) { steps.push({ hi: mid, out: outB, found: -1, checked: checked, text: base + LIST[mid] + ' is less than ' + target + ', so discard it and everything before it: low = ' + (mid + 1) + '.' }); low = mid + 1; }
+        else { steps.push({ hi: mid, out: outB, found: -1, checked: checked, text: base + LIST[mid] + ' is greater than ' + target + ', so discard it and everything after it: high = ' + (mid - 1) + '.' }); high = mid - 1; }
+      }
+      steps.push({ hi: -1, out: LIST.map(function (_, j) { return j; }), found: -1, checked: checked, text: 'low is now greater than high, so there is nothing left to search: ' + target + ' is not in the list. Only ' + checked + ' checks were needed.' });
+    }
+    return steps;
+  }
+  function renderSearch() {
+    var st = sSteps[sAt];
+    var arr = document.getElementById('s-arr'); arr.innerHTML = '';
+    LIST.forEach(function (v, i) {
+      var cls = i === st.found ? 'found' : i === st.hi ? 'hi' : st.out.indexOf(i) >= 0 ? 'out' : '';
+      arr.appendChild(cell(v, cls, i));
+    });
+    document.getElementById('s-say').textContent = st.text;
+    document.getElementById('s-count').textContent = st.checked;
+    document.getElementById('s-next').disabled = sAt >= sSteps.length - 1;
+  }
+  function resetSearch() { sSteps = buildSearch(); sAt = 0; renderSearch(); }
+  document.getElementById('s-next').addEventListener('click', function () { if (sAt < sSteps.length - 1) { sAt++; renderSearch(); } });
+  document.getElementById('s-reset').addEventListener('click', resetSearch);
+  document.querySelectorAll('#search input, #s-t').forEach(function (e) { e.addEventListener('change', resetSearch); });
+  resetSearch();
+
+  // ---------- Sorts ----------
+  var START = [5, 2, 9, 1, 6, 3];
+  function bubbleSteps() {
+    var a = START.slice(), steps = [{ groups: [a.slice()], hi: [], done: 0, text: 'Bubble sort on ' + a.join(', ') + '. Each pass compares neighbouring pairs.' }];
+    var n = a.length, pass = 0, swapped = true;
+    while (swapped) {
+      swapped = false; pass++;
+      for (var i = 0; i < n - pass; i++) {
+        var x = a[i], y = a[i + 1];
+        if (x > y) { a[i] = y; a[i + 1] = x; swapped = true; steps.push({ groups: [a.slice()], hi: [i, i + 1], done: pass - 1, text: 'Pass ' + pass + ': compare ' + x + ' and ' + y + '. ' + x + ' > ' + y + ', so swap them.' }); }
+        else steps.push({ groups: [a.slice()], hi: [i, i + 1], done: pass - 1, text: 'Pass ' + pass + ': compare ' + x + ' and ' + y + '. Already in order, no swap.' });
+      }
+      steps.push({ groups: [a.slice()], hi: [], done: pass, text: 'End of pass ' + pass + '. ' + (swapped ? 'Swaps were made, so another pass is needed. The largest unsorted item is now in place.' : 'No swaps this pass, so the list is sorted!') });
+    }
+    return steps;
+  }
+  function insertionSteps() {
+    var a = START.slice(), steps = [{ groups: [a.slice()], hi: [], sorted: 1, text: 'Insertion sort on ' + a.join(', ') + '. The first item on its own counts as sorted.' }];
+    for (var i = 1; i < a.length; i++) {
+      var key = a[i], j = i - 1;
+      steps.push({ groups: [a.slice()], hi: [i], sorted: i, text: 'Take ' + key + ' and insert it into the sorted part on the left.' });
+      while (j >= 0 && a[j] > key) {
+        a[j + 1] = a[j]; a[j] = key;
+        steps.push({ groups: [a.slice()], hi: [j], sorted: i + 1, text: a[j + 1] + ' is bigger than ' + key + ', so it shifts right and ' + key + ' moves left.' });
+        j--;
+      }
+      steps.push({ groups: [a.slice()], hi: [j + 1], sorted: i + 1, text: key + ' is in the right place. The first ' + (i + 1) + ' items are now sorted.' });
+    }
+    steps.push({ groups: [a.slice()], hi: [], sorted: a.length, text: 'Every item has been inserted, so the list is sorted.' });
+    return steps;
+  }
+  function mergeSteps() {
+    var groups = [START.slice()], steps = [{ groups: groups.map(function (g) { return g.slice(); }), text: 'Merge sort on ' + START.join(', ') + '. First, divide.' }];
+    while (groups.some(function (g) { return g.length > 1; })) {
+      var next = [];
+      groups.forEach(function (g) { if (g.length > 1) { var h = Math.ceil(g.length / 2); next.push(g.slice(0, h), g.slice(h)); } else next.push(g); });
+      groups = next;
+      steps.push({ groups: groups.map(function (g) { return g.slice(); }), text: groups.every(function (g) { return g.length === 1; }) ? 'Every sub-list now has one item, so each is sorted. Now merge pairs of sub-lists.' : 'Split each list in half.' });
+    }
+    // merge back up, mirroring the split tree
+    var levels = [];
+    (function split(g, depth) { if (g.length <= 1) return; var h = Math.ceil(g.length / 2); levels[depth] = (levels[depth] || 0) + 1; split(g.slice(0, h), depth + 1); split(g.slice(h), depth + 1); })(START, 0);
+    function sortTree(g, depth, target) { // returns groups at the given depth of the merge
+      if (g.length <= 1 || depth === target) return [g.slice().sort(function (p, q) { return p - q; })];
+      var h = Math.ceil(g.length / 2);
+      return sortTree(g.slice(0, h), depth + 1, target).concat(sortTree(g.slice(h), depth + 1, target));
+    }
+    for (var d = levels.length - 1; d >= 0; d--) {
+      var gs = sortTree(START, 0, d);
+      steps.push({ groups: gs, text: gs.length === 1 ? 'Merge the last two sub-lists, taking the smaller front item each time. The list is sorted: ' + gs[0].join(', ') + '.' : 'Merge the sub-lists back together in the same groups they were split from, putting the items in order.' });
+    }
+    return steps;
+  }
+  var soSteps = [], soAt = 0;
+  function algo() { return document.querySelector('input[name="so-a"]:checked').value; }
+  function renderSort() {
+    var st = soSteps[soAt], a = algo();
+    var box = document.getElementById('so-arr'); box.innerHTML = '';
+    if (a === 'merge') {
+      st.groups.forEach(function (g) { var gd = document.createElement('div'); gd.className = 'group'; g.forEach(function (v) { gd.appendChild(cell(v, soAt === soSteps.length - 1 ? 'done' : '')); }); box.appendChild(gd); });
+    } else {
+      st.groups[0].forEach(function (v, i) {
+        var cls = st.hi.indexOf(i) >= 0 ? 'hi' : '';
+        if (a === 'bubble' && i >= st.groups[0].length - st.done) cls += ' done';
+        if (a === 'insertion' && i < st.sorted && !cls) cls = 'done';
+        if (soAt === soSteps.length - 1) cls = 'done';
+        box.appendChild(cell(v, cls));
+      });
+    }
+    document.getElementById('so-say').textContent = st.text;
+    document.getElementById('so-count').textContent = 'Step ' + soAt + ' of ' + (soSteps.length - 1);
+    document.getElementById('so-next').disabled = soAt >= soSteps.length - 1;
+  }
+  function resetSort() { var a = algo(); soSteps = a === 'bubble' ? bubbleSteps() : a === 'insertion' ? insertionSteps() : mergeSteps(); soAt = 0; renderSort(); }
+  document.getElementById('so-next').addEventListener('click', function () { if (soAt < soSteps.length - 1) { soAt++; renderSort(); } });
+  document.getElementById('so-reset').addEventListener('click', resetSort);
+  document.querySelectorAll('input[name="so-a"]').forEach(function (r) { r.addEventListener('change', resetSort); });
+  resetSort();
+})();
+</script>
+</body>
+</html>
