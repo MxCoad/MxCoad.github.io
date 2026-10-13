@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2.1 Systems software — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.2.1: operating systems, memory management (paging, segmentation, virtual memory), interrupts, scheduling algorithms, types of OS, BIOS, device drivers and virtual machines.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  /* Scheduler */
+  .jobs { border-collapse: collapse; font-size: 16px; margin: 6px 0 12px; }
+  .jobs th, .jobs td { border-bottom: 1px solid var(--ms-line); padding: 5px 12px; text-align: center; }
+  .jobs th { background: var(--ms-surface-2); font-size: 14px; }
+  .sw { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; }
+  .gantt-wrap { overflow-x: auto; margin-top: 8px; }
+  .gantt { display: grid; gap: 2px; min-width: 520px; }
+  .gantt .slot { height: 40px; border-radius: 4px; display: grid; place-items: center; font-family: var(--ms-font-mono); font-weight: 700; color: #18202B; font-size: 15px; }
+  .gantt .idle { background: var(--ms-surface-2); color: var(--ms-muted); }
+  .gantt .t { font-family: var(--ms-font-mono); font-size: 12px; color: var(--ms-muted); text-align: left; }
+  .results { border-collapse: collapse; font-size: 15px; margin-top: 12px; }
+  .results th, .results td { border-bottom: 1px solid var(--ms-line); padding: 4px 12px; text-align: center; }
+  .results th { background: var(--ms-surface-2); font-size: 13px; }
+  .avg { font-family: var(--ms-font-mono); font-weight: 700; font-size: 20px; color: var(--ms-accent); }
+  /* Interrupt stepper */
+  .irq { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  .box2 { border: 2px solid var(--ms-line); border-radius: 10px; padding: 8px 10px; background: var(--ms-bg); }
+  .box2.changed { border-color: var(--ms-accent); background: var(--ms-accent-soft); }
+  .box2 .k { font-size: 13px; font-weight: 700; color: var(--ms-muted); }
+  .box2 .v { font-family: var(--ms-font-mono); font-size: 18px; font-weight: 700; min-height: 1.4em; }
+  .stack { display: flex; flex-direction: column-reverse; gap: 3px; min-height: 60px; }
+  .stack span { font-family: var(--ms-font-mono); font-size: 14px; background: var(--ms-surface); border: 1px solid var(--ms-line-strong); border-radius: 6px; padding: 2px 6px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.2.1 Systems software</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.2.1</p>
+  <h1>Systems software</h1>
+  <p class="intro">How the operating system manages memory, handles interrupts and shares the processor between processes, the different kinds of operating system, and the BIOS, device drivers and virtual machines.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="os">
+    <div class="sec-head"><span class="sec-num">1.2.1a</span><h2>The need for an operating system</h2></div>
+    <p>An <span class="term">operating system</span> is a collection of programs that <strong>manages the computer's hardware and resources</strong> and provides a <strong>platform for applications</strong>, hiding the complexity of the hardware from users and programmers. Without one, every program would need its own code to drive the hardware.</p>
+    <ul>
+      <li><strong>Memory management</strong> — allocating RAM to processes and protecting them from each other</li>
+      <li><strong>Processor scheduling</strong> — deciding which process uses the CPU and for how long</li>
+      <li><strong>Interrupt handling</strong> — responding to events from hardware and software</li>
+      <li><strong>Managing peripherals</strong> through device drivers</li>
+      <li><strong>File management</strong>, <strong>security</strong> (user accounts, permissions) and a <strong>user interface</strong></li>
+    </ul>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="memory">
+    <div class="sec-head"><span class="sec-num">1.2.1b</span><h2>Memory management</h2></div>
+    <p>The OS must share RAM between many processes, keep them from accessing each other's memory, and cope when there isn't enough. Programs don't need to be stored in one continuous block: they can be split up.</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col"></th><th scope="col">Paging</th><th scope="col">Segmentation</th></tr></thead>
+      <tr><th scope="row">How memory is split</th><td>Into <strong>equal, fixed-size</strong> blocks called pages (e.g. 4 KB)</td><td>Into <strong>variable-size</strong> blocks called segments</td></tr>
+      <tr><th scope="row">Based on</th><td><strong>Physical</strong> divisions — a page may cut through the middle of a routine</td><td><strong>Logical</strong> divisions of the program — e.g. a whole function, module or data structure</td></tr>
+      <tr><th scope="row">Tracking</th><td>A <strong>page table</strong> maps each page to a frame in physical memory</td><td>A segment table stores each segment's start address and length</td></tr>
+      <tr><th scope="row">Pros / cons</th><td>Simple to manage; no gaps between pages, but the last page may be partly empty</td><td>Segments match how the program is structured, but variable sizes leave gaps (fragmentation)</td></tr>
+    </table></div>
+    <p>Both allow a process's pages or segments to be stored <strong>non-contiguously</strong>, wherever there's space.</p>
+    <h3>Virtual memory</h3>
+    <p>When RAM is full, the OS uses part of <strong>secondary storage as virtual memory</strong>. Pages or segments that aren't currently needed are <strong>swapped out</strong> to disk, and swapped back in when needed. This lets more (or bigger) programs run than RAM alone allows — but secondary storage is far slower, so it slows the computer down.</p>
+    <p>If RAM is too small, the OS can spend more time swapping pages in and out than doing useful work. This is <span class="term">disk thrashing</span>, and performance collapses.</p>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="interrupts">
+    <div class="sec-head"><span class="sec-num">1.2.1c</span><h2>Interrupts</h2></div>
+    <p>An <span class="term">interrupt</span> is a <strong>signal to the processor</strong> that a device or program needs attention. Examples: a key is pressed, a printer runs out of paper, data arrives from the network, a timer runs out, or a program tries to divide by zero. Each interrupt has a <strong>priority</strong>.</p>
+    <h3>How interrupts fit into the FDE cycle</h3>
+    <ol>
+      <li>The interrupt is sent along the control bus and sets a flag in the <strong>interrupt register</strong>.</li>
+      <li>The processor <strong>finishes the current FDE cycle</strong> — it never stops halfway through an instruction.</li>
+      <li>At the <strong>end of each cycle</strong>, it checks the interrupt register. If there's an interrupt with a <strong>higher priority</strong> than the current task, it services it; otherwise it carries on.</li>
+      <li>The contents of the registers, including the <strong>PC</strong>, are saved (<strong>pushed onto a stack</strong>) so the current task can be resumed.</li>
+      <li>The <strong>address of the interrupt service routine (ISR)</strong> is loaded into the PC, and the ISR runs.</li>
+      <li>When the ISR finishes, the saved values are <strong>popped off the stack</strong> back into the registers, and the original task carries on exactly where it left off.</li>
+    </ol>
+    <p>If an even higher-priority interrupt arrives while an ISR is running, the ISR itself can be interrupted: its registers are pushed onto the stack too. The stack makes sure everything is resumed in the right order.</p>
+
+    <div class="tool" id="irq">
+      <p class="tool-title">Try it: handle an interrupt</p>
+      <p class="tool-sub">A program is running when a key is pressed. Step through what the processor does.</p>
+      <div class="irq">
+        <div class="box2" data-k="running"><div class="k">Running</div><div class="v"></div></div>
+        <div class="box2" data-k="pc"><div class="k">PC</div><div class="v"></div></div>
+        <div class="box2" data-k="acc"><div class="k">ACC</div><div class="v"></div></div>
+        <div class="box2" data-k="flag"><div class="k">Interrupt register</div><div class="v"></div></div>
+        <div class="box2" data-k="stack"><div class="k">Stack</div><div class="stack"></div></div>
+      </div>
+      <p class="explain" id="irq-say" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="irq-next">Next step</button>
+        <button type="button" class="btn" id="irq-reset">Start again</button>
+        <span class="small" id="irq-count" style="margin:0 0 0 auto"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="scheduling">
+    <div class="sec-head"><span class="sec-num">1.2.1d</span><h2>Scheduling</h2></div>
+    <p>With many processes ready to run and only a few cores, the OS <span class="term">scheduler</span> decides which process runs next. Its aims: keep the CPU busy, give every process a <strong>fair</strong> share, respond quickly to users, and get as many jobs done as possible — without any process <strong>starving</strong> (never getting the CPU).</p>
+    <table class="def">
+      <tr><th scope="row">First come first served (FCFS)</th><td>Processes run <strong>in the order they arrive</strong>, each to completion. Simple and fair in one sense, but a long job holds everyone else up.</td></tr>
+      <tr><th scope="row">Round robin (RR)</th><td>Each process gets a fixed <strong>time slice</strong> (quantum) in turn; unfinished processes go to the back of the queue. Good <strong>response</strong> for interactive systems, but lots of switching, and no priorities.</td></tr>
+      <tr><th scope="row">Shortest job first (SJF)</th><td>The waiting process with the <strong>shortest total run time</strong> goes next, running to completion. Minimises <strong>average waiting time</strong>, but needs to know (or estimate) run times, and long jobs may <strong>starve</strong>.</td></tr>
+      <tr><th scope="row">Shortest remaining time (SRT)</th><td>Like SJF but <strong>pre-emptive</strong>: if a new process arrives with less time remaining than the current one, it takes over. Even lower average waiting time; long jobs may starve.</td></tr>
+      <tr><th scope="row">Multi-level feedback queues (MLFQ)</th><td>Several queues with <strong>different priorities</strong>. Processes <strong>move between queues</strong> based on their behaviour — e.g. a process that uses its whole time slice drops to a lower queue, so short and interactive processes stay high. Flexible, but complex.</td></tr>
+    </table>
+
+    <div class="tool" id="sched">
+      <p class="tool-title">Try it: compare the scheduling algorithms</p>
+      <p class="tool-sub">Four processes arrive at different times. Pick an algorithm and compare the average waiting time.</p>
+      <table class="jobs" id="jobs-table"></table>
+      <fieldset class="ctl"><legend>Algorithm</legend>
+        <div class="seg" id="algos"></div>
+      </fieldset>
+      <div class="gantt-wrap"><div class="gantt" id="gantt"></div></div>
+      <table class="results" id="results"></table>
+      <p style="margin:12px 0 0">Average waiting time: <span class="avg" id="avg"></span></p>
+      <p class="explain" id="sched-say" aria-live="polite"></p>
+      <p class="small">Round robin uses a time slice of 2. MLFQ here has three queues: time slice 1, then 2, then first come first served; a process that uses its whole slice drops a level. When a new arrival and a pre-empted process join a queue at the same moment, the new arrival goes first.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="types">
+    <div class="sec-head"><span class="sec-num">1.2.1e</span><h2>Types of operating system</h2></div>
+    <table class="def">
+      <tr><th scope="row">Distributed</th><td>Runs across <strong>several computers</strong>, sharing the work of a task between them so they appear to the user as one system. Used for very large computations.</td></tr>
+      <tr><th scope="row">Embedded</th><td>Built into a device with a <strong>dedicated function</strong> (washing machine, car control unit). Small, efficient, reliable, with limited resources and a simple or no interface.</td></tr>
+      <tr><th scope="row">Multi-tasking</th><td>Lets one user run <strong>several programs at once</strong>, sharing CPU time by scheduling (e.g. Windows, macOS).</td></tr>
+      <tr><th scope="row">Multi-user</th><td>Lets <strong>many users</strong> share one computer's resources at the same time, e.g. a server or mainframe, with scheduling to keep it fair.</td></tr>
+      <tr><th scope="row">Real-time</th><td><strong>Guarantees a response within a strict time limit</strong>. Used where delay could be dangerous: aircraft autopilots, airbags, industrial control, medical monitors. Often has redundancy built in.</td></tr>
+    </table>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="bios-drivers-vm">
+    <div class="sec-head"><span class="sec-num">1.2.1f–h</span><h2>BIOS, device drivers and virtual machines</h2></div>
+    <h3>BIOS</h3>
+    <p>The <span class="term">BIOS</span> (Basic Input/Output System — on modern PCs, UEFI) is the first program to run when the computer is switched on. It's stored in <strong>ROM / flash memory</strong>. It runs the <strong>POST</strong> (power-on self-test) to check the hardware, initialises devices, then finds the OS on a storage device and <strong>loads it into RAM</strong> (the bootstrap). Its settings, such as the boot order, are stored in non-volatile memory.</p>
+    <h3>Device drivers</h3>
+    <p>A <span class="term">device driver</span> is software that lets the OS communicate with a particular piece of hardware. It <strong>translates the OS's general instructions into commands specific to that device</strong>, so the OS doesn't need to know how every device works. Drivers are specific to both the device and the operating system.</p>
+    <h3>Virtual machines</h3>
+    <p>A <span class="term">virtual machine</span> is <strong>software that emulates a computer</strong>, so one physical machine can run several operating systems or programs as if they were on separate hardware. Uses:</p>
+    <ul>
+      <li>Running a different OS (e.g. Linux on a Windows machine), or old software that needs an old OS</li>
+      <li><strong>Testing</strong> software safely in an isolated environment, e.g. analysing malware</li>
+      <li>Running many servers on one physical machine (cloud hosting)</li>
+      <li>Running <strong>intermediate code</strong> — see below</li>
+    </ul>
+    <p><strong>Intermediate code</strong> (e.g. Java bytecode) is code that has been partly translated: it isn't specific to any processor. A <strong>process virtual machine</strong> (e.g. the Java Virtual Machine) on each platform translates and runs it. The same compiled program can therefore run on any device with the VM — <strong>portability</strong> — at the cost of running more slowly than native machine code.</p>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-1-3-input-output-storage.html">1.1.3 Input, output and storage</a> · Next: <a href="1-2-2-applications-generation.html">1.2.2 Applications generation</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-2-1-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'Explain why a computer needs an operating system.',
+      points: ['Manages the hardware / resources (memory, CPU, peripherals)', 'Provides a platform for applications to run on / hides hardware complexity from programmers', 'Provides a user interface / security / file management'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'Compare paging and segmentation as methods of memory management.',
+      points: ['Paging divides memory into fixed-size blocks; segmentation uses variable-size blocks', 'Pages are physical divisions; segments are logical divisions (e.g. a whole function / module)', 'A page may split a routine part-way through; a segment holds a complete section', 'Both allow a program to be stored non-contiguously / support virtual memory'],
+      guide: '1 mark per point. Maximum 4.' },
+    { id: 'q3', marks: 3, text: 'Explain how virtual memory is used and what is meant by disk thrashing.',
+      points: ['When RAM is full, part of secondary storage is used as extra memory', 'Pages not currently needed are swapped out to disk and swapped back in when needed', 'Disk thrashing: so much swapping occurs that the computer spends more time moving pages than processing / performance drops sharply'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 5, text: 'Describe how an interrupt is handled by the processor.',
+      points: ['The interrupt sets a flag in the interrupt register', 'The processor completes the current FDE cycle', 'At the end of the cycle it checks for interrupts and compares priorities', 'If the interrupt has a higher priority, the contents of the registers (incl. PC) are pushed onto the stack', 'The address of the ISR is loaded into the PC and the ISR runs', 'Afterwards the registers are restored from the stack and the original process resumes'],
+      guide: 'Any five, 1 mark each.' },
+    { id: 'q5', marks: 4, text: 'Compare round robin and shortest job first scheduling.',
+      points: ['Round robin gives each process a fixed time slice in turn; SJF runs the shortest job next to completion', 'Round robin is fair / gives good response times for interactive users; SJF can leave long jobs waiting / starving', 'SJF minimises average waiting time; round robin has overhead from frequent switching', 'SJF needs the run time to be known / estimated; round robin does not'],
+      guide: '1 mark per comparison point. Maximum 4.' },
+    { id: 'q6', marks: 2, text: 'Give an example of where a real-time operating system is needed and explain why.',
+      points: ['Example, e.g. aircraft autopilot / car airbag / life-support monitor / industrial robot', 'It must respond to inputs within a guaranteed time, because a delay could be dangerous'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'Describe the purpose of the BIOS.',
+      points: ['Runs the power-on self-test / checks and initialises hardware when the computer starts', 'Locates the operating system and loads it into RAM (bootstrap)'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 3, text: 'Explain how a virtual machine allows intermediate code to be portable.',
+      points: ['Intermediate code (e.g. bytecode) is not specific to any processor', 'A virtual machine for each platform translates / executes the intermediate code', 'So the same compiled program can run on any device that has the virtual machine (at the cost of slower execution)'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A school\'s server is used by many students at once, running a mixture of short interactive tasks (opening files) and long tasks (rendering videos). Discuss which scheduling algorithm(s) would be most suitable.',
+      points: ['FCFS: simple, but a long render would block short tasks, so poor response for students', 'Round robin: every process gets a time slice, so interactive tasks respond quickly / fair for many users', '…but long jobs take longer overall due to switching overheads; no priorities', 'SJF: short tasks finish quickly, minimising average waiting time', '…but needs run times in advance; long renders could starve', 'SRT: pre-emptive version — new short tasks interrupt long ones; same starvation risk', 'MLFQ: short / interactive tasks stay in high-priority queues while long jobs drop down; adapts to behaviour', '…more complex to implement; ageing could stop starvation', 'A justified conclusion, e.g. MLFQ or round robin as best for a mixed multi-user workload'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of several algorithms, consistently applied to the mix of short and long tasks on a multi-user server. Benefits and drawbacks weighed, with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge of some algorithms with some application to the server. Some evaluation; conclusion partly supported.'],
+        ['1–3 marks', 'Basic descriptions of one or more algorithms, with little application or evaluation.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Interrupt stepper ----------
+  var S = [
+    { running: 'Word processor', pc: '101', acc: '37', flag: 'none', stack: [], ch: [], t: 'A word processor is running. The CPU has just fetched the instruction at address 100, so the PC holds 101.' },
+    { running: 'Word processor', pc: '101', acc: '37', flag: 'Keyboard (priority 2)', stack: [], ch: ['flag'], t: 'A key is pressed. The keyboard sends an interrupt along the control bus, setting a flag in the interrupt register.' },
+    { running: 'Word processor', pc: '101', acc: '42', flag: 'Keyboard (priority 2)', stack: [], ch: ['acc'], t: 'The CPU does not stop mid-instruction: it finishes the current fetch–decode–execute cycle first (here the ACC changes to 42).' },
+    { running: 'Word processor', pc: '101', acc: '42', flag: 'Keyboard (priority 2)', stack: [], ch: ['flag'], t: 'At the end of the cycle, the CPU checks the interrupt register. The keyboard interrupt has a higher priority than the word processor, so it will be serviced now.' },
+    { running: 'Word processor', pc: '101', acc: '42', flag: 'Keyboard (priority 2)', stack: ['PC = 101', 'ACC = 42'], ch: ['stack'], t: 'The contents of the registers, including the PC, are pushed onto the stack, so the word processor can carry on later exactly where it stopped.' },
+    { running: 'Keyboard ISR', pc: '500', acc: '42', flag: 'none', stack: ['PC = 101', 'ACC = 42'], ch: ['pc', 'running', 'flag'], t: 'The address of the keyboard\'s interrupt service routine (500) is loaded into the PC, and the flag is cleared.' },
+    { running: 'Keyboard ISR', pc: '507', acc: '75', flag: 'none', stack: ['PC = 101', 'ACC = 42'], ch: ['pc', 'acc'], t: 'The ISR runs through its own fetch–decode–execute cycles: it reads the key code (75, "K") and stores it in the keyboard buffer.' },
+    { running: 'Word processor', pc: '101', acc: '42', flag: 'none', stack: [], ch: ['pc', 'acc', 'running', 'stack'], t: 'The ISR has finished. The saved values are popped off the stack back into the registers: PC = 101, ACC = 42.' },
+    { running: 'Word processor', pc: '102', acc: '42', flag: 'none', stack: [], ch: ['pc'], t: 'The word processor continues from address 101 as if nothing had happened. The whole thing took a few microseconds.' }
+  ];
+  var ia = 0;
+  function renderIrq() {
+    var st = S[ia];
+    ['running', 'pc', 'acc', 'flag'].forEach(function (k) {
+      var b = document.querySelector('#irq [data-k="' + k + '"]');
+      b.querySelector('.v').textContent = st[k];
+      b.classList.toggle('changed', st.ch.indexOf(k) >= 0);
+    });
+    var sb = document.querySelector('#irq [data-k="stack"]');
+    sb.classList.toggle('changed', st.ch.indexOf('stack') >= 0);
+    var stack = sb.querySelector('.stack'); stack.innerHTML = '';
+    if (!st.stack.length) { var e = document.createElement('span'); e.textContent = 'empty'; e.style.opacity = '.6'; stack.appendChild(e); }
+    st.stack.forEach(function (x) { var s = document.createElement('span'); s.textContent = x; stack.appendChild(s); });
+    document.getElementById('irq-say').textContent = st.t;
+    document.getElementById('irq-count').textContent = 'Step ' + (ia + 1) + ' of ' + S.length;
+    document.getElementById('irq-next').disabled = ia >= S.length - 1;
+  }
+  document.getElementById('irq-next').addEventListener('click', function () { if (ia < S.length - 1) { ia++; renderIrq(); } });
+  document.getElementById('irq-reset').addEventListener('click', function () { ia = 0; renderIrq(); });
+  renderIrq();
+
+  // ---------- Scheduler ----------
+  var JOBS = [
+    { id: 'A', arrive: 0, burst: 5, color: 'var(--ks-gcse)' },
+    { id: 'B', arrive: 1, burst: 3, color: 'var(--ks-ks3)' },
+    { id: 'C', arrive: 2, burst: 1, color: 'var(--ks-btec)' },
+    { id: 'D', arrive: 3, burst: 4, color: 'var(--ks-tools)' }
+  ];
+  var ALGOS = [['fcfs', 'FCFS'], ['rr', 'Round robin'], ['sjf', 'SJF'], ['srt', 'SRT'], ['mlfq', 'MLFQ']];
+  var jt = document.getElementById('jobs-table');
+  jt.innerHTML = '<thead><tr><th scope="col">Process</th><th scope="col">Arrives at</th><th scope="col">Run time needed</th></tr></thead>';
+  var jb = document.createElement('tbody');
+  JOBS.forEach(function (j) {
+    var tr = document.createElement('tr');
+    var td1 = document.createElement('td'); var sw = document.createElement('span'); sw.className = 'sw'; sw.style.background = j.color; td1.append(sw, document.createTextNode(j.id));
+    var td2 = document.createElement('td'); td2.textContent = j.arrive;
+    var td3 = document.createElement('td'); td3.textContent = j.burst;
+    tr.append(td1, td2, td3); jb.appendChild(tr);
+  });
+  jt.appendChild(jb);
+  var seg = document.getElementById('algos');
+  ALGOS.forEach(function (a, i) {
+    var l = document.createElement('label'); var r = document.createElement('input'); r.type = 'radio'; r.name = 'algo'; r.value = a[0]; if (i === 0) r.checked = true;
+    var s = document.createElement('span'); s.textContent = a[1]; l.append(r, s); seg.appendChild(l);
+    r.addEventListener('change', renderSched);
+  });
+
+  function simulate(algo) {
+    var rem = {}, finish = {}, timeline = [];
+    JOBS.forEach(function (j) { rem[j.id] = j.burst; });
+    var t = 0, done = 0, n = JOBS.length;
+    function arrivedBy(time) { return JOBS.filter(function (j) { return j.arrive <= time && rem[j.id] > 0; }); }
+    if (algo === 'fcfs' || algo === 'sjf') {
+      while (done < n) {
+        var ready = arrivedBy(t);
+        if (!ready.length) { timeline.push(null); t++; continue; }
+        var pick = algo === 'fcfs' ? ready[0] : ready.slice().sort(function (a, b) { return a.burst - b.burst || a.arrive - b.arrive; })[0];
+        for (var k = 0; k < pick.burst; k++) timeline.push(pick.id);
+        t += pick.burst; rem[pick.id] = 0; finish[pick.id] = t; done++;
+      }
+    } else if (algo === 'srt') {
+      while (done < n) {
+        var r = arrivedBy(t);
+        if (!r.length) { timeline.push(null); t++; continue; }
+        var p = r.slice().sort(function (a, b) { return rem[a.id] - rem[b.id] || a.arrive - b.arrive; })[0];
+        timeline.push(p.id); rem[p.id]--; t++;
+        if (rem[p.id] === 0) { finish[p.id] = t; done++; }
+      }
+    } else if (algo === 'rr') {
+      var q = [], seen = {}, Q = 2;
+      function admit(time) { JOBS.forEach(function (j) { if (!seen[j.id] && j.arrive <= time) { seen[j.id] = true; q.push(j.id); } }); }
+      admit(0);
+      while (done < n) {
+        if (!q.length) { timeline.push(null); t++; admit(t); continue; }
+        var id = q.shift(), run = Math.min(Q, rem[id]);
+        for (var s = 0; s < run; s++) { timeline.push(id); t++; rem[id]--; admit(t); }
+        if (rem[id] === 0) { finish[id] = t; done++; } else q.push(id);
+      }
+    } else { // mlfq
+      var queues = [[], [], []], seenM = {}, QUANT = [1, 2, Infinity];
+      function admitM(time) { JOBS.forEach(function (j) { if (!seenM[j.id] && j.arrive <= time) { seenM[j.id] = true; queues[0].push(j.id); } }); }
+      admitM(0);
+      while (done < n) {
+        var lvl = queues.findIndex(function (x) { return x.length; });
+        if (lvl < 0) { timeline.push(null); t++; admitM(t); continue; }
+        var jid = queues[lvl].shift(), runM = Math.min(QUANT[lvl], rem[jid]);
+        for (var u = 0; u < runM; u++) { timeline.push(jid); t++; rem[jid]--; admitM(t); }
+        if (rem[jid] === 0) { finish[jid] = t; done++; } else queues[Math.min(2, lvl + 1)].push(jid);
+      }
+    }
+    return { timeline: timeline, finish: finish };
+  }
+  var SAY = {
+    fcfs: 'A arrived first, so it runs to completion even though C only needs 1 unit — C waits behind longer jobs.',
+    rr: 'Every process gets a turn quickly, which feels responsive to users, but there is a lot of switching and the average wait is not the lowest.',
+    sjf: 'Once A finishes, the shortest waiting job (C) goes next. This gives a low average waiting time, but a long job could keep being overtaken.',
+    srt: 'B arrives with less remaining time than A, so it takes over immediately (pre-emption). This usually gives the lowest average waiting time.',
+    mlfq: 'Every process starts in the top queue with a short slice. Processes that use their whole slice drop down, so short jobs like C finish quickly while long ones move to lower queues.'
+  };
+  function renderSched() {
+    var algo = document.querySelector('input[name="algo"]:checked').value;
+    var res = simulate(algo);
+    var g = document.getElementById('gantt');
+    g.innerHTML = ''; g.style.gridTemplateColumns = 'repeat(' + res.timeline.length + ', minmax(30px, 1fr))';
+    res.timeline.forEach(function (id) {
+      var d = document.createElement('div'); d.className = 'slot' + (id ? '' : ' idle'); d.textContent = id || '–';
+      if (id) d.style.background = JOBS.filter(function (j) { return j.id === id; })[0].color;
+      g.appendChild(d);
+    });
+    for (var i = 0; i < res.timeline.length; i++) { var tl = document.createElement('div'); tl.className = 't'; tl.textContent = i; g.appendChild(tl); }
+    var rt = document.getElementById('results');
+    rt.innerHTML = '<thead><tr><th scope="col">Process</th><th scope="col">Finishes at</th><th scope="col">Waiting time</th></tr></thead>';
+    var tb = document.createElement('tbody'), total = 0;
+    JOBS.forEach(function (j) {
+      var w = res.finish[j.id] - j.arrive - j.burst; total += w;
+      var tr = document.createElement('tr');
+      [j.id, res.finish[j.id], w].forEach(function (v) { var td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
+      tb.appendChild(tr);
+    });
+    rt.appendChild(tb);
+    document.getElementById('avg').textContent = (total / JOBS.length).toFixed(2);
+    document.getElementById('sched-say').textContent = SAY[algo] + ' (Waiting time = finish time − arrival time − run time.)';
+    document.getElementById('gantt').setAttribute('aria-label', 'Order of running: ' + res.timeline.map(function (x) { return x || 'idle'; }).join(', '));
+  }
+  renderSched();
+})();
+</script>
+</body>
+</html>
