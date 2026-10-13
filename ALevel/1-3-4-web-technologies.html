@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3.4 Web technologies — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.3.4: HTML, CSS and JavaScript, search engine indexing, the PageRank algorithm, and server-side and client-side processing.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .code-in { width: 100%; min-height: 200px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 15px; resize: vertical; tab-size: 2; }
+  .preview { width: 100%; height: 260px; border: 1px solid var(--ms-line-strong); border-radius: 10px; background: #fff; display: block; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-body); font-size: 14px; cursor: pointer; }
+  .presets button:hover { border-color: var(--ms-accent); }
+  .ed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .ed-grid { grid-template-columns: 1fr; } }
+  .tags { columns: 2; column-gap: 24px; }
+  .tags li { break-inside: avoid; }
+  @media (max-width: 560px) { .tags { columns: 1; } }
+  .pr-wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .pr-wrap { grid-template-columns: 1fr; } }
+  .pr-graph { width: 100%; max-width: 340px; display: block; margin: 0 auto; }
+  .pr-graph circle { fill: color-mix(in srgb, var(--ks-alevel) 45%, var(--ms-surface)); stroke: var(--ms-text); stroke-width: 2; }
+  .pr-graph text { fill: var(--ms-text); font-family: var(--ms-font-body); text-anchor: middle; dominant-baseline: central; }
+  .pr-graph text.big { font-weight: 700; font-size: 18px; }
+  .pr-graph text.small { font-size: 12px; }
+  .pr-graph line { stroke: var(--ms-text); stroke-width: 2; }
+  .pr-graph marker path { fill: var(--ms-text); }
+  table.links { border-collapse: collapse; font-size: 15px; margin: 6px 0; }
+  table.links th, table.links td { padding: 4px 8px; text-align: center; border-bottom: 1px solid var(--ms-line); }
+  table.links input { width: 22px; height: 22px; accent-color: var(--ms-accent); }
+  table.iter { border-collapse: collapse; font-size: 14px; width: 100%; font-family: var(--ms-font-mono); }
+  table.iter th, table.iter td { padding: 4px 8px; text-align: right; border-bottom: 1px solid var(--ms-line); }
+  table.iter th { background: var(--ms-surface-2); font-family: var(--ms-font-body); }
+  table.iter tr.final td { font-weight: 700; background: var(--ms-accent-soft); }
+  .formula { font-family: var(--ms-font-mono); font-size: 16px; padding: 10px 12px; background: var(--ms-surface-2); border-radius: 10px; overflow-x: auto; white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.3.4 Web technologies</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.3.4</p>
+  <h1>Web technologies</h1>
+  <p class="intro">The languages that make web pages, how search engines find and rank them, and where the processing happens. You need to be able to read and write HTML, CSS and JavaScript, so use the live editor to practise.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="html-css">
+    <div class="sec-head"><span class="sec-num">1.3.4a</span><h2>HTML and CSS</h2></div>
+    <p><span class="term">HTML</span> (HyperText Markup Language) describes the <strong>structure and content</strong> of a page using tags. The tags you need to know:</p>
+    <ul class="tags">
+      <li><code>&lt;html&gt;</code> the whole page</li>
+      <li><code>&lt;head&gt;</code> information about the page</li>
+      <li><code>&lt;title&gt;</code> shown in the browser tab</li>
+      <li><code>&lt;link&gt;</code> links an external stylesheet</li>
+      <li><code>&lt;body&gt;</code> the visible content</li>
+      <li><code>&lt;h1&gt;</code> <code>&lt;h2&gt;</code> <code>&lt;h3&gt;</code> headings</li>
+      <li><code>&lt;p&gt;</code> paragraph</li>
+      <li><code>&lt;img src="cat.jpg" alt="…"&gt;</code> image</li>
+      <li><code>&lt;a href="page.html"&gt;</code> hyperlink</li>
+      <li><code>&lt;div&gt;</code> a block used to group and style content</li>
+      <li><code>&lt;ul&gt;</code> <code>&lt;ol&gt;</code> <code>&lt;li&gt;</code> lists and items</li>
+      <li><code>&lt;form&gt;</code> <code>&lt;input&gt;</code> forms and inputs</li>
+      <li><code>&lt;script&gt;</code> JavaScript</li>
+    </ul>
+    <p><span class="term">CSS</span> (Cascading Style Sheets) describes how the page <strong>looks</strong>. It can be written <strong>inline</strong> (<code>style="…"</code> on a tag), <strong>internally</strong> (in a <code>&lt;style&gt;</code> block) or in an <strong>external</strong> <code>.css</code> file linked with <code>&lt;link rel="stylesheet" href="style.css"&gt;</code>.</p>
+<pre><code>h1 { color: navy; }                 /* every h1 */
+.warning { color: red; font-size: 20px; }   /* class: class="warning" */
+#menu { background-color: #eeeeee;          /* id: id="menu" */
+        border-style: solid; border-width: 2px; border-color: black;
+        width: 300px; height: 100px; font-family: Arial; }</code></pre>
+    <p>An <strong>external stylesheet</strong> can be shared by every page, so the whole site looks consistent and can be restyled by changing one file; it's also cached by the browser. A <strong>class</strong> can be used on many elements; an <strong>id</strong> should be unique on a page.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="javascript">
+    <div class="sec-head"><span class="sec-num">1.3.4b</span><h2>JavaScript</h2></div>
+    <p><span class="term">JavaScript</span> adds <strong>behaviour</strong>: it runs in the browser and can respond to events, check form input and change the page. You may be asked to write JavaScript in the exam:</p>
+<pre><code>function check() {
+  var age = document.getElementById("age").value;   // read an input
+  if (age &gt;= 18) {
+    document.getElementById("msg").innerHTML = "Adult";   // change the page
+  } else {
+    document.getElementById("msg").innerHTML = "Under 18";
+  }
+}
+for (var i = 1; i &lt;= 3; i++) { alert(i); }          // pop-up box
+document.write("Hello");                              // write into the page</code></pre>
+    <div class="tool" id="editor">
+      <p class="tool-title">Try it: live web page editor</p>
+      <p class="tool-sub">Edit the HTML, CSS or JavaScript; the page on the right updates as you type. Choose an example to start.</p>
+      <div class="presets" id="ed-presets"></div>
+      <div class="ed-grid">
+        <div>
+          <fieldset class="ctl" style="margin-bottom:8px"><legend class="sr">Which code</legend>
+            <div class="seg">
+              <label><input type="radio" name="edt" value="html" checked><span>HTML</span></label>
+              <label><input type="radio" name="edt" value="css"><span>CSS</span></label>
+              <label><input type="radio" name="edt" value="js"><span>JavaScript</span></label>
+            </div>
+          </fieldset>
+          <label for="ed-code" class="sr">Code</label>
+          <textarea class="code-in" id="ed-code" spellcheck="false" placeholder="No code here yet. Type some!"></textarea>
+        </div>
+        <div>
+          <p style="margin:0 0 8px;font-weight:700">Result</p>
+          <iframe class="preview" id="ed-out" title="Result of your code" sandbox="allow-scripts allow-modals"></iframe>
+        </div>
+      </div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p><code>document.getElementById("x").value</code> reads what's typed in an <strong>input</strong>; <code>.innerHTML</code> reads or changes the content of an element such as a <code>&lt;p&gt;</code> or <code>&lt;div&gt;</code>. Values read from inputs are <strong>strings</strong>, so convert them with <code>parseInt()</code> or <code>Number()</code> before adding them up.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="search">
+    <div class="sec-head"><span class="sec-num">1.3.4c</span><h2>Search engine indexing</h2></div>
+    <p>Search engines can't search the whole web every time someone types a query. Instead they build an <span class="term">index</span> in advance:</p>
+    <ol>
+      <li>Programs called <strong>crawlers</strong> (spiders, bots) visit web pages and <strong>follow the links</strong> on each page to find more pages.</li>
+      <li>For each page, they record the <strong>keywords</strong> and their positions, and information such as the title, headings and meta data.</li>
+      <li>This is stored in the <strong>index</strong>: like the index of a book, it lists each word and the pages it appears on. Pages are revisited regularly to keep it up to date.</li>
+      <li>When someone searches, the engine looks up the words in the index (fast), then <strong>ranks</strong> the matching pages, using factors including PageRank.</li>
+    </ol>
+    <p>Site owners can ask crawlers not to visit pages using a <code>robots.txt</code> file.</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="pagerank">
+    <div class="sec-head"><span class="sec-num">1.3.4d</span><h2>The PageRank algorithm</h2></div>
+    <p><span class="term">PageRank</span> (developed by Google's founders) ranks a page by the <strong>number and quality of pages that link to it</strong>. A link is like a vote; a vote from an important page is worth more, and a page that links to many pages shares its vote between them.</p>
+    <p class="formula">PR(A) = (1 − d) + d × ( PR(T1)/C(T1) + … + PR(Tn)/C(Tn) )</p>
+    <ul>
+      <li><strong>PR(A)</strong> is the PageRank of page A; <strong>T1 … Tn</strong> are the pages that link <strong>to</strong> A</li>
+      <li><strong>C(T)</strong> is the number of <strong>outbound links</strong> from page T</li>
+      <li><strong>d</strong> is the <strong>damping factor</strong>, usually 0.85: the probability that a person randomly clicking links keeps clicking rather than going somewhere new</li>
+    </ul>
+    <p>Because each page's rank depends on the others, it is calculated <strong>iteratively</strong>: start every page at 1, apply the formula to all pages again and again, and stop when the values stop changing.</p>
+    <div class="tool" id="pr">
+      <p class="tool-title">Try it: calculate PageRank</p>
+      <p class="tool-sub">Tick the boxes to choose which pages link to which. The circles grow with their PageRank. d = 0.85.</p>
+      <div class="pr-wrap">
+        <div>
+          <div class="table-wrap" style="margin:0"><table class="links" id="pr-links"></table></div>
+          <svg class="pr-graph" id="pr-graph" viewBox="0 0 300 300" role="img" aria-label="Link graph"></svg>
+        </div>
+        <div>
+          <div class="table-wrap" style="margin:0"><table class="iter" id="pr-iter"></table></div>
+          <p class="explain" id="pr-say" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>You may be asked to do one iteration by hand. Write out the formula with the numbers substituted in, so you get method marks even if you slip on the arithmetic. Remember C(T) is the number of links <strong>out of</strong> T, not into it.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="processing">
+    <div class="sec-head"><span class="sec-num">1.3.4e</span><h2>Server-side and client-side processing</h2></div>
+    <div class="two-col">
+      <div class="mini"><h4>Client-side</h4><ul>
+        <li>Code (usually JavaScript) runs in the user's <strong>browser</strong></li>
+        <li>✓ <strong>Instant</strong> response with no page reload; reduces load on the server and network traffic</li>
+        <li>✗ The code is <strong>visible</strong> and can be changed or turned off by the user, so it <strong>can't be trusted</strong>; depends on the browser supporting it</li>
+        <li>Uses: checking form input before sending, animations, interactive pages</li>
+      </ul></div>
+      <div class="mini"><h4>Server-side</h4><ul>
+        <li>Code (e.g. PHP, Python, Node.js) runs on the <strong>web server</strong>, which sends back the result</li>
+        <li>✓ Code is <strong>hidden</strong> and secure; can use the <strong>database</strong>; doesn't depend on the user's device</li>
+        <li>✗ Each request adds load to the server and needs a round trip, so it is slower to respond</li>
+        <li>Uses: logins, searching a database, processing payments, final validation</li>
+      </ul></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Explain why input should be checked <strong>on both sides</strong>: client-side for a fast, friendly response; server-side because client-side checks can be bypassed, which would let malicious data (such as SQL injection) reach the database.</p>
+    </div>
+    <div class="tool" id="cs">
+      <p class="tool-title">Try it: client or server?</p>
+      <p class="tool-sub">Where should each job be done?</p>
+      <div id="sort-cs"></div>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Modern sites blur the line: a page can load once and then use JavaScript to fetch just the data it needs from the server in the background (often as JSON), updating part of the page without reloading. This keeps the speed of client-side processing while the server still does the secure work.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type. You can test code answers in the live editor.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-3-3-networks.html">1.3.3 Networks</a> · Next: <a href="1-4-1-data-types.html">1.4.1 Data types</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-3-4-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'Write HTML to display a level 2 heading "Clubs", followed by an unordered list containing "Chess" and "Coding", and a hyperlink with the text "Join" that goes to join.html.',
+      points: ['<h2>Clubs</h2>', '<ul> containing <li>Chess</li> and <li>Coding</li>, closed with </ul>', '<a href="join.html">Join</a>'],
+      guide: '1 mark each. Tags must be correctly opened and closed.' },
+    { id: 'q2', marks: 3, text: 'Write CSS for an external stylesheet so that every element with the class "notice" has white text on a dark blue background, a font size of 18px and a solid border.',
+      points: ['Correct selector .notice with { }', 'color: white; background-color: darkblue (or a hex code)', 'font-size: 18px; border-style: solid'],
+      guide: '1 mark each. Properties must be separated by semicolons.' },
+    { id: 'q3', marks: 4, text: 'A web page has an input box with the id "score" and a paragraph with the id "result". Write a JavaScript function that displays "Pass" in the paragraph if the score is 40 or more, and "Fail" otherwise.',
+      points: ['Function declared, e.g. function grade() { … }', 'Reads the value with document.getElementById("score").value', 'Selection: if score >= 40 … else …', 'Writes the message with document.getElementById("result").innerHTML = …'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Give two advantages of using an external stylesheet rather than inline styles.',
+      points: ['The same stylesheet can be used by every page, giving a consistent look', 'The whole site\'s style can be changed by editing one file', 'Keeps content separate from presentation / HTML is shorter and easier to maintain', 'Cached by the browser, so pages load faster'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Describe how a search engine indexes web pages.',
+      points: ['Crawlers / spiders visit web pages', 'They follow the links on each page to find other pages', 'Keywords (and positions / meta data) from each page are stored in an index, mapping words to the pages that contain them; pages are revisited to keep it updated'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 4, text: 'Page B links to pages A and D. Page C links only to page A. No other pages link to A. PR(B) = 1.2 and PR(C) = 0.6. Using d = 0.85, calculate the PageRank of page A. Show your working.',
+      points: ['PR(A) = (1 − 0.85) + 0.85 × (PR(B)/C(B) + PR(C)/C(C))', 'B contributes 1.2 / 2 = 0.6', 'C contributes 0.6 / 1 = 0.6', 'PR(A) = 0.15 + 0.85 × 1.2 = 1.17'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'An online form is validated using JavaScript in the browser. Explain why the data should also be validated on the server.',
+      points: ['Client-side code can be seen / edited / disabled by the user', 'So invalid or malicious data could be sent anyway', 'e.g. SQL injection could reach the database', 'Server-side validation cannot be bypassed by the user, so the data is checked before it is used / stored'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 9, text: 'An online shop is redesigning its website. Discuss which tasks should be carried out using client-side processing and which using server-side processing.',
+      points: ['Client-side: checking form input as the user types, giving instant feedback', 'Client-side: interactive features such as image galleries, updating basket totals without reloading', 'Client-side reduces server load and network traffic, so the site copes with more users', 'Client-side code is visible and can be bypassed, so it cannot be relied on', 'Server-side: searching the product database and checking stock', 'Server-side: logins, processing payments and storing orders, which must be secure', 'Server-side: final validation of all data before it is stored (e.g. preventing SQL injection)', 'Server-side responses are slower and add load to the server', 'A justified conclusion, e.g. use both: client-side for speed and usability, server-side for anything involving security or the database'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of both types of processing, applied to the shop throughout, with tasks clearly matched and justified. A well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application to the shop; some justification of which side tasks belong on.'],
+        ['1–3 marks', 'Basic descriptions of client-side and/or server-side processing with little application.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+
+  // ---------- Live editor ----------
+  var EX = [
+    { name: 'Basic page', html: '<h1>My club</h1>\n<p class="intro">We meet every <b>Tuesday</b>.</p>\n<ul>\n  <li>Chess</li>\n  <li>Coding</li>\n</ul>\n<a href="#">Join us</a>\n<div id="box">This is a div.</div>',
+      css: 'body { font-family: Arial; }\nh1 { color: navy; }\n.intro { font-size: 20px; }\n#box {\n  background-color: lightyellow;\n  border-style: solid;\n  border-width: 2px;\n  border-color: orange;\n  width: 200px;\n  height: 60px;\n}', js: '' },
+    { name: 'Pass or fail', html: '<p>Score: <input id="score" type="number" value="55"></p>\n<button onclick="grade()">Check</button>\n<p id="result"></p>',
+      css: 'body { font-family: Arial; font-size: 18px; }\n#result { font-weight: bold; }',
+      js: 'function grade() {\n  var score = Number(document.getElementById("score").value);\n  if (score >= 40) {\n    document.getElementById("result").innerHTML = "Pass";\n  } else {\n    document.getElementById("result").innerHTML = "Fail";\n  }\n}' },
+    { name: 'Form check', html: '<form onsubmit="return check()">\n  <p>Email: <input id="email"></p>\n  <input type="submit" value="Sign up">\n</form>\n<p id="msg"></p>',
+      css: 'body { font-family: Arial; }\n#msg { color: red; }',
+      js: 'function check() {\n  var e = document.getElementById("email").value;\n  if (e.indexOf("@") == -1) {\n    document.getElementById("msg").innerHTML = "Please enter a valid email";\n    return false;   // stop the form being sent\n  }\n  document.getElementById("msg").innerHTML = "Thanks! (Form would be sent)";\n  return false;\n}' },
+    { name: 'Loop', html: '<h2>Times table</h2>\n<ul id="list"></ul>',
+      css: 'body { font-family: Arial; }\nli { color: darkgreen; }',
+      js: 'var html = "";\nfor (var i = 1; i <= 10; i++) {\n  html = html + "<li>" + i + " x 7 = " + (i * 7) + "</li>";\n}\ndocument.getElementById("list").innerHTML = html;' }
+  ];
+  var cur = { html: '', css: '', js: '' }, area = document.getElementById('ed-code'), frame = document.getElementById('ed-out'), timer;
+  function which() { return document.querySelector('input[name="edt"]:checked').value; }
+  function render() {
+    var js = cur.js.replace(/<\/script/gi, '<\\/script');
+    frame.srcdoc = '<!doctype html><html><head><meta charset="utf-8"><style>body{margin:12px;color:#111;background:#fff}' + '</style><style>' + cur.css + '</style></head><body>' + cur.html +
+      '<script>window.onerror=function(m,s,l){var d=document.createElement("pre");d.style.cssText="color:#b00;white-space:pre-wrap;font:13px monospace;border-top:1px solid #b00;margin-top:12px;padding-top:6px";d.textContent="JavaScript error (line "+l+"): "+m;document.body.appendChild(d);};<\/script><script>' + js + '<\/script></body></html>';
+  }
+  function load(ex) { cur = { html: ex.html, css: ex.css, js: ex.js }; area.value = cur[which()]; render(); }
+  EX.forEach(function (ex) { var b = el('button', null, ex.name); b.type = 'button'; b.addEventListener('click', function () { load(ex); }); document.getElementById('ed-presets').appendChild(b); });
+  document.querySelectorAll('input[name="edt"]').forEach(function (r) { r.addEventListener('change', function () { area.value = cur[which()]; }); });
+  area.addEventListener('input', function () { cur[which()] = area.value; clearTimeout(timer); timer = setTimeout(render, 400); });
+  area.addEventListener('keydown', function (e) {
+    if (e.key === 'Tab' && !e.shiftKey && !e.ctrlKey && !e.altKey) { var s = area.selectionStart; if (area.value.slice(area.value.lastIndexOf('\n', s - 1) + 1, s).trim() === '') { e.preventDefault(); area.setRangeText('  ', s, area.selectionEnd, 'end'); area.dispatchEvent(new Event('input')); } }
+  });
+  load(EX[0]);
+
+  // ---------- PageRank ----------
+  var P = ['A', 'B', 'C', 'D'], D = 0.85;
+  var links = { A: { B: 1, C: 1 }, B: { C: 1 }, C: { A: 1 }, D: { C: 1 } };
+  var POS = { A: [70, 70], B: [230, 70], C: [230, 230], D: [70, 230] };
+  function buildLinks() {
+    var t = document.getElementById('pr-links'); t.innerHTML = '';
+    var hr = el('tr'); hr.appendChild(el('th', null, 'From ↓ to →')); P.forEach(function (p) { var th = el('th', null, p); th.scope = 'col'; hr.appendChild(th); });
+    var th = el('thead'); th.appendChild(hr); t.appendChild(th);
+    var tb = el('tbody');
+    P.forEach(function (f) {
+      var tr = el('tr'); var rh = el('th', null, f); rh.scope = 'row'; tr.appendChild(rh);
+      P.forEach(function (to) {
+        var td = el('td');
+        if (f !== to) {
+          var c = el('input'); c.type = 'checkbox'; c.checked = !!links[f][to]; c.setAttribute('aria-label', f + ' links to ' + to);
+          c.addEventListener('change', function () { if (c.checked) links[f][to] = 1; else delete links[f][to]; calc(); });
+          td.appendChild(c);
+        } else td.textContent = '—';
+        tr.appendChild(td);
+      });
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+  }
+  function calc() {
+    var pr = { A: 1, B: 1, C: 1, D: 1 }, rows = [[0, pr]], it = 0, change = 1;
+    while (change > 0.00005 && it < 200) {
+      var next = {};
+      P.forEach(function (p) {
+        var s = 0;
+        P.forEach(function (q) { if (links[q][p]) s += pr[q] / Object.keys(links[q]).length; });
+        next[p] = (1 - D) + D * s;
+      });
+      change = Math.max.apply(null, P.map(function (p) { return Math.abs(next[p] - pr[p]); }));
+      pr = next; it++; rows.push([it, pr]);
+    }
+    var t = document.getElementById('pr-iter'); t.innerHTML = '';
+    var hr = el('tr'); hr.appendChild(el('th', null, 'Iteration')); P.forEach(function (p) { hr.appendChild(el('th', null, 'PR(' + p + ')')); });
+    var th = el('thead'); th.appendChild(hr); t.appendChild(th);
+    var tb = el('tbody');
+    var show = rows.length <= 7 ? rows : rows.slice(0, 5).concat([null, rows[rows.length - 1]]);
+    show.forEach(function (r, i) {
+      var tr = el('tr', r && i === show.length - 1 ? 'final' : null);
+      if (!r) { var td = el('td', null, '⋮'); td.colSpan = 5; td.style.textAlign = 'center'; tr.appendChild(td); }
+      else { tr.appendChild(el('td', null, r[0])); P.forEach(function (p) { tr.appendChild(el('td', null, r[1][p].toFixed(3))); }); }
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    var order = P.slice().sort(function (a, b) { return pr[b] - pr[a]; });
+    var first = P.map(function (p) {
+      var terms = P.filter(function (q) { return links[q][p]; }).map(function (q) { return 'PR(' + q + ')/' + Object.keys(links[q]).length; });
+      return 'PR(' + p + ') = 0.15 + 0.85 × (' + (terms.join(' + ') || '0') + ')';
+    });
+    var say = document.getElementById('pr-say');
+    say.innerHTML = '';
+    say.appendChild(el('span', null, (change <= 0.00005 ? 'Settled after ' + it + ' iterations. ' : '') + 'Ranking: ' + order.join(' > ') + '. '));
+    var pages = P.filter(function (p) { return !P.some(function (q) { return links[q][p]; }); });
+    if (pages.length) say.appendChild(el('span', null, 'Nothing links to ' + pages.join(' and ') + ', so ' + (pages.length > 1 ? 'they get' : 'it gets') + ' only the minimum 0.15. '));
+    var dang = P.filter(function (p) { return !Object.keys(links[p]).length; });
+    if (dang.length) say.appendChild(el('span', null, dang.join(' and ') + (dang.length > 1 ? ' link' : ' links') + ' nowhere, so ' + (dang.length > 1 ? 'their' : 'its') + ' rank isn\'t passed on. '));
+    var ul = el('div', 'small'); ul.style.marginTop = '6px'; ul.style.fontFamily = 'var(--ms-font-mono)';
+    first.forEach(function (f) { ul.appendChild(el('div', null, f)); });
+    say.appendChild(ul);
+    draw(pr);
+  }
+  function draw(pr) {
+    var svg = document.getElementById('pr-graph'), NS = 'http://www.w3.org/2000/svg';
+    function mk(t, a) { var x = document.createElementNS(NS, t); for (var k in a) x.setAttribute(k, a[k]); return x; }
+    svg.innerHTML = '';
+    var defs = mk('defs', {}), m = mk('marker', { id: 'arr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' });
+    m.appendChild(mk('path', { d: 'M0,0 L10,5 L0,10 z' })); defs.appendChild(m); svg.appendChild(defs);
+    function rad(p) { return 18 + Math.min(pr[p], 2.5) * 14; }
+    P.forEach(function (f) {
+      Object.keys(links[f]).forEach(function (to) {
+        var a = POS[f], b = POS[to], dx = b[0] - a[0], dy = b[1] - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+        var both = links[to][f], ox = both ? -uy * 7 : 0, oy = both ? ux * 7 : 0;
+        svg.appendChild(mk('line', { x1: a[0] + ux * rad(f) + ox, y1: a[1] + uy * rad(f) + oy, x2: b[0] - ux * (rad(to) + 2) + ox, y2: b[1] - uy * (rad(to) + 2) + oy, 'marker-end': 'url(#arr)' }));
+      });
+    });
+    P.forEach(function (p) {
+      svg.appendChild(mk('circle', { cx: POS[p][0], cy: POS[p][1], r: rad(p) }));
+      var t = mk('text', { x: POS[p][0], y: POS[p][1] - 8, class: 'big' }); t.textContent = p; svg.appendChild(t);
+      var v = mk('text', { x: POS[p][0], y: POS[p][1] + 12, class: 'small' }); v.textContent = pr[p].toFixed(2); svg.appendChild(v);
+    });
+  }
+  buildLinks(); calc();
+
+  // ---------- Client / server sorter ----------
+  TopicKit.sorter(document.getElementById('sort-cs'), ['Client-side', 'Server-side'], [
+    { text: 'Showing "passwords don\'t match" as the user types', answer: 'Client-side', why: 'Instant feedback without contacting the server.' },
+    { text: 'Checking a username and password against the user database', answer: 'Server-side', why: 'Needs the database and must be secure.' },
+    { text: 'Taking payment from a card', answer: 'Server-side', why: 'Must be secure and can\'t be tampered with by the user.' },
+    { text: 'Opening a drop-down menu when the mouse hovers over it', answer: 'Client-side', why: 'A visual effect that needs no data from the server.' },
+    { text: 'Searching 50,000 products for "blue trainers"', answer: 'Server-side', why: 'The product database is on the server.' },
+    { text: 'Working out a basket total before checkout', answer: 'Client-side', why: 'Quick to do in the browser — though the server must recalculate it before charging.' }
+  ]);
+})();
+</script>
+</body>
+</html>

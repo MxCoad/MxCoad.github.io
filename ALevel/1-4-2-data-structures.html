@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4.2 Data structures — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.4.2: arrays, records, lists and tuples; stacks, queues, linked lists, graphs, trees, binary search trees and hash tables.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .mono { font-family: var(--ms-font-mono); }
+  .inline-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin: 10px 0; }
+  .inline-ctl .field { max-width: 150px; }
+  .result-bad { color: var(--ms-bad); font-weight: 700; }
+  .cells { display: flex; gap: 4px; flex-wrap: wrap; margin: 8px 0; }
+  .cell { width: 52px; text-align: center; }
+  .cell .box, .stackcol .box { min-height: 44px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--ms-line-strong); border-radius: 8px; background: var(--ms-bg); font-family: var(--ms-font-mono); font-size: 16px; font-weight: 700; margin: 0; padding: 0; }
+  .cell .box.used, .stackcol .box.used { background: var(--ms-accent-soft); border-color: var(--ms-accent); }
+  .cell .box.hl { background: var(--ms-warn-soft); border-color: var(--ms-warn); }
+  .cell .idx { font-size: 12px; color: var(--ms-muted); font-family: var(--ms-font-mono); }
+  .cell .ptr { font-size: 12px; font-weight: 700; min-height: 18px; color: var(--ms-accent); }
+  .stackcol { display: flex; flex-direction: column-reverse; gap: 4px; width: 150px; }
+  .stackcol .row { display: grid; grid-template-columns: 24px 1fr 52px; gap: 6px; align-items: center; }
+  .stackcol .row .box { min-height: 38px; }
+  .ds-grid { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 640px) { .ds-grid { grid-template-columns: 1fr; } }
+  table.mini-t { border-collapse: collapse; font-size: 15px; }
+  table.mini-t th, table.mini-t td { border-bottom: 1px solid var(--ms-line); padding: 4px 10px; text-align: center; font-family: var(--ms-font-mono); }
+  table.mini-t th { background: var(--ms-surface-2); font-family: var(--ms-font-body); font-size: 13px; }
+  table.mini-t tr.hl td { background: var(--ms-warn-soft); }
+  table.mini-t tr.free td { color: var(--ms-muted); }
+  .chain { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 10px 0; font-family: var(--ms-font-mono); font-size: 15px; }
+  .chain .node { display: inline-flex; border: 2px solid var(--ms-accent); border-radius: 8px; overflow: hidden; }
+  .chain .node span { padding: 6px 8px; }
+  .chain .node span + span { border-left: 2px solid var(--ms-accent); background: var(--ms-accent-soft); font-size: 13px; }
+  .chain .node.hl { border-color: var(--ms-warn); background: var(--ms-warn-soft); }
+  .chain .lbl { font-family: var(--ms-font-body); font-size: 13px; font-weight: 700; color: var(--ms-muted); }
+  svg.ds { width: 100%; display: block; margin: 6px auto; }
+  svg.ds line { stroke: var(--ms-line-strong); stroke-width: 2.5; }
+  svg.ds circle { fill: var(--ms-bg); stroke: var(--ms-text); stroke-width: 2; }
+  svg.ds circle.seen { fill: var(--ms-accent-soft); stroke: var(--ms-accent); }
+  svg.ds circle.cur { fill: var(--ms-warn-soft); stroke: var(--ms-warn); stroke-width: 3; }
+  svg.ds text { fill: var(--ms-text); font-family: var(--ms-font-body); font-weight: 700; font-size: 16px; text-anchor: middle; dominant-baseline: central; }
+  svg.ds text.ord { font-size: 11px; font-weight: 700; fill: var(--ms-accent); }
+  .order { font-family: var(--ms-font-mono); font-size: 17px; margin: 6px 0; min-height: 26px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.4.2 Data structures</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.4.2</p>
+  <h1>Data structures</h1>
+  <p class="intro">Ways of organising data so it can be stored and processed efficiently. For each structure you need to know how to create it, traverse it, and add and remove data. Every tool below shows the pointers working as you go.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="arrays">
+    <div class="sec-head"><span class="sec-num">1.4.2a</span><h2>Arrays, records, lists and tuples</h2></div>
+    <table class="def">
+      <tr><th scope="row">Array</th><td>A <strong>fixed-size</strong> (static) collection of elements of the <strong>same data type</strong>, accessed by <strong>index</strong>. Can have one, two or three dimensions: <code>array board[8,8]</code>, then <code>board[2,5] = "Q"</code>. A 2D array is like a table (row, column); 3D adds a layer.</td></tr>
+      <tr><th scope="row">Record</th><td>A collection of related <strong>fields</strong>, which can be of <strong>different types</strong>, e.g. a student record with name (string), age (integer) and enrolled (Boolean). Fields are accessed by name: <code>student.name</code>.</td></tr>
+      <tr><th scope="row">List</th><td>A <strong>dynamic</strong> collection of items that can be of different types; items can be added and removed, so its size changes. Items aren't necessarily stored next to each other in memory.</td></tr>
+      <tr><th scope="row">Tuple</th><td>An ordered collection of items, possibly of different types, that is <strong>immutable</strong>: once created, it can't be changed, e.g. <code>(51.5, -0.12)</code> for a fixed location.</td></tr>
+    </table>
+<pre><code>array scores[3,4]                  // 3 rows, 4 columns
+total = 0
+for row = 0 to 2
+    for col = 0 to 3
+        total = total + scores[row,col]
+    next col
+next row</code></pre>
+    <p><strong>Static</strong> structures (arrays) have a fixed size set when they are created: simple and fast, but space can be wasted or run out. <strong>Dynamic</strong> structures (lists, linked lists, trees) grow and shrink as needed, using memory efficiently, but need extra memory for pointers and can be slower to access.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="stacks-queues">
+    <div class="sec-head"><span class="sec-num">1.4.2b</span><h2>Stacks and queues</h2></div>
+    <div class="two-col">
+      <div class="mini"><h4>Stack (LIFO)</h4><ul>
+        <li><strong>Last in, first out</strong>: items are added and removed at the <strong>top</strong></li>
+        <li>A <strong>top pointer</strong> shows the top item</li>
+        <li><strong>push</strong>: check not full (else <strong>overflow</strong>), increment top, store item</li>
+        <li><strong>pop</strong>: check not empty (else <strong>underflow</strong>), return item at top, decrement top</li>
+        <li><strong>peek</strong>: return the top item without removing it</li>
+        <li>Uses: the call stack for subroutines, undo, back button, evaluating expressions</li>
+      </ul></div>
+      <div class="mini"><h4>Queue (FIFO)</h4><ul>
+        <li><strong>First in, first out</strong>: added at the <strong>rear</strong>, removed from the <strong>front</strong></li>
+        <li><strong>Front</strong> and <strong>rear pointers</strong></li>
+        <li><strong>enqueue</strong>: check not full, increment rear, store item</li>
+        <li><strong>dequeue</strong>: check not empty, return item at front, increment front</li>
+        <li>In a <strong>linear</strong> queue, spaces freed at the front can't be reused. A <strong>circular</strong> queue wraps the pointers round: <code>rear = (rear + 1) MOD size</code></li>
+        <li>Uses: printer queues, keyboard buffers, scheduling processes</li>
+      </ul></div>
+    </div>
+    <div class="tool" id="sq">
+      <p class="tool-title">Try it: stack and queue (size 6)</p>
+      <p class="tool-sub">Add and remove items and watch the pointers. Fill the linear queue, then dequeue a few and try adding more.</p>
+      <fieldset class="ctl"><legend class="sr">Structure</legend>
+        <div class="seg">
+          <label><input type="radio" name="sqk" value="stack" checked><span>Stack</span></label>
+          <label><input type="radio" name="sqk" value="linear"><span>Linear queue</span></label>
+          <label><input type="radio" name="sqk" value="circular"><span>Circular queue</span></label>
+        </div>
+      </fieldset>
+      <div class="inline-ctl">
+        <div class="ctl"><label for="sq-in">Item</label><input class="field" id="sq-in" value="A" maxlength="4"></div>
+        <button type="button" class="btn primary" id="sq-add">Push</button>
+        <button type="button" class="btn" id="sq-rem">Pop</button>
+        <button type="button" class="btn" id="sq-peek">Peek</button>
+        <button type="button" class="btn" id="sq-reset">Empty it</button>
+      </div>
+      <div id="sq-vis"></div>
+      <p class="explain" id="sq-say" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="linked-lists">
+    <div class="sec-head"><span class="sec-num">1.4.2c</span><h2>Linked lists</h2></div>
+    <p>A <span class="term">linked list</span> is a dynamic structure where each <strong>node</strong> holds <strong>data</strong> and a <strong>pointer</strong> to the next node. A <strong>start pointer</strong> identifies the first node; the last node's pointer is <strong>null</strong>. Unused nodes are kept in a <strong>free list</strong>, identified by a <strong>free pointer</strong>.</p>
+    <ul>
+      <li><strong>Traverse</strong>: start at the start pointer and follow each pointer until null.</li>
+      <li><strong>Add</strong>: take the node at the free pointer and update the free pointer; store the data; find the right place by traversing; set the new node's pointer to the next node, and the previous node's pointer to the new node.</li>
+      <li><strong>Remove</strong>: traverse to the node; set the previous node's pointer to the removed node's pointer (bypassing it); add the removed node to the free list.</li>
+    </ul>
+    <p>✓ Items can be inserted or removed without moving any other data — only pointers change. ✗ No direct access by index: to find an item you must traverse from the start; pointers use extra memory.</p>
+    <div class="tool" id="ll">
+      <p class="tool-title">Try it: an ordered linked list stored in an array</p>
+      <p class="tool-sub">Names are kept in alphabetical order. Watch which pointers change when you add or remove one. −1 means null.</p>
+      <div class="inline-ctl" style="margin-top:0">
+        <div class="ctl"><label for="ll-in">Name</label><input class="field" id="ll-in" value="Eve" maxlength="8"></div>
+        <button type="button" class="btn primary" id="ll-add">Add</button>
+        <button type="button" class="btn" id="ll-del">Remove</button>
+        <button type="button" class="btn" id="ll-trav">Traverse</button>
+        <button type="button" class="btn" id="ll-reset">Reset</button>
+      </div>
+      <div class="chain" id="ll-chain"></div>
+      <div class="ds-grid">
+        <div class="table-wrap" style="margin:0"><table class="mini-t" id="ll-table"></table></div>
+        <p class="explain" id="ll-say" aria-live="polite" style="margin:0"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="graphs">
+    <div class="sec-head"><span class="sec-num">1.4.2d</span><h2>Graphs</h2></div>
+    <p>A <span class="term">graph</span> is a set of <strong>vertices</strong> (nodes) connected by <strong>edges</strong> (arcs). Graphs can be <strong>directed</strong> (edges one way) or <strong>undirected</strong>, and <strong>weighted</strong> (each edge has a cost, such as a distance) or unweighted. They model networks such as roads, social networks and the web.</p>
+    <div class="two-col">
+      <div class="mini"><h4>Adjacency matrix</h4><ul>
+        <li>A 2D array: row = from, column = to; a 1 (or the weight) shows an edge</li>
+        <li>✓ Fast to check whether an edge exists</li>
+        <li>✗ Wastes memory for <strong>sparse</strong> graphs (few edges)</li>
+      </ul></div>
+      <div class="mini"><h4>Adjacency list</h4><ul>
+        <li>Each vertex stores a list of its neighbours</li>
+        <li>✓ Memory-efficient for sparse graphs</li>
+        <li>✗ Slower to check whether a particular edge exists</li>
+      </ul></div>
+    </div>
+    <p>Traversals: <strong>depth-first</strong> goes as far as possible along one branch before <strong>backtracking</strong> (uses a <strong>stack</strong>); <strong>breadth-first</strong> visits all neighbours of a node before moving further away (uses a <strong>queue</strong>).</p>
+    <div class="tool" id="gr">
+      <p class="tool-title">Try it: traverse a graph</p>
+      <p class="tool-sub">Neighbours are visited in alphabetical order. Step through and watch the stack or queue.</p>
+      <div class="inline-ctl" style="margin-top:0">
+        <fieldset class="ctl" style="min-width:min(280px,100%)"><legend class="sr">Traversal</legend>
+          <div class="seg">
+            <label><input type="radio" name="gt" value="dfs" checked><span>Depth-first</span></label>
+            <label><input type="radio" name="gt" value="bfs"><span>Breadth-first</span></label>
+          </div>
+        </fieldset>
+        <div class="ctl"><label for="gr-start">Start at</label><select class="field" id="gr-start"></select></div>
+      </div>
+      <div class="ds-grid">
+        <svg class="ds" id="gr-svg" viewBox="0 0 360 250" style="max-width:360px" role="img" aria-label="Graph"></svg>
+        <div>
+          <p style="margin:0 0 4px"><strong id="gr-dslabel">Stack</strong></p><div class="order" id="gr-ds"></div>
+          <p style="margin:8px 0 4px"><strong>Visited order</strong></p><div class="order" id="gr-order"></div>
+          <p class="explain" id="gr-say" aria-live="polite"></p>
+          <div class="btn-row"><button type="button" class="btn" id="gr-back">Back</button><button type="button" class="btn primary" id="gr-next">Next step</button></div>
+          <p class="small" style="margin-top:10px">Adjacency list:</p><div class="mono small" id="gr-adj"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="trees">
+    <div class="sec-head"><span class="sec-num">1.4.2e</span><h2>Trees and binary search trees</h2></div>
+    <p>A <span class="term">tree</span> is a connected graph with <strong>no cycles</strong>, with a <strong>root</strong> node at the top; each node has <strong>children</strong>, and nodes with no children are <strong>leaves</strong>. In a <span class="term">binary tree</span>, each node has at most two children. A <span class="term">binary search tree</span> is ordered: everything in a node's <strong>left</strong> subtree is <strong>smaller</strong>, everything in its <strong>right</strong> subtree is <strong>larger</strong>, so searching only follows one path (O(log n) if the tree is balanced).</p>
+    <ul>
+      <li><strong>Add</strong>: start at the root; go left if the new item is smaller, right if larger; repeat until there's an empty place.</li>
+      <li><strong>Remove</strong>: a leaf is simply removed; a node with one child is replaced by its child; a node with two children is replaced by its <strong>in-order successor</strong> (the smallest item in its right subtree).</li>
+      <li>Traversals: <strong>pre-order</strong> (node, left, right), <strong>in-order</strong> (left, node, right — gives the items <strong>in order</strong>), <strong>post-order</strong> (left, right, node), and <strong>breadth-first</strong> (level by level).</li>
+    </ul>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>A quick way to write traversals: draw a line round the outside of the tree, starting left of the root. Pre-order: list each node as you pass its <strong>left</strong> side. In-order: as you pass <strong>underneath</strong>. Post-order: as you pass its <strong>right</strong> side.</p>
+    </div>
+    <div class="tool" id="bst">
+      <p class="tool-title">Try it: binary search tree</p>
+      <p class="tool-sub">Add numbers, search for one, or watch a traversal.</p>
+      <div class="inline-ctl" style="margin-top:0">
+        <div class="ctl"><label for="bst-in">Number</label><input class="field" type="number" id="bst-in" value="65"></div>
+        <button type="button" class="btn primary" id="bst-add">Add</button>
+        <button type="button" class="btn" id="bst-find">Search</button>
+        <button type="button" class="btn" id="bst-reset">Reset</button>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="btn" data-trav="pre">Pre-order</button>
+        <button type="button" class="btn" data-trav="in">In-order</button>
+        <button type="button" class="btn" data-trav="post">Post-order</button>
+        <button type="button" class="btn" data-trav="bf">Breadth-first</button>
+      </div>
+      <svg class="ds" id="bst-svg" role="img" aria-label="Binary search tree"></svg>
+      <div class="order" id="bst-order"></div>
+      <p class="explain" id="bst-say" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="hash-tables">
+    <div class="sec-head"><span class="sec-num">1.4.2f</span><h2>Hash tables</h2></div>
+    <p>A <span class="term">hash table</span> stores data at a position calculated from its key by a <strong>hash function</strong>, so an item can be found <strong>directly</strong> in (ideally) one step — O(1) — rather than by searching.</p>
+    <ul>
+      <li>A good hash function is <strong>quick to calculate</strong> and spreads keys <strong>evenly</strong> over the table. A common one is <code>key MOD tablesize</code>, often with a prime table size.</li>
+      <li>A <strong>collision</strong> happens when two keys hash to the same position. Resolve it by <strong>linear probing</strong> (try the next free position, wrapping round) or <strong>chaining</strong> (each position holds a linked list of items).</li>
+      <li>To <strong>search</strong>, hash the key and look there; if another item is there, probe onwards until you find it or reach an empty slot. Too many collisions slow it down, so tables are kept partly empty (a low <strong>load factor</strong>) and may be rehashed into a bigger table.</li>
+    </ul>
+    <div class="tool" id="ht">
+      <p class="tool-title">Try it: hash table with linear probing</p>
+      <p class="tool-sub">11 slots; hash = key MOD 11. Add the numbers 23, 18, 45, 30 and 56 to see collisions.</p>
+      <div class="inline-ctl" style="margin-top:0">
+        <div class="ctl"><label for="ht-in">Key</label><input class="field" type="number" id="ht-in" value="23"></div>
+        <button type="button" class="btn primary" id="ht-add">Add</button>
+        <button type="button" class="btn" id="ht-find">Search</button>
+        <button type="button" class="btn" id="ht-reset">Empty it</button>
+      </div>
+      <div class="cells" id="ht-cells"></div>
+      <p class="explain" id="ht-say" aria-live="polite"></p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Deleting from a linear-probing hash table is tricky: if you just empty the slot, a later search could stop there and miss an item that was probed past it. Real implementations mark the slot as "deleted" (a tombstone) so searches carry on past it.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-4-1-data-types.html">1.4.1 Data types</a> · Next: <a href="1-4-3-boolean-algebra.html">1.4.3 Boolean algebra</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-4-2-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'A 2D array temps[7,24] stores the temperature for each hour (0–23) of each day (0–6) of a week. Write pseudocode to calculate and output the mean temperature for day 3.',
+      points: ['Loop for hour = 0 to 23', 'Adds temps[3,hour] to a running total (initialised to 0)', 'Outputs total / 24'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 2, text: 'Explain the difference between a static and a dynamic data structure.',
+      points: ['Static: size fixed when it is created / cannot change at run time (e.g. array)', 'Dynamic: size can change as the program runs, using memory as needed (e.g. linked list)'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'Compare an array, a list and a tuple.',
+      points: ['An array is fixed size and holds items of one data type', 'A list is dynamic / can change size and can hold different data types', 'A tuple can hold different types but is immutable / cannot be changed once created'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'A stack is stored in an array with a pointer called top. Describe how an item is pushed onto the stack and how an item is popped from it.',
+      points: ['Push: check whether the stack is full (stack overflow)', 'Push: increment top and store the item at position top', 'Pop: check whether the stack is empty (stack underflow)', 'Pop: return the item at position top and decrement top'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Explain the advantage of a circular queue over a linear queue, and show how the rear pointer is updated in a circular queue of size 6.',
+      points: ['In a linear queue, spaces freed at the front cannot be reused', 'A circular queue wraps round, so freed spaces are reused / memory used efficiently', 'rear = (rear + 1) MOD 6'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 4, text: 'Describe how a new item is inserted into an ordered linked list that uses a free list.',
+      points: ['The new item is stored in the node pointed to by the free pointer, and the free pointer is updated to the next free node', 'Traverse the list from the start pointer to find the correct position', 'The new node\'s pointer is set to point to the next node', 'The previous node\'s pointer (or start pointer if first) is updated to point to the new node'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 3, text: 'The numbers 50, 30, 70, 20, 40, 60 are added in that order to an empty binary search tree. Give the pre-order, in-order and post-order traversals.',
+      points: ['Pre-order: 50, 30, 20, 40, 70, 60', 'In-order: 20, 30, 40, 50, 60, 70', 'Post-order: 20, 40, 30, 60, 70, 50'],
+      guide: '1 mark each. Use the BST tool to check.' },
+    { id: 'q8', marks: 3, text: 'Explain what a collision is in a hash table and how linear probing deals with it.',
+      points: ['A collision is when two keys hash to the same position', 'Linear probing checks the next position(s) in turn (wrapping round)', 'until an empty slot is found, where the item is stored; searching follows the same path'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 2, text: 'A road network has 2000 junctions, each connected to only a few others. State, with a reason, whether an adjacency matrix or an adjacency list would be more suitable.',
+      points: ['Adjacency list', 'The graph is sparse, so a matrix (2000 × 2000) would be mostly empty / waste memory'],
+      guide: '1 mark each.' },
+    { id: 'q10', marks: 9, text: 'A music streaming app needs to store: the songs queued to play next; a history of played songs for the "back" button; the library of songs, searched by title; and a network of artists linked to similar artists for recommendations. Discuss suitable data structures for each.',
+      points: ['Play queue: a queue (FIFO) — songs play in the order added', 'Queue could be circular / a linked list so songs can be inserted or reordered easily', 'Back button: a stack (LIFO) — the most recent song is returned first', 'Library: a hash table keyed on title gives fast O(1) look-up', 'Or a binary search tree — fast search and in-order traversal lists songs alphabetically', 'Similar artists: a graph — artists are vertices, similarity links are edges (possibly weighted)', 'Sparse graph so an adjacency list; breadth-first traversal finds closely related artists first', 'Dynamic structures because the amounts of data change', 'A justified overall conclusion'],
+      levels: [
+        ['7–9 marks', 'Suitable structures chosen for all four needs, each justified with how it is used. Thorough knowledge with a clear conclusion.'],
+        ['4–6 marks', 'Suitable structures for most needs with some justification.'],
+        ['1–3 marks', 'Some structures named with little justification.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function $(id) { return document.getElementById(id); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(t, a) { var x = document.createElementNS(NS, t); for (var k in a) x.setAttribute(k, a[k]); return x; }
+
+  // ---------- Stack and queue ----------
+  var SIZE = 6, sq;
+  function kind() { return document.querySelector('input[name="sqk"]:checked').value; }
+  function resetSQ() { sq = { a: [null, null, null, null, null, null], top: -1, front: 0, rear: -1, count: 0 }; }
+  resetSQ();
+  function cellEl(v, idx, ptr, cls) {
+    var c = el('div', 'cell'); c.append(el('div', 'ptr', ptr || ''), el('div', 'box' + (cls ? ' ' + cls : ''), v == null ? '' : v), el('div', 'idx', idx)); return c;
+  }
+  function drawSQ(msg) {
+    var k = kind(), vis = $('sq-vis'); vis.innerHTML = '';
+    $('sq-add').textContent = k === 'stack' ? 'Push' : 'Enqueue';
+    $('sq-rem').textContent = k === 'stack' ? 'Pop' : 'Dequeue';
+    if (k === 'stack') {
+      var col = el('div', 'stackcol');
+      for (var i = 0; i < SIZE; i++) {
+        var row = el('div', 'row'); row.append(el('div', 'idx mono small', i), el('div', 'box' + (i <= sq.top ? ' used' : ''), i <= sq.top ? sq.a[i] : ''), el('div', 'ptr', i === sq.top ? '← top' : ''));
+        col.appendChild(row);
+      }
+      vis.appendChild(col);
+      vis.appendChild(el('p', 'small mono', 'top = ' + sq.top));
+    } else {
+      var cells = el('div', 'cells');
+      for (var j = 0; j < SIZE; j++) {
+        var used = k === 'linear' ? (j >= sq.front && j <= sq.rear) : (sq.count > 0 && ((j - sq.front + SIZE) % SIZE) < sq.count);
+        var p = []; if (j === sq.front) p.push('F'); if (j === sq.rear) p.push('R');
+        cells.appendChild(cellEl(used ? sq.a[j] : '', j, p.join(' '), used ? 'used' : ''));
+      }
+      vis.appendChild(cells);
+      vis.appendChild(el('p', 'small mono', 'front = ' + sq.front + ', rear = ' + sq.rear + (k === 'circular' ? ', count = ' + sq.count : '')));
+    }
+    $('sq-say').textContent = msg || '';
+  }
+  $('sq-add').addEventListener('click', function () {
+    var k = kind(), v = $('sq-in').value.trim() || '?', next = String.fromCharCode(((v.charCodeAt(0) - 65 + 1) % 26) + 65);
+    if (k === 'stack') {
+      if (sq.top === SIZE - 1) return drawSQ('Stack overflow: top = ' + sq.top + ' = size − 1, so the stack is full.');
+      sq.top++; sq.a[sq.top] = v; drawSQ('Pushed ' + v + ': top incremented to ' + sq.top + ' and ' + v + ' stored there.');
+    } else if (k === 'linear') {
+      if (sq.rear === SIZE - 1) return drawSQ('Queue full: rear = ' + sq.rear + ', the last position.' + (sq.front > 0 ? ' There are ' + sq.front + ' empty spaces at the front, but a linear queue can\'t reuse them. A circular queue can!' : ''));
+      sq.rear++; sq.a[sq.rear] = v; drawSQ('Enqueued ' + v + ': rear incremented to ' + sq.rear + '.');
+    } else {
+      if (sq.count === SIZE) return drawSQ('Queue full: count = ' + SIZE + '.');
+      var old = sq.rear; sq.rear = (sq.rear + 1) % SIZE; sq.a[sq.rear] = v; sq.count++;
+      drawSQ('Enqueued ' + v + ': rear = (' + old + ' + 1) MOD 6 = ' + sq.rear + (sq.rear < old ? ' — it wrapped round to the start!' : '.'));
+    }
+    if (/^[A-Z]$/.test(v)) $('sq-in').value = next;
+  });
+  $('sq-rem').addEventListener('click', function () {
+    var k = kind(), v;
+    if (k === 'stack') {
+      if (sq.top === -1) return drawSQ('Stack underflow: top = −1, so the stack is empty.');
+      v = sq.a[sq.top]; sq.top--; drawSQ('Popped ' + v + ': it was at the top, and top decremented to ' + sq.top + '. (The data is still in the array but will be overwritten.)');
+    } else if (k === 'linear') {
+      if (sq.front > sq.rear) return drawSQ('Queue empty: front > rear.');
+      v = sq.a[sq.front]; sq.front++; drawSQ('Dequeued ' + v + ' from the front; front incremented to ' + sq.front + '.');
+    } else {
+      if (sq.count === 0) return drawSQ('Queue empty: count = 0.');
+      v = sq.a[sq.front]; var old = sq.front; sq.front = (sq.front + 1) % SIZE; sq.count--;
+      drawSQ('Dequeued ' + v + ': front = (' + old + ' + 1) MOD 6 = ' + sq.front + '.');
+    }
+  });
+  $('sq-peek').addEventListener('click', function () {
+    var k = kind();
+    if (k === 'stack') drawSQ(sq.top === -1 ? 'The stack is empty.' : 'Peek: the top item is ' + sq.a[sq.top] + ' (not removed).');
+    else drawSQ((k === 'linear' ? sq.front > sq.rear : sq.count === 0) ? 'The queue is empty.' : 'Peek: the front item is ' + sq.a[sq.front] + ' (not removed).');
+  });
+  $('sq-reset').addEventListener('click', function () { resetSQ(); $('sq-in').value = 'A'; drawSQ('Emptied.'); });
+  document.querySelectorAll('input[name="sqk"]').forEach(function (r) { r.addEventListener('change', function () { resetSQ(); $('sq-in').value = 'A'; drawSQ(); }); });
+  drawSQ();
+
+  // ---------- Linked list ----------
+  var LL;
+  function resetLL() {
+    LL = { data: ['Kim', 'Ali', '', 'Raj', 'Dan', '', '', ''], next: [3, 4, 5, -1, 0, 6, 7, -1], start: 1, free: 2 };
+  }
+  resetLL();
+  function drawLL(msg, hl) {
+    hl = hl || [];
+    var ch = $('ll-chain'); ch.innerHTML = '';
+    ch.appendChild(el('span', 'lbl', 'start = ' + LL.start + ' →'));
+    var p = LL.start, guard = 0;
+    while (p !== -1 && guard++ < 20) {
+      var n = el('span', 'node' + (hl.indexOf(p) >= 0 ? ' hl' : '')); n.append(el('span', null, LL.data[p]), el('span', null, '[' + p + ']'));
+      ch.appendChild(n); ch.appendChild(el('span', null, '→')); p = LL.next[p];
+    }
+    ch.appendChild(el('span', 'lbl', 'null'));
+    var freeSet = [], f = LL.free; while (f !== -1 && freeSet.length < 20) { freeSet.push(f); f = LL.next[f]; }
+    var t = $('ll-table'); t.innerHTML = '<thead><tr><th scope="col">Index</th><th scope="col">Data</th><th scope="col">Next</th></tr></thead>';
+    var tb = el('tbody');
+    LL.data.forEach(function (d, i) {
+      var tr = el('tr', hl.indexOf(i) >= 0 ? 'hl' : freeSet.indexOf(i) >= 0 ? 'free' : null);
+      tr.append(el('td', null, i), el('td', null, freeSet.indexOf(i) >= 0 ? '(free)' : d), el('td', null, LL.next[i])); tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    var foot = el('tfoot'), fr = el('tr'), fc = el('td', null, 'start = ' + LL.start + ', free = ' + LL.free); fc.colSpan = 3; fc.style.fontWeight = '700'; fr.appendChild(fc); foot.appendChild(fr); t.appendChild(foot);
+    $('ll-say').textContent = msg || 'The list is stored in index order 1, 4, 0, 3 — not next to each other — but the pointers keep it in alphabetical order. Free nodes are linked together from the free pointer.';
+  }
+  function cmp(a, b) { return a.toLowerCase() < b.toLowerCase() ? -1 : a.toLowerCase() > b.toLowerCase() ? 1 : 0; }
+  $('ll-add').addEventListener('click', function () {
+    var v = $('ll-in').value.trim(); if (!v) return;
+    if (LL.free === -1) return drawLL('The list is full: the free pointer is −1 (null), so there are no free nodes.');
+    var nw = LL.free; LL.free = LL.next[nw]; LL.data[nw] = v;
+    var steps = 'New node [' + nw + '] taken from the free pointer, which now points to ' + LL.free + '. ';
+    if (LL.start === -1 || cmp(v, LL.data[LL.start]) < 0) {
+      LL.next[nw] = LL.start; LL.start = nw;
+      steps += v + ' comes first, so its pointer is set to the old start and start now points to [' + nw + '].';
+      return drawLL(steps, [nw]);
+    }
+    var prev = LL.start;
+    while (LL.next[prev] !== -1 && cmp(LL.data[LL.next[prev]], v) < 0) prev = LL.next[prev];
+    LL.next[nw] = LL.next[prev]; LL.next[prev] = nw;
+    steps += 'Traversed to ' + LL.data[prev] + ' [' + prev + ']. ' + v + '\'s pointer is set to ' + LL.next[nw] + (LL.next[nw] === -1 ? ' (null, it\'s last)' : ' (' + LL.data[LL.next[nw]] + ')') + ', and ' + LL.data[prev] + '\'s pointer is changed to ' + nw + '. No data was moved.';
+    drawLL(steps, [nw, prev]);
+  });
+  $('ll-del').addEventListener('click', function () {
+    var v = $('ll-in').value.trim(), prev = -1, p = LL.start;
+    while (p !== -1 && cmp(LL.data[p], v) !== 0) { prev = p; p = LL.next[p]; }
+    if (p === -1) return drawLL(v + ' isn\'t in the list (traversed to null without finding it).');
+    var msg;
+    if (prev === -1) { LL.start = LL.next[p]; msg = v + ' was first, so start now points to ' + LL.start + '. '; }
+    else { LL.next[prev] = LL.next[p]; msg = LL.data[prev] + '\'s pointer now skips over ' + v + ' to ' + LL.next[prev] + '. '; }
+    LL.next[p] = LL.free; LL.free = p;
+    msg += 'Node [' + p + '] is added to the front of the free list: its pointer is set to the old free pointer, and free = ' + p + '.';
+    drawLL(msg, prev === -1 ? [p] : [p, prev]);
+  });
+  $('ll-trav').addEventListener('click', function () {
+    var order = [], p = LL.start; while (p !== -1 && order.length < 20) { order.push(LL.data[p] + ' [' + p + ']'); p = LL.next[p]; }
+    drawLL('Traverse: start at ' + LL.start + ', follow each pointer until null: ' + (order.join(' → ') || '(empty)') + '.');
+  });
+  $('ll-reset').addEventListener('click', function () { resetLL(); drawLL(); });
+  drawLL();
+
+  // ---------- Graph traversal ----------
+  var GP = { A: [50, 60], B: [170, 30], C: [70, 190], D: [300, 40], E: [200, 130], F: [180, 220], G: [320, 190] };
+  var GE = [['A', 'B'], ['A', 'C'], ['B', 'D'], ['B', 'E'], ['C', 'F'], ['E', 'F'], ['E', 'G'], ['D', 'G']];
+  var ADJ = {}; Object.keys(GP).forEach(function (n) { ADJ[n] = []; });
+  GE.forEach(function (e) { ADJ[e[0]].push(e[1]); ADJ[e[1]].push(e[0]); });
+  Object.keys(ADJ).forEach(function (n) { ADJ[n].sort(); });
+  $('gr-adj').innerHTML = Object.keys(ADJ).map(function (n) { return n + ': ' + ADJ[n].join(', '); }).join('<br>');
+  Object.keys(GP).forEach(function (n) { var o = el('option', null, n); o.value = n; $('gr-start').appendChild(o); });
+  var gsteps = [], gi = 0;
+  function buildG() {
+    var start = $('gr-start').value, bfs = document.querySelector('input[name="gt"]:checked').value === 'bfs';
+    gsteps = []; var seen = [];
+    if (bfs) {
+      var q = [start]; seen.push(start);
+      gsteps.push({ cur: null, ds: q.slice(), seen: seen.slice(), say: 'Add the start vertex ' + start + ' to the queue and mark it as visited.' });
+      while (q.length) {
+        var c = q.shift(), added = [];
+        ADJ[c].forEach(function (n) { if (seen.indexOf(n) < 0) { seen.push(n); q.push(n); added.push(n); } });
+        gsteps.push({ cur: c, ds: q.slice(), seen: seen.slice(), say: 'Remove ' + c + ' from the front of the queue. ' + (added.length ? 'Add its unvisited neighbours ' + added.join(', ') + ' to the back and mark them visited.' : 'All its neighbours are already visited.') });
+      }
+      gsteps.push({ cur: null, ds: [], seen: seen.slice(), say: 'The queue is empty, so the traversal is finished. Order: ' + seen.join(', ') + '.' });
+    } else {
+      var stack = [];
+      (function dfs(n) {
+        seen.push(n); stack.push(n);
+        gsteps.push({ cur: n, ds: stack.slice(), seen: seen.slice(), say: 'Visit ' + n + ' and push it onto the stack.' });
+        ADJ[n].forEach(function (m) { if (seen.indexOf(m) < 0) dfs(m); });
+        stack.pop();
+        gsteps.push({ cur: stack[stack.length - 1] || null, ds: stack.slice(), seen: seen.slice(), say: n + ' has no unvisited neighbours, so pop it and backtrack' + (stack.length ? ' to ' + stack[stack.length - 1] + '.' : '. The stack is empty, so the traversal is finished. Order: ' + seen.join(', ') + '.') });
+      })(start);
+    }
+    gi = 0; drawG();
+  }
+  function drawG() {
+    var s = gsteps[gi], svg = $('gr-svg'), bfs = document.querySelector('input[name="gt"]:checked').value === 'bfs';
+    svg.innerHTML = '';
+    GE.forEach(function (e) { svg.appendChild(mk('line', { x1: GP[e[0]][0], y1: GP[e[0]][1], x2: GP[e[1]][0], y2: GP[e[1]][1] })); });
+    Object.keys(GP).forEach(function (n) {
+      var si = s.seen.indexOf(n);
+      svg.appendChild(mk('circle', { cx: GP[n][0], cy: GP[n][1], r: 22, class: n === s.cur ? 'cur' : si >= 0 ? 'seen' : '' }));
+      var t = mk('text', { x: GP[n][0], y: GP[n][1] }); t.textContent = n; svg.appendChild(t);
+      if (si >= 0) { var o = mk('text', { x: GP[n][0] + 22, y: GP[n][1] - 20, class: 'ord' }); o.textContent = si + 1; svg.appendChild(o); }
+    });
+    $('gr-dslabel').textContent = bfs ? 'Queue (front on the left)' : 'Stack (top on the right)';
+    $('gr-ds').textContent = s.ds.length ? '[ ' + s.ds.join(', ') + ' ]' : '[ empty ]';
+    $('gr-order').textContent = s.seen.join(', ');
+    $('gr-say').textContent = 'Step ' + (gi + 1) + ' of ' + gsteps.length + ': ' + s.say;
+    $('gr-back').disabled = gi === 0;
+    $('gr-next').textContent = gi === gsteps.length - 1 ? 'Start again' : 'Next step';
+  }
+  $('gr-next').addEventListener('click', function () { gi = gi === gsteps.length - 1 ? 0 : gi + 1; drawG(); });
+  $('gr-back').addEventListener('click', function () { if (gi > 0) gi--; drawG(); });
+  $('gr-start').addEventListener('change', buildG);
+  document.querySelectorAll('input[name="gt"]').forEach(function (r) { r.addEventListener('change', buildG); });
+  buildG();
+
+  // ---------- BST ----------
+  var root, timer;
+  function ins(node, v) { if (!node) return { v: v, l: null, r: null }; if (v < node.v) node.l = ins(node.l, v); else if (v > node.v) node.r = ins(node.r, v); return node; }
+  function resetBST() { root = null; [50, 30, 70, 20, 40, 60, 80].forEach(function (v) { root = ins(root, v); }); }
+  resetBST();
+  function depth(n) { return n ? 1 + Math.max(depth(n.l), depth(n.r)) : 0; }
+  function drawBST(hl, ord) {
+    hl = hl || {}; ord = ord || {};
+    var svg = $('bst-svg'); svg.innerHTML = '';
+    var list = []; (function io(n, d) { if (!n) return; io(n.l, d + 1); n.d = d; n.i = list.length; list.push(n); io(n.r, d + 1); })(root, 0);
+    var W = Math.max(320, list.length * 46), H = Math.max(1, depth(root)) * 64 + 10;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.style.maxWidth = W + 'px';
+    function x(n) { return 26 + n.i * (W - 52) / Math.max(1, list.length - 1); }
+    function y(n) { return 30 + n.d * 64; }
+    list.forEach(function (n) { [n.l, n.r].forEach(function (c) { if (c) svg.appendChild(mk('line', { x1: x(n), y1: y(n), x2: x(c), y2: y(c) })); }); });
+    list.forEach(function (n) {
+      svg.appendChild(mk('circle', { cx: x(n), cy: y(n), r: 20, class: hl[n.v] === 'cur' ? 'cur' : hl[n.v] ? 'seen' : '' }));
+      var t = mk('text', { x: x(n), y: y(n) }); t.textContent = n.v; t.setAttribute('font-size', '14'); svg.appendChild(t);
+      if (ord[n.v]) { var o = mk('text', { x: x(n) + 20, y: y(n) - 20, class: 'ord' }); o.textContent = ord[n.v]; svg.appendChild(o); }
+    });
+  }
+  function trav(kind) {
+    var out = [];
+    if (kind === 'bf') { var q = root ? [root] : []; while (q.length) { var n = q.shift(); out.push(n.v); if (n.l) q.push(n.l); if (n.r) q.push(n.r); } }
+    else (function go(n) { if (!n) return; if (kind === 'pre') out.push(n.v); go(n.l); if (kind === 'in') out.push(n.v); go(n.r); if (kind === 'post') out.push(n.v); })(root);
+    return out;
+  }
+  var TNAME = { pre: 'Pre-order (node, left, right)', in: 'In-order (left, node, right) — notice it comes out sorted', post: 'Post-order (left, right, node)', bf: 'Breadth-first (level by level, using a queue)' };
+  document.querySelectorAll('[data-trav]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      clearTimeout(timer);
+      var k = b.getAttribute('data-trav'), seq = trav(k), i = 0, ord = {}, hl = {};
+      $('bst-say').textContent = TNAME[k] + '.';
+      (function tick() {
+        if (i < seq.length) { Object.keys(hl).forEach(function (v) { hl[v] = 'seen'; }); hl[seq[i]] = 'cur'; ord[seq[i]] = i + 1; drawBST(hl, ord); $('bst-order').textContent = seq.slice(0, i + 1).join(', '); i++; timer = setTimeout(tick, 600); }
+        else { Object.keys(hl).forEach(function (v) { hl[v] = 'seen'; }); drawBST(hl, ord); }
+      })();
+    });
+  });
+  $('bst-add').addEventListener('click', function () {
+    clearTimeout(timer);
+    var v = Math.round(+$('bst-in').value); if (isNaN(v)) return;
+    var path = [], n = root;
+    while (n && n.v !== v) { path.push(n.v + (v < n.v ? ' (go left)' : ' (go right)')); n = v < n.v ? n.l : n.r; }
+    if (n) { $('bst-say').textContent = v + ' is already in the tree.'; return; }
+    if (depth(root) >= 6 && path.length >= 5) { $('bst-say').textContent = 'The tree is too deep to draw here. Press Reset.'; return; }
+    root = ins(root, v); var hl = {}; hl[v] = 'cur'; drawBST(hl); $('bst-order').textContent = '';
+    $('bst-say').textContent = path.length ? 'Compared with ' + path.join(', then ') + ', and added ' + v + ' in the empty space.' : v + ' is the root.';
+  });
+  $('bst-find').addEventListener('click', function () {
+    clearTimeout(timer);
+    var v = Math.round(+$('bst-in').value), n = root, path = [], hl = {};
+    while (n) { path.push(n.v); hl[n.v] = 'seen'; if (n.v === v) break; n = v < n.v ? n.l : n.r; }
+    if (n) hl[v] = 'cur';
+    drawBST(hl); $('bst-order').textContent = path.join(' → ');
+    $('bst-say').textContent = n ? 'Found ' + v + ' after ' + path.length + ' comparison' + (path.length > 1 ? 's' : '') + '. Each comparison discards half of what\'s left (if the tree is balanced).' : v + ' is not in the tree: the search reached an empty place after ' + path.length + ' comparisons.';
+  });
+  $('bst-reset').addEventListener('click', function () { clearTimeout(timer); resetBST(); drawBST(); $('bst-order').textContent = ''; $('bst-say').textContent = ''; });
+  drawBST();
+
+  // ---------- Hash table ----------
+  var HT = new Array(11).fill(null);
+  function drawHT(hl, msg) {
+    hl = hl || {};
+    var box = $('ht-cells'); box.innerHTML = '';
+    HT.forEach(function (v, i) { box.appendChild(cellEl(v == null ? '' : v, i, '', hl[i] || (v != null ? 'used' : ''))); });
+    if (msg != null) $('ht-say').textContent = msg;
+  }
+  $('ht-add').addEventListener('click', function () {
+    var k = Math.round(+$('ht-in').value); if (isNaN(k) || k < 0) return drawHT({}, 'Enter a whole number of 0 or more.');
+    if (HT.indexOf(k) >= 0) return drawHT({}, k + ' is already in the table.');
+    if (HT.every(function (v) { return v != null; })) return drawHT({}, 'The table is full.');
+    var h = k % 11, i = h, probes = [], hl = {};
+    while (HT[i] != null) { probes.push(i + ' (' + HT[i] + ')'); hl[i] = 'hl'; i = (i + 1) % 11; }
+    HT[i] = k; hl[i] = 'used';
+    var load = HT.filter(function (v) { return v != null; }).length;
+    drawHT(hl, k + ' MOD 11 = ' + h + '. ' + (probes.length ? 'Collision! Slot ' + probes.join(', then slot ') + ' taken, so ' + k + ' is stored in slot ' + i + '.' : 'Slot ' + h + ' is free, so ' + k + ' is stored there.') + ' Load factor ' + load + '/11.');
+    var next = { 23: 18, 18: 45, 45: 30, 30: 56 }[k]; if (next) $('ht-in').value = next;
+  });
+  $('ht-find').addEventListener('click', function () {
+    var k = Math.round(+$('ht-in').value), h = k % 11, i = h, n = 0, hl = {};
+    while (HT[i] != null && HT[i] !== k && n < 11) { hl[i] = 'hl'; i = (i + 1) % 11; n++; }
+    if (HT[i] === k) { hl[i] = 'used'; drawHT(hl, k + ' MOD 11 = ' + h + '. ' + (n ? 'Probed ' + n + ' slot' + (n > 1 ? 's' : '') + ' past other items, then found ' + k + ' in slot ' + i + '.' : 'Found straight away in slot ' + h + '.')); }
+    else drawHT(hl, k + ' MOD 11 = ' + h + '. ' + (n ? 'Probed ' + n + ' slot' + (n > 1 ? 's' : '') + ', then ' : '') + 'reached an empty slot, so ' + k + ' is not in the table.');
+  });
+  $('ht-reset').addEventListener('click', function () { HT = new Array(11).fill(null); $('ht-in').value = 23; drawHT({}, 'Emptied.'); });
+  drawHT({}, '');
+})();
+</script>
+</body>
+</html>

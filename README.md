@@ -11,6 +11,7 @@ The site is plain HTML, CSS and JavaScript hosted on GitHub Pages. There is no b
 | Resource | Audience | Link |
 | --- | --- | --- |
 | **Homepage** — links to everything, plus exam countdowns | All | [index.html](https://mxcoad.github.io/) |
+| **A-Level revision notes** — every OCR H446 Paper 1 topic (1.1.1–1.5.2) with notes, interactive tools and self-marked exam questions | A-Level | [ALevel/](https://mxcoad.github.io/ALevel/) |
 | **Learning Defold** — game-development course using the Defold engine | A-Level | [Defold/01-homepage.html](https://mxcoad.github.io/Defold/01-homepage.html) |
 | **Binary practice tools** — binary, hexadecimal, negative binary and floating point | KS3 / GCSE / A-Level | [Binary_Practice/binary.html](https://mxcoad.github.io/Binary_Practice/binary.html) |
 | **GCSE Revision Console** — OCR GCSE Computer Science revision | GCSE | [GCSE/Revision_Console.html](https://mxcoad.github.io/GCSE/Revision_Console.html) |
@@ -50,6 +51,7 @@ ks3-computing-curriculum.html
 cyber-defence-console.html
 timetable-to-calendar.html
 floating-point-practice.html  Redirect (moved to Binary_Practice/)
+ALevel/                     Revision notes for every H446 Paper 1 topic (index.html lists them)
 Binary_Practice/            Number-representation practice tools
 Cover Lessons/              KS3 spreadsheet cover lessons (index.html lists them)
 Defold/                     Defold game-development course
@@ -69,7 +71,7 @@ GCSE/                       Revision notes for every J277 topic (index.html) and
 3. To make it easy to find, copy a card in `index.html` into the right key-stage section and set its `data-topic`.
 4. Commit to `main`. GitHub Pages republishes the site within a minute or two.
 
-GCSE topic pages also use `assets/topic.css` and `assets/topic.js`, which provide the shared layout, progress tracking and self-marked exam questions. Each page defines its questions in `window.TOPIC`.
+GCSE and A-Level topic pages also use `assets/topic.css` and `assets/topic.js`, which provide the shared layout, progress tracking and self-marked exam questions. Each page defines its questions in `window.TOPIC`, and saves progress in the browser under its `key` (for example `alevel-1-3-2-progress`), which the GCSE and A-Level index pages read to show progress bars. A-Level pages set `--stage: var(--ks-alevel)` for their colour.
 
 The Defold course and the BTEC example website keep their own designs on purpose.
 

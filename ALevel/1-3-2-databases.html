@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3.2 Databases — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.3.2: relational databases, keys, entity relationship diagrams, normalisation to 3NF, SQL, referential integrity, transaction processing and ACID, record locking.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-body); font-size: 14px; cursor: pointer; }
+  .presets button:hover { border-color: var(--ms-accent); }
+  .sql-in { width: 100%; min-height: 110px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 16px; resize: vertical; }
+  table.data { border-collapse: collapse; font-size: 15px; background: var(--ms-bg); }
+  table.data caption { text-align: left; font-weight: 700; padding: 0 0 4px; font-size: 15px; }
+  table.data th, table.data td { border-bottom: 1px solid var(--ms-line); padding: 5px 10px; text-align: left; white-space: nowrap; }
+  table.data th { background: var(--ms-surface-2); font-family: var(--ms-font-mono); font-size: 13px; }
+  table.data th.pk { text-decoration: underline; text-underline-offset: 3px; }
+  table.data tr.changed td { background: var(--ms-warn-soft); }
+  table.data td.dup { background: var(--ms-bad-soft); }
+  .tables { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+  .tables .table-wrap { margin: 0; }
+  .result-bad { color: var(--ms-bad); font-weight: 700; }
+  .result-good { color: var(--ms-good); font-weight: 700; }
+  .erd { width: 100%; max-width: 640px; display: block; margin: 8px 0 14px; }
+  .erd rect { fill: var(--ms-surface); stroke: var(--ms-line-strong); stroke-width: 2; }
+  .erd text { fill: var(--ms-text); font-family: var(--ms-font-body); font-size: 15px; text-anchor: middle; }
+  .erd line, .erd path { stroke: var(--ms-text); stroke-width: 2; fill: none; }
+  .stage-tabs { margin-bottom: 12px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.3.2 Databases</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.3.2</p>
+  <h1>Databases</h1>
+  <p class="intro">How relational databases are designed, normalised and queried, and how they keep data correct when many people use them at once. The SQL playground runs real queries on a small school database.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="relational">
+    <div class="sec-head"><span class="sec-num">1.3.2a</span><h2>Relational databases, keys and ERDs</h2></div>
+    <p>A <span class="term">flat file</span> database stores everything in a single table. That leads to <strong>data redundancy</strong> (the same data repeated), which wastes space and causes <strong>inconsistency</strong> when one copy is updated and another isn't.</p>
+    <p>A <span class="term">relational database</span> splits data into separate <strong>tables</strong> (one per <strong>entity</strong>), linked by keys. Each fact is stored once.</p>
+    <table class="def">
+      <tr><th scope="row">Entity</th><td>A thing about which data is stored, e.g. Student, Course. Each becomes a table.</td></tr>
+      <tr><th scope="row">Primary key</th><td>A field that <strong>uniquely identifies</strong> each record in a table, e.g. StudentID.</td></tr>
+      <tr><th scope="row">Composite key</th><td>A primary key made of <strong>two or more fields</strong> combined, e.g. (StudentID, CourseID) in Enrolment.</td></tr>
+      <tr><th scope="row">Foreign key</th><td>A field in one table that is the <strong>primary key of another table</strong>, used to create the link (relationship) between them.</td></tr>
+      <tr><th scope="row">Secondary key</th><td>A field that is <strong>indexed</strong> so records can be searched or sorted quickly by it, though it is not unique, e.g. Surname.</td></tr>
+      <tr><th scope="row">Index</th><td>A separate structure listing key values and where each record is stored, so the database doesn't have to search every record. It speeds up searching but uses extra storage and slows down inserts and updates.</td></tr>
+    </table>
+    <h3>Entity relationship diagrams</h3>
+    <p>Relationships are <strong>one-to-one</strong>, <strong>one-to-many</strong> or <strong>many-to-many</strong>. The "many" end is drawn with a crow's foot. A many-to-many relationship can't be built directly, so it is broken into two one-to-many relationships with a <strong>link table</strong>:</p>
+    <svg class="erd" viewBox="0 0 640 120" role="img" aria-label="Entity relationship diagram: Student one-to-many Enrolment, Course one-to-many Enrolment">
+      <rect x="10" y="35" width="150" height="50" rx="6"/><text x="85" y="66">Student</text>
+      <rect x="245" y="35" width="150" height="50" rx="6"/><text x="320" y="66">Enrolment</text>
+      <rect x="480" y="35" width="150" height="50" rx="6"/><text x="555" y="66">Course</text>
+      <line x1="160" y1="60" x2="245" y2="60"/><path d="M225 60 L245 45 M225 60 L245 75"/>
+      <line x1="395" y1="60" x2="480" y2="60"/><path d="M415 60 L395 45 M415 60 L395 75"/>
+      <text x="202" y="105">1 : many</text><text x="437" y="105">many : 1</text>
+    </svg>
+    <p>One student has many enrolments, one course has many enrolments, so students and courses are many-to-many through Enrolment. Enrolment holds StudentID and CourseID as <strong>foreign keys</strong>, and together they form its <strong>composite primary key</strong>.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="normalisation">
+    <div class="sec-head"><span class="sec-num">1.3.2b</span><h2>Normalisation</h2></div>
+    <p><span class="term">Normalisation</span> is the process of organising tables to <strong>remove redundancy</strong> and avoid problems when adding, updating or deleting data. You need to know three normal forms:</p>
+    <table class="def">
+      <tr><th scope="row">First normal form (1NF)</th><td><strong>No repeating groups</strong> of attributes; every field holds a single (<strong>atomic</strong>) value; each record has a primary key.</td></tr>
+      <tr><th scope="row">Second normal form (2NF)</th><td>In 1NF and <strong>no partial dependencies</strong>: every non-key field depends on the <strong>whole</strong> primary key, not just part of a composite key.</td></tr>
+      <tr><th scope="row">Third normal form (3NF)</th><td>In 2NF and <strong>no transitive (non-key) dependencies</strong>: non-key fields depend <strong>only on the key</strong>, not on other non-key fields. "The key, the whole key, and nothing but the key."</td></tr>
+    </table>
+    <div class="tool" id="norm">
+      <p class="tool-title">Try it: normalise a table step by step</p>
+      <p class="tool-sub">Primary keys are <u>underlined</u>; foreign keys are marked with *. Red cells are the repeated data each step removes.</p>
+      <fieldset class="ctl stage-tabs"><legend class="sr">Stage</legend>
+        <div class="seg">
+          <label><input type="radio" name="nf" value="0" checked><span>Unnormalised</span></label>
+          <label><input type="radio" name="nf" value="1"><span>1NF</span></label>
+          <label><input type="radio" name="nf" value="2"><span>2NF</span></label>
+          <label><input type="radio" name="nf" value="3"><span>3NF</span></label>
+        </div>
+      </fieldset>
+      <div class="tables" id="nf-tables"></div>
+      <p class="explain" id="nf-say" aria-live="polite"></p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Normalisation isn't always the end of the story. Joining many tables is slow, so large systems that are mostly read (such as reporting databases) are sometimes deliberately <strong>denormalised</strong>, accepting some redundancy in exchange for faster queries.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="sql">
+    <div class="sec-head"><span class="sec-num">1.3.2c</span><h2>SQL</h2></div>
+    <p><span class="term">SQL</span> (Structured Query Language) is used to define, query and change data in a relational database. You need to read and write:</p>
+<pre><code>SELECT Surname, Form          -- fields to show (* = all)
+FROM Student                  -- table(s)
+WHERE Form = '12A' AND Surname LIKE 'K%'   -- % = any characters
+ORDER BY Surname DESC         -- ASC is the default
+
+SELECT Student.FirstName, Enrolment.Grade
+FROM Student
+INNER JOIN Enrolment ON Student.StudentID = Enrolment.StudentID
+
+INSERT INTO Student (StudentID, FirstName, Surname, Form)
+VALUES (7, 'Grace', 'Lee', '12A')
+
+UPDATE Enrolment SET Grade = 'A' WHERE StudentID = 2 AND CourseID = 'CS'
+
+DELETE FROM Enrolment WHERE StudentID = 1
+
+DROP TABLE Enrolment</code></pre>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Forgetting the <code>WHERE</code> on an <code>UPDATE</code> or <code>DELETE</code> changes <strong>every</strong> record. When joining tables, qualify field names that appear in both tables, e.g. <code>Student.StudentID</code>.</p>
+    </div>
+    <div class="tool" id="sqltool">
+      <p class="tool-title">Try it: SQL playground</p>
+      <p class="tool-sub">Three linked tables. Run queries, change the data and see referential integrity stop you from breaking it. <strong>Reset</strong> puts the data back.</p>
+      <div class="presets" id="sql-presets"></div>
+      <label for="sql-in" class="sr">SQL statement</label>
+      <textarea class="sql-in" id="sql-in" spellcheck="false"></textarea>
+      <div class="btn-row" style="margin-top:8px"><button type="button" class="btn primary" id="sql-run">Run</button><button type="button" class="btn" id="sql-reset">Reset data</button></div>
+      <p class="explain" id="sql-say" aria-live="polite"></p>
+      <div class="table-wrap" id="sql-out"></div>
+      <details style="margin-top:10px"><summary style="cursor:pointer;font-weight:700">Show all the tables</summary><div class="tables" id="sql-all" style="margin-top:10px"></div></details>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="capture">
+    <div class="sec-head"><span class="sec-num">1.3.2d</span><h2>Capturing, selecting, managing and exchanging data</h2></div>
+    <ul>
+      <li><strong>Capturing</strong>: paper or online forms, <strong>OMR</strong> (marks on multiple-choice sheets), <strong>OCR</strong> (scanning printed text), barcodes and QR codes, sensors, card readers. Forms should be designed with <strong>validation</strong> to keep bad data out.</li>
+      <li><strong>Selecting and managing</strong>: queries (SQL or query-by-example) select the data needed; a <strong>DBMS</strong> (database management system) handles storage, security, backups, indexing and access by many users.</li>
+      <li><strong>Exchanging</strong>: data is moved between systems in standard formats such as <strong>CSV</strong>, <strong>XML</strong> or <strong>JSON</strong>, or by <strong>EDI</strong> (electronic data interchange), where organisations' systems exchange documents such as orders and invoices automatically in an agreed format.</li>
+    </ul>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="integrity">
+    <div class="sec-head"><span class="sec-num">1.3.2e</span><h2>Integrity, transactions and record locking</h2></div>
+    <p><span class="term">Referential integrity</span> means every foreign key value must match an existing primary key value in the linked table. The DBMS will refuse to add an enrolment for a student who doesn't exist, or to delete a student who still has enrolments (or will cascade the delete to them). Try <em>Delete a student</em> in the playground.</p>
+    <h3>Transaction processing and ACID</h3>
+    <p>A <span class="term">transaction</span> is a single logical operation, which might involve several changes, e.g. moving money takes it from one account and adds it to another. Transactions must have the <strong>ACID</strong> properties:</p>
+    <table class="def">
+      <tr><th scope="row">Atomicity</th><td>A transaction is <strong>all or nothing</strong>: either every change happens, or none do (it is rolled back).</td></tr>
+      <tr><th scope="row">Consistency</th><td>A transaction takes the database from one <strong>valid state to another</strong>; no rules (such as referential integrity) are broken.</td></tr>
+      <tr><th scope="row">Isolation</th><td>Transactions running at the same time give the <strong>same result as if they ran one after another</strong>; they don't interfere.</td></tr>
+      <tr><th scope="row">Durability</th><td>Once a transaction is <strong>committed</strong>, it stays saved, even if there is a power cut or crash straight afterwards (it is written to secondary storage).</td></tr>
+    </table>
+    <div class="tool" id="acid">
+      <p class="tool-title">Try it: which ACID property?</p>
+      <p class="tool-sub">Match each situation to the property it is about.</p>
+      <div id="sort-acid"></div>
+    </div>
+    <h3>Record locking</h3>
+    <p>If two users read the same record, change it and save it, one update is <strong>lost</strong>. <span class="term">Record locking</span> stops this: while one transaction is using a record, it is locked and other transactions must wait. A risk is <strong>deadlock</strong>: transaction 1 has locked record A and is waiting for B, while transaction 2 has locked B and is waiting for A, so neither can continue. (Alternatives include <strong>serialisation</strong>, timestamp ordering and commitment ordering, which make concurrent transactions behave as if run one at a time.)</p>
+    <h3>Redundancy</h3>
+    <p>Here, <strong>redundancy</strong> means something good: keeping <strong>duplicate copies</strong> of the database on separate hardware, often in another place, so the system keeps running if one fails. This is different from data redundancy inside tables, which normalisation removes.</p>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Don't explain record locking as "stopping two people from seeing the data". It stops the same record being <strong>changed</strong> by two transactions at once, which would lose an update.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type. Questions 4 and 5 use the tables in the SQL playground.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-3-1-compression-encryption-hashing.html">1.3.1 Compression, encryption and hashing</a> · Next: <a href="1-3-3-networks.html">1.3.3 Networks</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-3-2-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'Using the Student and Enrolment tables as examples, explain what is meant by a primary key, a foreign key and a secondary key.',
+      points: ['Primary key: a field that uniquely identifies each record, e.g. StudentID in Student', 'Foreign key: a field that is the primary key of another table, used to link them, e.g. StudentID in Enrolment', 'Secondary key: an indexed field used to search/sort quickly that need not be unique, e.g. Surname'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 3, text: 'Explain why a relational database is more suitable than a flat file for storing the school\'s student and course data.',
+      points: ['Data is stored only once / less data redundancy', 'So less storage is wasted', 'Avoids inconsistency — a change only needs to be made in one place', 'Tables can be linked to answer complex queries / easier to maintain and extend'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q3', marks: 3, text: 'State the conditions a database must meet to be in third normal form.',
+      points: ['No repeating groups / all fields atomic (1NF)', 'No partial dependencies — non-key fields depend on the whole key (2NF)', 'No transitive / non-key dependencies — non-key fields depend only on the key (3NF)'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'Write an SQL statement to show the first name and surname of every student in form 12A who takes the course with CourseID CS, in alphabetical order of surname.',
+      code: 'Student(StudentID, FirstName, Surname, Form)\nEnrolment(StudentID, CourseID, Grade)',
+      points: ['SELECT FirstName, Surname', 'FROM Student INNER JOIN Enrolment ON Student.StudentID = Enrolment.StudentID (or FROM Student, Enrolment WHERE Student.StudentID = Enrolment.StudentID)', 'WHERE Form = \'12A\' AND CourseID = \'CS\'', 'ORDER BY Surname (ASC)'],
+      guide: '1 mark each. You can test your answer in the SQL playground: it should return Amira Khan only.' },
+    { id: 'q5', marks: 2, text: 'Student 4\'s predicted grade in Physics (CourseID PH) has changed to B. Write an SQL statement to update the database.',
+      points: ['UPDATE Enrolment SET Grade = \'B\'', 'WHERE StudentID = 4 AND CourseID = \'PH\''],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain what is meant by referential integrity, using an example from the school database.',
+      points: ['Every foreign key value must match an existing primary key value in the linked table', 'e.g. an Enrolment cannot have a StudentID that is not in the Student table', 'So a student with enrolments cannot be deleted (or the delete cascades) / a record cannot be added for a student who does not exist'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'Explain what is meant by atomicity and durability in transaction processing.',
+      points: ['Atomicity: a transaction is processed completely or not at all', 'If any part fails, the whole transaction is rolled back / the database is not left half-changed', 'Durability: once a transaction is committed it remains', 'Even after a system failure / power cut, because it has been saved to secondary storage'],
+      guide: '2 marks for each property.' },
+    { id: 'q8', marks: 3, text: 'Describe record locking and one problem it can cause.',
+      points: ['When a record is being used / changed by one transaction it is locked', 'Other transactions cannot change it until it is released, preventing lost updates', 'Deadlock: two transactions each lock a record the other needs, so neither can continue'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A concert ticket website lets thousands of people book seats at the same time. Discuss how the design and management of its database can make sure the booking data stays accurate and available.',
+      points: ['Normalisation to 3NF removes data redundancy, so data is not inconsistent', 'Referential integrity — bookings must refer to real customers / seats / concerts', 'Transactions are atomic — payment and seat booking both succeed or both fail', 'Consistency — rules (e.g. a seat booked once) are never broken', 'Isolation / record locking stops two customers booking the same seat (lost update)', 'Deadlock is possible with locking and must be detected / handled; serialisation / timestamp ordering as alternatives', 'Durability — committed bookings survive a crash', 'Redundancy — copies on separate servers keep the site available if one fails', 'Validation on input forms keeps bad data out; a justified conclusion'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of database design and transaction management, clearly applied to simultaneous ticket booking. Several issues discussed in depth with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application to the website; some points developed.'],
+        ['1–3 marks', 'Basic points, mostly descriptive, with little application.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function drawTable(name, cols, rows, opts) {
+    opts = opts || {};
+    var wrap = el('div', 'table-wrap'), t = el('table', 'data');
+    if (name) t.appendChild(el('caption', null, name));
+    var thead = el('thead'), tr = el('tr');
+    cols.forEach(function (c) {
+      var th = el('th', (opts.pk || []).indexOf(c) >= 0 ? 'pk' : null, c + ((opts.fk || []).indexOf(c) >= 0 ? '*' : ''));
+      th.scope = 'col'; tr.appendChild(th);
+    });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb = el('tbody');
+    rows.forEach(function (r, i) {
+      var row = el('tr', opts.changed && opts.changed.indexOf(i) >= 0 ? 'changed' : null);
+      r.forEach(function (v, j) { row.appendChild(el('td', opts.dup && opts.dup[i] && opts.dup[i].indexOf(j) >= 0 ? 'dup' : null, v == null ? '' : v)); });
+      tb.appendChild(row);
+    });
+    t.appendChild(tb); wrap.appendChild(t);
+    return wrap;
+  }
+
+  // ---------- Normalisation ----------
+  var NF = [
+    { say: 'Unnormalised: each student has a repeating group of courses crammed into one record, so fields are not atomic and you can\'t easily search for, say, everyone taking Maths.',
+      tables: [{ name: 'StudentCourses', cols: ['StudentID', 'Name', 'Form', 'FormTutor', 'Courses (CourseID, Title, Grade)'], pk: ['StudentID'],
+        rows: [[1, 'Amira Khan', '12A', 'Mrs Byrne', 'CS, Computer Science, A; MA, Maths, A*'], [2, 'Ben Clarke', '12B', 'Mr Ito', 'CS, Computer Science, C; EC, Economics, B'], [3, 'Chloe Wright', '12A', 'Mrs Byrne', 'PH, Physics, B']] }] },
+    { say: '1NF: the repeating group is removed, so there is one record per student per course and every field is atomic. The primary key is now the composite (StudentID, CourseID). But Name, Form, FormTutor and Title are repeated (red), so changing a name means changing several records.',
+      tables: [{ name: 'StudentCourses', cols: ['StudentID', 'CourseID', 'Name', 'Form', 'FormTutor', 'Title', 'Grade'], pk: ['StudentID', 'CourseID'],
+        rows: [[1, 'CS', 'Amira Khan', '12A', 'Mrs Byrne', 'Computer Science', 'A'], [1, 'MA', 'Amira Khan', '12A', 'Mrs Byrne', 'Maths', 'A*'], [2, 'CS', 'Ben Clarke', '12B', 'Mr Ito', 'Computer Science', 'C'], [2, 'EC', 'Ben Clarke', '12B', 'Mr Ito', 'Economics', 'B'], [3, 'PH', 'Chloe Wright', '12A', 'Mrs Byrne', 'Physics', 'B']],
+        dup: { 1: [2, 3, 4], 2: [5], 3: [2, 3, 4] } }] },
+    { say: '2NF: Name, Form and FormTutor depend on only part of the key (StudentID), and Title depends only on CourseID. These partial dependencies are removed by moving them into their own tables. Only Grade depends on the whole key, so it stays in Enrolment. But FormTutor is still repeated for students in the same form (red).',
+      tables: [
+        { name: 'Student', cols: ['StudentID', 'Name', 'Form', 'FormTutor'], pk: ['StudentID'], rows: [[1, 'Amira Khan', '12A', 'Mrs Byrne'], [2, 'Ben Clarke', '12B', 'Mr Ito'], [3, 'Chloe Wright', '12A', 'Mrs Byrne']], dup: { 2: [3] } },
+        { name: 'Enrolment', cols: ['StudentID', 'CourseID', 'Grade'], pk: ['StudentID', 'CourseID'], fk: ['StudentID', 'CourseID'], rows: [[1, 'CS', 'A'], [1, 'MA', 'A*'], [2, 'CS', 'C'], [2, 'EC', 'B'], [3, 'PH', 'B']] },
+        { name: 'Course', cols: ['CourseID', 'Title'], pk: ['CourseID'], rows: [['CS', 'Computer Science'], ['MA', 'Maths'], ['EC', 'Economics'], ['PH', 'Physics']] }] },
+    { say: '3NF: FormTutor depends on Form, which is not the key, so it is a transitive dependency (StudentID → Form → FormTutor). Moving it into a Form table means each tutor is stored once. Every non-key field now depends on the key, the whole key and nothing but the key.',
+      tables: [
+        { name: 'Student', cols: ['StudentID', 'Name', 'Form'], pk: ['StudentID'], fk: ['Form'], rows: [[1, 'Amira Khan', '12A'], [2, 'Ben Clarke', '12B'], [3, 'Chloe Wright', '12A']] },
+        { name: 'Form', cols: ['Form', 'FormTutor'], pk: ['Form'], rows: [['12A', 'Mrs Byrne'], ['12B', 'Mr Ito']] },
+        { name: 'Enrolment', cols: ['StudentID', 'CourseID', 'Grade'], pk: ['StudentID', 'CourseID'], fk: ['StudentID', 'CourseID'], rows: [[1, 'CS', 'A'], [1, 'MA', 'A*'], [2, 'CS', 'C'], [2, 'EC', 'B'], [3, 'PH', 'B']] },
+        { name: 'Course', cols: ['CourseID', 'Title'], pk: ['CourseID'], rows: [['CS', 'Computer Science'], ['MA', 'Maths'], ['EC', 'Economics'], ['PH', 'Physics']] }] }
+  ];
+  function showNF() {
+    var s = NF[+document.querySelector('input[name="nf"]:checked').value], box = document.getElementById('nf-tables');
+    box.innerHTML = '';
+    s.tables.forEach(function (t) { box.appendChild(drawTable(t.name, t.cols, t.rows, t)); });
+    document.getElementById('nf-say').textContent = s.say;
+  }
+  document.querySelectorAll('input[name="nf"]').forEach(function (r) { r.addEventListener('change', showNF); });
+  showNF();
+
+  // ---------- ACID sorter ----------
+  TopicKit.sorter(document.getElementById('sort-acid'), ['Atomicity', 'Consistency', 'Isolation', 'Durability'], [
+    { text: 'A bank transfer crashes after the money leaves one account, so the money is put back', answer: 'Atomicity', why: 'All or nothing: the half-finished transfer is rolled back.' },
+    { text: 'A confirmed online order is still there after the server loses power a second later', answer: 'Durability', why: 'Committed transactions are permanent.' },
+    { text: 'Two people buying the last ticket at the same moment can\'t both get it', answer: 'Isolation', why: 'Concurrent transactions behave as if run one after another.' },
+    { text: 'A transaction that would give a stock level of -3 is rejected because stock can\'t be negative', answer: 'Consistency', why: 'The database moves only between valid states.' },
+    { text: 'An enrolment for a non-existent student is refused', answer: 'Consistency', why: 'The referential integrity rule must still hold after the transaction.' },
+    { text: 'An update is written to disk before the user is told it has succeeded', answer: 'Durability', why: 'Saving to secondary storage makes it survive a crash.' }
+  ]);
+
+  // ---------- SQL engine ----------
+  var START = {
+    Student: { cols: ['StudentID', 'FirstName', 'Surname', 'Form'], pk: ['StudentID'], fk: {},
+      rows: [[1, 'Amira', 'Khan', '12A'], [2, 'Ben', 'Clarke', '12B'], [3, 'Chloe', 'Wright', '12A'], [4, 'Dev', 'Patel', '13A'], [5, 'Ella', 'Jones', '13B'], [6, 'Femi', 'Adeyemi', '12B']] },
+    Course: { cols: ['CourseID', 'Title', 'Teacher'], pk: ['CourseID'], fk: {},
+      rows: [['CS', 'Computer Science', 'Ms Hall'], ['MA', 'Maths', 'Mr Grant'], ['PH', 'Physics', 'Dr Okoro'], ['EC', 'Economics', 'Mrs Shah']] },
+    Enrolment: { cols: ['StudentID', 'CourseID', 'Grade'], pk: ['StudentID', 'CourseID'], fk: { StudentID: 'Student', CourseID: 'Course' },
+      rows: [[1, 'CS', 'A'], [1, 'MA', 'A*'], [2, 'CS', 'C'], [2, 'EC', 'B'], [3, 'PH', 'B'], [3, 'MA', 'A'], [4, 'CS', 'B'], [4, 'PH', 'C'], [5, 'EC', 'A'], [6, 'CS', 'A*'], [6, 'MA', 'B']] }
+  };
+  var DB;
+  function reset() { DB = JSON.parse(JSON.stringify(START)); }
+  reset();
+
+  function Err(m) { return new Error(m); }
+  function tokenize(src) {
+    var re = /\s*(?:(--[^\n]*)|(\d+(?:\.\d+)?)|'((?:[^']|'')*)'|"([^"]*)"|([A-Za-z_]\w*(?:\.(?:[A-Za-z_]\w*|\*))?)|(<=|>=|<>|!=|[=<>(),*;]))/y, out = [], m;
+    re.lastIndex = 0;
+    while (re.lastIndex < src.length) {
+      var start = re.lastIndex;
+      m = re.exec(src);
+      if (!m) { if (/^\s*$/.test(src.slice(start))) break; throw Err('I don\'t understand "' + src.slice(start).trim().split(/\s/)[0] + '". Check your quotes and symbols.'); }
+      if (m[1] != null) continue;
+      if (m[2] != null) out.push({ t: 'num', v: +m[2] });
+      else if (m[3] != null) out.push({ t: 'str', v: m[3].replace(/''/g, "'") });
+      else if (m[4] != null) out.push({ t: 'str', v: m[4] });
+      else if (m[5] != null) out.push({ t: 'id', v: m[5], u: m[5].toUpperCase() });
+      else if (m[6] != null) { if (m[6] !== ';') out.push({ t: 'op', v: m[6] === '!=' ? '<>' : m[6] }); }
+    }
+    return out;
+  }
+  var KW = ['SELECT', 'FROM', 'WHERE', 'ORDER', 'BY', 'AND', 'OR', 'NOT', 'INNER', 'JOIN', 'ON', 'LIKE', 'INSERT', 'INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE', 'DROP', 'TABLE', 'ASC', 'DESC'];
+  function Parser(toks) { this.k = toks; this.i = 0; }
+  Parser.prototype.peek = function () { return this.k[this.i]; };
+  Parser.prototype.isKw = function (w) { var t = this.k[this.i]; return t && t.t === 'id' && t.u === w; };
+  Parser.prototype.isOp = function (o) { var t = this.k[this.i]; return t && t.t === 'op' && t.v === o; };
+  Parser.prototype.kw = function (w, hint) { if (!this.isKw(w)) throw Err('Expected ' + w + (hint ? ' ' + hint : '') + (this.peek() ? ' but found "' + this.peek().v + '".' : ' but the statement ended.')); this.i++; };
+  Parser.prototype.op = function (o) { if (!this.isOp(o)) throw Err('Expected "' + o + '"' + (this.peek() ? ' but found "' + this.peek().v + '".' : ' but the statement ended.')); this.i++; };
+  Parser.prototype.name = function (what) { var t = this.peek(); if (!t || t.t !== 'id' || KW.indexOf(t.u) >= 0) throw Err('Expected ' + what + (t ? ' but found "' + t.v + '".' : ' but the statement ended.')); this.i++; return t.v; };
+  Parser.prototype.or = function () { var a = this.and(); while (this.isKw('OR')) { this.i++; a = { op: 'OR', a: a, b: this.and() }; } return a; };
+  Parser.prototype.and = function () { var a = this.not(); while (this.isKw('AND')) { this.i++; a = { op: 'AND', a: a, b: this.not() }; } return a; };
+  Parser.prototype.not = function () { if (this.isKw('NOT')) { this.i++; return { op: 'NOT', a: this.not() }; } return this.cmp(); };
+  Parser.prototype.cmp = function () {
+    var a = this.prim();
+    var t = this.peek();
+    if (t && t.t === 'op' && ['=', '<>', '<', '>', '<=', '>='].indexOf(t.v) >= 0) { this.i++; return { op: t.v, a: a, b: this.prim() }; }
+    if (this.isKw('LIKE')) { this.i++; return { op: 'LIKE', a: a, b: this.prim() }; }
+    return a;
+  };
+  Parser.prototype.prim = function () {
+    var t = this.peek();
+    if (!t) throw Err('The condition is incomplete.');
+    if (this.isOp('(')) { this.i++; var e = this.or(); this.op(')'); return e; }
+    this.i++;
+    if (t.t === 'num' || t.t === 'str') return { lit: t.v };
+    if (t.t === 'id' && KW.indexOf(t.u) < 0) return { col: t.v };
+    throw Err('Unexpected "' + t.v + '" in the condition.');
+  };
+  Parser.prototype.value = function () {
+    var t = this.peek(); if (!t || (t.t !== 'num' && t.t !== 'str')) throw Err('Expected a value such as 7 or \'Lee\'' + (t ? ' but found "' + t.v + '".' : '.') + (t && t.t === 'id' ? ' Text values need quotes.' : ''));
+    this.i++; return t.v;
+  };
+  Parser.prototype.end = function () { if (this.i < this.k.length) throw Err('Unexpected "' + this.peek().v + '". Check the order of the clauses, and put text values in quotes, e.g. \'12A\'.'); };
+
+  function table(name) {
+    for (var k in DB) if (k.toUpperCase() === name.toUpperCase()) return k;
+    throw Err('There is no table called "' + name + '". The tables are: ' + Object.keys(DB).join(', ') + '.');
+  }
+  function colIndex(tn, c) {
+    var cols = DB[tn].cols;
+    for (var i = 0; i < cols.length; i++) if (cols[i].toUpperCase() === c.toUpperCase()) return i;
+    throw Err('Table ' + tn + ' has no field called "' + c + '". Its fields are: ' + cols.join(', ') + '.');
+  }
+  // env: array of {t: tableName, r: row}
+  function resolve(env, name) {
+    var parts = name.split('.');
+    if (parts.length === 2) {
+      for (var i = 0; i < env.length; i++) if (env[i].t.toUpperCase() === parts[0].toUpperCase()) return [i, colIndex(env[i].t, parts[1])];
+      throw Err('Table "' + parts[0] + '" is not in the FROM part of this query.');
+    }
+    var found = [];
+    env.forEach(function (e, i) { DB[e.t].cols.forEach(function (c, j) { if (c.toUpperCase() === name.toUpperCase()) found.push([i, j]); }); });
+    if (!found.length) {
+      var all = []; env.forEach(function (e) { all = all.concat(DB[e.t].cols); });
+      throw Err('There is no field called "' + name + '". The fields are: ' + all.join(', ') + '. (If "' + name + '" is meant to be text, put it in quotes.)');
+    }
+    if (found.length > 1) throw Err(name + ' is in more than one table, so say which one, e.g. ' + env[found[0][0]].t + '.' + name + '.');
+    return found[0];
+  }
+  function evalE(e, env) {
+    if ('lit' in e) return e.lit;
+    if ('col' in e) { var p = resolve(env, e.col); return env[p[0]].r[p[1]]; }
+    if (e.op === 'AND') return truthy(evalE(e.a, env)) && truthy(evalE(e.b, env));
+    if (e.op === 'OR') return truthy(evalE(e.a, env)) || truthy(evalE(e.b, env));
+    if (e.op === 'NOT') return !truthy(evalE(e.a, env));
+    var a = evalE(e.a, env), b = evalE(e.b, env);
+    if (e.op === 'LIKE') {
+      var rx = new RegExp('^' + String(b).replace(/[.+?^${}()|[\]\\*]/g, '\\$&').replace(/%/g, '.*').replace(/_/g, '.') + '$', 'i');
+      return rx.test(String(a));
+    }
+    if (typeof a === 'number' && typeof b === 'string' && b.trim() !== '' && !isNaN(+b)) b = +b;
+    if (typeof b === 'number' && typeof a === 'string' && a.trim() !== '' && !isNaN(+a)) a = +a;
+    switch (e.op) { case '=': return a === b; case '<>': return a !== b; case '<': return a < b; case '>': return a > b; case '<=': return a <= b; case '>=': return a >= b; }
+  }
+  function truthy(v) { if (typeof v !== 'boolean') throw Err('The WHERE part must be a condition, e.g. Form = \'12A\'.'); return v; }
+
+  function checkIntegrity() {
+    for (var tn in DB) {
+      var T = DB[tn], seen = {};
+      var pki = T.pk.map(function (c) { return colIndex(tn, c); });
+      for (var r = 0; r < T.rows.length; r++) {
+        var key = pki.map(function (i) { return T.rows[r][i]; });
+        if (key.some(function (v) { return v == null || v === ''; })) throw Err('Entity integrity: the primary key ' + T.pk.join(', ') + ' in ' + tn + ' can\'t be empty.');
+        var ks = JSON.stringify(key);
+        if (seen[ks]) throw Err('Primary key clash: ' + tn + ' already has a record with ' + T.pk.join(', ') + ' = ' + key.join(', ') + '. A primary key must be unique.');
+        seen[ks] = 1;
+        for (var fc in T.fk) {
+          var v = T.rows[r][colIndex(tn, fc)], ref = T.fk[fc];
+          if (!DB[ref]) throw Err('Referential integrity: ' + tn + '.' + fc + ' refers to the ' + ref + ' table, so ' + ref + ' can\'t be dropped while ' + tn + ' exists.');
+          var pi = colIndex(ref, DB[ref].pk[0]);
+          if (!DB[ref].rows.some(function (x) { return x[pi] === v; })) throw Err('Referential integrity: ' + tn + ' would have a record with ' + fc + ' = ' + JSON.stringify(v) + ', but there is no ' + ref + ' with that ' + DB[ref].pk[0] + '. Every foreign key must match an existing primary key.');
+        }
+      }
+    }
+  }
+  function coerce(tn, ci, v) {
+    var sample = START[tn] && START[tn].rows[0][ci];
+    if (typeof sample === 'number' && typeof v !== 'number') { if (isNaN(+v) || v === '') throw Err(DB[tn].cols[ci] + ' must be a number.'); return +v; }
+    if (typeof sample === 'string' && typeof v === 'number') return String(v);
+    return v;
+  }
+
+  function run(src) {
+    var P = new Parser(tokenize(src));
+    if (!P.peek()) throw Err('Type an SQL statement first.');
+    var first = P.peek().u;
+    if (first === 'SELECT') {
+      P.i++;
+      var cols = [];
+      if (P.isOp('*')) { P.i++; cols = '*'; }
+      else { do { var c = P.peek(); if (!c || c.t !== 'id' || KW.indexOf(c.u) >= 0) throw Err('After SELECT, list the fields to show, separated by commas, or use *.'); P.i++; cols.push(c.v); } while (P.isOp(',') && ++P.i); }
+      P.kw('FROM', 'after the list of fields');
+      var tabs = [table(P.name('a table name'))], joins = [];
+      while (true) {
+        if (P.isOp(',')) { P.i++; tabs.push(table(P.name('a table name'))); }
+        else if (P.isKw('INNER') || P.isKw('JOIN')) { if (P.isKw('INNER')) P.i++; P.kw('JOIN'); tabs.push(table(P.name('a table name'))); P.kw('ON', 'to say how the tables link'); joins.push({ n: tabs.length, e: P.or() }); }
+        else break;
+      }
+      var where = null, order = [];
+      if (P.isKw('WHERE')) { P.i++; where = P.or(); }
+      if (P.isKw('ORDER')) { P.i++; P.kw('BY'); do { var oc = P.name('a field to sort by'), dir = 1; if (P.isKw('DESC')) { P.i++; dir = -1; } else if (P.isKw('ASC')) P.i++; order.push([oc, dir]); } while (P.isOp(',') && ++P.i); }
+      P.end();
+      // Build combinations, applying JOIN conditions as each table is added
+      var envs = [[]];
+      tabs.forEach(function (tn, ti) {
+        var next = [];
+        envs.forEach(function (env) { DB[tn].rows.forEach(function (r) { next.push(env.concat([{ t: tn, r: r }])); }); });
+        joins.forEach(function (j) { if (j.n === ti + 1) next = next.filter(function (env) { return truthy(evalE(j.e, env)); }); });
+        envs = next;
+      });
+      // validate column names even if there are no rows
+      var probe = tabs.map(function (tn) { return { t: tn, r: DB[tn].cols.map(function () { return null; }) }; });
+      if (where) envs = envs.filter(function (env) { return truthy(evalE(where, env)); });
+      var heads, pick;
+      if (cols === '*') {
+        heads = []; pick = [];
+        tabs.forEach(function (tn, ti) { DB[tn].cols.forEach(function (c, ci) { heads.push(tabs.length > 1 ? tn + '.' + c : c); pick.push([ti, ci]); }); });
+      } else {
+        heads = cols; pick = cols.map(function (c) { return resolve(probe, c); });
+      }
+      order.forEach(function (o) { resolve(probe, o[0]); });
+      envs.sort(function (x, y) {
+        for (var k = 0; k < order.length; k++) {
+          var a = evalE({ col: order[k][0] }, x), b = evalE({ col: order[k][0] }, y);
+          if (a < b) return -order[k][1]; if (a > b) return order[k][1];
+        }
+        return 0;
+      });
+      return { heads: heads, rows: envs.map(function (env) { return pick.map(function (p) { return env[p[0]].r[p[1]]; }); }), msg: envs.length + ' record' + (envs.length === 1 ? '' : 's') + ' found.' };
+    }
+    var saved = JSON.stringify(DB), tn, T, n, changed = [];
+    try {
+      if (first === 'INSERT') {
+        P.i++; P.kw('INTO'); tn = table(P.name('a table name')); T = DB[tn];
+        var ic = null;
+        if (P.isOp('(')) { P.i++; ic = []; do { ic.push(colIndex(tn, P.name('a field name'))); } while (P.isOp(',') && ++P.i); P.op(')'); }
+        P.kw('VALUES'); P.op('(');
+        var vals = []; do { vals.push(P.value()); } while (P.isOp(',') && ++P.i); P.op(')'); P.end();
+        ic = ic || T.cols.map(function (_, i) { return i; });
+        if (vals.length !== ic.length) throw Err('There are ' + ic.length + ' fields but ' + vals.length + ' values. They must match up.');
+        var row = T.cols.map(function () { return null; });
+        ic.forEach(function (ci, k) { row[ci] = coerce(tn, ci, vals[k]); });
+        T.rows.push(row); changed = [T.rows.length - 1];
+        checkIntegrity();
+        return { table: tn, changed: changed, msg: '1 record inserted into ' + tn + '.' };
+      }
+      if (first === 'UPDATE') {
+        P.i++; tn = table(P.name('a table name')); T = DB[tn]; P.kw('SET');
+        var sets = []; do { var sc = colIndex(tn, P.name('a field name')); P.op('='); sets.push([sc, P.value()]); } while (P.isOp(',') && ++P.i);
+        var uw = null; if (P.isKw('WHERE')) { P.i++; uw = P.or(); } P.end();
+        T.rows.forEach(function (r, i) { if (!uw || truthy(evalE(uw, [{ t: tn, r: r }]))) { sets.forEach(function (s) { r[s[0]] = coerce(tn, s[0], s[1]); }); changed.push(i); } });
+        checkIntegrity();
+        return { table: tn, changed: changed, msg: changed.length + ' record' + (changed.length === 1 ? '' : 's') + ' updated' + (uw ? '.' : ' — there was no WHERE, so every record was changed!') };
+      }
+      if (first === 'DELETE') {
+        P.i++; P.kw('FROM'); tn = table(P.name('a table name')); T = DB[tn];
+        var dw = null; if (P.isKw('WHERE')) { P.i++; dw = P.or(); } P.end();
+        var before = T.rows.length;
+        T.rows = T.rows.filter(function (r) { return !(!dw || truthy(evalE(dw, [{ t: tn, r: r }]))); });
+        n = before - T.rows.length;
+        checkIntegrity();
+        return { table: tn, changed: [], msg: n + ' record' + (n === 1 ? '' : 's') + ' deleted from ' + tn + (dw ? '.' : ' — there was no WHERE, so every record was deleted!') };
+      }
+      if (first === 'DROP') {
+        P.i++; P.kw('TABLE'); tn = table(P.name('a table name')); P.end();
+        delete DB[tn];
+        checkIntegrity();
+        return { msg: 'Table ' + tn + ' dropped (deleted). Press Reset data to bring it back.' };
+      }
+    } catch (e) { DB = JSON.parse(saved); throw e; }
+    throw Err('Start with SELECT, INSERT, UPDATE, DELETE or DROP.');
+  }
+
+  var PRESETS = [
+    ['All students', 'SELECT *\nFROM Student'],
+    ['12A by surname', "SELECT FirstName, Surname\nFROM Student\nWHERE Form = '12A'\nORDER BY Surname"],
+    ['LIKE', "SELECT *\nFROM Course\nWHERE Title LIKE '%s'"],
+    ['Join three tables', "SELECT Student.FirstName, Course.Title, Enrolment.Grade\nFROM Student\nINNER JOIN Enrolment ON Student.StudentID = Enrolment.StudentID\nINNER JOIN Course ON Enrolment.CourseID = Course.CourseID\nWHERE Course.CourseID = 'CS'\nORDER BY Student.FirstName"],
+    ['Insert', "INSERT INTO Student (StudentID, FirstName, Surname, Form)\nVALUES (7, 'Grace', 'Lee', '12A')"],
+    ['Update', "UPDATE Enrolment\nSET Grade = 'A'\nWHERE StudentID = 2 AND CourseID = 'CS'"],
+    ['Delete a student', 'DELETE FROM Student\nWHERE StudentID = 1'],
+    ['Bad enrolment', "INSERT INTO Enrolment VALUES (9, 'CS', 'B')"]
+  ];
+  var sqlIn = document.getElementById('sql-in');
+  PRESETS.forEach(function (s) {
+    var b = el('button', null, s[0]); b.type = 'button';
+    b.addEventListener('click', function () { sqlIn.value = s[1]; runSql(); });
+    document.getElementById('sql-presets').appendChild(b);
+  });
+  function showAll() {
+    var box = document.getElementById('sql-all'); box.innerHTML = '';
+    Object.keys(DB).forEach(function (tn) { box.appendChild(drawTable(tn, DB[tn].cols, DB[tn].rows, { pk: DB[tn].pk, fk: Object.keys(DB[tn].fk) })); });
+  }
+  function runSql() {
+    var say = document.getElementById('sql-say'), out = document.getElementById('sql-out');
+    out.innerHTML = ''; say.innerHTML = '';
+    try {
+      var r = run(sqlIn.value);
+      say.appendChild(el('span', 'result-good', r.msg));
+      if (r.heads) { if (r.rows.length) out.appendChild(drawTable(null, r.heads, r.rows)); }
+      else if (r.table && DB[r.table]) { var T = DB[r.table]; out.appendChild(drawTable(r.table + ' now', T.cols, T.rows, { pk: T.pk, fk: Object.keys(T.fk), changed: r.changed })); }
+    } catch (e) {
+      say.appendChild(el('span', 'result-bad', e.message));
+      if (/^Referential|^Primary key|^Entity/.test(e.message)) say.appendChild(document.createTextNode(' The change was rolled back.'));
+    }
+    showAll();
+  }
+  document.getElementById('sql-run').addEventListener('click', runSql);
+  document.getElementById('sql-reset').addEventListener('click', function () { reset(); document.getElementById('sql-say').textContent = 'Data reset.'; document.getElementById('sql-out').innerHTML = ''; showAll(); });
+  sqlIn.value = PRESETS[1][1];
+  runSql();
+})();
+</script>
+</body>
+</html>

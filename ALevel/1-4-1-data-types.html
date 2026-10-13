@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4.1 Data types — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.4.1: primitive data types, binary, sign and magnitude, two's complement, hexadecimal, binary arithmetic, floating point and normalisation, bitwise operations and masks, ASCII and Unicode.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .bits { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px; max-width: 420px; }
+  .bits.b4 { grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 210px; }
+  .bits .pv { text-align: center; font-size: 12px; color: var(--ms-muted); font-family: var(--ms-font-mono); overflow: hidden; white-space: nowrap; }
+  .bits button { min-height: 44px; border-radius: 8px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 20px; font-weight: 700; cursor: pointer; padding: 0; }
+  .bits button.one { background: var(--ms-accent); border-color: var(--ms-accent); color: var(--ms-on-accent); }
+  .bits button:focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
+  .bits .res { min-height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: var(--ms-surface-2); font-family: var(--ms-font-mono); font-size: 19px; font-weight: 700; }
+  .bits .res.one { background: var(--ms-accent-soft); }
+  .readout { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 12px 0 4px; font-size: 17px; }
+  .readout b { font-family: var(--ms-font-mono); font-size: 19px; }
+  .sum { font-family: var(--ms-font-mono); font-size: 18px; line-height: 1.5; display: inline-grid; grid-template-columns: auto repeat(9, 1.4em); text-align: center; margin: 8px 0; }
+  .sum .lab { text-align: left; padding-right: 10px; font-family: var(--ms-font-body); font-size: 14px; color: var(--ms-muted); }
+  .sum .carry { color: var(--ms-bad); font-size: 13px; }
+  .sum .line { border-top: 2px solid var(--ms-text); }
+  .sum .gone { color: var(--ms-muted); text-decoration: line-through; }
+  .row-l { font-weight: 700; font-size: 14px; margin: 10px 0 4px; }
+  .inline-ctl { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin-top: 10px; }
+  .inline-ctl .field { max-width: 180px; }
+  .mono { font-family: var(--ms-font-mono); }
+  .result-bad { color: var(--ms-bad); font-weight: 700; }
+  .result-good { color: var(--ms-good); font-weight: 700; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.4.1 Data types</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.4.1</p>
+  <h1>Data types</h1>
+  <p class="intro">How numbers and characters are stored in binary: negative numbers, binary arithmetic, floating point and bitwise operations. Every tool here has clickable bits, so you can check your working on any question.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="primitive">
+    <div class="sec-head"><span class="sec-num">1.4.1a</span><h2>Primitive data types</h2></div>
+    <table class="def">
+      <tr><th scope="row">Integer</th><td>A whole number, positive or negative, e.g. <code>-7</code>, <code>2048</code>.</td></tr>
+      <tr><th scope="row">Real / float</th><td>A number with a fractional part, e.g. <code>3.14</code>, <code>-0.5</code>.</td></tr>
+      <tr><th scope="row">Character</th><td>A single letter, digit or symbol, e.g. <code>'A'</code>, <code>'7'</code>, <code>'#'</code>.</td></tr>
+      <tr><th scope="row">String</th><td>A sequence of characters, e.g. <code>"Hello"</code>, <code>"07700 900123"</code>.</td></tr>
+      <tr><th scope="row">Boolean</th><td>One of two values: <code>True</code> or <code>False</code>.</td></tr>
+    </table>
+    <p>Choose the type that suits the data: a phone number is a <strong>string</strong> (it can start with 0, and you never do arithmetic on it); a price is a <strong>real</strong>; a count of items is an <strong>integer</strong>.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="binary">
+    <div class="sec-head"><span class="sec-num">1.4.1b</span><h2>Binary, negative numbers and hexadecimal</h2></div>
+    <p><strong>Unsigned binary</strong>: in 8 bits, the place values are 128, 64, 32, 16, 8, 4, 2, 1, giving 0 to 255.</p>
+    <table class="def">
+      <tr><th scope="row">Sign and magnitude</th><td>The <strong>most significant bit</strong> is the sign (0 = positive, 1 = negative); the other 7 bits are the size. −45 = <span class="mono">1</span><span class="mono">0101101</span>. Range −127 to +127. Drawbacks: <strong>two zeros</strong> (00000000 and 10000000) and arithmetic doesn't work with normal binary addition.</td></tr>
+      <tr><th scope="row">Two's complement</th><td>The MSB has a <strong>negative</strong> place value: −128, 64, 32, 16, 8, 4, 2, 1. Range −128 to +127, with one zero. To negate a number: <strong>flip all the bits and add 1</strong> (or: copy bits from the right up to and including the first 1, then flip the rest). 45 = 00101101 → flip 11010010 → add 1 → <span class="mono">11010011</span> = −45.</td></tr>
+      <tr><th scope="row">Hexadecimal</th><td>Base 16, digits 0–9 and A–F. Each hex digit is exactly <strong>4 bits</strong> (a nibble), so convert by splitting binary into groups of four: 1011 0111 = <span class="mono">B7</span>. Used because it is <strong>shorter and easier for people to read</strong> than binary, with fewer mistakes, and converts to binary easily (e.g. colour codes, memory addresses, MAC addresses).</td></tr>
+    </table>
+    <div class="tool" id="numtool">
+      <p class="tool-title">Try it: one byte, three ways</p>
+      <p class="tool-sub">Click the bits, or type a denary number. Switch between representations to see how the same bits mean different numbers.</p>
+      <fieldset class="ctl" style="margin-bottom:10px"><legend class="sr">Representation</legend>
+        <div class="seg">
+          <label><input type="radio" name="rep" value="u"><span>Unsigned</span></label>
+          <label><input type="radio" name="rep" value="sm"><span>Sign and magnitude</span></label>
+          <label><input type="radio" name="rep" value="tc" checked><span>Two's complement</span></label>
+        </div>
+      </fieldset>
+      <div class="bits" id="nt-pv"></div>
+      <div class="bits" id="nt-bits" style="margin-top:4px"></div>
+      <div class="readout"><span>Denary: <b id="nt-den"></b></span><span>Hex: <b id="nt-hex"></b></span></div>
+      <p class="explain" id="nt-say"></p>
+      <div class="inline-ctl">
+        <div class="ctl"><label for="nt-in">Denary number</label><input class="field" type="number" id="nt-in" value="-45"></div>
+        <button type="button" class="btn primary" id="nt-set">Convert</button>
+        <button type="button" class="btn" id="nt-neg">Negate (flip and add 1)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="arithmetic">
+    <div class="sec-head"><span class="sec-num">1.4.1c</span><h2>Binary addition and subtraction</h2></div>
+    <p>Add column by column from the right: 0+0=0, 0+1=1, 1+1=0 carry 1, 1+1+1=1 carry 1. If a result needs more bits than are available, an <strong>overflow</strong> occurs.</p>
+    <p>To <strong>subtract</strong>, find the <strong>two's complement</strong> of the number being taken away, then <strong>add</strong> it. Ignore any carry out of the leftmost column.</p>
+    <div class="tool" id="addtool">
+      <p class="tool-title">Try it: 8-bit two's complement arithmetic</p>
+      <p class="tool-sub">Type two 8-bit binary numbers. Carries are shown in red above each column.</p>
+      <div class="inline-ctl" style="margin-top:0">
+        <div class="ctl"><label for="ad-a">First number</label><input class="field mono" id="ad-a" value="01101001" maxlength="8" inputmode="numeric" spellcheck="false"></div>
+        <div class="ctl"><label for="ad-b">Second number</label><input class="field mono" id="ad-b" value="00011100" maxlength="8" inputmode="numeric" spellcheck="false"></div>
+      </div>
+      <fieldset class="ctl" style="margin-top:10px"><legend class="sr">Operation</legend>
+        <div class="seg">
+          <label><input type="radio" name="adop" value="add"><span>Add</span></label>
+          <label><input type="radio" name="adop" value="sub" checked><span>Subtract</span></label>
+        </div>
+      </fieldset>
+      <div id="ad-out"></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="floating">
+    <div class="sec-head"><span class="sec-num">1.4.1d</span><h2>Floating point and normalisation</h2></div>
+    <p>Floating point stores a real number as a <strong>mantissa</strong> and an <strong>exponent</strong>, both in two's complement: value = mantissa × 2<sup>exponent</sup>. The mantissa has an <strong>imaginary binary point after the first (sign) bit</strong>, so its place values are −1, ½, ¼, ⅛, …</p>
+    <div class="box worked">
+      <p class="box-label">Worked example: floating point to denary</p>
+      <p>Mantissa <span class="mono">01011000</span>, exponent <span class="mono">0011</span>.</p>
+      <ol>
+        <li>Exponent 0011 = +3.</li>
+        <li>Mantissa is 0.1011000. Move the point 3 places <strong>right</strong> (left if the exponent is negative): 0101.1000.</li>
+        <li>0101.1 = 4 + 1 + ½ = <strong>5.5</strong>.</li>
+      </ol>
+      <p>For a negative mantissa, the sign bit is worth −1 (or −8 after moving the point three places): mantissa <span class="mono">10100000</span>, exponent <span class="mono">0010</span>: 101.00000 = −4 + 1 = <strong>−3</strong>.</p>
+    </div>
+    <h3>Normalisation</h3>
+    <p>A number is <span class="term">normalised</span> when the mantissa starts <strong>01</strong> (positive) or <strong>10</strong> (negative). To normalise, shift the mantissa left until it does, and <strong>subtract</strong> the number of places shifted from the exponent. Normalising gives the <strong>maximum precision</strong> for the number of bits, and makes sure each number has <strong>only one representation</strong>.</p>
+    <h3>Range and precision</h3>
+    <p>With a fixed total number of bits, more bits in the <strong>mantissa</strong> give more <strong>precision</strong>; more bits in the <strong>exponent</strong> give a bigger <strong>range</strong>. Floating point gives a far bigger range than fixed point but can be less precise, and calculations are slower.</p>
+    <div class="tool" id="fptool">
+      <p class="tool-title">Try it: floating point explorer</p>
+      <p class="tool-sub">8-bit mantissa and 4-bit exponent, both two's complement. Click bits, normalise, or type a denary number.</p>
+      <p class="row-l">Mantissa</p>
+      <div class="bits" id="fp-mpv"></div>
+      <div class="bits" id="fp-m" style="margin-top:4px"></div>
+      <p class="row-l">Exponent</p>
+      <div class="bits b4" id="fp-epv"></div>
+      <div class="bits b4" id="fp-e" style="margin-top:4px"></div>
+      <div class="readout"><span>Value: <b id="fp-val"></b></span><span id="fp-norm"></span></div>
+      <p class="explain" id="fp-say"></p>
+      <div class="inline-ctl">
+        <button type="button" class="btn" id="fp-normalise">Normalise</button>
+        <div class="ctl"><label for="fp-in">Denary number</label><input class="field" type="number" step="any" id="fp-in" value="6.5"></div>
+        <button type="button" class="btn primary" id="fp-set">Convert</button>
+      </div>
+    </div>
+    <h3>Adding and subtracting floating point numbers</h3>
+    <div class="box worked">
+      <p class="box-label">Worked example: 6 + 1.25</p>
+      <ol>
+        <li>6 = <span class="mono">0.1100000 × 2<sup>3</sup></span>; 1.25 = <span class="mono">0.1010000 × 2<sup>1</sup></span>.</li>
+        <li><strong>Make the exponents the same</strong>: shift the mantissa of the smaller one right by 2 and add 2 to its exponent: <span class="mono">0.0010100 × 2<sup>3</sup></span>.</li>
+        <li><strong>Add the mantissas</strong>: 0.1100000 + 0.0010100 = <span class="mono">0.1110100</span>, exponent 3.</li>
+        <li><strong>Normalise</strong> the result if needed. 0.1110100 × 2<sup>3</sup> = 111.0100 = <strong>7.25</strong> ✓</li>
+      </ol>
+      <p>To subtract, take the two's complement of the second mantissa (after matching exponents) and add.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="bitwise">
+    <div class="sec-head"><span class="sec-num">1.4.1e</span><h2>Bitwise manipulation and masks</h2></div>
+    <table class="def">
+      <tr><th scope="row">Logical shift</th><td>Moves all bits left or right, filling the gap with 0s. Shifting left <em>n</em> places <strong>multiplies by 2<sup>n</sup></strong>; right <em>n</em> places <strong>divides by 2<sup>n</sup></strong> (for unsigned numbers; bits that fall off the end are lost).</td></tr>
+      <tr><th scope="row">Arithmetic shift</th><td>A right shift that <strong>keeps the sign bit</strong> by copying it into the gap, so negative two's complement numbers stay negative.</td></tr>
+      <tr><th scope="row">AND mask</th><td><strong>Clears</strong> bits: where the mask is 0, the result is 0; where it's 1, the bit is kept. Used to <strong>check</strong> or extract particular bits.</td></tr>
+      <tr><th scope="row">OR mask</th><td><strong>Sets</strong> bits: where the mask is 1, the result is 1.</td></tr>
+      <tr><th scope="row">XOR mask</th><td><strong>Toggles</strong> (flips) bits: where the mask is 1, the bit is flipped.</td></tr>
+    </table>
+    <div class="tool" id="bwtool">
+      <p class="tool-title">Try it: masks and shifts</p>
+      <p class="tool-sub">Click the bits of the value and the mask, then choose an operation.</p>
+      <fieldset class="ctl" style="margin-bottom:10px"><legend class="sr">Operation</legend>
+        <div class="seg">
+          <label><input type="radio" name="bw" value="AND" checked><span>AND</span></label>
+          <label><input type="radio" name="bw" value="OR"><span>OR</span></label>
+          <label><input type="radio" name="bw" value="XOR"><span>XOR</span></label>
+          <label><input type="radio" name="bw" value="LSL"><span>Shift left</span></label>
+          <label><input type="radio" name="bw" value="LSR"><span>Shift right</span></label>
+          <label><input type="radio" name="bw" value="ASR"><span>Arith. right</span></label>
+        </div>
+      </fieldset>
+      <p class="row-l">Value</p>
+      <div class="bits" id="bw-a"></div>
+      <p class="row-l" id="bw-ml">Mask</p>
+      <div class="bits" id="bw-m"></div>
+      <div class="inline-ctl" id="bw-places" hidden>
+        <div class="ctl"><label for="bw-n">Places</label><input class="field" type="number" id="bw-n" value="2" min="1" max="7"></div>
+      </div>
+      <p class="row-l">Result</p>
+      <div class="bits" id="bw-r"></div>
+      <p class="explain" id="bw-say"></p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="charsets">
+    <div class="sec-head"><span class="sec-num">1.4.1f</span><h2>Character sets</h2></div>
+    <p>A <span class="term">character set</span> is the list of characters a computer can represent, each with a unique binary <strong>code</strong>.</p>
+    <div class="two-col">
+      <div class="mini"><h4>ASCII</h4><ul>
+        <li>Originally <strong>7 bits</strong>: 128 characters (extended ASCII uses 8 bits: 256)</li>
+        <li>English letters, digits, punctuation and control codes</li>
+        <li>Codes are in order: 'A' = 65, 'B' = 66; 'a' = 97; '0' = 48</li>
+        <li>✗ Can't represent other alphabets or emoji</li>
+      </ul></div>
+      <div class="mini"><h4>Unicode</h4><ul>
+        <li>Uses up to <strong>32 bits</strong> per character (UTF-8 uses 1 to 4 bytes; UTF-16 2 or 4)</li>
+        <li>Over a million possible codes, covering <strong>all the world's writing systems</strong>, symbols and emoji</li>
+        <li>The first 128 codes are the same as ASCII</li>
+        <li>✗ Text can take more storage</li>
+      </ul></div>
+    </div>
+    <div class="tool" id="chtool">
+      <p class="tool-title">Try it: character codes</p>
+      <p class="tool-sub">Type any characters, including other alphabets or emoji.</p>
+      <div class="ctl"><label for="ch-in">Text</label><input class="field" id="ch-in" value="Hi é Ω 😀" spellcheck="false"></div>
+      <div class="table-wrap" id="ch-out" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type. Check your working with the tools above.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-3-4-web-technologies.html">1.3.4 Web technologies</a> · Next: <a href="1-4-2-data-structures.html">1.4.2 Data structures</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-4-1-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Convert −45 to an 8-bit two\'s complement binary number. Show your working.',
+      points: ['45 = 00101101 (or a valid method shown, e.g. −128 + 83)', '11010011'],
+      guide: '1 mark for working, 1 for the answer.' },
+    { id: 'q2', marks: 2, text: 'Represent −45 in 8-bit sign and magnitude, and give one disadvantage of sign and magnitude compared with two\'s complement.',
+      points: ['10101101', 'Two representations of zero / binary addition does not work directly / smaller range'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'Using 8-bit two\'s complement, calculate 01101001 − 00011100. Show your working.',
+      points: ['Two\'s complement of 00011100 = 11100100', '01101001 + 11100100 with carries shown', '01001101 (carry out of the leftmost bit ignored)'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Convert 10110111 to hexadecimal and give one reason hexadecimal is used.',
+      points: ['B7', 'Shorter / easier for people to read and remember than binary / fewer errors / converts easily to binary'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'A floating point number has an 8-bit mantissa 01011000 and a 4-bit exponent 0011, both in two\'s complement. Convert it to denary.',
+      points: ['Exponent = 3', 'Point moved 3 places right: 0101.1000', '5.5'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Normalise the floating point number with mantissa 00011010 and exponent 0101, and explain why numbers are normalised.',
+      points: ['Mantissa shifted left 2 places: 01101000', 'Exponent reduced by 2: 0011', 'Normalising maximises precision for the bits available / gives a unique representation for each number'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'Convert the floating point number with mantissa 10100000 and exponent 0010 to denary.',
+      points: ['Exponent = 2, point moved: 101.00000', '−4 + 1 = −3'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 2, text: 'State the mask and bitwise operation that would set the four least significant bits of a byte to 0 while keeping the rest unchanged.',
+      points: ['AND', 'Mask 11110000'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 2, text: 'Show the result of a logical shift right by 2 places on the unsigned byte 01101000 and state its effect.',
+      points: ['00011010', 'Divides the number by 4 (104 → 26)'],
+      guide: '1 mark each.' },
+    { id: 'q10', marks: 3, text: 'Explain why Unicode has replaced ASCII in most modern systems.',
+      points: ['ASCII uses 7 (or 8) bits so can only represent 128 (256) characters', 'Unicode uses up to 32 bits, so has many more codes', 'So it can represent characters from all languages / symbols / emoji, needed for global communication; the first 128 codes match ASCII so it is backwards compatible'],
+      guide: '1 mark each.' },
+    { id: 'q11', marks: 9, text: 'A games company is writing a physics engine that stores the positions and speeds of objects. Discuss how it should choose between integer, fixed point and floating point representations, and how the bits in a floating point number should be divided between mantissa and exponent.',
+      points: ['Integers: exact and fast, but can\'t store fractions — could store positions in small units (e.g. millimetres)', 'Fixed point: fast arithmetic and constant precision, but limited range for a given number of bits', 'Floating point: very large range — tiny speeds and huge distances in the same format', 'Floating point arithmetic is slower / more complex and introduces rounding errors', 'Rounding errors can build up over many frames, causing objects to drift', 'More mantissa bits give greater precision', 'More exponent bits give greater range', 'Normalisation makes best use of the mantissa bits', 'A justified conclusion linked to the game (e.g. floating point with a large mantissa for an open world, or fixed point for speed on limited hardware)'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of the representations and of mantissa/exponent trade-offs, applied to the physics engine. A justified recommendation.'],
+        ['4–6 marks', 'Good knowledge of most representations with some application; a conclusion with some support.'],
+        ['1–3 marks', 'Basic descriptions of one or more representations with little application.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function bitRow(box, bits, onChange, label) {
+    box.innerHTML = '';
+    bits.forEach(function (b, i) {
+      var btn = el('button', b ? 'one' : null, b); btn.type = 'button';
+      btn.setAttribute('aria-label', (label || 'Bit') + ' ' + (i + 1) + ': ' + b);
+      btn.addEventListener('click', function () { bits[i] = 1 - bits[i]; onChange(i); });
+      box.appendChild(btn);
+    });
+  }
+  function resRow(box, bits) { box.innerHTML = ''; bits.forEach(function (b) { box.appendChild(el('div', 'res' + (b ? ' one' : ''), b)); }); }
+  function pvRow(box, labels) { box.innerHTML = ''; labels.forEach(function (l) { box.appendChild(el('div', 'pv', l)); }); }
+  function toInt(bits) { return bits.reduce(function (a, b) { return a * 2 + b; }, 0); }
+  function fromInt(n, w) { var out = []; for (var i = w - 1; i >= 0; i--) out.push((n >> i) & 1); return out; }
+  function signed(bits) { var u = toInt(bits); return bits[0] ? u - Math.pow(2, bits.length) : u; }
+  function str(bits) { return bits.join(''); }
+
+  // ---------- Number explorer ----------
+  var nb = fromInt(256 - 45, 8);
+  function rep() { return document.querySelector('input[name="rep"]:checked').value; }
+  function drawNum() {
+    var r = rep();
+    pvRow(document.getElementById('nt-pv'), r === 'tc' ? ['−128', '64', '32', '16', '8', '4', '2', '1'] : r === 'sm' ? ['sign', '64', '32', '16', '8', '4', '2', '1'] : ['128', '64', '32', '16', '8', '4', '2', '1']);
+    bitRow(document.getElementById('nt-bits'), nb, drawNum, 'Bit');
+    var u = toInt(nb), val, say;
+    var parts = [];
+    if (r === 'u') { val = u; nb.forEach(function (b, i) { if (b) parts.push(128 >> i); }); say = parts.length ? parts.join(' + ') + ' = ' + val : 'All zeros = 0'; }
+    else if (r === 'tc') { val = signed(nb); nb.forEach(function (b, i) { if (b) parts.push(i === 0 ? '−128' : String(128 >> i)); }); say = parts.length ? parts.join(' + ') + ' = ' + val : 'All zeros = 0'; }
+    else {
+      var mag = u & 127; val = nb[0] ? -mag : mag;
+      nb.slice(1).forEach(function (b, i) { if (b) parts.push(64 >> i); });
+      say = 'Sign bit ' + nb[0] + ' means ' + (nb[0] ? 'negative' : 'positive') + '; magnitude ' + (parts.join(' + ') || '0') + ' = ' + mag + '. So the value is ' + (nb[0] && mag === 0 ? '−0 (the second zero!)' : val) + '.';
+    }
+    document.getElementById('nt-den').textContent = (r === 'sm' && nb[0] && (u & 127) === 0) ? '−0' : val;
+    document.getElementById('nt-hex').textContent = u.toString(16).toUpperCase().padStart(2, '0');
+    document.getElementById('nt-say').textContent = say;
+  }
+  document.querySelectorAll('input[name="rep"]').forEach(function (x) { x.addEventListener('change', drawNum); });
+  document.getElementById('nt-set').addEventListener('click', function () {
+    var n = Math.round(+document.getElementById('nt-in').value), r = rep(), say = document.getElementById('nt-say');
+    var lo = r === 'u' ? 0 : r === 'sm' ? -127 : -128, hi = r === 'u' ? 255 : 127;
+    if (isNaN(n) || n < lo || n > hi) { drawNum(); say.textContent = 'That doesn\'t fit: this representation can store ' + lo + ' to ' + hi + ' in 8 bits.'; return; }
+    nb = r === 'sm' ? fromInt((n < 0 ? 128 : 0) + Math.abs(n), 8) : fromInt(n < 0 ? 256 + n : n, 8);
+    drawNum();
+  });
+  document.getElementById('nt-neg').addEventListener('click', function () {
+    if (rep() !== 'tc') { document.querySelector('input[name="rep"][value="tc"]').checked = true; }
+    var before = str(nb), flipped = nb.map(function (b) { return 1 - b; }), after = fromInt((toInt(flipped) + 1) & 255, 8);
+    nb = after; drawNum();
+    document.getElementById('nt-say').textContent = before + ' → flip all bits → ' + str(flipped) + ' → add 1 → ' + str(after) + ' = ' + signed(after) + (before === '10000000' ? '. (−128 has no positive partner in 8 bits, so it negates to itself!)' : '.');
+  });
+  drawNum();
+
+  // ---------- Adder ----------
+  function clean(v) { return v.replace(/[^01]/g, ''); }
+  function drawAdd() {
+    var a = clean(document.getElementById('ad-a').value), b = clean(document.getElementById('ad-b').value), out = document.getElementById('ad-out');
+    out.innerHTML = '';
+    if (a.length !== 8 || b.length !== 8) { out.appendChild(el('p', 'explain', 'Enter two 8-bit binary numbers (eight 0s and 1s each).')); return; }
+    var A = a.split('').map(Number), B = b.split('').map(Number), sub = document.querySelector('input[name="adop"]:checked').value === 'sub';
+    var Bu = B;
+    if (sub) {
+      var fl = B.map(function (x) { return 1 - x; }); Bu = fromInt((toInt(fl) + 1) & 255, 8);
+      out.appendChild(el('p', 'explain', 'Step 1: two\'s complement of ' + b + ': flip → ' + str(fl) + ', add 1 → ' + str(Bu) + '. Now add it.'));
+    }
+    var carry = [0, 0, 0, 0, 0, 0, 0, 0, 0], R = [], c = 0;
+    for (var i = 7; i >= 0; i--) { var s = A[i] + Bu[i] + c; R[i] = s & 1; c = s >> 1; carry[i] = c; }
+    var g = el('div', 'sum');
+    function cell(t, cls) { g.appendChild(el('span', cls || null, t)); }
+    cell('carries', 'lab'); cell(carry[0] ? '1' : '', 'carry' + (carry[0] && sub ? ' gone' : '')); for (i = 1; i <= 8; i++) cell(i < 8 && carry[i] ? '1' : '', 'carry');
+    cell('', 'lab'); cell(''); A.forEach(function (x) { cell(x); });
+    cell('+', 'lab'); cell(''); Bu.forEach(function (x) { cell(x); });
+    cell('=', 'lab line'); cell(c ? '1' : '', 'line' + (c ? ' gone' : '')); R.forEach(function (x) { cell(x, 'line'); });
+    var wrap = el('div'); wrap.style.overflowX = 'auto'; wrap.appendChild(g); out.appendChild(wrap);
+    var sa = signed(A), sb = signed(B), sr = signed(R), exp = sub ? sa - sb : sa + sb;
+    var p = el('p', 'explain');
+    p.appendChild(document.createTextNode('In denary: ' + sa + (sub ? ' − ' : ' + ') + (sb < 0 ? '(' + sb + ')' : sb) + ' = ' + exp + '. The 8-bit result ' + str(R) + ' = ' + sr + '. '));
+    if (exp !== sr) p.appendChild(el('span', 'result-bad', 'Overflow! ' + exp + ' is outside −128 to 127, so the answer doesn\'t fit and the sign bit is wrong.'));
+    else if (c) p.appendChild(document.createTextNode('The carry out of the leftmost column is ignored in two\'s complement — the answer is still correct.'));
+    out.appendChild(p);
+  }
+  ['ad-a', 'ad-b'].forEach(function (id) { document.getElementById(id).addEventListener('input', drawAdd); });
+  document.querySelectorAll('input[name="adop"]').forEach(function (x) { x.addEventListener('change', drawAdd); });
+  drawAdd();
+
+  // ---------- Floating point ----------
+  var M = [0, 1, 1, 0, 1, 0, 0, 0], X = [0, 0, 1, 1];
+  pvRow(document.getElementById('fp-mpv'), ['−1 .', '½', '¼', '⅛', '1/16', '1/32', '1/64', '1/128']);
+  pvRow(document.getElementById('fp-epv'), ['−8', '4', '2', '1']);
+  function mval(m) { return signed(m) / 128; }
+  function isNorm(m) { return m[0] !== m[1]; }
+  function fmt(v) { return Number.isInteger(v) ? String(v) : String(+v.toFixed(10)); }
+  function drawFP(msg) {
+    bitRow(document.getElementById('fp-m'), M, function () { drawFP(); }, 'Mantissa bit');
+    bitRow(document.getElementById('fp-e'), X, function () { drawFP(); }, 'Exponent bit');
+    var m = mval(M), e = signed(X), v = m * Math.pow(2, e);
+    document.getElementById('fp-val').textContent = fmt(v);
+    var n = document.getElementById('fp-norm'); n.innerHTML = '';
+    var zero = M.every(function (b) { return b === 0; });
+    n.appendChild(el('span', isNorm(M) ? 'result-good' : 'result-bad', isNorm(M) ? 'Normalised ✓' : zero ? 'Zero' : 'Not normalised'));
+    document.getElementById('fp-say').textContent = msg || ('Mantissa ' + M[0] + '.' + str(M.slice(1)) + ' = ' + fmt(m) + ', exponent ' + str(X) + ' = ' + e + '. ' + fmt(m) + ' × 2^' + e + ' = ' + fmt(v) + '. ' + (isNorm(M) ? '' : zero ? '' : 'It starts ' + M[0] + M[1] + ', so press Normalise.'));
+  }
+  document.getElementById('fp-normalise').addEventListener('click', function () {
+    if (M.every(function (b) { return b === M[0]; }) && (M[0] === 0)) { drawFP('Zero can\'t be normalised; it is stored as all zeros.'); return; }
+    var e = signed(X), shifts = 0;
+    while (M[0] === M[1] && e > -8) { M = M.slice(1).concat([0]); e--; shifts++; }
+    X = fromInt(e & 15, 4);
+    drawFP(shifts ? 'Shifted the mantissa left ' + shifts + ' place' + (shifts > 1 ? 's' : '') + ' and subtracted ' + shifts + ' from the exponent. The value is unchanged: ' + fmt(mval(M) * Math.pow(2, e)) + '.' + (M[0] === M[1] ? ' (The exponent can\'t go below −8, so it couldn\'t be fully normalised.)' : '') : 'Already normalised.');
+  });
+  document.getElementById('fp-set').addEventListener('click', function () {
+    var x = +document.getElementById('fp-in').value;
+    if (isNaN(x)) return;
+    if (x === 0) { M = [0, 0, 0, 0, 0, 0, 0, 0]; X = [0, 0, 0, 0]; drawFP('Zero is stored as all zeros.'); return; }
+    var best = null;
+    for (var e = -8; e <= 7; e++) {
+      var mi = Math.round(x / Math.pow(2, e) * 128);
+      if (mi < -128 || mi > 127) continue;
+      var mb = fromInt(mi & 255, 8); if (!isNorm(mb)) continue;
+      var err = Math.abs(mi / 128 * Math.pow(2, e) - x);
+      if (!best || err < best.err - 1e-12) best = { m: mb, e: e, err: err };
+    }
+    if (!best) { drawFP(); document.getElementById('fp-say').textContent = x + ' is outside the range of this format (about −128 to 127, and nothing closer to zero than 2^−9).'; return; }
+    M = best.m; X = fromInt(best.e & 15, 4);
+    var got = mval(M) * Math.pow(2, best.e);
+    drawFP(best.err < 1e-12 ? x + ' is stored exactly as mantissa ' + str(M) + ', exponent ' + str(X) + '.' : x + ' can\'t be stored exactly. The nearest normalised value is ' + fmt(got) + ' (error ' + fmt(+best.err.toPrecision(3)) + '). More mantissa bits would give more precision.');
+  });
+  drawFP();
+
+  // ---------- Bitwise ----------
+  var BA = [1, 0, 1, 1, 0, 1, 1, 0], BM = [0, 0, 0, 0, 1, 1, 1, 1];
+  function op() { return document.querySelector('input[name="bw"]:checked').value; }
+  function drawBW() {
+    var o = op(), shift = o === 'LSL' || o === 'LSR' || o === 'ASR';
+    bitRow(document.getElementById('bw-a'), BA, drawBW, 'Value bit');
+    document.getElementById('bw-m').hidden = shift; document.getElementById('bw-ml').hidden = shift;
+    document.getElementById('bw-places').hidden = !shift;
+    if (!shift) bitRow(document.getElementById('bw-m'), BM, drawBW, 'Mask bit');
+    var n = Math.max(1, Math.min(7, +document.getElementById('bw-n').value || 1)), R, say;
+    var a = toInt(BA);
+    if (o === 'AND') { R = BA.map(function (b, i) { return b & BM[i]; }); say = 'AND keeps the bits where the mask is 1 and clears the bits where it is 0.'; }
+    if (o === 'OR') { R = BA.map(function (b, i) { return b | BM[i]; }); say = 'OR sets the bits where the mask is 1 and leaves the others unchanged.'; }
+    if (o === 'XOR') { R = BA.map(function (b, i) { return b ^ BM[i]; }); say = 'XOR flips the bits where the mask is 1 and leaves the others unchanged.'; }
+    if (o === 'LSL') { R = fromInt((a << n) & 255, 8); say = 'Logical shift left ' + n + ': ' + a + ' × ' + Math.pow(2, n) + ' = ' + a * Math.pow(2, n) + (a * Math.pow(2, n) > 255 ? ', but 1s fell off the left end, so the 8-bit result is only ' + toInt(R) + '.' : ' ✓'); }
+    if (o === 'LSR') { R = fromInt(a >> n, 8); say = 'Logical shift right ' + n + ': ' + a + ' ÷ ' + Math.pow(2, n) + ' = ' + (a / Math.pow(2, n)) + (a % Math.pow(2, n) ? ', but bits fell off the right, so the result is rounded down to ' + toInt(R) + '.' : ' ✓'); }
+    if (o === 'ASR') { R = BA.slice(); for (var k = 0; k < n; k++) R = [R[0]].concat(R.slice(0, 7)); say = 'Arithmetic shift right ' + n + ': the sign bit is copied in, so as two\'s complement ' + signed(BA) + ' becomes ' + signed(R) + ' (÷ ' + Math.pow(2, n) + ', rounded down).'; }
+    resRow(document.getElementById('bw-r'), R);
+    document.getElementById('bw-say').textContent = say + ' Result: ' + str(R) + '.';
+  }
+  document.querySelectorAll('input[name="bw"]').forEach(function (x) { x.addEventListener('change', drawBW); });
+  document.getElementById('bw-n').addEventListener('input', drawBW);
+  drawBW();
+
+  // ---------- Characters ----------
+  function drawCh() {
+    var s = document.getElementById('ch-in').value, out = document.getElementById('ch-out'); out.innerHTML = '';
+    var chars = Array.from(s).slice(0, 16); if (!chars.length) return;
+    var t = el('table', 'def'); t.style.minWidth = '0';
+    t.innerHTML = '<thead><tr><th scope="col">Char</th><th scope="col">Code</th><th scope="col">Binary</th><th scope="col">UTF-8 bytes</th><th scope="col">In ASCII?</th></tr></thead>';
+    var tb = el('tbody'), enc = new TextEncoder();
+    chars.forEach(function (c) {
+      var cp = c.codePointAt(0), tr = el('tr');
+      var cc = el('td', null, c === ' ' ? '(space)' : c); cc.style.fontSize = '20px';
+      tr.append(cc, el('td', 'mono', cp), el('td', 'mono', cp.toString(2).padStart(cp < 128 ? 7 : 8, '0')), el('td', null, enc.encode(c).length), el('td', null, cp < 128 ? 'Yes' : 'No'));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb); out.appendChild(t);
+  }
+  document.getElementById('ch-in').addEventListener('input', drawCh);
+  drawCh();
+})();
+</script>
+</body>
+</html>

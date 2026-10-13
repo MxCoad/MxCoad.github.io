@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3.1 Compression, encryption and hashing — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.3.1: lossy and lossless compression, run length encoding, dictionary coding, symmetric and asymmetric encryption, and hashing.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .outbox { margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--ms-surface-2); font-family: var(--ms-font-mono); font-size: 16px; overflow-wrap: anywhere; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 8px; font-size: 15px; }
+  .stats b { font-family: var(--ms-font-mono); }
+  .dict { border-collapse: collapse; margin-top: 8px; font-size: 15px; }
+  .dict th, .dict td { border-bottom: 1px solid var(--ms-line); padding: 3px 12px; text-align: left; font-family: var(--ms-font-mono); }
+  .dict th { font-family: var(--ms-font-body); background: var(--ms-surface-2); font-size: 13px; }
+  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 10px 0; }
+  .person { padding: 12px 14px; border-radius: 12px; border: 1px solid var(--ms-line); background: var(--ms-bg); }
+  .person h4 { margin: 0 0 6px; }
+  .key { display: inline-block; padding: 2px 8px; border-radius: 6px; font-family: var(--ms-font-mono); font-size: 14px; margin: 2px 0; }
+  .key.pub { background: color-mix(in srgb, var(--ks-gcse) 30%, var(--ms-surface)); }
+  .key.priv { background: color-mix(in srgb, var(--ks-tools) 35%, var(--ms-surface)); }
+  .hash { font-family: var(--ms-font-mono); font-size: 14px; overflow-wrap: anywhere; padding: 8px 10px; border-radius: 8px; background: var(--ms-surface-2); margin-top: 4px; }
+  .hash .diff { background: var(--ms-bad-soft); color: var(--ms-bad); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.3.1 Compression, encryption and hashing</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.3.1</p>
+  <h1>Compression, encryption and hashing</h1>
+  <p class="intro">Three ways of transforming data: making it smaller, making it secret, and producing a fingerprint of it. Try the tools to see each technique working on real data.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="compression">
+    <div class="sec-head"><span class="sec-num">1.3.1a</span><h2>Lossy and lossless compression</h2></div>
+    <p>Compression reduces file size, so files take less storage and transfer faster using less bandwidth.</p>
+    <table class="def">
+      <tr><th scope="row">Lossy</th><td><strong>Permanently removes data</strong>, choosing what people are least likely to notice — sounds outside the range of human hearing or masked by louder ones, fine colour detail in images. The original <strong>cannot be reconstructed</strong>. Much smaller files. <em>JPEG, MP3, MP4.</em> Unsuitable where every bit matters (text, code, medical images).</td></tr>
+      <tr><th scope="row">Lossless</th><td>Reduces size by <strong>finding patterns and redundancy</strong> and storing them more efficiently. The original can be <strong>restored exactly</strong>. Less reduction. <em>PNG, ZIP, FLAC.</em> Essential for text, program files and data.</td></tr>
+    </table>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="rle-dictionary">
+    <div class="sec-head"><span class="sec-num">1.3.1b</span><h2>Run length encoding and dictionary coding</h2></div>
+    <h3>Run length encoding (RLE)</h3>
+    <p>Replaces <strong>runs of the same value</strong> with the value and the <strong>number of times</strong> it repeats: <code>WWWWWWBBBW</code> → <code>6W3B1W</code>. Very effective for data with long runs, such as simple images with large blocks of colour. With little repetition it can make the data <strong>bigger</strong>, because every single value gains a count.</p>
+    <h3>Dictionary coding</h3>
+    <p>Builds a <strong>dictionary</strong> of repeated sequences (e.g. words) and replaces each occurrence with a short <strong>reference</strong> (an index) to its entry. The dictionary must be stored or sent with the compressed data so it can be decoded. Works best when long sequences repeat many times. (Methods such as LZW build the dictionary as they go.)</p>
+
+    <div class="tool" id="comp">
+      <p class="tool-title">Try it: compress some text</p>
+      <p class="tool-sub">Type or change the text and compare the two methods. Sizes assume 1 byte per character and 1 byte per count or index.</p>
+      <fieldset class="ctl" style="margin-bottom:10px"><legend class="sr">Method</legend>
+        <div class="seg">
+          <label><input type="radio" name="cm" value="rle" checked><span>Run length encoding</span></label>
+          <label><input type="radio" name="cm" value="dict"><span>Dictionary coding</span></label>
+        </div>
+      </fieldset>
+      <div class="ctl"><label for="cm-in">Text to compress</label><input class="field" style="font-family:var(--ms-font-mono)" type="text" id="cm-in" value="AAAAAAAABBBBCCCCCCCCCCCCD" spellcheck="false"></div>
+      <div class="presets" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px" id="cm-presets"></div>
+      <div id="cm-out"></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>If you're asked to compress data with RLE, show your answer in the same format as the question (e.g. <code>5A 3B</code> or <code>A5 B3</code>), and always state whether a method is lossy or lossless when you name it.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="encryption">
+    <div class="sec-head"><span class="sec-num">1.3.1c</span><h2>Symmetric and asymmetric encryption</h2></div>
+    <p><span class="term">Encryption</span> scrambles <strong>plaintext</strong> into <strong>ciphertext</strong> using an algorithm and a <strong>key</strong>, so that anyone who intercepts it can't understand it without the right key.</p>
+    <div class="two-col">
+      <div class="mini"><h4>Symmetric</h4><ul>
+        <li>The <strong>same key</strong> encrypts and decrypts</li>
+        <li>✓ <strong>Fast</strong>, so good for large amounts of data (e.g. AES)</li>
+        <li>✗ <strong>Key exchange problem</strong>: both sides need the key, and if it's intercepted while being shared, the attacker can read everything</li>
+      </ul></div>
+      <div class="mini"><h4>Asymmetric (public key)</h4><ul>
+        <li>Each person has a <strong>pair of keys</strong>: a <strong>public key</strong> anyone can have, and a <strong>private key</strong> kept secret. They're mathematically linked</li>
+        <li>Data encrypted with someone's <strong>public</strong> key can only be decrypted with their <strong>private</strong> key</li>
+        <li>✓ No secret key needs to be shared</li>
+        <li>✗ Much <strong>slower</strong> (e.g. RSA)</li>
+      </ul></div>
+    </div>
+    <p>In practice both are used together: HTTPS uses <strong>asymmetric</strong> encryption to share a <strong>symmetric</strong> session key safely, then switches to fast symmetric encryption for the data.</p>
+    <h3>Digital signatures</h3>
+    <p>To prove a message really came from Alice and hasn't been changed: Alice <strong>hashes</strong> the message and <strong>encrypts the hash with her private key</strong> — that's the signature. Bob <strong>decrypts it with Alice's public key</strong> and compares it with his own hash of the message. If they match, only Alice could have sent it (only she has her private key), and it hasn't been altered.</p>
+
+    <div class="tool" id="rsa">
+      <p class="tool-title">Try it: asymmetric encryption with tiny numbers</p>
+      <p class="tool-sub">Alice sends Bob a secret message using Bob's public key. Real keys have hundreds of digits; these are tiny so you can follow the maths (RSA with n = 55).</p>
+      <div class="people">
+        <div class="person"><h4>Bob</h4><p style="margin:0;font-size:16px">Public key (shared with everyone): <span class="key pub">e = 3, n = 55</span><br>Private key (kept secret): <span class="key priv">d = 27, n = 55</span></p></div>
+        <div class="person"><h4>Alice</h4><div class="ctl"><label for="rsa-in">Message (letters A–Z)</label><input class="field" type="text" id="rsa-in" value="HELLO" maxlength="12" spellcheck="false"></div></div>
+      </div>
+      <div id="rsa-out"></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>To send someone a secret, encrypt with <strong>their public</strong> key. To sign something, encrypt (the hash) with <strong>your private</strong> key. Mixing these up is the most common error.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="hashing">
+    <div class="sec-head"><span class="sec-num">1.3.1d</span><h2>Hashing</h2></div>
+    <p>A <span class="term">hash function</span> turns any input into a <strong>fixed-length</strong> value (the hash or digest). A good hash function is:</p>
+    <ul>
+      <li><strong>One-way</strong> — you can't work out the input from the hash</li>
+      <li><strong>Deterministic</strong> — the same input always gives the same hash</li>
+      <li>Sensitive — a tiny change to the input gives a <strong>completely different</strong> hash</li>
+      <li>Unlikely to produce <strong>collisions</strong> (two inputs with the same hash)</li>
+    </ul>
+    <h3>Uses</h3>
+    <ul>
+      <li><strong>Storing passwords</strong>: the system stores only the hash (usually with a random <strong>salt</strong> added). At log-in, it hashes what you type and compares. If the database is stolen, the passwords themselves aren't revealed.</li>
+      <li><strong>Checking integrity</strong>: a download's published hash lets you check the file hasn't been corrupted or tampered with.</li>
+      <li><strong>Digital signatures</strong>: the hash of a message is what gets signed.</li>
+      <li><strong>Hash tables</strong>: hashing a key gives the position to store or find data quickly (see <a href="1-4-2-data-structures.html#hash-tables">1.4.2</a>).</li>
+    </ul>
+    <div class="tool" id="hashtool">
+      <p class="tool-title">Try it: SHA-256</p>
+      <p class="tool-sub">Change one character and compare the hashes. Characters that differ are highlighted.</p>
+      <div class="controls">
+        <div class="ctl"><label for="h-a">Input A</label><input class="field" type="text" id="h-a" value="password123" spellcheck="false"></div>
+        <div class="ctl"><label for="h-b">Input B</label><input class="field" type="text" id="h-b" value="password124" spellcheck="false"></div>
+      </div>
+      <p style="margin:12px 0 0;font-weight:700">Hash of A</p><div class="hash" id="h-ha"></div>
+      <p style="margin:10px 0 0;font-weight:700">Hash of B</p><div class="hash" id="h-hb"></div>
+      <p class="explain" id="h-say" aria-live="polite"></p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Why salt? Attackers keep <strong>rainbow tables</strong>: huge precomputed lists of the hashes of common passwords. Adding a random salt to each password before hashing means two users with the same password get different hashes, and a precomputed table is useless. Password hashes such as bcrypt are also deliberately <strong>slow</strong>, so trying billions of guesses takes far longer.</p>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Hashing is <strong>not encryption</strong>. Encrypted data is meant to be decrypted with a key; a hash can't be reversed at all.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-2-4-programming-languages.html">1.2.4 Types of programming language</a> · Next: <a href="1-3-2-databases.html">1.3.2 Databases</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-3-1-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'Explain the difference between lossy and lossless compression, giving a suitable use of each.',
+      points: ['Lossy permanently removes data / the original cannot be reconstructed; lossless allows the original to be restored exactly', 'Suitable use of lossy, e.g. streaming music / photos on a website', 'Suitable use of lossless, e.g. text files / program code / spreadsheets'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 3, text: 'Show how AAAAABBBCCCCCCCCD would be compressed using run length encoding, and explain when RLE can increase the size of data.',
+      points: ['5A3B8C1D', 'RLE can increase size when there are few / no runs of repeated values', 'Because each single value then needs an extra count'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'Describe how dictionary coding compresses data.',
+      points: ['Repeated sequences / words are stored once in a dictionary', 'Each occurrence is replaced with a reference / index to the dictionary entry', 'The dictionary is stored / sent with the data so it can be decompressed'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'Compare symmetric and asymmetric encryption.',
+      points: ['Symmetric uses the same key to encrypt and decrypt; asymmetric uses a public and private key pair', 'Symmetric has a key exchange problem — the key must be shared securely; asymmetric does not need a secret key to be shared', 'Symmetric is faster; asymmetric is slower', 'Asymmetric is often used to exchange a symmetric key, which is then used for the data'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 4, text: 'Alice wants to send Bob a confidential message, and Bob wants to be sure it came from Alice. Explain how asymmetric encryption and a digital signature achieve this.',
+      points: ['Alice encrypts the message with Bob\'s public key', 'Only Bob\'s private key can decrypt it, so only Bob can read it', 'Alice hashes the message and encrypts the hash with her private key (the signature)', 'Bob decrypts the signature with Alice\'s public key and compares it with his own hash of the message; a match proves it came from Alice and was not changed'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain why websites store hashes of passwords rather than the passwords, and how a user is checked at log-in.',
+      points: ['If the database is stolen, the attacker only has hashes, which cannot be reversed to get the passwords', 'At log-in, the password entered is hashed (with the stored salt)', 'The new hash is compared with the stored hash; if they match, access is granted'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'State two properties of a good hash function for storing passwords.',
+      points: ['One-way / cannot be reversed', 'A small change to the input gives a very different hash', 'Collisions are very unlikely', 'Fixed-length output / deterministic / deliberately slow to compute (to resist brute force)'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q8', marks: 9, text: 'An online bank wants to protect its customers\' data, both when it is sent over the Internet and when it is stored on the bank\'s servers. Discuss how encryption and hashing could be used.',
+      points: ['In transit: HTTPS / TLS encrypts data between the customer and the bank', 'Asymmetric encryption is used to exchange a symmetric session key securely', 'Symmetric encryption then encrypts the data quickly', 'Digital certificates / signatures prove the customer is connected to the real bank', 'Stored: passwords hashed with salt, so a breach does not reveal them', 'Stored: account data encrypted at rest (symmetric), with keys kept securely', 'Hashes check the integrity of data / transactions', 'Trade-offs: performance cost of encryption; key management; hashing cannot be reversed so cannot be used for data the bank needs to read', 'A justified conclusion'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of encryption and hashing, applied to both data in transit and stored data at the bank. Explains why each technique suits each purpose, with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application. Covers transit or storage in more depth than the other; some justification.'],
+        ['1–3 marks', 'Basic descriptions of encryption or hashing with little application.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+
+  // ---------- Compression ----------
+  var PRE = { rle: ['AAAAAAAABBBBCCCCCCCCCCCCD', 'WWWWWWWWWWWWBWWWWWWWWWWWWBBB', 'ABCDEFGH'], dict: ['the cat sat on the mat and the cat ate the rat', 'to be or not to be that is the question', 'every word here is different'] };
+  var input = document.getElementById('cm-in');
+  function method() { return document.querySelector('input[name="cm"]:checked').value; }
+  function presets() {
+    var box = document.getElementById('cm-presets'); box.innerHTML = '';
+    PRE[method()].forEach(function (s) {
+      var b = el('button', null, s.length > 30 ? s.slice(0, 28) + '…' : s); b.type = 'button';
+      b.style.cssText = 'min-height:40px;padding:0 12px;border-radius:999px;border:1px solid var(--ms-line-strong);background:var(--ms-surface);color:var(--ms-text);font-family:var(--ms-font-mono);font-size:14px;cursor:pointer';
+      b.addEventListener('click', function () { input.value = s; compress(); });
+      box.appendChild(b);
+    });
+  }
+  function compress() {
+    var s = input.value, out = document.getElementById('cm-out'); out.innerHTML = '';
+    if (!s) return;
+    if (method() === 'rle') {
+      var runs = [], i = 0;
+      while (i < s.length) { var j = i; while (j < s.length && s[j] === s[i]) j++; runs.push([j - i, s[i]]); i = j; }
+      out.appendChild(el('div', 'outbox', runs.map(function (r) { return r[0] + (r[1] === ' ' ? '␣' : r[1]); }).join(' ')));
+      var size = runs.length * 2;
+      var st = el('div', 'stats');
+      st.innerHTML = '';
+      st.append(el('span', null, 'Original: ' + s.length + ' bytes'), el('span', null, 'Compressed: ' + size + ' bytes'));
+      var ratio = el('span'); ratio.appendChild(el('b', null, size <= s.length ? Math.round((1 - size / s.length) * 100) + '% smaller' : Math.round((size / s.length - 1) * 100) + '% BIGGER'));
+      st.appendChild(ratio); out.appendChild(st);
+      out.appendChild(el('p', 'explain', size < s.length ? runs.length + ' runs, each stored as a count and a character. Long runs compress very well.' : 'With few repeated characters, every character gains a count, so RLE makes the data bigger.'));
+    } else {
+      var words = s.trim().split(/\s+/), dict = [], idx = words.map(function (w) { var k = dict.indexOf(w); if (k < 0) { dict.push(w); k = dict.length - 1; } return k; });
+      var tb = el('table', 'dict'); tb.innerHTML = '<thead><tr><th scope="col">Index</th><th scope="col">Word</th></tr></thead>';
+      var body = el('tbody'); dict.forEach(function (w, i) { var tr = el('tr'); tr.append(el('td', null, i), el('td', null, w)); body.appendChild(tr); }); tb.appendChild(body);
+      out.appendChild(tb);
+      out.appendChild(el('div', 'outbox', idx.join(' ')));
+      var dictSize = dict.reduce(function (t, w) { return t + w.length + 1; }, 0), total = dictSize + idx.length;
+      var st2 = el('div', 'stats');
+      st2.append(el('span', null, 'Original: ' + s.length + ' bytes'), el('span', null, 'Dictionary: ' + dictSize + ' + references: ' + idx.length + ' = ' + total + ' bytes'));
+      var r2 = el('span'); r2.appendChild(el('b', null, total <= s.length ? Math.round((1 - total / s.length) * 100) + '% smaller' : Math.round((total / s.length - 1) * 100) + '% BIGGER')); st2.appendChild(r2);
+      out.appendChild(st2);
+      out.appendChild(el('p', 'explain', dict.length < words.length ? words.length + ' words but only ' + dict.length + ' different ones. Each repeat costs just one byte instead of the whole word (spaces are restored between words when decoding).' : 'No word repeats, so the dictionary is as big as the text and there is nothing to gain.'));
+    }
+  }
+  document.querySelectorAll('input[name="cm"]').forEach(function (r) { r.addEventListener('change', function () { input.value = PRE[method()][0]; presets(); compress(); }); });
+  input.addEventListener('input', compress);
+  presets(); compress();
+
+  // ---------- Tiny RSA ----------
+  function modpow(b, e, m) { var r = 1n, x = BigInt(b) % BigInt(m), E = BigInt(e), M = BigInt(m); while (E > 0n) { if (E & 1n) r = r * x % M; x = x * x % M; E >>= 1n; } return Number(r); }
+  function rsa() {
+    var msg = document.getElementById('rsa-in').value.toUpperCase().replace(/[^A-Z]/g, '');
+    var out = document.getElementById('rsa-out'); out.innerHTML = '';
+    if (!msg) { out.appendChild(el('p', 'explain', 'Type some letters.')); return; }
+    var nums = msg.split('').map(function (c) { return c.charCodeAt(0) - 64; });
+    var enc = nums.map(function (m) { return modpow(m, 3, 55); });
+    var dec = enc.map(function (c) { return modpow(c, 27, 55); });
+    var rows = [
+      ['1. Letters to numbers (A = 1 … Z = 26)', nums.join(', ')],
+      ['2. Alice encrypts each with Bob\'s PUBLIC key: m³ mod 55', enc.join(', ')],
+      ['3. This ciphertext is sent. An eavesdropper sees only', enc.join(', ')],
+      ['4. Bob decrypts with his PRIVATE key: c²⁷ mod 55', dec.join(', ')],
+      ['5. Numbers back to letters', dec.map(function (n) { return String.fromCharCode(n + 64); }).join('')]
+    ];
+    rows.forEach(function (r) { var p = el('p', null); p.style.margin = '8px 0 0'; p.appendChild(el('strong', null, r[0])); out.appendChild(p); out.appendChild(el('div', 'outbox', r[1])); });
+    out.appendChild(el('p', 'explain', 'The public key (3, 55) can only lock. Unlocking needs 27, which is worked out from the prime factors of 55 (5 × 11). With real keys, n has over 600 digits, and finding its factors would take longer than the age of the universe — that is what keeps the private key safe.'));
+  }
+  document.getElementById('rsa-in').addEventListener('input', rsa);
+  rsa();
+
+  // ---------- SHA-256 ----------
+  async function sha(s) {
+    if (!(window.crypto && crypto.subtle)) return null;
+    var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+  }
+  async function hashes() {
+    var a = document.getElementById('h-a').value, b = document.getElementById('h-b').value;
+    var ha = await sha(a), hb = await sha(b);
+    var A = document.getElementById('h-ha'), B = document.getElementById('h-hb'), say = document.getElementById('h-say');
+    if (ha === null) { A.textContent = B.textContent = 'Your browser can\'t compute SHA-256 here.'; return; }
+    A.innerHTML = ''; B.innerHTML = '';
+    var diff = 0;
+    for (var i = 0; i < ha.length; i++) {
+      var same = ha[i] === hb[i]; if (!same) diff++;
+      var sa = document.createElement('span'); sa.textContent = ha[i]; if (!same) sa.className = 'diff'; A.appendChild(sa);
+      var sb = document.createElement('span'); sb.textContent = hb[i]; if (!same) sb.className = 'diff'; B.appendChild(sb);
+    }
+    say.textContent = a === b ? 'Identical inputs always give identical hashes.' : diff + ' of the 64 hex characters are different, even though the inputs are very similar. Both hashes are always 64 hex characters (256 bits), whatever the length of the input.';
+  }
+  document.querySelectorAll('#hashtool input').forEach(function (i) { i.addEventListener('input', hashes); });
+  hashes();
+})();
+</script>
+</body>
+</html>

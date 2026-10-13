@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.5.1 Computing-related legislation — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.5.1: the Data Protection Act 2018, the Computer Misuse Act 1990, the Copyright, Designs and Patents Act 1988, and the Regulation of Investigatory Powers Act 2000.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 10px 0 16px; }
+  .act { border: 1px solid var(--ms-line); border-left: 6px solid var(--ks-alevel); border-radius: 10px; background: var(--ms-bg); padding: 10px 12px; }
+  .act b { display: block; font-size: 17px; }
+  .act span { font-size: 15px; color: var(--ms-muted); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.5.1 Computing-related legislation</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.5.1</p>
+  <h1>Computing-related legislation</h1>
+  <p class="intro">The four UK laws you need to know: what each one covers, what it allows or forbids, and how to apply it to a scenario. Exam questions almost always describe a situation and ask which law applies and why.</p>
+
+  <div class="acts">
+    <div class="act"><b>DPA 2018</b><span>Personal data</span></div>
+    <div class="act"><b>CMA 1990</b><span>Hacking and malware</span></div>
+    <div class="act"><b>CDPA 1988</b><span>Copying creative work</span></div>
+    <div class="act"><b>RIPA 2000</b><span>Surveillance by the state</span></div>
+  </div>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="dpa">
+    <div class="sec-head"><span class="sec-num">1.5.1a</span><h2>The Data Protection Act 2018</h2></div>
+    <p>The <span class="term">Data Protection Act 2018</span> is the UK's version of the GDPR. It controls how <strong>personal data</strong> — information about a living, identifiable person — is collected, stored and used.</p>
+    <table class="def">
+      <tr><th scope="row">Data subject</th><td>The person the data is about.</td></tr>
+      <tr><th scope="row">Data controller</th><td>The organisation that decides why and how the data is processed, and is responsible for following the Act.</td></tr>
+      <tr><th scope="row">Data processor</th><td>An organisation that processes data on the controller's behalf (e.g. a cloud provider).</td></tr>
+      <tr><th scope="row">ICO</th><td>The <strong>Information Commissioner's Office</strong> enforces the Act. It can investigate, order changes and issue fines of up to <strong>£17.5 million or 4% of annual global turnover</strong>, whichever is higher.</td></tr>
+    </table>
+    <h3>The data protection principles</h3>
+    <p>Personal data must be:</p>
+    <ol>
+      <li>Processed <strong>lawfully, fairly and transparently</strong> (there must be a legal basis such as consent, and people must be told what happens to their data)</li>
+      <li>Collected for <strong>specified, explicit purposes</strong> and not used for anything else (<strong>purpose limitation</strong>)</li>
+      <li><strong>Adequate, relevant and limited</strong> to what is needed (<strong>data minimisation</strong>)</li>
+      <li><strong>Accurate</strong> and kept up to date</li>
+      <li><strong>Kept no longer than necessary</strong> (<strong>storage limitation</strong>)</li>
+      <li>Kept <strong>secure</strong> against unauthorised access, loss or damage (<strong>integrity and confidentiality</strong>)</li>
+    </ol>
+    <p>And the controller must be able to <strong>show</strong> it complies (<strong>accountability</strong>).</p>
+    <h3>Rights of data subjects</h3>
+    <p>People have the right to be <strong>informed</strong> about how their data is used; to <strong>access</strong> it (a <strong>subject access request</strong>, normally free and answered within a month); to have it <strong>corrected</strong> or <strong>erased</strong>; to <strong>restrict</strong> or <strong>object</strong> to processing; to <strong>data portability</strong> (take it to another provider); and rights about <strong>automated decision-making</strong>. Some exemptions apply, e.g. for national security and preventing crime.</p>
+    <div class="tool" id="dpatool">
+      <p class="tool-title">Try it: which principle is broken?</p>
+      <p class="tool-sub">Match each situation to the DPA principle it breaks.</p>
+      <div id="sort-dpa"></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="cma">
+    <div class="sec-head"><span class="sec-num">1.5.1b</span><h2>The Computer Misuse Act 1990</h2></div>
+    <p>The <span class="term">Computer Misuse Act</span> made hacking and spreading malware criminal offences. Each offence builds on the one before:</p>
+    <table class="def">
+      <tr><th scope="row">Section 1<small>Up to 2 years in prison</small></th><td><strong>Unauthorised access to computer material</strong>: accessing a system or data without permission, e.g. logging in with someone else's password, or guessing your way into an account, even just to look.</td></tr>
+      <tr><th scope="row">Section 2<small>Up to 5 years</small></th><td><strong>Unauthorised access with intent to commit or facilitate further offences</strong>: hacking in order to commit another crime, e.g. getting into a bank system to steal money, or into an email account to blackmail someone.</td></tr>
+      <tr><th scope="row">Section 3<small>Up to 10 years</small></th><td><strong>Unauthorised acts with intent to impair</strong> the operation of a computer, or recklessly doing so: changing or deleting data, spreading <strong>viruses</strong> and other malware, <strong>denial of service</strong> attacks.</td></tr>
+    </table>
+    <p>Later amendments added offences for <strong>making, supplying or obtaining tools</strong> for use in these crimes (section 3A) and for acts causing <strong>serious damage</strong>, e.g. to national infrastructure (section 3ZA, up to life imprisonment).</p>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Name the <strong>section</strong> and say <strong>why</strong> it applies to the scenario. One action can break more than one section: someone who logs in with a stolen password (s1) and then deletes files (s3).</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="cdpa">
+    <div class="sec-head"><span class="sec-num">1.5.1c</span><h2>The Copyright, Designs and Patents Act 1988</h2></div>
+    <p>The <span class="term">CDPA</span> protects <strong>intellectual property</strong>: the creator of an original work owns it and decides who can copy and use it.</p>
+    <ul>
+      <li>Covers <strong>software</strong> (protected as a literary work), music, films, books, images, artwork and broadcasts.</li>
+      <li>Copyright is <strong>automatic</strong> — it doesn't have to be registered — and for most works lasts <strong>70 years after the creator's death</strong>.</li>
+      <li>It is illegal to <strong>copy, distribute, adapt, rent or broadcast</strong> a work without permission, e.g. installing one licensed copy of software on several machines, sharing films online, or using someone's photos on your website.</li>
+      <li>Some limited use is allowed as <strong>fair dealing</strong>, e.g. short quotations for criticism, review or private study.</li>
+      <li><strong>Patents</strong> protect <strong>inventions</strong> (how something works), must be applied for, and last up to 20 years. In the UK, a computer program "as such" can't be patented, but an invention that uses software may be.</li>
+    </ul>
+    <p>Software is distributed under a <strong>licence</strong>, which sets what the user may do: proprietary licences restrict copying and modification; open source licences allow them under conditions (see <a href="1-2-2-applications-generation.html">1.2.2</a>).</p>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="ripa">
+    <div class="sec-head"><span class="sec-num">1.5.1d</span><h2>The Regulation of Investigatory Powers Act 2000</h2></div>
+    <p><span class="term">RIPA</span> sets out when public bodies — the police, security services and some others such as HMRC and local councils — may carry out <strong>surveillance</strong> and <strong>intercept communications</strong>, and the rules they must follow.</p>
+    <ul>
+      <li><strong>Interception</strong> of the content of communications (e.g. emails, phone calls) needs a <strong>warrant</strong>, authorised by the Home Secretary.</li>
+      <li>Authorities can obtain <strong>communications data</strong> — who contacted whom, when and from where, but not the content — from ISPs and phone companies.</li>
+      <li>ISPs can be required to provide access to customers' communications and to <strong>install equipment</strong> to make interception possible.</li>
+      <li>People can be required to <strong>hand over encryption keys</strong> or decrypt data; refusing is an offence.</li>
+      <li>It also covers <strong>covert surveillance</strong> and the use of undercover sources.</li>
+      <li>It makes it an offence for others to intercept communications without authority.</li>
+    </ul>
+    <p>Supporters say it is needed to fight terrorism and serious crime. Critics say it <strong>invades privacy</strong>, has been used by councils for minor matters such as checking school catchment areas, and that keeping data on everyone treats everyone as a suspect.</p>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Many of RIPA's interception powers have since been replaced by the <strong>Investigatory Powers Act 2016</strong> (nicknamed the "Snooper's Charter"), which requires ISPs to keep records of the websites customers visit for 12 months. The specification still names RIPA, so learn it — but mentioning the newer Act in a discussion shows wider understanding.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="apply">
+    <div class="sec-head"><span class="sec-num">1.5.1e</span><h2>Applying the laws</h2></div>
+    <p>Scenario questions often involve more than one law. Read carefully: who did what, to whose data or system, and with what intention?</p>
+    <div class="tool" id="actstool">
+      <p class="tool-title">Try it: which Act?</p>
+      <p class="tool-sub">Match each situation to the law that is most relevant.</p>
+      <div id="sort-acts"></div>
+    </div>
+    <div class="tool" id="cmatool">
+      <p class="tool-title">Try it: which section of the Computer Misuse Act?</p>
+      <p class="tool-sub">Choose the most serious section each person has broken.</p>
+      <div id="sort-cma"></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>The Data Protection Act is about <strong>organisations</strong> handling <strong>personal</strong> data. A hacker breaking into a system breaks the <strong>Computer Misuse Act</strong>; the company that failed to secure the data may have broken the <strong>DPA</strong>.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers. This page is a revision summary, not legal advice.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-4-3-boolean-algebra.html">1.4.3 Boolean algebra</a> · Next: <a href="1-5-2-moral-ethical-issues.html">1.5.2 Moral and ethical issues</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-5-1-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'State the three main offences under the Computer Misuse Act 1990.',
+      points: ['Unauthorised access to computer material', 'Unauthorised access with intent to commit or facilitate further offences', 'Unauthorised acts with intent to impair the operation of a computer / unauthorised modification of computer material'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'A gym stores the names, addresses, dates of birth and payment details of its members. Describe four ways the gym must handle this data to comply with the Data Protection Act 2018.',
+      points: ['Tell members what data is collected and why / have a lawful basis such as consent', 'Only use it for the stated purpose, e.g. not sell it to advertisers without consent', 'Only collect the data it needs', 'Keep it accurate and up to date', 'Delete it when no longer needed, e.g. when membership ends', 'Keep it secure, e.g. encrypt payment details, access controls'],
+      guide: 'Any four, 1 mark each. Answers must be applied to the gym.' },
+    { id: 'q3', marks: 2, text: 'State two rights a data subject has under the Data Protection Act 2018.',
+      points: ['To access their data (subject access request)', 'To have inaccurate data corrected', 'To have data erased', 'To be informed / to object / to restrict processing / to data portability'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q4', marks: 2, text: 'Who enforces the Data Protection Act, and what penalty can it impose?',
+      points: ['The Information Commissioner\'s Office (ICO)', 'Fines of up to £17.5 million or 4% of annual global turnover (whichever is higher)'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'A student copies a game from a friend\'s computer and uploads it to a file-sharing website. Explain how the Copyright, Designs and Patents Act 1988 applies.',
+      points: ['The game is protected by copyright, which belongs to the developer / publisher (automatically)', 'Copying it without a licence / permission is illegal', 'Distributing / uploading it for others to download is also an offence'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Describe three powers that the Regulation of Investigatory Powers Act 2000 gives to public bodies.',
+      points: ['Intercept communications (e.g. emails, calls) with a warrant', 'Obtain communications data (who, when, where) from ISPs / phone companies', 'Require ISPs to provide access / install interception equipment', 'Require people to hand over encryption keys / decrypt data', 'Carry out covert surveillance'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q7', marks: 3, text: 'An employee watches a colleague type their password, later uses it to log in to the HR system, and increases their own salary. Identify which offences have been committed under the Computer Misuse Act, explaining your answer.',
+      points: ['Section 1: unauthorised access — logged in with someone else\'s password without permission', 'Section 2: access with intent to commit a further offence — fraud / gaining money', 'Section 3: unauthorised modification — changing the salary data'],
+      guide: '1 mark per section correctly identified and linked to the scenario.' },
+    { id: 'q8', marks: 2, text: 'Explain why it can be difficult to prosecute someone under the Computer Misuse Act.',
+      points: ['The attacker may be in another country, outside UK jurisdiction', 'It can be hard to prove who carried out the attack / their intent (e.g. they used someone else\'s account, hid their IP address)'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'The Regulation of Investigatory Powers Act 2000 allows government bodies to monitor communications. Discuss whether this is justified.',
+      points: ['Helps prevent terrorism and serious crime / protects national security', 'Criminals use digital communications and encryption, so powers are needed to keep up', 'Safeguards: warrants for interception; oversight by commissioners', 'Invades the privacy of ordinary citizens / everyone treated as a suspect', 'Has been used by local councils for minor matters (mission creep)', 'Data stored by ISPs could be leaked or hacked', 'Being forced to hand over encryption keys; may weaken trust / free speech (chilling effect)', 'Criminals can avoid monitoring using encryption / services abroad, so it may mostly affect the innocent', 'A justified conclusion weighing privacy against security'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of RIPA. A balanced discussion of security benefits and privacy concerns, with a well-reasoned conclusion.'],
+        ['4–6 marks', 'Good knowledge with arguments on both sides; a conclusion with some support.'],
+        ['1–3 marks', 'Basic points, mostly one-sided or descriptive.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  TopicKit.sorter(document.getElementById('sort-dpa'), ['Purpose', 'Minimisation', 'Accuracy', 'Storage', 'Security'], [
+    { text: 'A shop uses email addresses collected for receipts to send a partner company\'s adverts', answer: 'Purpose', why: 'Data was collected for receipts and used for something else.' },
+    { text: 'A library asks for your religion and blood group when you join', answer: 'Minimisation', why: 'It doesn\'t need that data to lend books.' },
+    { text: 'A school keeps former pupils\' medical records for 40 years', answer: 'Storage', why: 'Data must not be kept longer than necessary.' },
+    { text: 'A dentist never updates patients\' addresses, so letters go to the wrong houses', answer: 'Accuracy', why: 'Data must be accurate and kept up to date.' },
+    { text: 'A company leaves a laptop of unencrypted customer records on a train', answer: 'Security', why: 'Data must be protected against loss and unauthorised access.' },
+    { text: 'A charity\'s database has an admin password of "password"', answer: 'Security', why: 'Weak protection breaks the integrity and confidentiality principle.' }
+  ]);
+  TopicKit.sorter(document.getElementById('sort-acts'), ['DPA', 'CMA', 'CDPA', 'RIPA'], [
+    { text: 'A teenager guesses a teacher\'s password and changes their grades', answer: 'CMA', why: 'Unauthorised access and modification.' },
+    { text: 'A website uses a professional photographer\'s images without permission', answer: 'CDPA', why: 'The images are protected by copyright.' },
+    { text: 'The police intercept a suspect\'s emails after a warrant is issued', answer: 'RIPA', why: 'RIPA governs interception of communications by public bodies.' },
+    { text: 'A company refuses to tell a customer what data it holds about them', answer: 'DPA', why: 'Customers have the right of access (subject access request).' },
+    { text: 'Someone writes and spreads ransomware', answer: 'CMA', why: 'Section 3: acts intended to impair a computer\'s operation.' },
+    { text: 'A business sells a copy of commercial software it bought one licence for', answer: 'CDPA', why: 'Distributing copies breaks copyright and the licence.' },
+    { text: 'An ISP is required to hand over records of who a suspect contacted', answer: 'RIPA', why: 'Communications data can be obtained under RIPA.' },
+    { text: 'A hospital sends patient records to the wrong email address', answer: 'DPA', why: 'A failure to keep personal data secure.' }
+  ]);
+  TopicKit.sorter(document.getElementById('sort-cma'), ['Section 1', 'Section 2', 'Section 3'], [
+    { text: 'Reads a friend\'s messages by logging in to their account without asking', answer: 'Section 1', why: 'Unauthorised access, with no further intent.' },
+    { text: 'Hacks into an online shop to steal customers\' card details to use', answer: 'Section 2', why: 'Access with intent to commit fraud.' },
+    { text: 'Launches a denial of service attack that takes a website offline', answer: 'Section 3', why: 'An act that impairs the operation of a computer.' },
+    { text: 'Gets into a celebrity\'s cloud storage to find photos to blackmail them with', answer: 'Section 2', why: 'Access to facilitate a further crime (blackmail).' },
+    { text: 'Plants a virus that deletes files on the school network', answer: 'Section 3', why: 'Unauthorised modification / impairing operation.' },
+    { text: 'Uses a colleague\'s unlocked computer to look at the payroll files', answer: 'Section 1', why: 'Unauthorised access to computer material.' }
+  ]);
+})();
+</script>
+</body>
+</html>

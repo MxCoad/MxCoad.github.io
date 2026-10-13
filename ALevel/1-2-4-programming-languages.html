@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2.4 Types of programming language — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.2.4: programming paradigms, procedural languages, assembly language and Little Man Computer, addressing modes, and object-oriented programming.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  /* LMC */
+  .lmc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; }
+  @media (max-width: 760px) { .lmc { grid-template-columns: 1fr; } }
+  .lmc textarea { width: 100%; min-height: 300px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 15px; line-height: 1.45; resize: vertical; }
+  .mailboxes { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 2px; }
+  .mb { border: 1px solid var(--ms-line); border-radius: 4px; padding: 2px 0; text-align: center; background: var(--ms-bg); }
+  .mb small { display: block; font-size: 10px; color: var(--ms-muted); }
+  .mb b { font-family: var(--ms-font-mono); font-size: 13px; }
+  .mb.pc { border-color: var(--ks-alevel); background: color-mix(in srgb, var(--ks-alevel) 25%, var(--ms-surface)); }
+  .mb.touched { border-color: var(--ms-good); }
+  .lmc-regs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .lmc-regs div { padding: 6px 10px; border-radius: 8px; background: var(--ms-surface-2); font-size: 14px; }
+  .lmc-regs b { font-family: var(--ms-font-mono); font-size: 17px; margin-left: 4px; }
+  .outbox { font-family: var(--ms-font-mono); font-size: 16px; padding: 8px 10px; border-radius: 8px; background: #10151C; color: #E7EBF0; min-height: 40px; white-space: pre-wrap; margin-top: 8px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+  /* Addressing */
+  .memrow { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 4px; margin: 10px 0; }
+  .memrow div { border: 2px solid var(--ms-line); border-radius: 8px; text-align: center; padding: 4px 0; background: var(--ms-bg); }
+  .memrow small { display: block; font-size: 11px; color: var(--ms-muted); }
+  .memrow b { font-family: var(--ms-font-mono); font-size: 17px; }
+  .memrow .step1 { border-color: var(--ks-gcse); background: color-mix(in srgb, var(--ks-gcse) 20%, var(--ms-surface)); }
+  .memrow .step2 { border-color: var(--ks-alevel); background: color-mix(in srgb, var(--ks-alevel) 25%, var(--ms-surface)); }
+  .acc-big { font-family: var(--ms-font-mono); font-size: 24px; font-weight: 700; color: var(--ms-accent); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.2.4 Types of programming language</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.2.4</p>
+  <h1>Types of programming language</h1>
+  <p class="intro">Different programming paradigms and why they exist, procedural programming, assembly language using the Little Man Computer, how instructions address memory, and the key ideas of object-oriented programming.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="paradigms">
+    <div class="sec-head"><span class="sec-num">1.2.4a</span><h2>Programming paradigms</h2></div>
+    <p>A <span class="term">programming paradigm</span> is a <strong>style or approach</strong> to programming. Different paradigms exist because different kinds of problem are easier to solve in different ways, and many languages support more than one.</p>
+    <table class="def">
+      <tr><th scope="row">Procedural</th><td>A sequence of instructions, organised into procedures and functions that operate on data. <em>Python, C, Pascal.</em></td></tr>
+      <tr><th scope="row">Object-oriented</th><td>The program is built from <strong>objects</strong> that combine data (attributes) and behaviour (methods). <em>Java, C#, Python.</em></td></tr>
+      <tr><th scope="row">Assembly (low-level)</th><td>Mnemonics that map one-to-one to the processor's machine code. <em>LMC, x86, ARM assembly.</em></td></tr>
+      <tr><th scope="row">Declarative</th><td>Describes <strong>what</strong> the result should be, not how to get it — the language works out the steps. Includes <strong>functional</strong> (Haskell) and <strong>logic</strong> (Prolog) programming, and query languages such as SQL.</td></tr>
+    </table>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="procedural">
+    <div class="sec-head"><span class="sec-num">1.2.4b</span><h2>Procedural languages</h2></div>
+    <p>Procedural programs are a <strong>series of instructions</strong> executed in order, using <strong>sequence, selection and iteration</strong>. Code is broken into <strong>procedures and functions</strong> (subroutines) that can be called, take parameters and return values. Data is held in variables, which may be local or global.</p>
+    <ul>
+      <li>✓ Easy to follow; suits problems that are naturally a sequence of steps; subroutines allow reuse and decomposition</li>
+      <li>✗ Data and the code that uses it are separate, so large programs can become hard to manage — global data can be changed from anywhere</li>
+    </ul>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="lmc">
+    <div class="sec-head"><span class="sec-num">1.2.4c</span><h2>Assembly language and the Little Man Computer</h2></div>
+    <p>Assembly language uses <strong>mnemonics</strong> that translate one-to-one into machine code. OCR uses the <strong>Little Man Computer (LMC)</strong>: a simple model with 100 memory locations ("mailboxes" 0–99) and one accumulator.</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">Mnemonic</th><th scope="col">Code</th><th scope="col">Meaning</th></tr></thead>
+      <tr><td><code>ADD</code></td><td>1xx</td><td>Add the value at address xx to the accumulator</td></tr>
+      <tr><td><code>SUB</code></td><td>2xx</td><td>Subtract the value at address xx from the accumulator</td></tr>
+      <tr><td><code>STA</code></td><td>3xx</td><td>Store the accumulator at address xx</td></tr>
+      <tr><td><code>LDA</code></td><td>5xx</td><td>Load the value at address xx into the accumulator</td></tr>
+      <tr><td><code>BRA</code></td><td>6xx</td><td>Branch (jump) to address xx always</td></tr>
+      <tr><td><code>BRZ</code></td><td>7xx</td><td>Branch to xx if the accumulator is zero</td></tr>
+      <tr><td><code>BRP</code></td><td>8xx</td><td>Branch to xx if the accumulator is zero or positive</td></tr>
+      <tr><td><code>INP</code></td><td>901</td><td>Input a value into the accumulator</td></tr>
+      <tr><td><code>OUT</code></td><td>902</td><td>Output the accumulator</td></tr>
+      <tr><td><code>HLT</code></td><td>000</td><td>Stop</td></tr>
+      <tr><td><code>DAT</code></td><td>—</td><td>Not an instruction: reserves a memory location (optionally with a starting value) and labels it</td></tr>
+    </table></div>
+    <p>Labels let you name a location (like a variable) or a line to branch to.</p>
+
+    <div class="tool" id="lmc-tool">
+      <p class="tool-title">Try it: Little Man Computer</p>
+      <p class="tool-sub">Write or pick a program, give it some inputs, then assemble and step through it.</p>
+      <div class="presets" id="lmc-presets"></div>
+      <div class="lmc">
+        <div>
+          <label for="lmc-code" class="sr">LMC program</label>
+          <textarea id="lmc-code" spellcheck="false"></textarea>
+          <div class="ctl" style="margin-top:8px"><label for="lmc-in">Inputs (separate with commas)</label><input class="field" type="text" id="lmc-in" value="7, 12" spellcheck="false"></div>
+          <div class="btn-row" style="margin-top:10px">
+            <button type="button" class="btn primary" id="lmc-asm">Assemble</button>
+            <button type="button" class="btn" id="lmc-step" disabled>Step</button>
+            <button type="button" class="btn" id="lmc-run" disabled>Run</button>
+          </div>
+        </div>
+        <div>
+          <div class="lmc-regs"><div>PC<b id="r-pc">0</b></div><div>ACC<b id="r-acc">0</b></div><div>CIR<b id="r-cir">—</b></div><div>Steps<b id="r-steps">0</b></div></div>
+          <div class="mailboxes" id="lmc-mem" aria-label="Memory"></div>
+          <div class="outbox" id="lmc-out" aria-live="polite" aria-label="Output"></div>
+        </div>
+      </div>
+      <p class="explain" id="lmc-say" aria-live="polite">Pick an example or write your own, then press Assemble.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="addressing">
+    <div class="sec-head"><span class="sec-num">1.2.4d</span><h2>Modes of addressing memory</h2></div>
+    <p>The <strong>addressing mode</strong> tells the processor how to interpret an instruction's <strong>operand</strong>.</p>
+    <table class="def">
+      <tr><th scope="row">Immediate</th><td>The operand <strong>is the actual value</strong> to use. <code>LDA #3</code> loads the number 3. Fast — no memory access needed.</td></tr>
+      <tr><th scope="row">Direct</th><td>The operand is the <strong>address</strong> of the value. <code>LDA 3</code> loads whatever is stored at address 3.</td></tr>
+      <tr><th scope="row">Indirect</th><td>The operand is an address that holds <strong>another address</strong>, where the value is. Allows access to a wider range of memory than fits in the operand, and is used for pointers.</td></tr>
+      <tr><th scope="row">Indexed</th><td>The address used is the operand <strong>plus the value in the index register</strong>. Increasing the index register moves through consecutive locations — ideal for <strong>arrays</strong>.</td></tr>
+    </table>
+    <div class="tool" id="addr">
+      <p class="tool-title">Try it: one instruction, four modes</p>
+      <p class="tool-sub">The instruction is <code>LDA</code> with the operand below. The index register holds <strong>2</strong>.</p>
+      <div class="controls">
+        <fieldset class="ctl"><legend>Addressing mode</legend>
+          <div class="seg">
+            <label><input type="radio" name="am" value="imm"><span>Immediate</span></label>
+            <label><input type="radio" name="am" value="dir" checked><span>Direct</span></label>
+            <label><input type="radio" name="am" value="ind"><span>Indirect</span></label>
+            <label><input type="radio" name="am" value="idx"><span>Indexed</span></label>
+          </div>
+        </fieldset>
+        <div class="ctl"><label for="am-op">Operand <output id="am-op-o">3</output></label><input type="range" id="am-op" min="0" max="7" value="3"></div>
+      </div>
+      <div class="memrow" id="am-mem"></div>
+      <p>Accumulator: <span class="acc-big" id="am-acc"></span></p>
+      <p class="explain" id="am-say" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="oop">
+    <div class="sec-head"><span class="sec-num">1.2.4e</span><h2>Object-oriented programming</h2></div>
+    <table class="def">
+      <tr><th scope="row">Class</th><td>A <strong>template</strong> (blueprint) that defines the attributes and methods its objects will have.</td></tr>
+      <tr><th scope="row">Object</th><td>An <strong>instance</strong> of a class, with its own values for the attributes. Created by calling the class's <strong>constructor</strong> (<code>new</code>).</td></tr>
+      <tr><th scope="row">Attribute</th><td>A piece of <strong>data</strong> belonging to an object (a variable inside it).</td></tr>
+      <tr><th scope="row">Method</th><td>A <strong>procedure or function</strong> belonging to a class, defining what objects can do.</td></tr>
+      <tr><th scope="row">Encapsulation</th><td>Bundling data and methods together and <strong>hiding the attributes</strong> (making them <code>private</code>), so they can only be accessed through the class's public methods (getters and setters). This protects data from accidental or invalid changes, and lets the inner workings change without affecting other code.</td></tr>
+      <tr><th scope="row">Inheritance</th><td>A <strong>subclass</strong> (child) takes on the attributes and methods of a <strong>superclass</strong> (parent), and can add its own. Avoids repeating code.</td></tr>
+      <tr><th scope="row">Polymorphism</th><td>Objects of different classes can be treated the same way, with each responding in its own way — e.g. a subclass <strong>overrides</strong> a method it inherited. Calling <code>speak()</code> on any pet does the right thing for that pet.</td></tr>
+    </table>
+<pre><code>class Pet
+    private name
+    public procedure new(givenName)
+        name = givenName
+    endprocedure
+    public function getName()
+        return name
+    endfunction
+    public procedure speak()
+        print("...")
+    endprocedure
+endclass
+
+class Dog inherits Pet
+    public procedure speak()            // overrides Pet's speak (polymorphism)
+        print(getName() + " says Woof")
+    endprocedure
+endclass
+
+rex = new Dog("Rex")                    // rex is an object (an instance of Dog)
+rex.speak()                             // Rex says Woof</code></pre>
+    <div class="two-col">
+      <div class="mini"><h4>Strengths of OOP</h4><ul><li>Models real-world things naturally</li><li>Encapsulation protects data</li><li>Inheritance and classes enable reuse</li><li>Large projects split cleanly between programmers</li></ul></div>
+      <div class="mini"><h4>Weaknesses</h4><ul><li>More planning and design needed up front</li><li>Can be over-complicated for small, simple programs</li><li>Programs can be larger and use more memory</li></ul></div>
+    </div>
+    <div class="tool">
+      <p class="tool-title">Try it: which OOP concept?</p>
+      <p class="tool-sub">Choose the concept each statement describes.</p>
+      <div id="sort-oop"></div>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-2-3-software-development.html">1.2.3 Software development</a> · Next: <a href="1-3-1-compression-encryption-hashing.html">1.3.1 Compression, encryption and hashing</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-2-4-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'Explain what is meant by a programming paradigm and why different paradigms exist.',
+      points: ['A paradigm is a style / approach to programming', 'Different problems are more easily solved using different approaches', 'Example, e.g. OOP suits modelling real-world objects; declarative (SQL) suits querying data'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'Describe immediate, direct, indirect and indexed addressing.',
+      points: ['Immediate: the operand is the actual value to be used', 'Direct: the operand is the address of the value', 'Indirect: the operand is an address that holds the address of the value', 'Indexed: the address is the operand plus the contents of the index register'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 4, text: 'Write an LMC program that inputs two numbers and outputs the larger.',
+      points: ['Inputs both numbers and stores them (INP, STA)', 'Subtracts one from the other (LDA / SUB)', 'Uses BRP (or BRZ) to decide which is larger', 'Outputs the correct number in each case and halts, with DAT locations declared'],
+      guide: 'Example:\n        INP\n        STA a\n        INP\n        STA b\n        SUB a\n        BRP bbig\n        LDA a\n        OUT\n        HLT\nbbig    LDA b\n        OUT\n        HLT\na       DAT\nb       DAT\n(Try it in the LMC simulator above.)' },
+    { id: 'q4', marks: 3, text: 'The input is 3. State the outputs of this LMC program and describe what it does.',
+      code: '      INP\n      STA num\nloop  LDA num\n      OUT\n      SUB one\n      STA num\n      BRP loop\n      HLT\nnum   DAT\none   DAT 1',
+      points: ['Outputs 3, 2, 1, 0', 'It counts down from the input number to 0', 'It stops when the value becomes negative (-1), so BRP no longer branches'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 2, text: 'Explain what is meant by encapsulation and why it is useful.',
+      points: ['Attributes are made private / hidden and can only be accessed via the class\'s public methods', 'Protects data from accidental or invalid changes / internal code can change without affecting other parts of the program'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'Explain inheritance, using an example.',
+      points: ['A subclass takes on the attributes and methods of its superclass (and can add its own)', 'Example, e.g. Dog inherits from Pet / Car inherits from Vehicle'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'Explain polymorphism.',
+      points: ['Objects of different classes can be treated in the same way / respond to the same method call', 'Each responds in its own way, e.g. a subclass overrides an inherited method'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 4, text: 'Explain the terms class, object, attribute and method.',
+      points: ['Class: a template / blueprint for creating objects', 'Object: an instance of a class', 'Attribute: data / a variable belonging to an object', 'Method: a procedure / function belonging to a class'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A team is developing a large adventure game with many types of character, item and location. Discuss the benefits and drawbacks of using an object-oriented language rather than a procedural one.',
+      points: ['Classes model game entities naturally (Character, Item, Location)', 'Inheritance: e.g. Enemy and Player inherit from Character, avoiding repeated code', 'Polymorphism: all characters can be updated / drawn with the same method call', 'Encapsulation protects data (e.g. health can only change through methods), reducing bugs', 'Classes can be developed and tested independently, by different team members, and reused', 'Drawbacks: needs more design up front; class hierarchies can become complex', 'Objects can use more memory / be less efficient', 'Procedural code is simpler for small tasks, but harder to manage at this scale (global data)', 'A justified conclusion, e.g. OOP is more suitable for a large game'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of OOP concepts, consistently applied to the game. Benefits and drawbacks weighed against the procedural alternative, with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application to the game. Some evaluation; conclusion partly supported.'],
+        ['1–3 marks', 'Basic description of some OOP features, little application or evaluation.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  TopicKit.sorter(document.getElementById('sort-oop'), ['Class', 'Object', 'Encapsulation', 'Inheritance', 'Polymorphism'], [
+    { text: 'Car is a blueprint that defines colour, speed and drive()', answer: 'Class' },
+    { text: 'myCar is a red Car with a speed of 30', answer: 'Object' },
+    { text: 'balance is private and can only be changed through deposit() and withdraw()', answer: 'Encapsulation' },
+    { text: 'ElectricCar gets all of Car\'s attributes and methods, and adds batteryLevel', answer: 'Inheritance' },
+    { text: 'Calling draw() on a Circle and on a Square each draws the right shape', answer: 'Polymorphism' }
+  ]);
+
+  // ---------- Little Man Computer ----------
+  var EXAMPLES = {
+    'Add two numbers': { code: '        INP\n        STA first\n        INP\n        ADD first\n        OUT\n        HLT\nfirst   DAT', input: '7, 12' },
+    'Larger of two': { code: '        INP\n        STA a\n        INP\n        STA b\n        SUB a\n        BRP bbig\n        LDA a\n        OUT\n        HLT\nbbig    LDA b\n        OUT\n        HLT\na       DAT\nb       DAT', input: '15, 9' },
+    'Count down': { code: '        INP\n        STA num\nloop    LDA num\n        OUT\n        SUB one\n        STA num\n        BRP loop\n        HLT\nnum     DAT\none     DAT 1', input: '3' },
+    'Multiply': { code: '// multiply two inputs by repeated addition\n        INP\n        STA a\n        INP\n        STA b\nloop    LDA b\n        BRZ done\n        SUB one\n        STA b\n        LDA total\n        ADD a\n        STA total\n        BRA loop\ndone    LDA total\n        OUT\n        HLT\na       DAT\nb       DAT\ntotal   DAT 0\none     DAT 1', input: '6, 4' }
+  };
+  var OPS = { ADD: 1, SUB: 2, STA: 3, LDA: 5, BRA: 6, BRZ: 7, BRP: 8 };
+  var codeEl = document.getElementById('lmc-code'), inEl = document.getElementById('lmc-in');
+  Object.keys(EXAMPLES).forEach(function (k, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.textContent = k;
+    b.addEventListener('click', function () { codeEl.value = EXAMPLES[k].code; inEl.value = EXAMPLES[k].input; reset(); });
+    document.getElementById('lmc-presets').appendChild(b);
+    if (i === 0) { codeEl.value = EXAMPLES[k].code; inEl.value = EXAMPLES[k].input; }
+  });
+  var M = null, pc = 0, acc = 0, cir = '—', steps = 0, inputs = [], halted = false, touched = -1, out = [], ready = false;
+  function assemble(src) {
+    var lines = src.split('\n').map(function (l) { return l.replace(/\/\/.*$/, '').trim(); }).filter(Boolean);
+    if (lines.length > 100) throw new Error('Too many lines: there are only 100 mailboxes.');
+    var labels = {}, parsed = [];
+    lines.forEach(function (l, i) {
+      var parts = l.split(/\s+/), label = null;
+      if (!(parts[0].toUpperCase() in OPS) && ['INP', 'OUT', 'HLT', 'DAT', 'COB'].indexOf(parts[0].toUpperCase()) < 0) { label = parts.shift(); }
+      if (!parts.length) throw new Error('Line ' + (i + 1) + ': "' + l + '" has a label but no instruction.');
+      if (label) { if (labels[label] != null) throw new Error('The label "' + label + '" is used twice.'); labels[label] = i; }
+      parsed.push({ op: parts[0].toUpperCase(), arg: parts[1], line: l });
+    });
+    var mem = new Array(100).fill(0);
+    parsed.forEach(function (p, i) {
+      function addr() {
+        if (p.arg == null) throw new Error('"' + p.line + '": ' + p.op + ' needs an address or label.');
+        if (/^\d+$/.test(p.arg)) return +p.arg;
+        if (labels[p.arg] == null) throw new Error('"' + p.line + '": there is no label called "' + p.arg + '".');
+        return labels[p.arg];
+      }
+      if (p.op in OPS) mem[i] = OPS[p.op] * 100 + addr();
+      else if (p.op === 'INP') mem[i] = 901;
+      else if (p.op === 'OUT') mem[i] = 902;
+      else if (p.op === 'HLT' || p.op === 'COB') mem[i] = 0;
+      else if (p.op === 'DAT') { var v = p.arg == null ? 0 : parseInt(p.arg, 10); if (isNaN(v)) throw new Error('"' + p.line + '": DAT needs a number.'); mem[i] = v; }
+      else throw new Error('"' + p.line + '": unknown instruction "' + p.op + '".');
+    });
+    return mem;
+  }
+  function decodeText(v) {
+    var op = Math.floor(v / 100), a = v % 100;
+    var names = { 1: 'ADD', 2: 'SUB', 3: 'STA', 5: 'LDA', 6: 'BRA', 7: 'BRZ', 8: 'BRP' };
+    if (v === 901) return 'INP'; if (v === 902) return 'OUT'; if (v === 0) return 'HLT';
+    return names[op] ? names[op] + ' ' + a : '???';
+  }
+  function step() {
+    if (halted) return;
+    if (steps > 2000) { halted = true; say('Stopped after 2,000 steps — is there an infinite loop?'); return; }
+    var instr = M[pc]; cir = String(instr).padStart(3, '0'); touched = -1;
+    var at = pc, msg; pc = (pc + 1) % 100; steps++;
+    var op = Math.floor(instr / 100), a = instr % 100;
+    if (instr === 0) { halted = true; msg = 'HLT: the program stops.'; }
+    else if (instr === 901) { if (!inputs.length) { halted = true; pc = at; msg = 'INP: no inputs left! Add more in the Inputs box and assemble again.'; } else { acc = inputs.shift(); msg = 'INP: ' + acc + ' is input into the ACC.'; } }
+    else if (instr === 902) { out.push(acc); msg = 'OUT: the ACC (' + acc + ') is output.'; }
+    else if (op === 1) { acc += M[a]; msg = 'ADD ' + a + ': add the value at ' + a + ' (' + M[a] + ') — ACC is now ' + acc + '.'; touched = a; }
+    else if (op === 2) { acc -= M[a]; msg = 'SUB ' + a + ': subtract the value at ' + a + ' (' + M[a] + ') — ACC is now ' + acc + '.'; touched = a; }
+    else if (op === 3) { M[a] = acc; msg = 'STA ' + a + ': store the ACC (' + acc + ') at address ' + a + '.'; touched = a; }
+    else if (op === 5) { acc = M[a]; msg = 'LDA ' + a + ': load the value at ' + a + ' (' + acc + ') into the ACC.'; touched = a; }
+    else if (op === 6) { pc = a; msg = 'BRA ' + a + ': jump to address ' + a + '.'; }
+    else if (op === 7) { if (acc === 0) { pc = a; msg = 'BRZ ' + a + ': the ACC is 0, so jump to ' + a + '.'; } else msg = 'BRZ ' + a + ': the ACC is not 0, so carry on.'; }
+    else if (op === 8) { if (acc >= 0) { pc = a; msg = 'BRP ' + a + ': the ACC (' + acc + ') is zero or positive, so jump to ' + a + '.'; } else msg = 'BRP ' + a + ': the ACC (' + acc + ') is negative, so carry on.'; }
+    else { halted = true; msg = 'Address ' + at + ' does not hold a valid instruction (' + instr + '). Did the program run into its data?'; }
+    say('Address ' + at + ' — ' + msg);
+  }
+  function say(t) { document.getElementById('lmc-say').textContent = t; }
+  function render() {
+    var box = document.getElementById('lmc-mem'); box.innerHTML = '';
+    for (var i = 0; i < 100; i++) {
+      var d = document.createElement('div'); d.className = 'mb' + (M && i === pc && !halted ? ' pc' : '') + (i === touched ? ' touched' : '');
+      var s = document.createElement('small'); s.textContent = i;
+      var b = document.createElement('b'); b.textContent = M ? M[i] : '';
+      d.append(s, b); box.appendChild(d);
+    }
+    document.getElementById('r-pc').textContent = pc;
+    document.getElementById('r-acc').textContent = acc;
+    document.getElementById('r-cir').textContent = cir === '—' ? '—' : cir + ' (' + decodeText(+cir) + ')';
+    document.getElementById('r-steps').textContent = steps;
+    document.getElementById('lmc-out').textContent = out.length ? out.join('\n') : '';
+    document.getElementById('lmc-step').disabled = !ready || halted;
+    document.getElementById('lmc-run').disabled = !ready || halted;
+  }
+  function reset() { M = null; ready = false; pc = 0; acc = 0; cir = '—'; steps = 0; out = []; halted = false; touched = -1; render(); say('Press Assemble to load the program into memory.'); }
+  document.getElementById('lmc-asm').addEventListener('click', function () {
+    try {
+      M = assemble(codeEl.value);
+      inputs = inEl.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean).map(Number).filter(function (x) { return !isNaN(x); });
+      pc = 0; acc = 0; cir = '—'; steps = 0; out = []; halted = false; touched = -1; ready = true;
+      say('Assembled into machine code in mailboxes 0–' + (codeEl.value.split('\n').filter(function (l) { return l.replace(/\/\/.*$/, '').trim(); }).length - 1) + '. Now Step through it, or Run.');
+    } catch (e) { M = null; ready = false; say('Assembly error: ' + e.message); }
+    render();
+  });
+  document.getElementById('lmc-step').addEventListener('click', function () { step(); render(); });
+  document.getElementById('lmc-run').addEventListener('click', function () { while (!halted) step(); render(); });
+  codeEl.addEventListener('input', function () { if (ready) { ready = false; render(); say('The program has changed — press Assemble again.'); } });
+  reset();
+
+  // ---------- Addressing modes ----------
+  var MEM = [5, 4, 6, 7, 1, 9, 3, 2, 8, 0], IX = 2;
+  function renderAddr() {
+    var mode = document.querySelector('input[name="am"]:checked').value;
+    var op = +document.getElementById('am-op').value;
+    document.getElementById('am-op-o').textContent = op;
+    var s1 = -1, s2 = -1, acc, say;
+    if (mode === 'imm') { acc = op; say = 'Immediate (LDA #' + op + '): the operand ' + op + ' is the value itself. Memory is not used at all.'; }
+    else if (mode === 'dir') { s2 = op; acc = MEM[op]; say = 'Direct (LDA ' + op + '): go to address ' + op + ' and load what is there: ' + acc + '.'; }
+    else if (mode === 'ind') { s1 = op; var p = MEM[op]; s2 = p; acc = MEM[p]; say = 'Indirect: go to address ' + op + ', which holds another address, ' + p + '. Then go to address ' + p + ' and load ' + acc + '.'; }
+    else { var a = op + IX; s2 = a; acc = MEM[a]; say = 'Indexed: add the index register (' + IX + ') to the operand: ' + op + ' + ' + IX + ' = ' + a + '. Load what is at address ' + a + ': ' + acc + '.'; }
+    var row = document.getElementById('am-mem'); row.innerHTML = '';
+    MEM.forEach(function (v, i) {
+      var d = document.createElement('div'); d.className = i === s2 ? 'step2' : i === s1 ? 'step1' : '';
+      var sm = document.createElement('small'); sm.textContent = 'addr ' + i;
+      var b = document.createElement('b'); b.textContent = v;
+      d.append(sm, b); row.appendChild(d);
+    });
+    document.getElementById('am-acc').textContent = acc;
+    document.getElementById('am-say').textContent = say;
+  }
+  document.querySelectorAll('#addr input').forEach(function (i) { i.addEventListener('input', renderAddr); i.addEventListener('change', renderAddr); });
+  renderAddr();
+})();
+</script>
+</body>
+</html>
