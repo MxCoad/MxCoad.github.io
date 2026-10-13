@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1.2 Types of processor — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.1.2: CISC and RISC processors, GPUs and their uses, multicore and parallel systems.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .isa { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 12px; }
+  .isa .mini pre { margin: 6px 0 8px; }
+  .cyc { font-family: var(--ms-font-mono); font-weight: 700; }
+  .chart { width: 100%; height: auto; display: block; margin-top: 12px; }
+  .chart .axis { stroke: var(--ms-line-strong); stroke-width: 1.5; }
+  .chart .grid { stroke: var(--ms-line); stroke-width: 1; }
+  .chart .ideal { stroke: var(--ms-muted); stroke-width: 2; stroke-dasharray: 5 5; fill: none; }
+  .chart .curve { stroke: var(--ks-alevel); stroke-width: 3.5; fill: none; }
+  .chart .dot { fill: var(--ks-alevel); stroke: var(--ms-text); stroke-width: 2; }
+  .chart text { fill: var(--ms-muted); font-family: var(--ms-font-body); font-size: 13px; }
+  .chart .lab { fill: var(--ms-text); font-weight: 700; }
+  .big { font-family: var(--ms-font-mono); font-size: 26px; font-weight: 700; color: var(--ms-accent); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.1.2 Types of processor</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.1.2</p>
+  <h1>Types of processor</h1>
+  <p class="intro">Two different philosophies for designing an instruction set, the graphics processor and why it's now used for far more than graphics, and how multicore and parallel systems speed things up — and where they stop helping.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="cisc-risc">
+    <div class="sec-head"><span class="sec-num">1.1.2a</span><h2>CISC and RISC</h2></div>
+    <p>A processor's <span class="term">instruction set</span> is the full list of machine code instructions it understands. There are two approaches to designing one.</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col"></th><th scope="col">CISC — Complex Instruction Set Computer</th><th scope="col">RISC — Reduced Instruction Set Computer</th></tr></thead>
+      <tr><th scope="row">Instructions</th><td>A <strong>large</strong> set, including <strong>complex</strong> instructions that do several things (e.g. load, multiply and store in one)</td><td>A <strong>small</strong> set of <strong>simple</strong> instructions</td></tr>
+      <tr><th scope="row">Cycles per instruction</th><td>Complex instructions take <strong>several clock cycles</strong></td><td>Most instructions take <strong>one clock cycle</strong></td></tr>
+      <tr><th scope="row">Instruction length</th><td>Variable</td><td>Fixed — which makes <strong>pipelining easier</strong></td></tr>
+      <tr><th scope="row">Program size</th><td><strong>Fewer</strong> instructions per program, so less RAM for code; easier to write in assembly</td><td><strong>More</strong> instructions per program; the <strong>compiler</strong> has to do more work</td></tr>
+      <tr><th scope="row">Hardware</th><td>More complex circuitry, <strong>more transistors</strong>, more power and heat</td><td>Simpler circuitry, <strong>fewer transistors</strong>, <strong>less power and heat</strong>, cheaper; room for more registers</td></tr>
+      <tr><th scope="row">Typical use</th><td>Desktop and laptop PCs (Intel and AMD x86)</td><td>Phones, tablets, embedded systems (ARM) — and increasingly laptops</td></tr>
+    </table></div>
+
+    <div class="tool" id="isa">
+      <p class="tool-title">Try it: the same task, two instruction sets</p>
+      <p class="tool-sub">Multiply the numbers stored at memory locations 200 and 201, and store the answer back in 200.</p>
+      <div class="isa">
+        <div class="mini"><h4>CISC</h4>
+<pre><code>MULT 200, 201</code></pre>
+          <p style="font-size:16px;margin:0"><span class="cyc">1</span> instruction, but it takes about <span class="cyc">4</span> clock cycles inside the processor (load, load, multiply, store).</p></div>
+        <div class="mini"><h4>RISC</h4>
+<pre><code>LOAD  R1, 200
+LOAD  R2, 201
+MUL   R1, R2
+STORE R1, 200</code></pre>
+          <p style="font-size:16px;margin:0"><span class="cyc">4</span> instructions, <span class="cyc">1</span> clock cycle each — and each one can be pipelined.</p></div>
+      </div>
+      <p class="small">Illustrative instruction sets. The point: CISC moves complexity into the hardware; RISC moves it into the compiler and the program.</p>
+      <h4 style="margin:18px 0 6px">Which one is it?</h4>
+      <div id="sort-isa"></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>RISC isn't "slower because it needs more instructions". Each instruction is so quick and easy to pipeline that RISC processors can be just as fast, while using less power.</p>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="gpu">
+    <div class="sec-head"><span class="sec-num">1.1.2b</span><h2>GPUs and their uses</h2></div>
+    <p>A <span class="term">GPU</span> (graphics processing unit) is a co-processor with <strong>hundreds or thousands of simple cores</strong>. It's designed to perform <strong>the same operation on many pieces of data at once</strong> — this is called <strong>SIMD</strong> (single instruction, multiple data).</p>
+    <p>That's exactly what graphics needs: to draw a frame, the same calculations (position, lighting, colour) are done for millions of pixels and vertices independently. A CPU with a few powerful cores would have to work through them a few at a time.</p>
+    <h3>Uses beyond graphics</h3>
+    <ul>
+      <li><strong>Machine learning</strong> — training neural networks is mostly huge numbers of matrix multiplications</li>
+      <li><strong>Scientific modelling</strong> — weather, climate, protein folding and physics simulations</li>
+      <li><strong>Video editing and encoding</strong></li>
+      <li><strong>Cryptocurrency mining</strong> and <strong>password cracking</strong> — trying many hashes in parallel</li>
+      <li><strong>Financial modelling</strong> — running many scenarios at once</li>
+    </ul>
+    <p>A GPU is <strong>not</strong> a replacement for the CPU. Its cores are simpler and slower individually, and it's poor at tasks that are <strong>sequential</strong> or full of <strong>branches</strong> (decisions), which the CPU handles well. The CPU runs the program and hands the parallel work to the GPU.</p>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Explain <em>why</em> a GPU suits a task: the task can be <strong>split into many independent parts</strong> that need the <strong>same operation</strong>, which the GPU's many cores perform <strong>in parallel</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="parallel">
+    <div class="sec-head"><span class="sec-num">1.1.2c</span><h2>Multicore and parallel systems</h2></div>
+    <p>A <span class="term">multicore</span> processor has two or more independent cores on one chip, each with its own ALU, control unit and registers (and usually its own L1 cache). <span class="term">Parallel processing</span> means using several processors or cores to carry out different parts of a task <strong>at the same time</strong>.</p>
+    <ul>
+      <li><strong>SIMD</strong> — one instruction applied to many data items at once (GPUs, vector instructions)</li>
+      <li><strong>MIMD</strong> — multiple instructions on multiple data: each core runs its own instructions on its own data (multicore CPUs, clusters of computers)</li>
+    </ul>
+    <h3>Benefits and limits</h3>
+    <div class="two-col">
+      <div class="mini"><h4>Benefits</h4><ul>
+        <li>More instructions processed per second</li>
+        <li>Several programs (or threads) can genuinely run at once</li>
+        <li>Large tasks that split well finish much faster</li>
+      </ul></div>
+      <div class="mini"><h4>Limits</h4><ul>
+        <li>Software must be <strong>written to be parallel</strong> (split into threads)</li>
+        <li>Some tasks are <strong>inherently sequential</strong>: each step needs the previous result</li>
+        <li><strong>Overheads</strong>: splitting the task, communicating and combining results, keeping caches consistent</li>
+        <li>Cores <strong>share</strong> RAM and the buses, which can become a bottleneck</li>
+      </ul></div>
+    </div>
+
+    <div class="tool" id="amdahl">
+      <p class="tool-title">Try it: how much faster with more cores?</p>
+      <p class="tool-sub">Choose how much of a task can run in parallel, and how many cores to use. The dashed line is the "perfect" speed-up you might expect.</p>
+      <div class="controls">
+        <div class="ctl"><label for="am-p">Parallel part of the task <output id="am-p-o" for="am-p">90%</output></label><input type="range" id="am-p" min="0" max="100" step="5" value="90"></div>
+        <div class="ctl"><label for="am-n">Cores <output id="am-n-o" for="am-n">8</output></label><input type="range" id="am-n" min="0" max="10" step="1" value="3"></div>
+      </div>
+      <p style="margin:14px 0 0">Speed-up: <span class="big" id="am-s"></span> <span class="small" id="am-max" style="display:inline"></span></p>
+      <svg class="chart" id="am-chart" viewBox="0 0 560 260" role="img" aria-labelledby="am-say"></svg>
+      <p class="explain" id="am-say" aria-live="polite"></p>
+      <p class="small">Uses Amdahl's law: speed-up = 1 ÷ ((1 − P) + P ÷ N), where P is the parallel fraction and N the number of cores. It ignores overheads, so real speed-ups are lower still. Both axes double at each gridline.</p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>This is <strong>Amdahl's law</strong>: the sequential part of a task sets a hard limit. If 10% must run in sequence, the maximum speed-up is 10×, however many cores you add. It's why GPUs are given only the parts of a program that are almost entirely parallel.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-1-1-processor.html">1.1.1 Structure and function of the processor</a> · Next: <a href="1-1-3-input-output-storage.html">1.1.3 Input, output and storage</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-1-2-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Compare CISC and RISC processors.',
+      points: ['CISC has a large instruction set; RISC has a small instruction set', 'CISC instructions can take several clock cycles; RISC instructions usually take one', 'CISC programs need fewer instructions / less code; RISC programs need more instructions', 'CISC needs more complex hardware / more transistors; RISC hardware is simpler', 'RISC instructions are a fixed length, so pipelining is easier'],
+      guide: '1 mark per comparison point (both sides needed). Maximum 4.' },
+    { id: 'q2', marks: 2, text: 'Explain why RISC processors are commonly used in mobile phones.',
+      points: ['Simpler circuitry / fewer transistors', 'So they use less power / produce less heat, giving longer battery life / no need for a fan'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 2, text: 'Explain why RISC processors are well suited to pipelining.',
+      points: ['Instructions are the same length / simple', 'Most take one clock cycle, so the stages of different instructions line up / overlap easily'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 3, text: 'Describe what a GPU is and explain why it is suited to processing graphics.',
+      points: ['A processor / co-processor with a very large number of (simple) cores', 'Graphics involves the same operation on many pixels / vertices independently', 'So many can be processed in parallel / SIMD'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 2, text: 'Give two uses of GPUs other than processing graphics.',
+      points: ['Machine learning / training AI models', 'Scientific modelling / simulations', 'Video encoding / editing', 'Cryptocurrency mining / password cracking / financial modelling'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q6', marks: 3, text: 'A program runs on a quad-core processor. Explain why it may not run four times faster than on a single-core processor.',
+      points: ['The program may not be written to use multiple threads / cores', 'Some parts of the task are sequential / depend on previous results and cannot be split', 'Overheads of dividing the task, communication between cores and combining results', 'Cores share resources such as RAM / buses, which can become a bottleneck'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q7', marks: 9, text: 'A research team runs computer simulations of weather systems, which involve the same calculations on millions of grid points. They are choosing between a computer with a fast 8-core CISC processor and one with a slower CPU plus a powerful GPU. Discuss which would be more suitable.',
+      points: ['The simulation applies the same operation to many independent data points — suited to SIMD / parallel processing', 'A GPU has thousands of cores, so it can process many grid points at the same time', 'The 8-core CPU can also work in parallel, but only on 8 threads at once', 'CPU cores are individually faster and better at sequential / branching code', 'Parts of the simulation may be sequential (e.g. each time step depends on the last), limiting speed-up (Amdahl)', 'Software must be written to use the GPU / multiple threads', 'Overheads of transferring data between CPU and GPU / communication between cores', 'Power use / cost considerations', 'A justified conclusion, e.g. the GPU system, because the workload is highly parallel'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of CPU, multicore and GPU processing, applied to the weather simulation throughout. Weighs up both options, including limits of parallelism, with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application to the scenario. Some comparison of the two options; the conclusion is partly supported.'],
+        ['1–3 marks', 'Basic knowledge of processors or GPUs, with little application. Points listed rather than discussed.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  TopicKit.sorter(document.getElementById('sort-isa'), ['CISC', 'RISC'], [
+    { text: 'Most instructions complete in a single clock cycle', answer: 'RISC' },
+    { text: 'Has instructions that load, calculate and store in one step', answer: 'CISC' },
+    { text: 'Needs more transistors and produces more heat', answer: 'CISC' },
+    { text: 'Uses fixed-length instructions that are easy to pipeline', answer: 'RISC' },
+    { text: 'Programs compile to fewer machine code instructions', answer: 'CISC' },
+    { text: 'Found in most smartphones', answer: 'RISC', why: 'ARM processors are RISC: low power means longer battery life.' }
+  ]);
+
+  // ---------- Amdahl's law ----------
+  var CORES = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(t, a, p) { var e = document.createElementNS(NS, t); for (var k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+  function speed(p, n) { return 1 / ((1 - p) + p / n); }
+  function fmt(x) { return x >= 100 ? Math.round(x).toString() : x.toFixed(x >= 10 ? 1 : 2); }
+  function update() {
+    var p = +document.getElementById('am-p').value / 100;
+    var n = CORES[+document.getElementById('am-n').value];
+    document.getElementById('am-p-o').textContent = Math.round(p * 100) + '%';
+    document.getElementById('am-n-o').textContent = n;
+    var s = speed(p, n);
+    document.getElementById('am-s').textContent = fmt(s) + '×';
+    document.getElementById('am-max').textContent = p < 1 ? '(maximum possible with any number of cores: ' + fmt(1 / (1 - p)) + '×)' : '(no limit — the whole task is parallel)';
+    // chart: x = log2 cores (0..10), y = speed-up (log scale up to 1024)
+    var svg = document.getElementById('am-chart'); svg.innerHTML = '';
+    var L = 52, R = 540, T = 14, B = 220;
+    function X(i) { return L + (R - L) * i / 10; }
+    function Y(v) { return B - (B - T) * Math.log2(Math.max(1, v)) / 10; }
+    for (var i = 0; i <= 10; i += 2) {
+      el('line', { x1: X(i), y1: T, x2: X(i), y2: B, class: 'grid' }, svg);
+      var tx = el('text', { x: X(i), y: B + 18, 'text-anchor': 'middle' }, svg); tx.textContent = CORES[i];
+      el('line', { x1: L, y1: Y(Math.pow(2, i)), x2: R, y2: Y(Math.pow(2, i)), class: 'grid' }, svg);
+      var ty = el('text', { x: L - 8, y: Y(Math.pow(2, i)) + 4, 'text-anchor': 'end' }, svg); ty.textContent = Math.pow(2, i) + '×';
+    }
+    el('line', { x1: L, y1: B, x2: R, y2: B, class: 'axis' }, svg);
+    el('line', { x1: L, y1: T, x2: L, y2: B, class: 'axis' }, svg);
+    var xl = el('text', { x: (L + R) / 2, y: B + 36, 'text-anchor': 'middle', class: 'lab' }, svg); xl.textContent = 'Number of cores';
+    var ideal = [], curve = [];
+    for (var j = 0; j <= 10; j++) { ideal.push(X(j) + ',' + Y(CORES[j])); curve.push(X(j) + ',' + Y(speed(p, CORES[j]))); }
+    el('polyline', { points: ideal.join(' '), class: 'ideal' }, svg);
+    el('polyline', { points: curve.join(' '), class: 'curve' }, svg);
+    var idx = CORES.indexOf(n);
+    el('circle', { cx: X(idx), cy: Y(s), r: 7, class: 'dot' }, svg);
+    var say;
+    if (p === 0) say = 'Nothing can run in parallel, so extra cores make no difference at all.';
+    else if (p === 1) say = 'Everything runs in parallel, so the speed-up matches the number of cores (ignoring overheads). Real tasks are almost never like this.';
+    else say = 'With ' + n + ' core' + (n > 1 ? 's' : '') + ', the task runs ' + fmt(s) + '× faster — ' + (n > 1 ? 'well short of ' + n + '×, ' : '') + 'because the ' + Math.round((1 - p) * 100) + '% that is sequential still runs on one core. The curve flattens out at ' + fmt(1 / (1 - p)) + '×.';
+    document.getElementById('am-say').textContent = say;
+  }
+  document.querySelectorAll('#amdahl input').forEach(function (i) { i.addEventListener('input', update); });
+  update();
+})();
+</script>
+</body>
+</html>
