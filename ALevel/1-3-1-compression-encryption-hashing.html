@@ -67,6 +67,10 @@
       <div class="presets" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px" id="cm-presets"></div>
       <div id="cm-out"></div>
     </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>If you're asked to compress data with RLE, show your answer in the same format as the question (e.g. <code>5A 3B</code> or <code>A5 B3</code>), and always state whether a method is lossy or lossless when you name it.</p>
+    </div>
   </section>
 
   <!-- 3 -->
@@ -132,6 +136,10 @@
       <p style="margin:12px 0 0;font-weight:700">Hash of A</p><div class="hash" id="h-ha"></div>
       <p style="margin:10px 0 0;font-weight:700">Hash of B</p><div class="hash" id="h-hb"></div>
       <p class="explain" id="h-say" aria-live="polite"></p>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Why salt? Attackers keep <strong>rainbow tables</strong>: huge precomputed lists of the hashes of common passwords. Adding a random salt to each password before hashing means two users with the same password get different hashes, and a precomputed table is useless. Password hashes such as bcrypt are also deliberately <strong>slow</strong>, so trying billions of guesses takes far longer.</p>
     </div>
     <div class="box mistake">
       <p class="box-label">Common mistake</p>
