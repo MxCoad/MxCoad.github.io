@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.3.3 Networks — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.3.3: protocols and standards, the TCP/IP stack, DNS, LANs and WANs, packet and circuit switching, network security, hardware, client-server and peer-to-peer.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .layers { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 18px; margin: 10px 0; }
+  .layers .col-h { font-weight: 700; font-size: 14px; color: var(--ms-muted); }
+  .layer { padding: 8px 10px; border-radius: 8px; border: 1px solid var(--ms-line); background: var(--ms-bg); font-size: 15px; }
+  .layer.on { border-color: var(--ms-accent); background: var(--ms-accent-soft); font-weight: 700; }
+  .packet { margin: 12px 0 4px; font-family: var(--ms-font-mono); font-size: 13px; min-height: 60px; }
+  .packet .wrapbox { padding: 6px 10px 10px; border-radius: 8px; border: 1px solid var(--ms-line-strong); overflow-wrap: anywhere; }
+  .packet .wrapbox .wrapbox { margin-top: 6px; }
+  .packet .trail { margin-top: 6px; }
+  .packet .h-link { background: color-mix(in srgb, var(--ks-ks3) 45%, var(--ms-surface)); }
+  .packet .h-ip { background: color-mix(in srgb, var(--ks-gcse) 40%, var(--ms-surface)); }
+  .packet .h-tcp { background: color-mix(in srgb, var(--ks-btec) 40%, var(--ms-surface)); }
+  .packet .h-data { background: var(--ms-surface); }
+  .packet b { display: block; margin-top: 2px; font-family: var(--ms-font-body); font-size: 12px; margin-bottom: 2px; }
+  .net { width: 100%; max-width: 640px; display: block; margin: 8px auto; touch-action: manipulation; }
+  .net .edge { stroke: var(--ms-line-strong); stroke-width: 4; cursor: pointer; }
+  .net .edge.broken { stroke: var(--ms-bad); stroke-dasharray: 6 6; }
+  .net .hit { stroke: transparent; stroke-width: 22; cursor: pointer; }
+  .net circle { fill: var(--ms-surface); stroke: var(--ms-text); stroke-width: 2; }
+  .net circle.end { fill: color-mix(in srgb, var(--ks-alevel) 45%, var(--ms-surface)); }
+  .net text { fill: var(--ms-text); font-family: var(--ms-font-body); font-size: 14px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .net .route { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; opacity: .9; pointer-events: none; }
+  table.pk { border-collapse: collapse; font-size: 15px; width: 100%; }
+  table.pk th, table.pk td { border-bottom: 1px solid var(--ms-line); padding: 5px 8px; text-align: left; }
+  table.pk th { background: var(--ms-surface-2); font-size: 13px; }
+  .swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: middle; margin-right: 6px; }
+  .mono { font-family: var(--ms-font-mono); }
+  @media (max-width: 560px) { .layers { grid-template-columns: 1fr; } .layers .col-h:nth-child(2) { display: none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.3.3 Networks</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.3.3</p>
+  <h1>Networks</h1>
+  <p class="intro">How data gets from one computer to another: protocols and the TCP/IP stack, DNS, packet switching, and how networks are protected and organised. Follow a web request down and back up the stack, then send packets through a network and break some links.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="protocols">
+    <div class="sec-head"><span class="sec-num">1.3.3a</span><h2>Networks, protocols and standards</h2></div>
+    <table class="def">
+      <tr><th scope="row">LAN</th><td>Local area network: covers a <strong>small geographical area</strong> (a building or site); the infrastructure is usually <strong>owned</strong> by the organisation.</td></tr>
+      <tr><th scope="row">WAN</th><td>Wide area network: covers a <strong>large geographical area</strong>, connecting LANs; uses infrastructure <strong>leased</strong> from telecoms companies. The Internet is the biggest WAN.</td></tr>
+      <tr><th scope="row">Protocol</th><td>A set of <strong>rules</strong> for how devices communicate: data format, addressing, error checking, speed, and so on.</td></tr>
+      <tr><th scope="row">Standard</th><td>An agreed specification (often set by bodies such as the IEEE or IETF) that manufacturers follow, so hardware and software from <strong>different manufacturers can work together</strong>.</td></tr>
+    </table>
+    <p>Common protocols: <strong>HTTP/HTTPS</strong> (web pages), <strong>FTP</strong> (file transfer), <strong>SMTP</strong> (sending email), <strong>POP3/IMAP</strong> (receiving email), <strong>TCP</strong> and <strong>UDP</strong> (transport), <strong>IP</strong> (addressing and routing).</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="tcpip">
+    <div class="sec-head"><span class="sec-num">1.3.3b</span><h2>The TCP/IP stack and protocol layering</h2></div>
+    <p>Network communication is split into <strong>layers</strong>. Each layer has its own job and protocols, and only talks to the layers directly above and below it. This means each layer can be <strong>developed and changed independently</strong> (e.g. Wi-Fi replaced by Ethernet without changing HTTP), and the problem is broken into manageable parts.</p>
+    <table class="def">
+      <tr><th scope="row">Application<small>HTTP, FTP, SMTP, DNS</small></th><td>Provides services to applications and decides what data to send and in what format.</td></tr>
+      <tr><th scope="row">Transport<small>TCP, UDP</small></th><td>Splits data into <strong>packets/segments</strong>, adds <strong>sequence numbers</strong> and <strong>port numbers</strong> (which application), sets up the connection, checks for errors and requests resending of lost packets (TCP).</td></tr>
+      <tr><th scope="row">Network / Internet<small>IP</small></th><td>Adds the <strong>source and destination IP addresses</strong>; <strong>routers</strong> use these to choose the route for each packet.</td></tr>
+      <tr><th scope="row">Link<small>Ethernet, Wi-Fi</small></th><td>Adds the <strong>MAC addresses</strong> of the next device and passes the data across the physical medium as signals.</td></tr>
+    </table>
+    <p>A <strong>socket</strong> is an IP address plus a port number, e.g. <span class="mono">203.0.113.10:443</span>. An <strong>IP address</strong> identifies a device on the internet and can change; a <strong>MAC address</strong> is the fixed hardware address of a network interface, used to deliver data on the local network.</p>
+    <div class="tool" id="stack">
+      <p class="tool-title">Try it: follow a web request through the stack</p>
+      <p class="tool-sub">Each layer wraps the data in its own header on the way down (encapsulation) and removes it on the way up.</p>
+      <div class="layers" id="stk-layers"></div>
+      <div class="packet" id="stk-packet" aria-live="polite"></div>
+      <p class="explain" id="stk-say"></p>
+      <div class="btn-row"><button type="button" class="btn" id="stk-back">Back</button><button type="button" class="btn primary" id="stk-next">Next step</button><span class="small" id="stk-count"></span></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="dns">
+    <div class="sec-head"><span class="sec-num">1.3.3c</span><h2>The Domain Name System (DNS)</h2></div>
+    <p>People use domain names; computers need IP addresses. The <span class="term">DNS</span> is a hierarchy of servers that resolves one into the other:</p>
+    <ol>
+      <li>You type <span class="mono">www.example.com</span>. The computer checks its own <strong>cache</strong>; if the address isn't there, it asks its <strong>DNS resolver</strong> (usually run by the ISP).</li>
+      <li>If the resolver doesn't have it cached, it asks a <strong>root server</strong>, which replies with the address of the <strong>top-level domain</strong> server for <span class="mono">.com</span>.</li>
+      <li>The TLD server replies with the address of the <strong>authoritative name server</strong> for <span class="mono">example.com</span>.</li>
+      <li>That server returns the <strong>IP address</strong>. The resolver caches it and sends it back to the computer, which can now connect to the web server.</li>
+      <li>If the name can't be found, an error is returned.</li>
+    </ol>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Mention <strong>caching</strong>: it makes later look-ups faster and reduces load on the DNS servers. Also mention the error returned if the domain doesn't exist.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="switching">
+    <div class="sec-head"><span class="sec-num">1.3.3d</span><h2>Packet switching and circuit switching</h2></div>
+    <div class="two-col">
+      <div class="mini"><h4>Packet switching</h4><ul>
+        <li>Data is split into <strong>packets</strong>, each with a header (source and destination address, <strong>sequence number</strong>, checksum)</li>
+        <li>Each packet is routed <strong>independently</strong> by routers and may take a <strong>different route</strong></li>
+        <li>Packets may <strong>arrive out of order</strong> and are reassembled using the sequence numbers; missing or corrupted ones are re-requested</li>
+        <li>✓ Makes efficient use of the network; routes around broken or busy links</li>
+        <li>✗ Delays can vary, which is a problem for real-time data</li>
+      </ul></div>
+      <div class="mini"><h4>Circuit switching</h4><ul>
+        <li>A <strong>dedicated path</strong> is set up between the two devices for the whole communication (as in old telephone networks)</li>
+        <li>All data follows the <strong>same route</strong> and arrives <strong>in order</strong></li>
+        <li>✓ Reliable, constant speed, suits real-time voice and video</li>
+        <li>✗ The links are reserved even when no data is being sent (wasteful); if a link fails, the connection is lost</li>
+      </ul></div>
+    </div>
+    <div class="tool" id="psw">
+      <p class="tool-title">Try it: send a message across a network</p>
+      <p class="tool-sub">Press <strong>Send</strong>. Tap a link to break or repair it, then send again.</p>
+      <fieldset class="ctl" style="margin-bottom:8px"><legend class="sr">Method</legend>
+        <div class="seg">
+          <label><input type="radio" name="sw" value="packet" checked><span>Packet switching</span></label>
+          <label><input type="radio" name="sw" value="circuit"><span>Circuit switching</span></label>
+        </div>
+      </fieldset>
+      <svg class="net" id="net" viewBox="0 0 620 220" role="img" aria-label="Network of routers between sender and receiver"></svg>
+      <div class="btn-row"><button type="button" class="btn primary" id="psw-send">Send "MEET AT NOON"</button><button type="button" class="btn" id="psw-fix">Repair all links</button></div>
+      <div id="psw-out" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="security">
+    <div class="sec-head"><span class="sec-num">1.3.3e</span><h2>Network security and threats</h2></div>
+    <p>Threats include <strong>malware</strong> (viruses, worms, trojans, ransomware), <strong>hackers</strong> gaining unauthorised access, <strong>denial of service</strong> attacks flooding a server with requests, <strong>interception</strong> of data in transit, and <strong>phishing</strong> and other social engineering. Defences include:</p>
+    <table class="def">
+      <tr><th scope="row">Firewall</th><td>Hardware or software that sits between a network and the outside, <strong>inspecting packets</strong> and blocking or allowing them by <strong>rules</strong> about IP addresses, <strong>port numbers</strong> and protocols (<strong>packet filtering</strong>). Stateful firewalls also track connections, so only replies to requests made from inside are let in.</td></tr>
+      <tr><th scope="row">Proxy server</th><td>Makes requests to the internet <strong>on behalf of</strong> a client, so the client's IP address is <strong>hidden</strong>. It can <strong>filter</strong> content (block websites), <strong>log</strong> activity, and <strong>cache</strong> frequently visited pages to speed up access and save bandwidth.</td></tr>
+      <tr><th scope="row">Encryption</th><td>Data intercepted in transit can't be understood without the key, e.g. HTTPS (TLS), WPA2/3 on Wi-Fi. See <a href="1-3-1-compression-encryption-hashing.html#encryption">1.3.1</a>.</td></tr>
+    </table>
+    <p>Other measures: strong passwords and two-factor authentication, user access levels, anti-malware software, keeping software patched, and training staff to spot phishing.</p>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="hardware">
+    <div class="sec-head"><span class="sec-num">1.3.3f</span><h2>Network hardware, client-server and peer-to-peer</h2></div>
+    <table class="def">
+      <tr><th scope="row">NIC</th><td>Network interface card: lets a device connect to a network; has a unique <strong>MAC address</strong>.</td></tr>
+      <tr><th scope="row">Switch</th><td>Connects devices on a <strong>LAN</strong>; learns which MAC address is on which port and sends each frame only to the right device.</td></tr>
+      <tr><th scope="row">Router</th><td>Connects <strong>different networks</strong> (e.g. a LAN to the Internet) and forwards packets towards their destination using <strong>IP addresses</strong> and routing tables.</td></tr>
+      <tr><th scope="row">Wireless access point</th><td>Lets wireless devices connect to a wired network.</td></tr>
+      <tr><th scope="row">Transmission media</th><td>Copper cable (cheap, interference over distance), fibre optic (very fast, long distances, expensive), wireless (convenient, limited range, less secure).</td></tr>
+    </table>
+    <div class="two-col">
+      <div class="mini"><h4>Client-server</h4><ul>
+        <li>A central <strong>server</strong> provides services (files, email, logins, web pages) that <strong>clients</strong> request</li>
+        <li>✓ Central backups, security and updates; easy to manage users</li>
+        <li>✗ Server is expensive and needs expertise; a <strong>single point of failure</strong>; can bottleneck under load</li>
+      </ul></div>
+      <div class="mini"><h4>Peer-to-peer</h4><ul>
+        <li>All computers are <strong>equal</strong> and share resources directly with each other</li>
+        <li>✓ Cheap, easy to set up, no single point of failure; spreads load (e.g. file sharing)</li>
+        <li>✗ No central backup or security; files can be hard to find; peers can be slowed down by others using their resources</li>
+      </ul></div>
+    </div>
+    <div class="tool" id="hw">
+      <p class="tool-title">Try it: which device?</p>
+      <p class="tool-sub">Match each job to the hardware that does it.</p>
+      <div id="sort-hw"></div>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>TCP is reliable because it uses <strong>acknowledgements</strong>: the receiver confirms each segment, and anything not acknowledged within a time-out is sent again. <strong>UDP</strong> doesn't bother, so it is faster but unreliable — ideal for live video calls and games, where a late packet is no use anyway.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-3-2-databases.html">1.3.2 Databases</a> · Next: <a href="1-3-4-web-technologies.html">1.3.4 Web technologies</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-3-3-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Explain why standards are needed in networking.',
+      points: ['Standards are agreed specifications that manufacturers / developers follow', 'So hardware and software from different manufacturers can communicate / work together'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'Describe the role of each of the four layers of the TCP/IP stack when a web page is requested.',
+      points: ['Application: HTTP(S) formats the request for the web page', 'Transport: TCP splits the data into packets, adds sequence numbers and port numbers / manages the connection and error checking', 'Network: IP adds source and destination IP addresses / routes packets', 'Link: adds MAC addresses and sends the data over the physical network'],
+      guide: '1 mark per layer.' },
+    { id: 'q3', marks: 4, text: 'Describe how the Domain Name System is used to find the IP address of www.example.com.',
+      points: ['The computer checks its cache / sends the domain name to a DNS resolver', 'If not cached, the resolver asks a root server, which gives the address of the .com TLD server', 'The TLD server gives the address of the authoritative name server for example.com', 'The IP address is returned to the computer (and cached); an error is returned if not found'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'Describe how packet switching is used to send a file across the Internet.',
+      points: ['The file is split into packets', 'Each packet has a header with destination address and sequence number', 'Packets are sent independently and may take different routes, chosen by routers', 'Packets are reassembled in order using the sequence numbers at the destination; missing packets are re-requested'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Give three differences between circuit switching and packet switching.',
+      points: ['Circuit switching sets up a dedicated path; packet switching does not', 'In circuit switching all data takes the same route and arrives in order; packets may take different routes and arrive out of order', 'Circuit switching reserves bandwidth even when not in use; packet switching shares links more efficiently', 'Circuit switching fails if a link breaks; packet switching can re-route'],
+      guide: 'Any three, 1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain how a firewall protects a school network.',
+      points: ['It sits between the school network and the Internet and inspects incoming / outgoing packets', 'It compares them with rules, e.g. IP addresses, port numbers, protocols (packet filtering)', 'Packets that break the rules are blocked / ports not in use are closed, stopping unauthorised access'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 2, text: 'State two benefits of using a proxy server.',
+      points: ['Hides the IP addresses of the client computers', 'Can filter / block unsuitable websites', 'Caches frequently used pages, so they load faster / bandwidth is saved', 'Logs activity'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q8', marks: 2, text: 'Explain the difference between the role of a switch and a router.',
+      points: ['A switch connects devices within a LAN, sending frames to the right device using MAC addresses', 'A router connects different networks, forwarding packets using IP addresses'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A small design company with 12 staff is setting up a network. Its staff share large image files and all work on the same projects. Discuss whether the company should use a client-server or peer-to-peer network.',
+      points: ['Client-server: files stored centrally, so everyone works on the latest version', 'Client-server: central backups protect the company\'s work', 'Client-server: central security, user accounts and access levels', 'Client-server: costs of a server and someone to manage it; single point of failure', 'Peer-to-peer: cheap and quick to set up for 12 staff', 'Peer-to-peer: no central backup — each machine must be backed up; versions get confused', 'Peer-to-peer: performance suffers when others access your machine; security set per machine', 'Large image files: a fast server and switch reduce bottlenecks', 'A justified conclusion (e.g. client-server, because the shared project files and backups matter more than the cost)'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of both models, applied to the company\'s situation throughout (shared projects, large files, small size). A clear, justified recommendation.'],
+        ['4–6 marks', 'Good knowledge of both models with some application; a conclusion with some justification.'],
+        ['1–3 marks', 'Basic features of one or both models with little application or no conclusion.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+
+  // ---------- TCP/IP encapsulation ----------
+  var DATA = 'GET /index.html HTTP/1.1 · Host: www.example.com';
+  var H = {
+    link: ['h-link', 'Link header', 'to MAC 3C:22:FB:10:9A:01 (router) · from MAC A4:5E:60:D2:11:7C'],
+    ip: ['h-ip', 'IP header', 'from 198.51.100.7 · to 203.0.113.10'],
+    tcp: ['h-tcp', 'TCP header', 'from port 50123 · to port 80 · seq 1 of 1'],
+    data: ['h-data', 'Data', DATA],
+    trail: ['h-link', 'Trailer', 'CRC check']
+  };
+  var STEPS = [
+    { side: 0, layer: 0, parts: ['data'], say: 'Sender, application layer: the browser uses HTTP to create a request for the page.' },
+    { side: 0, layer: 1, parts: ['tcp', 'data'], say: 'Transport layer: TCP splits the data into segments (just one here) and adds a header with port numbers (port 80 means the web server) and a sequence number.' },
+    { side: 0, layer: 2, parts: ['ip', 'tcp', 'data'], say: 'Network layer: IP adds the source and destination IP addresses. These stay the same for the whole journey.' },
+    { side: 0, layer: 3, parts: ['link', 'ip', 'tcp', 'data', 'trail'], say: 'Link layer: adds the MAC address of the next device (the local router) and a trailer for error checking, then sends it as signals.' },
+    { side: 2, layer: -1, parts: ['link', 'ip', 'tcp', 'data', 'trail'], say: 'Across the Internet: each router removes the link layer frame, reads the destination IP address to choose the next hop, then wraps it in a new frame with new MAC addresses. The IP addresses never change.', linkAlt: 'to MAC next router · from MAC this router' },
+    { side: 1, layer: 3, parts: ['ip', 'tcp', 'data'], say: 'Receiver, link layer: the server\'s network card checks the frame is addressed to it, checks the trailer, and removes the frame.' },
+    { side: 1, layer: 2, parts: ['tcp', 'data'], say: 'Network layer: IP checks the destination IP address and removes the IP header.' },
+    { side: 1, layer: 1, parts: ['data'], say: 'Transport layer: TCP puts segments back in order using the sequence numbers, checks for errors, acknowledges them, and passes the data to the application on port 80.' },
+    { side: 1, layer: 0, parts: ['data'], say: 'Application layer: the web server receives the HTTP request and sends the page back, through the same process in reverse.' }
+  ];
+  var NAMES = ['Application', 'Transport', 'Network', 'Link'], si = 0;
+  function drawStack() {
+    var s = STEPS[si], box = document.getElementById('stk-layers'); box.innerHTML = '';
+    box.append(el('div', 'col-h', 'Sender (your computer)'), el('div', 'col-h', 'Receiver (web server)'));
+    for (var i = 0; i < 4; i++) for (var side = 0; side < 2; side++) box.appendChild(el('div', 'layer' + (s.side === side && s.layer === i ? ' on' : ''), NAMES[i]));
+    var pk = document.getElementById('stk-packet'); pk.innerHTML = '';
+    var parent = pk;
+    s.parts.forEach(function (p) {
+      if (p === 'trail') { var t = el('div', 'trail'); t.appendChild(el('b', null, H.trail[1])); t.appendChild(document.createTextNode(H.trail[2])); pk.firstChild.appendChild(t); return; }
+      var d = el('div', 'wrapbox ' + H[p][0]); d.appendChild(el('b', null, H[p][1] + (p === 'data' ? '' : ' added by the ' + { link: 'link', ip: 'network', tcp: 'transport' }[p] + ' layer')));
+      d.appendChild(document.createTextNode(p === 'link' && s.linkAlt ? s.linkAlt : H[p][2]));
+      parent.appendChild(d); parent = d;
+    });
+    document.getElementById('stk-say').textContent = s.say;
+    document.getElementById('stk-count').textContent = 'Step ' + (si + 1) + ' of ' + STEPS.length;
+    document.getElementById('stk-back').disabled = si === 0;
+    document.getElementById('stk-next').textContent = si === STEPS.length - 1 ? 'Start again' : 'Next step';
+  }
+  document.getElementById('stk-next').addEventListener('click', function () { si = si === STEPS.length - 1 ? 0 : si + 1; drawStack(); });
+  document.getElementById('stk-back').addEventListener('click', function () { if (si > 0) si--; drawStack(); });
+  drawStack();
+
+  // ---------- Packet switching ----------
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var N = { S: [40, 110, 'Sender'], R1: [170, 40], R2: [170, 180], R3: [320, 40], R4: [320, 180], R5: [450, 110], D: [580, 110, 'Receiver'] };
+  var E = [['S', 'R1'], ['S', 'R2'], ['R1', 'R3'], ['R1', 'R4'], ['R2', 'R4'], ['R3', 'R5'], ['R4', 'R5'], ['R3', 'D'], ['R5', 'D'], ['R4', 'D']];
+  var broken = {}, COLORS = ['#7C4DFF', '#E8590C', '#0CA678', '#1C7ED6'];
+  var PKTS = ['MEE', 'T A', 'T N', 'OON'];
+  var svg = document.getElementById('net');
+  function key(e) { return e[0] + '-' + e[1]; }
+  function mk(t, a) { var x = document.createElementNS(SVGNS, t); for (var k in a) x.setAttribute(k, a[k]); return x; }
+  function drawNet(routes) {
+    svg.innerHTML = '';
+    E.forEach(function (e) {
+      var a = N[e[0]], b = N[e[1]], k = key(e);
+      var line = mk('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: 'edge' + (broken[k] ? ' broken' : '') });
+      var hit = mk('line', { x1: a[0], y1: a[1], x2: b[0], y2: b[1], class: 'hit', tabindex: 0, role: 'button' });
+      hit.setAttribute('aria-label', (broken[k] ? 'Repair' : 'Break') + ' link ' + e[0] + ' to ' + e[1]);
+      function toggle() { broken[k] = !broken[k]; drawNet(); document.getElementById('psw-out').innerHTML = ''; }
+      hit.addEventListener('click', toggle);
+      hit.addEventListener('keydown', function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); } });
+      svg.append(line, hit);
+    });
+    (routes || []).forEach(function (r, i) {
+      var off = (i - 1.5) * 4;
+      svg.appendChild(mk('polyline', { class: 'route', stroke: COLORS[i], points: r.map(function (n) { return (N[n][0] + off) + ',' + (N[n][1] + off); }).join(' ') }));
+    });
+    Object.keys(N).forEach(function (n) {
+      var p = N[n];
+      svg.appendChild(mk('circle', { cx: p[0], cy: p[1], r: p[2] ? 34 : 22, class: p[2] ? 'end' : '' }));
+      var t = mk('text', { x: p[0], y: p[1] }); t.textContent = p[2] || n; if (p[2]) t.setAttribute('font-size', '11.5'); svg.appendChild(t);
+    });
+  }
+  function paths() {
+    var out = [];
+    (function dfs(n, seen) {
+      if (n === 'D') { out.push(seen.slice()); return; }
+      E.forEach(function (e) {
+        if (broken[key(e)]) return;
+        var m = e[0] === n ? e[1] : e[1] === n ? e[0] : null;
+        if (m && seen.indexOf(m) < 0) { seen.push(m); dfs(m, seen); seen.pop(); }
+      });
+    })('S', ['S']);
+    return out;
+  }
+  var circuit = null;
+  function send() {
+    var mode = document.querySelector('input[name="sw"]:checked').value, all = paths(), out = document.getElementById('psw-out');
+    out.innerHTML = '';
+    if (!all.length) { drawNet(); out.appendChild(el('p', 'explain', 'There is no route left from the sender to the receiver, so nothing can be delivered. Repair a link.')); return; }
+    var routes, arrive;
+    if (mode === 'circuit') {
+      var ok = circuit && all.some(function (p) { return p.join() === circuit.join(); });
+      var wasBroken = circuit && !ok;
+      if (!ok) { all.sort(function (a, b) { return a.length - b.length; }); circuit = all[0]; }
+      routes = PKTS.map(function () { return circuit; });
+      arrive = [0, 1, 2, 3];
+      drawNet([circuit]);
+      if (wasBroken) out.appendChild(el('p', 'explain', 'The reserved circuit was broken, so the connection was lost and a new circuit had to be set up before sending again.'));
+    } else {
+      circuit = null;
+      var shortest = Math.min.apply(null, all.map(function (r) { return r.length; }));
+      var sensible = all.filter(function (r) { return r.length <= shortest + 1; });
+      routes = PKTS.map(function () { return sensible[Math.floor(Math.random() * sensible.length)]; });
+      var times = routes.map(function (r, i) { return r.length * (1 + Math.random() * 2) + i * 0.6; });
+      arrive = [0, 1, 2, 3].sort(function (a, b) { return times[a] - times[b]; });
+      drawNet(routes);
+    }
+    var t = el('table', 'pk');
+    t.innerHTML = '<thead><tr><th scope="col">Packet</th><th scope="col">Data</th><th scope="col">Route</th><th scope="col">Arrived</th></tr></thead>';
+    var tb = el('tbody');
+    PKTS.forEach(function (d, i) {
+      var tr = el('tr'), c = el('td'); var sw = el('span', 'swatch'); sw.style.background = COLORS[i]; c.append(sw, document.createTextNode('#' + (i + 1)));
+      tr.append(c, el('td', 'mono', '"' + d + '"'), el('td', null, routes[i].join(' → ').replace('S', 'Sender').replace(/D$/, 'Receiver')), el('td', null, ['1st', '2nd', '3rd', '4th'][arrive.indexOf(i)]));
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    var wrap = el('div', 'table-wrap'); wrap.appendChild(t); out.appendChild(wrap);
+    var recv = arrive.map(function (i) { return PKTS[i]; }).join(''), recvShow = arrive.map(function (i) { return '#' + (i + 1) + ' "' + PKTS[i] + '"'; }).join(', ');
+    var p = el('p', 'explain');
+    if (mode === 'circuit') p.textContent = 'Every packet used the same reserved route and arrived in order: "' + recv + '". That route stays reserved for the whole conversation, even when nothing is being sent. Try breaking one of its links.';
+    else p.textContent = 'Arrived in the order ' + recvShow + '. The receiver uses the sequence numbers to put them back together: "' + PKTS.join('') + '".' + (recv !== PKTS.join('') ? ' They arrived out of order because they took different routes.' : ' This time they happened to arrive in order. Send again.');
+    out.appendChild(p);
+  }
+  document.getElementById('psw-send').addEventListener('click', send);
+  document.getElementById('psw-fix').addEventListener('click', function () { broken = {}; drawNet(); document.getElementById('psw-out').innerHTML = ''; });
+  document.querySelectorAll('input[name="sw"]').forEach(function (r) { r.addEventListener('change', function () { circuit = null; drawNet(); document.getElementById('psw-out').innerHTML = ''; }); });
+  drawNet();
+
+  // ---------- Hardware sorter ----------
+  TopicKit.sorter(document.getElementById('sort-hw'), ['NIC', 'Switch', 'Router', 'WAP'], [
+    { text: 'Forwards packets between the school network and the Internet', answer: 'Router', why: 'Routers join different networks using IP addresses.' },
+    { text: 'Sends a frame only to the computer on the LAN with the matching MAC address', answer: 'Switch', why: 'Switches deliver frames within one LAN.' },
+    { text: 'Gives a laptop its MAC address and connects it to the network', answer: 'NIC', why: 'Every NIC has a unique MAC address.' },
+    { text: 'Lets phones and tablets join the wired school network', answer: 'WAP', why: 'A wireless access point bridges wireless devices to the wired network.' },
+    { text: 'Uses a routing table to choose the next hop for each packet', answer: 'Router', why: 'Routing tables are how routers choose routes.' },
+    { text: 'Connects the 30 computers in a classroom together', answer: 'Switch', why: 'Switches connect devices on the same LAN.' }
+  ]);
+})();
+</script>
+</body>
+</html>
