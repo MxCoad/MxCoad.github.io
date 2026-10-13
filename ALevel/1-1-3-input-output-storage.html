@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1.3 Input, output and storage — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.1.3: choosing input, output and storage devices, magnetic, flash and optical storage, RAM and ROM, and virtual storage.">
+<style>
+  body { --stage: var(--ks-alevel); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.1.3 Input, output and storage</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.1.3</p>
+  <h1>Input, output and storage</h1>
+  <p class="intro">Choosing the right devices for a problem, how magnetic, flash and optical storage actually work, the roles of RAM and ROM, and virtual storage. Exam questions here are nearly always set in a scenario, so practise justifying your choices.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="devices">
+    <div class="sec-head"><span class="sec-num">1.1.3a</span><h2>Choosing input and output devices</h2></div>
+    <p>You won't be asked to list devices. You'll be given a <strong>scenario</strong> and asked which device suits it and <strong>why</strong>. Think about the user, the environment, the data and any constraints (cost, speed, accessibility, durability).</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">Device</th><th scope="col">Good for</th><th scope="col">Why</th></tr></thead>
+      <tr><th scope="row">Barcode / QR scanner</th><td>Shop tills, ticket gates</td><td>Fast and accurate; cheap codes can be printed on anything; needs line of sight</td></tr>
+      <tr><th scope="row">RFID reader</th><td>Contactless cards, stock tracking, library books, pet chips</td><td>Reads tags by radio <strong>without line of sight</strong>, several at once, through packaging</td></tr>
+      <tr><th scope="row">Sensors</th><td>Greenhouses, car engines, weather stations</td><td>Collect data <strong>automatically and continuously</strong> without a person (temperature, light, pressure, moisture)</td></tr>
+      <tr><th scope="row">Touchscreen</th><td>Kiosks, phones, self-service</td><td>Input and output in one; intuitive; no separate keyboard to break or lose</td></tr>
+      <tr><th scope="row">Microphone</th><td>Voice assistants, accessibility</td><td>Hands-free input; helps users who can't use a keyboard</td></tr>
+      <tr><th scope="row">Actuators</th><td>Robots, automatic doors, irrigation</td><td>Output that causes <strong>physical movement</strong> (motors, valves), often controlled by sensor readings</td></tr>
+      <tr><th scope="row">E-ink display</th><td>E-readers, shelf labels</td><td>Very low power: only uses power when the image changes; readable in sunlight</td></tr>
+      <tr><th scope="row">3D printer</th><td>Prototypes, custom parts</td><td>Builds a physical object layer by layer from a digital model</td></tr>
+    </table></div>
+    <div class="tool">
+      <p class="tool-title">Try it: pick the input device</p>
+      <p class="tool-sub">Choose the most suitable input device for each scenario.</p>
+      <div id="sort-input"></div>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="storage">
+    <div class="sec-head"><span class="sec-num">1.1.3b</span><h2>Magnetic, flash and optical storage</h2></div>
+    <h3>Magnetic (hard disk drives and tape)</h3>
+    <p>An HDD has <strong>spinning platters</strong> coated in magnetic material. A <strong>read/write head</strong> on a moving arm magnetises tiny areas in one of two directions to store 0s and 1s, and reads them back by detecting the direction. The disk is divided into tracks and sectors.</p>
+    <ul>
+      <li>✓ <strong>Large capacity</strong> and <strong>low cost per gigabyte</strong></li>
+      <li>✗ <strong>Moving parts</strong>: can be damaged if dropped while running; slower access, because the head must move to the right place (seek time) and wait for the platter to spin round (latency)</li>
+      <li><strong>Magnetic tape</strong> is cheaper still, with huge capacity, but has <strong>serial access</strong> (it must wind to the data), so it's used for <strong>backups and archives</strong></li>
+    </ul>
+    <h3>Flash (solid state)</h3>
+    <p>Flash memory stores data by <strong>trapping electrons</strong> in floating-gate transistors arranged in NAND cells. The charge stays without power, so it's <strong>non-volatile</strong>. Used in SSDs, USB drives and SD cards.</p>
+    <ul>
+      <li>✓ <strong>No moving parts</strong>: fast, silent, durable, low power, light</li>
+      <li>✗ Higher cost per gigabyte; each cell has a <strong>limited number of write/erase cycles</strong>. SSD controllers use <strong>wear levelling</strong> — spreading writes evenly across cells — to extend their life</li>
+    </ul>
+    <h3>Optical</h3>
+    <p>A <strong>laser</strong> reads a spiral track of <strong>pits and lands</strong> on the disc surface. Light reflects differently where a pit meets a land, and these changes are read as binary. Recordable discs (CD-R) use a laser to change a dye layer; rewritable discs (RW) use a material that can be switched back.</p>
+    <ul>
+      <li>✓ Very <strong>cheap</strong> to mass-produce, light and portable — good for <strong>distributing</strong> data such as films and games</li>
+      <li>✗ <strong>Low capacity</strong> (CD ≈ 700 MB, DVD ≈ 4.7 GB, Blu-ray ≈ 25 GB per layer), slow, easily scratched</li>
+    </ul>
+    <div class="tool">
+      <p class="tool-title">Try it: which storage?</p>
+      <p class="tool-sub">Choose the most suitable type of storage for each situation.</p>
+      <div id="sort-storage"></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Justify using the <strong>characteristics</strong> — capacity, speed, portability, durability, reliability, cost — and link each one to the scenario. "SSDs are fast" scores less than "an SSD has no moving parts, so the camera's storage won't be damaged by vibration on the mountain bike".</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="ram-rom">
+    <div class="sec-head"><span class="sec-num">1.1.3c</span><h2>RAM and ROM</h2></div>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col"></th><th scope="col">RAM</th><th scope="col">ROM</th></tr></thead>
+      <tr><th scope="row">Volatility</th><td><strong>Volatile</strong> — contents lost when power is off</td><td><strong>Non-volatile</strong> — contents kept without power</td></tr>
+      <tr><th scope="row">Read / write</th><td>Read and write</td><td>Read-only (or rarely rewritten, e.g. flash ROM for firmware updates)</td></tr>
+      <tr><th scope="row">Holds</th><td>The OS, programs and data <strong>currently in use</strong></td><td>The <strong>bootstrap loader / BIOS</strong> and <strong>firmware</strong> that must be available at start-up</td></tr>
+      <tr><th scope="row">Size</th><td>Several gigabytes</td><td>Small</td></tr>
+    </table></div>
+    <p>A computer needs both: when switched on, RAM is empty, so the instructions to start up and load the operating system must come from <strong>ROM</strong>. Once running, programs need fast <strong>read/write</strong> memory, which is <strong>RAM</strong>.</p>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>There are two main kinds of RAM. <strong>DRAM</strong> stores each bit as charge in a capacitor that leaks, so it must be refreshed thousands of times a second; it's dense and cheap, and used for main memory. <strong>SRAM</strong> uses flip-flops, needs no refreshing and is much faster but more expensive — it's used for cache.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="virtual-storage">
+    <div class="sec-head"><span class="sec-num">1.1.3d</span><h2>Virtual storage</h2></div>
+    <p><span class="term">Virtual storage</span> (storage virtualisation) <strong>pools several physical storage devices</strong>, possibly in different places, so that they <strong>appear to users and software as one single storage device</strong>. The user doesn't know or care where the data physically is.</p>
+    <ul>
+      <li><strong>Cloud storage</strong> (e.g. Google Drive, OneDrive) — files are spread across a provider's data centres but appear as one drive</li>
+      <li><strong>Storage area networks (SANs)</strong> and <strong>network-attached storage (NAS)</strong> — many drives on a network presented as one volume to an organisation's servers</li>
+    </ul>
+    <div class="two-col">
+      <div class="mini"><h4>Benefits</h4><ul>
+        <li>Easy to <strong>add capacity</strong> without users noticing</li>
+        <li><strong>Managed centrally</strong>: backups and security in one place</li>
+        <li>Data can be <strong>duplicated</strong> across devices, so one failure doesn't lose it</li>
+        <li>Cloud storage can be accessed <strong>from anywhere</strong></li>
+      </ul></div>
+      <div class="mini"><h4>Drawbacks</h4><ul>
+        <li>Cloud storage needs an Internet connection and is slower than local storage</li>
+        <li>Security and privacy depend on the provider</li>
+        <li>Ongoing costs; complex to set up in-house</li>
+      </ul></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Don't confuse <strong>virtual storage</strong> with <strong>virtual memory</strong> (using secondary storage as extra RAM — see <a href="1-2-1-systems-software.html#memory">1.2.1</a>).</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-1-2-types-of-processor.html">1.1.2 Types of processor</a> · Next: <a href="1-2-1-systems-software.html">1.2.1 Systems software</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-1-3-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'A student is choosing between a solid state drive (SSD) and a hard disk drive (HDD) for a new laptop. Compare the two for this use.',
+      points: ['SSD has no moving parts, so is more durable if the laptop is knocked / dropped; HDD can be damaged', 'SSD has faster access / boot / load times; HDD is slower (seek time)', 'SSD uses less power, so longer battery life; HDD uses more', 'HDD is cheaper per gigabyte / gives more capacity for the money; SSD costs more', 'SSD is lighter / silent'],
+      guide: '1 mark per comparison point linked to the laptop. Maximum 4.' },
+    { id: 'q2', marks: 3, text: 'Describe how data is read from an optical disc.',
+      points: ['A laser is shone onto the (spinning) disc / spiral track', 'The surface has pits and lands', 'Light is reflected differently at the transitions, which are detected and read as binary'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 3, text: 'Explain how flash memory stores data, and one limitation of flash storage.',
+      points: ['Electrons are trapped in floating-gate transistors (NAND cells)', 'The charge remains without power, so it is non-volatile', 'Limitation: a limited number of write / erase cycles before cells wear out (reduced by wear levelling) / higher cost per GB'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 3, text: 'Explain why a computer needs both RAM and ROM.',
+      points: ['ROM is non-volatile, so it keeps the start-up / boot instructions (BIOS) when the power is off', 'RAM is empty at start-up, so the boot program must come from ROM', 'RAM is read/write and fast, so it holds the programs and data currently in use'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Explain what is meant by virtual storage and give one benefit to an organisation.',
+      points: ['Several physical storage devices are pooled together', 'And appear to users / software as a single storage device', 'Benefit, e.g. capacity can be added easily / central management and backup / redundancy / remote access'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'A warehouse wants to record automatically when pallets of goods pass through its loading doors. Recommend an input device and justify your choice.',
+      points: ['RFID (tags on the pallets, readers at the doors)', 'Justification: no line of sight needed / can read many tags at once / works through packaging / automatic, no worker needed'],
+      guide: '1 mark for the device, 1 for the justification.' },
+    { id: 'q7', marks: 9, text: 'A film studio needs storage for three purposes: editing raw high-resolution footage, archiving finished films for decades, and sending copies of films to small independent cinemas. Discuss the most suitable storage for each purpose.',
+      points: ['Editing: SSDs — very fast read/write for large video files, so editing is smooth', '…high capacity needed; cost per GB is higher but speed is the priority', 'Archiving: magnetic tape — very high capacity, lowest cost per GB, long life', '…serial access / slow retrieval is acceptable because archives are rarely accessed', 'Alternative for archiving: HDDs or cloud / virtual storage, with backups in more than one place', 'Distribution: optical (Blu-ray) — cheap to mass-produce, light, easy to post', '…or portable SSD / HDD / cloud download, considering capacity and the cinemas\' equipment and Internet speed', 'Durability / reliability considerations for each, e.g. scratches on discs, moving parts in HDDs', 'Justified conclusions for each purpose'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of magnetic, flash and optical storage. Each purpose has a clear, well-justified recommendation using several characteristics, with trade-offs considered.'],
+        ['4–6 marks', 'Good knowledge with suitable recommendations for most purposes. Some justification, though not always linked to the scenario.'],
+        ['1–3 marks', 'Basic knowledge; recommendations given with little or no justification.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  TopicKit.sorter(document.getElementById('sort-input'), ['Barcode scanner', 'RFID reader', 'Sensor', 'Touchscreen', 'Microphone'], [
+    { text: 'A library wants borrowers to put a pile of books on a pad and check them all out at once', answer: 'RFID reader', why: 'Reads several tags at once without line of sight.' },
+    { text: 'A small shop wants to scan prices at the till cheaply', answer: 'Barcode scanner', why: 'Barcodes are cheap to print and fast to scan.' },
+    { text: 'A greenhouse should water plants automatically when the soil gets dry', answer: 'Sensor', why: 'A moisture sensor collects data continuously without a person.' },
+    { text: 'A museum wants an information point that visitors can use without a keyboard', answer: 'Touchscreen', why: 'Input and output in one, intuitive, nothing loose to break.' },
+    { text: 'A user with limited hand movement needs to control their computer', answer: 'Microphone', why: 'Voice input is hands-free.' },
+    { text: 'A bus company wants passengers to pay by tapping a card', answer: 'RFID reader', why: 'Contactless cards use RFID/NFC.' }
+  ]);
+  TopicKit.sorter(document.getElementById('sort-storage'), ['HDD', 'Magnetic tape', 'Flash', 'Optical'], [
+    { text: 'A head-mounted camera for a mountain biker', answer: 'Flash', why: 'No moving parts, so vibration won\'t damage it; small and light.' },
+    { text: 'A bank\'s nightly backup of 200 TB, kept for seven years', answer: 'Magnetic tape', why: 'Huge capacity at the lowest cost; serial access is fine for backups.' },
+    { text: 'Selling a game on a physical disc in shops', answer: 'Optical', why: 'Very cheap to mass-produce and distribute.' },
+    { text: 'A home media server storing a large film collection cheaply', answer: 'HDD', why: 'High capacity at low cost per GB, with fast enough random access.' },
+    { text: 'The main drive in a lightweight laptop', answer: 'Flash', why: 'Fast, durable, low power and light.' },
+    { text: 'A desktop PC\'s second drive for lots of rarely used files, on a tight budget', answer: 'HDD', why: 'Cheap per GB; durability matters less in a desktop.' }
+  ]);
+})();
+</script>
+</body>
+</html>
