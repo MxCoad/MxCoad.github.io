@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.4.3 Boolean algebra — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.4.3: logic gates and truth tables, Boolean algebra rules and De Morgan's laws, Karnaugh maps, half and full adders, and D-type flip-flops.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .mono { font-family: var(--ms-font-mono); }
+  .gates { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 10px 0 16px; }
+  .gatecard { border: 1px solid var(--ms-line); border-radius: 12px; background: var(--ms-bg); padding: 10px 12px; text-align: center; }
+  .gatecard h4 { margin: 0 0 4px; }
+  .gatecard svg { width: 120px; height: 56px; display: block; margin: 0 auto; }
+  .gatecard svg path, .gatecard svg circle { fill: var(--ms-surface); stroke: var(--ms-text); stroke-width: 2.5; }
+  .gatecard svg line { stroke: var(--ms-text); stroke-width: 2.5; }
+  .gatecard svg path.open { fill: none; }
+  .gatecard p { margin: 4px 0 0; font-size: 15px; }
+  table.tt { border-collapse: collapse; font-family: var(--ms-font-mono); font-size: 15px; margin: 6px 0; }
+  table.tt th, table.tt td { border: 1px solid var(--ms-line); padding: 4px 10px; text-align: center; }
+  table.tt th { background: var(--ms-surface-2); font-size: 13px; }
+  table.tt td.out { font-weight: 700; }
+  table.tt tr.bad td { background: var(--ms-bad-soft); }
+  table.tt tr.hl td { background: var(--ms-warn-soft); }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 10px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 14px; cursor: pointer; }
+  .presets button:hover { border-color: var(--ms-accent); }
+  .symbtns { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .symbtns button { min-width: 44px; min-height: 40px; border-radius: 8px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-size: 18px; cursor: pointer; }
+  .result-bad { color: var(--ms-bad); font-weight: 700; }
+  .result-good { color: var(--ms-good); font-weight: 700; }
+  .kmap { border-collapse: collapse; font-family: var(--ms-font-mono); margin: 10px 0; }
+  .kmap th { padding: 4px 8px; font-size: 14px; color: var(--ms-muted); }
+  .kmap th.corner { font-size: 13px; text-align: right; color: var(--ms-text); }
+  .kmap td { padding: 0; }
+  .kmap button { width: 56px; height: 56px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 20px; font-weight: 700; cursor: pointer; position: relative; display: block; }
+  .kmap button.one { background: var(--ms-accent-soft); }
+  .kmap .stripes { position: absolute; left: 3px; right: 3px; bottom: 3px; display: flex; gap: 2px; }
+  .kmap .stripes span { flex: 1; height: 6px; border-radius: 3px; }
+  .groups { list-style: none; padding: 0; margin: 6px 0; }
+  .groups li { margin: 4px 0; font-family: var(--ms-font-mono); }
+  .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: middle; margin-right: 8px; }
+  .answer { font-family: var(--ms-font-mono); font-size: 19px; font-weight: 700; padding: 10px 12px; background: var(--ms-surface-2); border-radius: 10px; overflow-wrap: anywhere; }
+  .toggles { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+  .tog { min-width: 84px; min-height: 44px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 17px; font-weight: 700; cursor: pointer; }
+  .tog[aria-pressed="true"] { background: var(--ms-accent); color: var(--ms-on-accent); border-color: var(--ms-accent); }
+  .outs { display: flex; gap: 18px; flex-wrap: wrap; font-size: 18px; margin: 6px 0; }
+  .outs b { font-family: var(--ms-font-mono); font-size: 22px; }
+  .wave { width: 100%; max-width: 640px; display: block; touch-action: manipulation; }
+  .wave text { fill: var(--ms-text); font-family: var(--ms-font-body); font-size: 13px; font-weight: 700; dominant-baseline: central; }
+  .wave polyline { fill: none; stroke-width: 2.5; stroke-linejoin: round; }
+  .wave .clk { stroke: var(--ms-muted); }
+  .wave .d { stroke: var(--ms-accent); }
+  .wave .q { stroke: var(--ms-good); }
+  .wave .edge { stroke: var(--ms-warn); stroke-width: 1.5; stroke-dasharray: 3 4; }
+  .wave rect.hit { fill: transparent; cursor: pointer; }
+  .wave rect.hit:hover { fill: var(--ms-accent-soft); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.4.3 Boolean algebra</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.4.3</p>
+  <h1>Boolean algebra</h1>
+  <p class="intro">Logic gates, the rules for simplifying Boolean expressions, Karnaugh maps, and the circuits that add numbers and store bits. Use the checker to test any simplification you do by hand.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="gates">
+    <div class="sec-head"><span class="sec-num">1.4.3a</span><h2>Logic gates and truth tables</h2></div>
+    <p>OCR writes Boolean expressions with these symbols. You need to draw and interpret <strong>logic gate diagrams</strong>, and complete <strong>truth tables</strong> (with <em>n</em> inputs there are 2<sup>n</sup> rows).</p>
+    <div class="gates" id="gatecards"></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="laws">
+    <div class="sec-head"><span class="sec-num">1.4.3b</span><h2>Simplifying with Boolean algebra</h2></div>
+    <table class="def">
+      <tr><th scope="row">De Morgan's laws</th><td><span class="mono">¬(A ∧ B) ≡ ¬A ∨ ¬B</span> and <span class="mono">¬(A ∨ B) ≡ ¬A ∧ ¬B</span>. "Break the line, change the sign": negate each term and swap ∧ and ∨.</td></tr>
+      <tr><th scope="row">Distribution</th><td><span class="mono">A ∧ (B ∨ C) ≡ (A ∧ B) ∨ (A ∧ C)</span> and <span class="mono">A ∨ (B ∧ C) ≡ (A ∨ B) ∧ (A ∨ C)</span></td></tr>
+      <tr><th scope="row">Association</th><td><span class="mono">(A ∧ B) ∧ C ≡ A ∧ (B ∧ C)</span>, and the same for ∨: brackets can be moved when the operators are the same.</td></tr>
+      <tr><th scope="row">Commutation</th><td><span class="mono">A ∧ B ≡ B ∧ A</span> and <span class="mono">A ∨ B ≡ B ∨ A</span>: order doesn't matter.</td></tr>
+      <tr><th scope="row">Double negation</th><td><span class="mono">¬¬A ≡ A</span></td></tr>
+      <tr><th scope="row">Absorption</th><td><span class="mono">A ∨ (A ∧ B) ≡ A</span> and <span class="mono">A ∧ (A ∨ B) ≡ A</span></td></tr>
+      <tr><th scope="row">Useful identities</th><td><span class="mono">A ∧ 1 ≡ A</span>, <span class="mono">A ∧ 0 ≡ 0</span>, <span class="mono">A ∨ 1 ≡ 1</span>, <span class="mono">A ∨ 0 ≡ A</span>, <span class="mono">A ∧ A ≡ A</span>, <span class="mono">A ∨ A ≡ A</span>, <span class="mono">A ∧ ¬A ≡ 0</span>, <span class="mono">A ∨ ¬A ≡ 1</span></td></tr>
+    </table>
+    <div class="box worked">
+      <p class="box-label">Worked example: simplify ¬(¬A ∨ B) ∨ (A ∧ B)</p>
+      <ol>
+        <li>De Morgan: <span class="mono">¬(¬A ∨ B) ≡ ¬¬A ∧ ¬B</span></li>
+        <li>Double negation: <span class="mono">≡ A ∧ ¬B</span>, so the whole thing is <span class="mono">(A ∧ ¬B) ∨ (A ∧ B)</span></li>
+        <li>Distribution (taking A out): <span class="mono">A ∧ (¬B ∨ B)</span></li>
+        <li><span class="mono">¬B ∨ B ≡ 1</span>, so <span class="mono">A ∧ 1 ≡ <strong>A</strong></span></li>
+      </ol>
+      <p>Paste the original into the checker below with <strong>A</strong> as the second expression to confirm.</p>
+    </div>
+    <div class="tool" id="eqtool">
+      <p class="tool-title">Try it: are these two expressions equivalent?</p>
+      <p class="tool-sub">Use A–D, ¬ ∧ ∨ ⊻ (or NOT AND OR XOR) and brackets. The symbol buttons type into the box you last clicked.</p>
+      <div class="presets" id="eq-presets"></div>
+      <div class="controls">
+        <div class="ctl"><label for="eq-a">Expression 1</label><input class="field mono" id="eq-a" value="¬(¬A ∨ B) ∨ (A ∧ B)" spellcheck="false"></div>
+        <div class="ctl"><label for="eq-b">Expression 2</label><input class="field mono" id="eq-b" value="A" spellcheck="false"></div>
+      </div>
+      <div class="symbtns" id="eq-syms"></div>
+      <p id="eq-verdict" style="margin:10px 0 0" aria-live="polite"></p>
+      <div class="table-wrap" id="eq-out"></div>
+      <div class="btn-row"><button type="button" class="btn" id="eq-tok">Put expression 1 into the Karnaugh map</button></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="kmaps">
+    <div class="sec-head"><span class="sec-num">1.4.3c</span><h2>Karnaugh maps</h2></div>
+    <p>A <span class="term">Karnaugh map</span> is a grid version of a truth table, used to simplify expressions. The rows and columns are labelled in <strong>Gray code</strong> order (00, 01, 11, 10), so neighbouring cells differ by only one bit.</p>
+    <ol>
+      <li>Fill in the 1s from the truth table.</li>
+      <li>Draw <strong>groups</strong> of 1s that are <strong>rectangles</strong> of size <strong>1, 2, 4, 8 or 16</strong> (powers of 2). No 0s may be inside a group.</li>
+      <li>Make the groups <strong>as large as possible</strong> and use <strong>as few as possible</strong>. Groups may <strong>overlap</strong> and can <strong>wrap around</strong> the edges (and the four corners can form a group).</li>
+      <li>For each group, write the variables that <strong>stay the same</strong> throughout it (A if always 1, ¬A if always 0). Variables that change are dropped.</li>
+      <li>Join the groups' terms with ∨.</li>
+    </ol>
+    <div class="tool" id="kmap">
+      <p class="tool-title">Try it: Karnaugh map</p>
+      <p class="tool-sub">Click cells to switch them between 0 and 1. The tool finds the best groups and the simplified expression.</p>
+      <fieldset class="ctl"><legend class="sr">Number of variables</legend>
+        <div class="seg">
+          <label><input type="radio" name="kv" value="2"><span>2 variables</span></label>
+          <label><input type="radio" name="kv" value="3"><span>3 variables</span></label>
+          <label><input type="radio" name="kv" value="4" checked><span>4 variables</span></label>
+        </div>
+      </fieldset>
+      <div class="table-wrap"><table class="kmap" id="km-grid"></table></div>
+      <ul class="groups" id="km-groups"></ul>
+      <p style="margin:6px 0 4px;font-weight:700">Simplified</p>
+      <div class="answer" id="km-ans" aria-live="polite"></div>
+      <div class="btn-row" style="margin-top:10px"><button type="button" class="btn" id="km-clear">Clear</button><button type="button" class="btn" id="km-rand">Random puzzle</button></div>
+    </div>
+    <div class="box mistake">
+      <p class="box-label">Common mistake</p>
+      <p>Groups of 3 or 6 are not allowed, and groups can't be diagonal. Also check the edges: cells on the left and right edges (and top and bottom) are next to each other.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="adders">
+    <div class="sec-head"><span class="sec-num">1.4.3d</span><h2>Half adders and full adders</h2></div>
+    <div class="two-col">
+      <div class="mini"><h4>Half adder</h4><ul>
+        <li>Adds <strong>two bits</strong>, A and B</li>
+        <li>Sum <span class="mono">S = A ⊻ B</span> (XOR gate)</li>
+        <li>Carry <span class="mono">C = A ∧ B</span> (AND gate)</li>
+        <li>Can't take a carry in, so can only add the rightmost bits</li>
+      </ul></div>
+      <div class="mini"><h4>Full adder</h4><ul>
+        <li>Adds <strong>three bits</strong>: A, B and a <strong>carry in</strong></li>
+        <li>Made from two half adders and an OR gate</li>
+        <li><span class="mono">S = A ⊻ B ⊻ Cin</span></li>
+        <li><span class="mono">Cout = (A ∧ B) ∨ (Cin ∧ (A ⊻ B))</span></li>
+        <li>Full adders are <strong>chained</strong> (carry out to the next carry in) to add multi-bit numbers</li>
+      </ul></div>
+    </div>
+    <div class="tool" id="addtool">
+      <p class="tool-title">Try it: adders</p>
+      <p class="tool-sub">Switch the inputs and watch the outputs and the matching truth table row.</p>
+      <fieldset class="ctl"><legend class="sr">Adder</legend>
+        <div class="seg">
+          <label><input type="radio" name="adk" value="half"><span>Half adder</span></label>
+          <label><input type="radio" name="adk" value="full" checked><span>Full adder</span></label>
+        </div>
+      </fieldset>
+      <div class="toggles" id="ad-tog"></div>
+      <div class="outs" id="ad-outs"></div>
+      <p class="explain" id="ad-say"></p>
+      <div class="table-wrap"><table class="tt" id="ad-tt"></table></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="flipflops">
+    <div class="sec-head"><span class="sec-num">1.4.3e</span><h2>D-type flip-flops</h2></div>
+    <p>A <span class="term">D-type flip-flop</span> stores <strong>one bit</strong>. It has a data input <strong>D</strong>, a <strong>clock</strong> input and an output <strong>Q</strong>. Q only changes on the <strong>rising edge</strong> of the clock (when it goes from 0 to 1): at that instant Q takes the value of D, and it then <strong>holds</strong> that value until the next rising edge, whatever D does in between.</p>
+    <p>So it acts as <strong>memory</strong>: flip-flops are the building blocks of <strong>registers</strong>, and chains of them can make counters and shift registers.</p>
+    <div class="tool" id="dff">
+      <p class="tool-title">Try it: timing diagram</p>
+      <p class="tool-sub">Click along the D line to change the input. Dashed lines mark the rising edges — the only moments Q can change.</p>
+      <svg class="wave" id="dff-svg" viewBox="0 0 640 230" role="img" aria-label="Timing diagram for a D-type flip-flop"></svg>
+      <p class="explain" id="dff-say"></p>
+      <div class="btn-row"><button type="button" class="btn" id="dff-reset">Reset</button></div>
+    </div>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Using a clock edge rather than just "whenever D changes" means every flip-flop in the processor updates at exactly the same instant. Signals have time to settle between ticks, so the whole circuit moves from one stable state to the next — that's what the clock speed in 1.1.2 is counting.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type. Check simplifications with the tools above.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-4-2-data-structures.html">1.4.2 Data structures</a> · Next: <a href="1-5-1-legislation.html">1.5.1 Computing-related legislation</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-4-3-progress',
+  questions: [
+    { id: 'q1', marks: 2, text: 'Draw the truth table for A ⊻ B and state one use of the XOR gate.',
+      points: ['Truth table 00→0, 01→1, 10→1, 11→0', 'e.g. the sum output of a half / full adder; toggling bits with a mask; comparing bits for equality'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 2, text: 'Use De Morgan\'s laws to write an expression equivalent to ¬(A ∨ ¬B).',
+      points: ['¬A ∧ ¬¬B', '= ¬A ∧ B (double negation)'],
+      guide: '1 mark for applying De Morgan, 1 for the simplified answer.' },
+    { id: 'q3', marks: 4, text: 'Simplify (A ∧ B) ∨ (A ∧ ¬B) ∨ (¬A ∧ B). Show your working.',
+      points: ['Distribution: A ∧ (B ∨ ¬B)', 'B ∨ ¬B = 1, so A ∧ 1 = A, giving A ∨ (¬A ∧ B)', 'Distribution: (A ∨ ¬A) ∧ (A ∨ B)', '= A ∨ B'],
+      guide: '1 mark per correct step, 4 for a correct answer with working. Check with the equivalence tool.' },
+    { id: 'q4', marks: 4, text: 'Use a Karnaugh map to simplify the expression whose output is 1 for these inputs (A B C): 000, 010, 100, 110, 111.',
+      points: ['Correct K-map with 1s in cells 000, 010, 100, 110, 111', 'Group of four: the C = 0 column pair (wrapping), giving ¬C', 'Group of two: 110, 111, giving A ∧ B', '¬C ∨ (A ∧ B)'],
+      guide: '1 mark each. Try it in the Karnaugh map tool.' },
+    { id: 'q5', marks: 3, text: 'Draw a truth table for a half adder and give the Boolean expressions for its outputs.',
+      points: ['Truth table: 00→S0 C0, 01→S1 C0, 10→S1 C0, 11→S0 C1', 'S = A ⊻ B', 'C = A ∧ B'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain the difference between a half adder and a full adder, and how full adders are used to add two 8-bit numbers.',
+      points: ['A half adder adds two bits; a full adder adds three bits (including a carry in)', 'A full adder can be made from two half adders and an OR gate', '8 full adders are chained, with the carry out of each connected to the carry in of the next'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 3, text: 'Describe the behaviour of a D-type flip-flop and state what it is used for.',
+      points: ['Has a data input D and a clock input', 'On the rising edge of the clock, Q takes the value of D; otherwise Q holds its value', 'Stores one bit / used to build registers / memory'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 2, text: 'A logic circuit has 4 inputs. How many rows does its truth table need, and why?',
+      points: ['16', 'Each input can be 0 or 1, so 2⁴ combinations'],
+      guide: '1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A chip designer can simplify a logic circuit using Boolean algebra or Karnaugh maps. Discuss the benefits of simplifying circuits and compare the two methods.',
+      points: ['Simpler circuits need fewer gates, so are cheaper to make', 'Use less power and produce less heat', 'Signals pass through fewer gates, so the circuit is faster', 'Smaller — more fits on a chip; fewer components to fail', 'Boolean algebra: applies laws (De Morgan, distribution, absorption…); works for any number of variables', 'Boolean algebra: can be hard to spot which law to apply; easy to make errors; hard to know when it is fully simplified', 'Karnaugh maps: visual and systematic, easier to find the simplest sum of products', 'Karnaugh maps: impractical beyond 4 (or 5–6) variables', 'Conclusion: e.g. K-maps for small circuits, algebra / software tools for larger ones; results checked with truth tables'],
+      levels: [
+        ['7–9 marks', 'Thorough discussion of the benefits of simplification and a balanced comparison of both methods, with a justified conclusion.'],
+        ['4–6 marks', 'Several benefits and some comparison of the methods; some justification.'],
+        ['1–3 marks', 'Basic points about simplification or one method, with little comparison.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  function el(t, c, x) { var e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; }
+  function $(id) { return document.getElementById(id); }
+  var NS = 'http://www.w3.org/2000/svg';
+  function mk(t, a, p) { var x = document.createElementNS(NS, t); for (var k in a) x.setAttribute(k, a[k]); if (p) p.appendChild(x); return x; }
+
+  // ---------- Gate cards ----------
+  var G = [
+    { n: 'AND', s: 'A ∧ B', d: '1 only if both inputs are 1' },
+    { n: 'OR', s: 'A ∨ B', d: '1 if at least one input is 1' },
+    { n: 'NOT', s: '¬A', d: 'Reverses the input' },
+    { n: 'XOR', s: 'A ⊻ B', d: '1 if the inputs are different' }
+  ];
+  G.forEach(function (g) {
+    var c = el('div', 'gatecard'); c.appendChild(el('h4', null, g.n));
+    var svg = mk('svg', { viewBox: '0 0 120 56', 'aria-hidden': 'true' });
+    if (g.n === 'NOT') { mk('line', { x1: 5, y1: 28, x2: 35, y2: 28 }, svg); mk('path', { d: 'M35 10 L72 28 L35 46 Z' }, svg); mk('circle', { cx: 77, cy: 28, r: 5 }, svg); mk('line', { x1: 82, y1: 28, x2: 115, y2: 28 }, svg); }
+    else {
+      var x0 = g.n === 'AND' ? 35 : 38;
+      mk('line', { x1: 5, y1: 18, x2: x0 + 4, y2: 18 }, svg); mk('line', { x1: 5, y1: 38, x2: x0 + 4, y2: 38 }, svg);
+      if (g.n === 'AND') mk('path', { d: 'M35 8 H60 A20 20 0 0 1 60 48 H35 Z' }, svg);
+      else mk('path', { d: 'M35 8 Q50 28 35 48 Q70 48 88 28 Q70 8 35 8 Z' }, svg);
+      if (g.n === 'XOR') mk('path', { d: 'M27 8 Q42 28 27 48', class: 'open' }, svg);
+      mk('line', { x1: g.n === 'AND' ? 80 : 88, y1: 28, x2: 115, y2: 28 }, svg);
+    }
+    c.appendChild(svg);
+    c.appendChild(el('p', 'mono', g.s));
+    c.appendChild(el('p', null, g.d));
+    var t = el('table', 'tt'); t.style.margin = '6px auto 0';
+    var rows = g.n === 'NOT' ? [[0], [1]] : [[0, 0], [0, 1], [1, 0], [1, 1]];
+    var hdr = el('tr'); (g.n === 'NOT' ? ['A'] : ['A', 'B']).concat(['Q']).forEach(function (h) { hdr.appendChild(el('th', null, h)); }); t.appendChild(hdr);
+    rows.forEach(function (r) {
+      var q = g.n === 'AND' ? r[0] & r[1] : g.n === 'OR' ? r[0] | r[1] : g.n === 'XOR' ? r[0] ^ r[1] : 1 - r[0];
+      var tr = el('tr'); r.forEach(function (v) { tr.appendChild(el('td', null, v)); }); tr.appendChild(el('td', 'out', q)); t.appendChild(tr);
+    });
+    c.appendChild(t);
+    $('gatecards').appendChild(c);
+  });
+
+  // ---------- Expression parser ----------
+  function tokenize(s) {
+    var out = [], re = /\s*(\(|\)|AND|OR|XOR|NOT|∧|∨|⊻|¬|~|!|&|\||\.|\+|\^|[A-Da-d]|[01])/y, i = 0, m;
+    s = s.replace(/\s+$/, '');
+    while (i < s.length) {
+      re.lastIndex = i; m = re.exec(s);
+      if (!m) throw new Error('I don\'t understand "' + s.slice(i).trim().slice(0, 8) + '". Use A–D, ¬ ∧ ∨ ⊻ and brackets.');
+      var t = m[1].toUpperCase();
+      t = { '∧': 'AND', '&': 'AND', '.': 'AND', '∨': 'OR', '|': 'OR', '+': 'OR', '⊻': 'XOR', '^': 'XOR', '¬': 'NOT', '~': 'NOT', '!': 'NOT' }[t] || t;
+      out.push(t); i = re.lastIndex;
+    }
+    return out;
+  }
+  function parse(s) {
+    var t = tokenize(s), p = 0;
+    if (!t.length) throw new Error('Type an expression.');
+    function or() { var a = xor(); while (t[p] === 'OR') { p++; a = { op: 'OR', l: a, r: xor() }; } return a; }
+    function xor() { var a = and(); while (t[p] === 'XOR') { p++; a = { op: 'XOR', l: a, r: and() }; } return a; }
+    function and() { var a = not(); while (t[p] === 'AND') { p++; a = { op: 'AND', l: a, r: not() }; } return a; }
+    function not() { if (t[p] === 'NOT') { p++; return { op: 'NOT', l: not() }; } return prim(); }
+    function prim() {
+      var x = t[p++];
+      if (x === '(') { var e = or(); if (t[p++] !== ')') throw new Error('Missing a closing bracket )'); return e; }
+      if (/^[A-D]$/.test(x)) return { v: x };
+      if (x === '0' || x === '1') return { k: +x };
+      throw new Error(x ? 'Unexpected "' + x + '"' : 'The expression ends too early');
+    }
+    var e = or();
+    if (p < t.length) throw new Error('Unexpected "' + t[p] + '"');
+    return e;
+  }
+  function ev(n, env) {
+    if (n.v) return env[n.v]; if (n.k != null) return n.k;
+    if (n.op === 'NOT') return 1 - ev(n.l, env);
+    var a = ev(n.l, env), b = ev(n.r, env);
+    return n.op === 'AND' ? a & b : n.op === 'OR' ? a | b : a ^ b;
+  }
+  function vars(n, set) { if (n.v) set[n.v] = 1; if (n.l) vars(n.l, set); if (n.r) vars(n.r, set); return set; }
+
+  // ---------- Equivalence ----------
+  var PRE = [['De Morgan', '¬(A ∧ B)', '¬A ∨ ¬B'], ['Distribution', 'A ∧ (B ∨ C)', '(A ∧ B) ∨ (A ∧ C)'], ['Absorption', 'A ∨ (A ∧ B)', 'A'], ['A wrong one', '¬(A ∨ B)', '¬A ∨ ¬B'], ['XOR', 'A ⊻ B', '(A ∧ ¬B) ∨ (¬A ∧ B)']];
+  var lastBox = $('eq-a');
+  PRE.forEach(function (p) { var b = el('button', null, p[0]); b.type = 'button'; b.addEventListener('click', function () { $('eq-a').value = p[1]; $('eq-b').value = p[2]; eq(); }); $('eq-presets').appendChild(b); });
+  ['¬', '∧', '∨', '⊻', '(', ')'].forEach(function (s) {
+    var b = el('button', null, s); b.type = 'button'; b.setAttribute('aria-label', 'Type ' + s);
+    b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+    b.addEventListener('click', function () { var f = lastBox, st = f.selectionStart == null ? f.value.length : f.selectionStart; f.setRangeText(s === '(' || s === ')' || s === '¬' ? s : ' ' + s + ' ', st, f.selectionEnd == null ? st : f.selectionEnd, 'end'); f.focus(); eq(); });
+    $('eq-syms').appendChild(b);
+  });
+  ['eq-a', 'eq-b'].forEach(function (id) { $(id).addEventListener('focus', function () { lastBox = $(id); }); $(id).addEventListener('input', eq); });
+  var lastTree = null;
+  function eq() {
+    var out = $('eq-out'), v = $('eq-verdict'); out.innerHTML = ''; v.innerHTML = '';
+    var a, b;
+    try { a = parse($('eq-a').value); } catch (e) { lastTree = null; v.appendChild(el('span', 'result-bad', 'Expression 1: ' + e.message)); return; }
+    lastTree = a;
+    try { b = parse($('eq-b').value); } catch (e) { v.appendChild(el('span', 'result-bad', 'Expression 2: ' + e.message)); return; }
+    var vs = Object.keys(Object.assign(vars(a, {}), vars(b, {}))).sort();
+    var t = el('table', 'tt'), hr = el('tr');
+    vs.concat(['Expr 1', 'Expr 2']).forEach(function (h) { var th = el('th', null, h); th.scope = 'col'; hr.appendChild(th); });
+    var th = el('thead'); th.appendChild(hr); t.appendChild(th);
+    var tb = el('tbody'), diffs = [], n = vs.length;
+    for (var r = 0; r < (1 << n); r++) {
+      var env = {}; vs.forEach(function (x, i) { env[x] = (r >> (n - 1 - i)) & 1; });
+      var x1 = ev(a, env), x2 = ev(b, env), tr = el('tr', x1 !== x2 ? 'bad' : null);
+      vs.forEach(function (x) { tr.appendChild(el('td', null, env[x])); });
+      tr.append(el('td', 'out', x1), el('td', 'out', x2)); tb.appendChild(tr);
+      if (x1 !== x2) diffs.push(vs.map(function (x) { return x + '=' + env[x]; }).join(' '));
+    }
+    t.appendChild(tb); out.appendChild(t);
+    if (!diffs.length) v.appendChild(el('span', 'result-good', 'Equivalent ✓ — the outputs match on every row.'));
+    else v.appendChild(el('span', 'result-bad', 'Not equivalent: they differ on ' + diffs.length + ' row' + (diffs.length > 1 ? 's' : '') + ' (highlighted), e.g. ' + diffs[0] + '.'));
+  }
+  eq();
+
+  // ---------- Karnaugh map ----------
+  var GRAY = { 1: [0, 1], 2: [0, 1, 3, 2] };
+  var COLORS = ['#7C4DFF', '#E8590C', '#0CA678', '#1C7ED6', '#D6336C', '#F08C00', '#2F9E44', '#495057'];
+  var NAMES = ['A', 'B', 'C', 'D'];
+  var nv = 4, ones = {};
+  function layout() { var rv = nv === 2 ? 1 : nv === 3 ? 1 : 2, cv = nv - rv; return { rv: rv, cv: cv }; }
+  function primes(ms) {
+    var cur = ms.map(function (m) { return { v: m, k: 0 }; }), primesOut = [], seen = {};
+    while (cur.length) {
+      var next = [], used = {}, nk = {};
+      for (var i = 0; i < cur.length; i++) for (var j = i + 1; j < cur.length; j++) {
+        var a = cur[i], b = cur[j];
+        if (a.k !== b.k) continue;
+        var d = a.v ^ b.v;
+        if (d && !(d & (d - 1))) {
+          used[i] = used[j] = 1;
+          var c = { v: a.v & ~d, k: a.k | d }, key = c.v + ':' + c.k;
+          if (!nk[key]) { nk[key] = 1; next.push(c); }
+        }
+      }
+      cur.forEach(function (c, i) { var key = c.v + ':' + c.k; if (!used[i] && !seen[key]) { seen[key] = 1; primesOut.push(c); } });
+      cur = next;
+    }
+    return primesOut;
+  }
+  function covers(p, m) { return (m & ~p.k) === p.v; }
+  function lits(p) { var n = 0; for (var i = 0; i < nv; i++) if (!(p.k >> i & 1)) n++; return n; }
+  function cover(ms, ps) {
+    if (!ms.length) return [];
+    var best = null, n = ps.length;
+    if (n <= 16) {
+      for (var s = 1; s < (1 << n); s++) {
+        var pick = ps.filter(function (_, i) { return s >> i & 1; });
+        if (best && pick.length > best.length) continue;
+        if (!ms.every(function (m) { return pick.some(function (p) { return covers(p, m); }); })) continue;
+        var cost = pick.reduce(function (t, p) { return t + lits(p); }, 0);
+        if (!best || pick.length < best.length || cost < best.cost) { best = pick; best.cost = cost; }
+      }
+      return best;
+    }
+    var left = ms.slice(), out = [];
+    while (left.length) {
+      ps.sort(function (a, b) { return left.filter(function (m) { return covers(b, m); }).length - left.filter(function (m) { return covers(a, m); }).length; });
+      out.push(ps[0]); left = left.filter(function (m) { return !covers(ps[0], m); });
+    }
+    return out;
+  }
+  function term(p) {
+    var parts = [];
+    for (var i = 0; i < nv; i++) { var bit = nv - 1 - i; if (p.k >> bit & 1) continue; parts.push((p.v >> bit & 1 ? '' : '¬') + NAMES[i]); }
+    return parts.length ? parts.join(' ∧ ') : '1';
+  }
+  function drawK() {
+    var L = layout(), rows = GRAY[L.rv], cols = GRAY[L.cv], t = $('km-grid');
+    var ms = Object.keys(ones).map(Number).filter(function (m) { return ones[m]; }).sort(function (a, b) { return a - b; });
+    var groups = ms.length === (1 << nv) ? [{ v: 0, k: (1 << nv) - 1 }] : cover(ms, primes(ms));
+    t.innerHTML = '';
+    var hr = el('tr'), rn = NAMES.slice(0, L.rv).join(''), cn = NAMES.slice(L.rv, nv).join('');
+    hr.appendChild(el('th', 'corner', rn + ' \\ ' + cn));
+    cols.forEach(function (c) { hr.appendChild(el('th', null, c.toString(2).padStart(L.cv, '0'))); });
+    t.appendChild(hr);
+    rows.forEach(function (r) {
+      var tr = el('tr'); var rh = el('th', null, r.toString(2).padStart(L.rv, '0')); rh.scope = 'row'; tr.appendChild(rh);
+      cols.forEach(function (c) {
+        var m = (r << L.cv) | c, td = el('td'), b = el('button', ones[m] ? 'one' : null, ones[m] ? 1 : 0); b.type = 'button';
+        b.setAttribute('aria-label', NAMES.slice(0, nv).map(function (n, i) { return n + '=' + (m >> (nv - 1 - i) & 1); }).join(' ') + ': ' + (ones[m] ? 1 : 0));
+        var st = el('span', 'stripes');
+        groups.forEach(function (g, gi) { if (ones[m] && covers(g, m)) { var s = el('span'); s.style.background = COLORS[gi % COLORS.length]; st.appendChild(s); } });
+        b.appendChild(st);
+        b.addEventListener('click', function () { ones[m] = !ones[m]; drawK(); });
+        td.appendChild(b); tr.appendChild(td);
+      });
+      t.appendChild(tr);
+    });
+    var gl = $('km-groups'); gl.innerHTML = '';
+    groups.forEach(function (g, gi) {
+      var li = el('li'), sw = el('span', 'swatch'); sw.style.background = COLORS[gi % COLORS.length];
+      var size = 1 << (function () { var c = 0, k = g.k; while (k) { c += k & 1; k >>= 1; } return c; })();
+      li.append(sw, document.createTextNode('Group of ' + size + ': ' + term(g)));
+      gl.appendChild(li);
+    });
+    $('km-ans').textContent = !ms.length ? '0 (no 1s)' : groups.length === 1 && groups[0].k === (1 << nv) - 1 ? '1 (always true)' : groups.map(function (g) { var s = term(g); return groups.length > 1 && /∧/.test(s) ? '(' + s + ')' : s; }).join(' ∨ ');
+  }
+  function setNV(n) { nv = n; document.querySelector('input[name="kv"][value="' + n + '"]').checked = true; }
+  document.querySelectorAll('input[name="kv"]').forEach(function (r) { r.addEventListener('change', function () { nv = +r.value; ones = {}; drawK(); }); });
+  $('km-clear').addEventListener('click', function () { ones = {}; drawK(); });
+  $('km-rand').addEventListener('click', function () { ones = {}; for (var m = 0; m < (1 << nv); m++) ones[m] = Math.random() < 0.45; drawK(); });
+  $('eq-tok').addEventListener('click', function () {
+    if (!lastTree) return;
+    var vs = vars(lastTree, {}), n = vs.D ? 4 : vs.C ? 3 : 2;
+    setNV(n); ones = {};
+    for (var m = 0; m < (1 << n); m++) { var env = {}; NAMES.slice(0, n).forEach(function (x, i) { env[x] = (m >> (n - 1 - i)) & 1; }); ones[m] = !!ev(lastTree, env); }
+    drawK(); $('kmap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  // start with an example: ¬C ∨ (A ∧ B) on 3 variables? Use a 4-variable example with wrap-around
+  [0, 2, 8, 10, 5, 7, 13, 15].forEach(function (m) { ones[m] = true; });
+  drawK();
+
+  // ---------- Adders ----------
+  var IN = { A: 1, B: 1, Cin: 0 };
+  function full() { return document.querySelector('input[name="adk"]:checked').value === 'full'; }
+  function drawAd() {
+    var f = full(), names = f ? ['A', 'B', 'Cin'] : ['A', 'B'];
+    var tg = $('ad-tog'); tg.innerHTML = '';
+    names.forEach(function (n) {
+      var b = el('button', 'tog', n + ' = ' + IN[n]); b.type = 'button'; b.setAttribute('aria-pressed', IN[n] ? 'true' : 'false');
+      b.addEventListener('click', function () { IN[n] = 1 - IN[n]; drawAd(); }); tg.appendChild(b);
+    });
+    var a = IN.A, b2 = IN.B, c = f ? IN.Cin : 0, x = a ^ b2, S = x ^ c, C = (a & b2) | (c & x);
+    var o = $('ad-outs'); o.innerHTML = '';
+    var s1 = el('span'); s1.append('Sum S = ', el('b', null, S)); var s2 = el('span'); s2.append((f ? 'Carry out' : 'Carry C') + ' = ', el('b', null, C));
+    o.append(s1, s2);
+    $('ad-say').textContent = f
+      ? 'S = A ⊻ B ⊻ Cin = ' + a + ' ⊻ ' + b2 + ' ⊻ ' + c + ' = ' + S + '.  Cout = (A ∧ B) ∨ (Cin ∧ (A ⊻ B)) = (' + (a & b2) + ') ∨ (' + c + ' ∧ ' + x + ') = ' + C + '.  In denary: ' + a + ' + ' + b2 + ' + ' + c + ' = ' + (a + b2 + c) + ' = binary ' + C + S + '.'
+      : 'S = A ⊻ B = ' + a + ' ⊻ ' + b2 + ' = ' + S + '.  C = A ∧ B = ' + C + '.  In denary: ' + a + ' + ' + b2 + ' = ' + (a + b2) + ' = binary ' + C + S + '.';
+    var t = $('ad-tt'); t.innerHTML = '';
+    var hr = el('tr'); names.concat(['S', f ? 'Cout' : 'C']).forEach(function (h) { var th = el('th', null, h); th.scope = 'col'; hr.appendChild(th); });
+    var thd = el('thead'); thd.appendChild(hr); t.appendChild(thd);
+    var tb = el('tbody');
+    for (var r = 0; r < (1 << names.length); r++) {
+      var bits = names.map(function (_, i) { return (r >> (names.length - 1 - i)) & 1; });
+      var ra = bits[0], rb = bits[1], rc = f ? bits[2] : 0, rx = ra ^ rb;
+      var tr = el('tr', ra === a && rb === b2 && (!f || rc === c) ? 'hl' : null);
+      bits.forEach(function (v) { tr.appendChild(el('td', null, v)); });
+      tr.append(el('td', 'out', rx ^ rc), el('td', 'out', (ra & rb) | (rc & rx))); tb.appendChild(tr);
+    }
+    t.appendChild(tb);
+  }
+  document.querySelectorAll('input[name="adk"]').forEach(function (r) { r.addEventListener('change', drawAd); });
+  drawAd();
+
+  // ---------- D-type flip-flop ----------
+  var HALF = 16, D0 = [0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1], Dsig = D0.slice();
+  // D segment i is centred on clock half i, so D changes happen midway between clock edges.
+  // Rising edges are at the start of each even half; Q takes the D value at that instant.
+  function drawDFF() {
+    var svg = $('dff-svg'); svg.innerHTML = '';
+    var X0 = 60, W = (640 - X0 - 10) / HALF, rows = { clk: 40, d: 110, q: 180 }, H = 36, END = X0 + HALF * W;
+    function y(row, v) { return rows[row] + (v ? -H / 2 : H / 2); }
+    var Q = [], q = 0, i;
+    for (i = 0; i < HALF; i++) { if (i % 2 === 0) q = Dsig[i]; Q.push(q); }
+    for (i = 0; i < HALF; i += 2) mk('line', { x1: X0 + i * W, y1: 14, x2: X0 + i * W, y2: 210, class: 'edge' }, svg);
+    function wave(vals, row, cls, shift) {
+      var pts = [];
+      vals.forEach(function (v, i) {
+        var x1 = Math.max(X0, X0 + (i - shift) * W), x2 = i === vals.length - 1 ? END : Math.min(END, X0 + (i + 1 - shift) * W);
+        pts.push(x1 + ',' + y(row, v)); pts.push(x2 + ',' + y(row, v));
+      });
+      mk('polyline', { points: pts.join(' '), class: cls }, svg);
+    }
+    wave(Array.from({ length: HALF }, function (_, i) { return i % 2 === 0 ? 1 : 0; }), 'clk', 'clk', 0);
+    wave(Dsig, 'd', 'd', 0.5); wave(Q, 'q', 'q', 0);
+    [['Clock', 'clk'], ['D', 'd'], ['Q', 'q']].forEach(function (l) { var t = mk('text', { x: 6, y: rows[l[1]] }, svg); t.textContent = l[0]; });
+    Dsig.forEach(function (v, i) {
+      var x1 = Math.max(X0, X0 + (i - 0.5) * W), x2 = i === HALF - 1 ? END : X0 + (i + 0.5) * W;
+      var r = mk('rect', { x: x1, y: rows.d - H / 2 - 6, width: x2 - x1, height: H + 12, class: 'hit', tabindex: 0, role: 'button' }, svg);
+      r.setAttribute('aria-label', 'D section ' + (i + 1) + ' is ' + v + '. Toggle.');
+      function tog() { Dsig[i] = 1 - Dsig[i]; drawDFF(); }
+      r.addEventListener('click', tog);
+      r.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(); } });
+    });
+    var missed = 0;
+    for (i = 1; i < HALF; i += 2) if (Dsig[i] !== Dsig[i - 1] && (i + 1 >= HALF || Dsig[i + 1] !== Dsig[i])) missed++;
+    $('dff-say').textContent = 'Q copies D only at each rising edge (dashed lines), then holds it — so Q only ever changes on an edge, even though D changes in between. ' + (missed ? missed + ' short pulse' + (missed > 1 ? 's' : '') + ' on D started and ended between two edges, so Q never saw ' + (missed > 1 ? 'them' : 'it') + '.' : 'Try making a short pulse on D between two edges.');
+  }
+  $('dff-reset').addEventListener('click', function () { Dsig = D0.slice(); drawDFF(); });
+  drawDFF();
+})();
+</script>
+</body>
+</html>
