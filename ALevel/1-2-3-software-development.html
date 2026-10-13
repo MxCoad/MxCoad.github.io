@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2.3 Software development — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.2.3: waterfall, agile, extreme programming, spiral and rapid application development methodologies, and writing and following algorithms.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .flow { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0 14px; }
+  .flow span { padding: 6px 12px; border-radius: 8px; background: color-mix(in srgb, var(--ks-alevel) 22%, var(--ms-surface)); border: 1px solid color-mix(in srgb, var(--ks-alevel) 60%, transparent); font-weight: 700; font-size: 15px; }
+  .flow i { color: var(--ms-muted); font-style: normal; }
+  table.trace { border-collapse: collapse; margin: 10px 0; font-family: var(--ms-font-mono); }
+  table.trace th, table.trace td { border: 1px solid var(--ms-line-strong); padding: 4px 6px; text-align: center; }
+  table.trace th { background: var(--ms-surface-2); font-size: 15px; padding: 8px 12px; }
+  table.trace input { width: 64px; min-height: 38px; text-align: center; border: 1px solid var(--ms-line); border-radius: 6px; background: var(--ms-bg); color: var(--ms-text); font: inherit; font-size: 17px; }
+  table.trace input.ok { border-color: var(--ms-good); background: var(--ms-good-soft); }
+  table.trace input.no { border-color: var(--ms-bad); background: var(--ms-bad-soft); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.2.3 Software development</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.2.3</p>
+  <h1>Software development</h1>
+  <p class="intro">The main methodologies used to plan and manage software projects, when each one is the right choice, and how to write and follow algorithms. Exam questions usually give a project and ask you to recommend and justify a methodology.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="waterfall">
+    <div class="sec-head"><span class="sec-num">1.2.3a</span><h2>The waterfall lifecycle</h2></div>
+    <div class="flow" aria-label="Waterfall stages"><span>Requirements</span><i>→</i><span>Design</span><i>→</i><span>Implementation</span><i>→</i><span>Testing</span><i>→</i><span>Deployment</span><i>→</i><span>Maintenance</span></div>
+    <p>Each stage is <strong>completed and signed off before the next begins</strong>, and produces documentation for the next. If a problem is found, the team can only go back to the <strong>previous</strong> stage. The user is mainly involved at the <strong>start</strong> (requirements) and the <strong>end</strong> (testing and deployment).</p>
+    <div class="two-col">
+      <div class="mini"><h4>Strengths</h4><ul><li>Simple, clear structure with defined milestones and deadlines</li><li>Thorough documentation</li><li>Easy to manage, even with large teams</li></ul></div>
+      <div class="mini"><h4>Weaknesses</h4><ul><li>Inflexible: <strong>changing requirements</strong> are very costly</li><li>The client doesn't see working software until late</li><li>Problems with the requirements may only be found during testing</li></ul></div>
+    </div>
+    <p><strong>Best for:</strong> projects with <strong>clear, stable requirements</strong> that are unlikely to change, e.g. a well-understood system or one with strict regulations.</p>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="agile">
+    <div class="sec-head"><span class="sec-num">1.2.3a</span><h2>Agile and extreme programming</h2></div>
+    <p><span class="term">Agile</span> methodologies develop software <strong>iteratively and incrementally</strong>: the project is split into short cycles (sprints), each producing a working part of the system that the client reviews. Requirements are expected to <strong>change</strong>, and the plan adapts. The focus is on working software and collaboration rather than heavy documentation.</p>
+    <h3>Extreme programming (XP)</h3>
+    <p>An agile methodology focused on <strong>code quality</strong>:</p>
+    <ul>
+      <li><strong>Pair programming</strong> — two programmers at one computer; one writes, one reviews, and they swap</li>
+      <li><strong>Test-driven development</strong> — unit tests are written <em>before</em> the code</li>
+      <li><strong>Short iterations</strong> (1–2 weeks) and frequent small releases</li>
+      <li>A <strong>customer representative</strong> works with the team, providing <strong>user stories</strong></li>
+      <li><strong>Continuous integration</strong> and <strong>refactoring</strong> — code is merged and improved constantly</li>
+      <li>A <strong>sustainable pace</strong> — no regular overtime</li>
+    </ul>
+    <div class="two-col">
+      <div class="mini"><h4>Strengths</h4><ul><li>Copes well with <strong>changing requirements</strong></li><li>Client sees working software early and often</li><li>XP produces high-quality, well-tested code</li></ul></div>
+      <div class="mini"><h4>Weaknesses</h4><ul><li>Hard to predict the final cost and timescale</li><li>Needs a committed, available client</li><li>Less documentation, which can make maintenance harder</li><li>Pair programming costs two programmers' time</li></ul></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="spiral-rad">
+    <div class="sec-head"><span class="sec-num">1.2.3a</span><h2>Spiral model and RAD</h2></div>
+    <h3>Spiral model</h3>
+    <p>A <strong>risk-driven</strong> approach. The project loops repeatedly through four phases, spiralling outwards as the product grows:</p>
+    <ol>
+      <li><strong>Determine objectives</strong> for this loop</li>
+      <li><strong>Identify and resolve risks</strong>, often by building prototypes</li>
+      <li><strong>Develop and test</strong></li>
+      <li><strong>Plan</strong> the next iteration</li>
+    </ol>
+    <p>✓ Excellent for <strong>large, complex, high-risk</strong> projects, because risks are tackled early. ✗ Expensive; relies on staff skilled in risk assessment; overkill for small projects.</p>
+    <h3>Rapid application development (RAD)</h3>
+    <p>Builds a series of <strong>prototypes</strong> very quickly, with requirements gathered through workshops and focus groups. Users try each prototype and give feedback; it's refined, often within a strict time limit (<strong>timeboxing</strong>), until it becomes the final product.</p>
+    <p>✓ Fast; users heavily involved, so the result meets their needs; good when requirements are unclear. ✗ Focus on the interface can neglect code quality and efficiency; hard to scale to large systems; needs users to be available throughout.</p>
+    <div class="tool">
+      <p class="tool-title">Try it: which methodology?</p>
+      <p class="tool-sub">Choose the methodology that best suits each project.</p>
+      <div id="sort-method"></div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="choosing">
+    <div class="sec-head"><span class="sec-num">1.2.3b</span><h2>Choosing a methodology</h2></div>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col"></th><th scope="col">Waterfall</th><th scope="col">Agile / XP</th><th scope="col">Spiral</th><th scope="col">RAD</th></tr></thead>
+      <tr><th scope="row">Changing requirements</th><td>Poor</td><td>Excellent</td><td>Good</td><td>Excellent</td></tr>
+      <tr><th scope="row">User involvement</th><td>Start and end</td><td>Throughout</td><td>At each loop</td><td>Throughout</td></tr>
+      <tr><th scope="row">Managing risk</th><td>Low</td><td>Medium</td><td>Excellent</td><td>Medium</td></tr>
+      <tr><th scope="row">Project size</th><td>Any, especially large</td><td>Small–medium</td><td>Large</td><td>Small–medium</td></tr>
+      <tr><th scope="row">Documentation</th><td>Extensive</td><td>Light</td><td>Moderate</td><td>Light</td></tr>
+      <tr><th scope="row">Code quality focus</th><td>Medium</td><td>High (XP)</td><td>Medium</td><td>Lower</td></tr>
+    </table></div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Pick out the clues in the scenario: Are the requirements fixed or uncertain? Is the client available? How big and risky is it? Is speed or quality the priority? Then justify your choice <strong>and</strong> explain why another methodology would be less suitable.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="algorithms">
+    <div class="sec-head"><span class="sec-num">1.2.3c</span><h2>Writing and following algorithms</h2></div>
+    <p>You need to be able to <strong>write</strong> algorithms in pseudocode (OCR's style, or a high-level language) and <strong>follow</strong> them to work out what they do, using a <strong>trace table</strong> (a <strong>dry run</strong>). Each column is a variable or the output; write a value only when it changes.</p>
+    <div class="tool" id="trace">
+      <p class="tool-title">Try it: trace the algorithm</p>
+      <p class="tool-sub">What does this algorithm do? Fill in the trace table, leaving a cell empty when the value doesn't change.</p>
+<pre><code>nums = [4, 9, 2, 7]
+max = nums[0]
+for i = 1 to 3
+    if nums[i] &gt; max then
+        max = nums[i]
+    endif
+next i
+print(max)</code></pre>
+      <table class="trace" aria-label="Trace table"><thead><tr><th scope="col">i</th><th scope="col">max</th><th scope="col">output</th></tr></thead><tbody id="tr-body"></tbody></table>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="tr-check">Check</button>
+        <button type="button" class="btn" id="tr-show">Show answers</button>
+        <button type="button" class="btn" id="tr-clear">Clear</button>
+      </div>
+      <p class="explain" id="tr-say" aria-live="polite">Row 1 is before the loop starts.</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-2-2-applications-generation.html">1.2.2 Applications generation</a> · Next: <a href="1-2-4-programming-languages.html">1.2.4 Types of programming language</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-2-3-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe the waterfall lifecycle and one drawback of using it.',
+      points: ['Stages are completed in sequence, e.g. requirements, design, implementation, testing, deployment, maintenance', 'Each stage is completed / signed off before the next begins', 'The team can only return to the previous stage / the user is involved mainly at the start and end', 'Drawback, e.g. inflexible if requirements change / client sees working software late / problems found late'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 4, text: 'Describe two features of extreme programming (XP).',
+      points: ['Names a first feature, e.g. pair programming / test-driven development / customer representative / short iterations / refactoring / continuous integration', 'Describes it, e.g. two programmers work together, one writing code and one reviewing it', 'Names a second, different feature', 'Describes it, e.g. tests are written before the code'],
+      guide: '2 marks per feature.' },
+    { id: 'q3', marks: 3, text: 'Describe the spiral model.',
+      points: ['Iterative: the project loops through phases repeatedly', 'Phases: determine objectives, identify and resolve risks, develop and test, plan the next iteration', 'Risk-driven — risks are identified and resolved (e.g. with prototypes) early / suited to large, high-risk projects'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 3, text: 'Explain how rapid application development (RAD) uses prototyping.',
+      points: ['Requirements are gathered (e.g. through focus groups / workshops)', 'A prototype is built quickly and evaluated by users', 'Feedback is used to refine the prototype repeatedly (timeboxed) until it becomes the final product'],
+      guide: '1 mark each.' },
+    { id: 'q5', marks: 4, text: 'A start-up is building a new social app. The founders are not sure exactly which features users will want. Compare waterfall and agile for this project.',
+      points: ['Requirements are uncertain / likely to change', 'Agile adapts to changing requirements; waterfall is inflexible once requirements are fixed', 'Agile delivers working versions early, so real users can give feedback; waterfall shows the client the product only at the end', 'Agile is more suitable / waterfall would risk building the wrong features'],
+      guide: '1 mark each, linked to the scenario.' },
+    { id: 'q6', marks: 3, text: 'State the output of this algorithm and explain what it does.',
+      code: 'nums = [3, 8, 1, 6]\ntotal = 0\nfor i = 0 to 3\n    if nums[i] MOD 2 == 0 then\n        total = total + nums[i]\n    endif\nnext i\nprint(total)',
+      points: ['Output: 14', 'It adds up the even numbers in the array', 'Because nums[i] MOD 2 == 0 is only true for 8 and 6'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 9, text: 'A hospital is commissioning a large system to manage patient records and prescriptions. The requirements are detailed, must meet strict regulations, and errors could put patients at risk. Discuss which development methodology would be most suitable.',
+      points: ['Waterfall: requirements are clear and stable, suiting a sequential approach', 'Waterfall: thorough documentation helps meet regulations and audits', 'Waterfall: drawback — late changes are costly; the hospital sees the system late', 'Spiral: risk-driven, so safety risks are identified and resolved early', 'Spiral: suits large, high-risk projects; but expensive and needs risk expertise', 'Agile/XP: adapts to change and gives high code quality (TDD), but lighter documentation may not meet regulations', 'RAD: unsuitable — focus on speed and interface may compromise quality / scalability for a large critical system', 'Users (doctors, pharmacists) need involvement to make sure the system is safe to use', 'A justified conclusion, e.g. spiral or waterfall'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of several methodologies, applied consistently to the hospital (size, regulation, risk). Strengths and weaknesses weighed, with a well-supported conclusion.'],
+        ['4–6 marks', 'Good knowledge with some application. Some comparison of methodologies; conclusion partly supported.'],
+        ['1–3 marks', 'Basic description of one or more methodologies, little application or evaluation.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  TopicKit.sorter(document.getElementById('sort-method'), ['Waterfall', 'Agile / XP', 'Spiral', 'RAD'], [
+    { text: 'A bank replaces a core payments system — huge, expensive and very risky if it goes wrong', answer: 'Spiral', why: 'Risks are identified and resolved in every loop.' },
+    { text: 'Payroll software where the tax rules are fixed and fully documented in advance', answer: 'Waterfall', why: 'Stable, clear requirements and documentation matter.' },
+    { text: 'A start-up whose idea will keep changing as they learn what users want, and wants very well-tested code', answer: 'Agile / XP', why: 'Short iterations adapt to change; TDD gives high quality.' },
+    { text: 'A charity needs a simple booking app in six weeks and isn\'t sure how it should look', answer: 'RAD', why: 'Quick prototypes help users discover what they want.' },
+    { text: 'A large government system that must pass a formal sign-off at each stage', answer: 'Waterfall', why: 'Each stage is signed off before the next.' },
+    { text: 'A small team with a customer representative who can sit with them every week', answer: 'Agile / XP', why: 'Agile relies on close, ongoing customer collaboration.' }
+  ]);
+
+  var ROWS = [['', '4', ''], ['1', '9', ''], ['2', '', ''], ['3', '', ''], ['', '', '9']];
+  var tbody = document.getElementById('tr-body');
+  ROWS.forEach(function (r, i) {
+    var tr = document.createElement('tr');
+    r.forEach(function (v, j) {
+      var td = document.createElement('td'), inp = document.createElement('input');
+      inp.type = 'text'; inp.inputMode = 'numeric'; inp.dataset.ans = v;
+      inp.setAttribute('aria-label', ['i', 'max', 'output'][j] + ', row ' + (i + 1));
+      td.appendChild(inp); tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  var inputs = tbody.querySelectorAll('input');
+  document.getElementById('tr-check').addEventListener('click', function () {
+    var right = 0;
+    inputs.forEach(function (inp) { var ok = inp.value.trim() === inp.dataset.ans; inp.classList.toggle('ok', ok); inp.classList.toggle('no', !ok); if (ok) right++; });
+    document.getElementById('tr-say').textContent = right === inputs.length ? 'All correct! The algorithm finds the largest value in the array (9). max only changes when a bigger number is found.' : right + ' of ' + inputs.length + ' cells correct. Remember: leave a cell empty if the value does not change.';
+  });
+  document.getElementById('tr-show').addEventListener('click', function () { inputs.forEach(function (i) { i.value = i.dataset.ans; i.classList.remove('no'); i.classList.add('ok'); }); document.getElementById('tr-say').textContent = 'max starts as 4, becomes 9 when i = 1, and 2 and 7 are smaller, so it stays 9. The algorithm outputs the largest value.'; });
+  document.getElementById('tr-clear').addEventListener('click', function () { inputs.forEach(function (i) { i.value = ''; i.classList.remove('ok', 'no'); }); });
+})();
+</script>
+</body>
+</html>
