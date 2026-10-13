@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.2.2 Applications generation — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.2.2: applications and utilities, open and closed source, translators, the stages of compilation, linkers, loaders and libraries.">
+<style>
+  body { --stage: var(--ks-alevel); }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 12px; }
+  .presets button { min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font-family: var(--ms-font-mono); font-size: 14px; cursor: pointer; }
+  .stage-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0 10px; }
+  .stage-tabs button { min-height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--ms-line-strong); background: var(--ms-surface); color: var(--ms-text); font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .stage-tabs button[aria-selected="true"] { background: var(--ms-accent); border-color: var(--ms-accent); color: var(--ms-on-accent); }
+  .stage-tabs button:disabled { opacity: .45; cursor: not-allowed; }
+  .tokens { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tok { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--ms-line-strong); background: var(--ms-bg); }
+  .tok b { font-family: var(--ms-font-mono); font-size: 17px; }
+  .tok small { font-size: 11px; color: var(--ms-muted); text-transform: uppercase; letter-spacing: .04em; }
+  .tok.id { border-color: var(--ks-gcse); } .tok.num { border-color: var(--ks-btec); } .tok.op { border-color: var(--ks-ks3); }
+  .tree { font-family: var(--ms-font-mono); font-size: 15px; line-height: 1.5; white-space: pre; overflow-x: auto; padding: 12px; border-radius: 10px; background: var(--ms-surface-2); margin: 0; }
+  .err { color: var(--ms-bad); font-weight: 700; }
+  table.sym { border-collapse: collapse; font-size: 15px; margin-top: 10px; }
+  table.sym th, table.sym td { border-bottom: 1px solid var(--ms-line); padding: 4px 12px; text-align: left; }
+  table.sym th { background: var(--ms-surface-2); font-size: 13px; }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.2.2 Applications generation</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.2.2</p>
+  <h1>Applications generation</h1>
+  <p class="intro">Choosing application and utility software, open and closed source, the three kinds of translator, what a compiler actually does at each stage, and how linkers, loaders and libraries turn compiled code into a running program.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="applications">
+    <div class="sec-head"><span class="sec-num">1.2.2a</span><h2>Applications</h2></div>
+    <p><span class="term">Application software</span> lets users carry out tasks. In the exam you'll be asked to <strong>justify</strong> a choice of application for a user's needs, so link its features to the scenario.</p>
+    <div class="table-wrap"><table class="def">
+      <thead><tr><th scope="col">Application</th><th scope="col">Useful features</th><th scope="col">Typical use</th></tr></thead>
+      <tr><th scope="row">Word processor</th><td>Formatting, templates, spell check, <strong>mail merge</strong>, track changes</td><td>Letters, reports, personalised mailings</td></tr>
+      <tr><th scope="row">Spreadsheet</th><td><strong>Formulas</strong> that recalculate, charts, modelling "what if" scenarios</td><td>Budgets, financial forecasts, analysing numerical data</td></tr>
+      <tr><th scope="row">Database</th><td>Stores large amounts of <strong>structured</strong> data; <strong>queries</strong> to search and sort; validation; reports; linked tables</td><td>Customer, stock, patient and student records</td></tr>
+      <tr><th scope="row">Desktop publishing</th><td>Precise page layout, frames, combining text and images</td><td>Posters, leaflets, magazines</td></tr>
+      <tr><th scope="row">Graphics / image editing</th><td>Layers, filters, vector or bitmap tools</td><td>Logos, photo editing</td></tr>
+      <tr><th scope="row">Presentation</th><td>Slides, animations, speaker notes</td><td>Talks, lessons</td></tr>
+      <tr><th scope="row">Web browser</th><td>Renders HTML/CSS, runs JavaScript, bookmarks, extensions</td><td>Accessing websites and web apps</td></tr>
+    </table></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="utilities">
+    <div class="sec-head"><span class="sec-num">1.2.2b</span><h2>Utilities</h2></div>
+    <p><span class="term">Utilities</span> are small programs that perform a <strong>specific task to maintain or improve</strong> the computer, rather than doing the user's work.</p>
+    <table class="def">
+      <tr><th scope="row">Anti-malware</th><td>Scans files for known malware signatures and suspicious behaviour; quarantines threats</td></tr>
+      <tr><th scope="row">Disk defragmenter</th><td>Rearranges file fragments on a hard disk so each file is contiguous, reducing head movement and access time</td></tr>
+      <tr><th scope="row">Compression</th><td>Reduces file sizes for storage or transmission</td></tr>
+      <tr><th scope="row">Backup</th><td>Copies data (full or incremental) so it can be restored after loss</td></tr>
+      <tr><th scope="row">Encryption</th><td>Scrambles files or drives so they can't be read without the key</td></tr>
+      <tr><th scope="row">Disk clean-up / file manager</th><td>Removes temporary and duplicate files; organises files and folders</td></tr>
+    </table>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="source">
+    <div class="sec-head"><span class="sec-num">1.2.2c</span><h2>Open source and closed source</h2></div>
+    <div class="two-col">
+      <div class="mini"><h4>Open source</h4><ul>
+        <li><strong>Source code is available</strong>; users can study, modify and redistribute it (under its licence)</li>
+        <li>Usually free; a community finds and fixes bugs; can be adapted to exact needs</li>
+        <li>✗ Support may be informal; documentation and polish vary; may need expertise to adapt</li>
+        <li>e.g. Linux, Firefox, LibreOffice, Python</li>
+      </ul></div>
+      <div class="mini"><h4>Closed source (proprietary)</h4><ul>
+        <li>Only the <strong>compiled</strong> program is supplied; source code is kept secret</li>
+        <li>Licence restricts copying and modification; usually paid</li>
+        <li>✓ Professional support, regular updates, often well tested and polished</li>
+        <li>✗ Can't fix or customise it yourself; tied to the vendor</li>
+        <li>e.g. Microsoft Office, Adobe Photoshop, macOS</li>
+      </ul></div>
+    </div>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Answer from the point of view in the question. A <strong>user</strong> cares about cost, support and features; a <strong>developer</strong> releasing software cares about income, protecting their work, and community contributions.</p>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="translators">
+    <div class="sec-head"><span class="sec-num">1.2.2d</span><h2>Translators</h2></div>
+    <table class="def">
+      <tr><th scope="row">Assembler</th><td>Translates <strong>assembly language</strong> into machine code. Each mnemonic translates into <strong>one</strong> machine code instruction.</td></tr>
+      <tr><th scope="row">Compiler</th><td>Translates the <strong>whole</strong> high-level program into <strong>object code</strong> in one go. Errors are reported after compilation. The result runs quickly and can be distributed without the source code — but it's platform-specific and must be recompiled after every change.</td></tr>
+      <tr><th scope="row">Interpreter</th><td>Translates and executes the program <strong>one statement at a time</strong>. No object code is produced; it stops at the first error, which helps debugging. Slower to run, and the user needs the interpreter and source code.</td></tr>
+    </table>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Many modern languages combine both. Java and C# compile to <strong>intermediate code</strong> (bytecode), which a virtual machine runs — often using a <strong>just-in-time (JIT) compiler</strong> that compiles frequently used parts to machine code while the program runs.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="compilation">
+    <div class="sec-head"><span class="sec-num">1.2.2e</span><h2>Stages of compilation</h2></div>
+    <table class="def">
+      <tr><th scope="row">1. Lexical analysis</th><td>Removes <strong>whitespace and comments</strong>. Splits the source code into <strong>tokens</strong> (keywords, identifiers, operators, literals). Identifiers are added to the <strong>symbol table</strong>. Invalid tokens (e.g. an illegal identifier) are reported.</td></tr>
+      <tr><th scope="row">2. Syntax analysis</th><td>Checks the sequence of tokens against the <strong>grammar rules</strong> of the language and builds an <strong>abstract syntax tree</strong>. <strong>Syntax errors</strong> are reported. Further details such as data types and scope are added to the symbol table.</td></tr>
+      <tr><th scope="row">3. Code generation</th><td>Converts the syntax tree into <strong>object code</strong> (machine code, or an intermediate form).</td></tr>
+      <tr><th scope="row">4. Optimisation</th><td>Makes the code <strong>run faster or use less memory</strong> without changing what it does — e.g. removing redundant or unreachable code, working out constant expressions at compile time (<code>2 * 3</code> → <code>6</code>), simplifying <code>x * 1</code> to <code>x</code>. It can make compilation slower, and over-aggressive optimisation can introduce bugs.</td></tr>
+    </table>
+
+    <div class="tool" id="compiler">
+      <p class="tool-title">Try it: watch a compiler at work</p>
+      <p class="tool-sub">Type an assignment statement (letters, numbers, + − * / and brackets), or pick one. Then look at each stage.</p>
+      <div class="presets" id="cp-presets"></div>
+      <div class="ctl"><label for="cp-in" class="sr">Source code</label><input class="field" style="font-family:var(--ms-font-mono)" type="text" id="cp-in" value="total = total + price * 2 * 3 // add VAT" autocomplete="off" spellcheck="false"></div>
+      <div class="stage-tabs" role="tablist" aria-label="Compilation stages" id="cp-tabs"></div>
+      <div id="cp-out" role="tabpanel" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="linking">
+    <div class="sec-head"><span class="sec-num">1.2.2f</span><h2>Linkers, loaders and libraries</h2></div>
+    <p><span class="term">Libraries</span> are collections of <strong>pre-written, pre-tested</strong> code (e.g. for maths, graphics or networking) that programs can use.</p>
+    <ul>
+      <li>✓ Saves development time; already tested, so more reliable; written by experts; can be written in another language</li>
+      <li>✗ May include more than you need; you depend on someone else to fix bugs; a library update can break your program</li>
+    </ul>
+    <p>A <span class="term">linker</span> combines the compiled object code of a program with the object code of any <strong>libraries</strong> and other modules it uses, resolving references between them, to produce one executable.</p>
+    <div class="two-col">
+      <div class="mini"><h4>Static linking</h4><p>The library code is <strong>copied into the executable</strong>. The program is self-contained and won't break if libraries change — but the file is larger, and library fixes need a recompile.</p></div>
+      <div class="mini"><h4>Dynamic linking</h4><p>The executable only contains <strong>references</strong> to shared libraries (e.g. DLLs), loaded when the program runs. Smaller files, libraries shared between programs and updated once — but the program fails if the library is missing or an incompatible version.</p></div>
+    </div>
+    <p>A <span class="term">loader</span> is part of the operating system. It <strong>copies the executable into memory</strong>, adjusts memory addresses to where the program has actually been placed (relocation), and loads any dynamically linked libraries it needs, ready to run.</p>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Previous: <a href="1-2-1-systems-software.html">1.2.1 Systems software</a> · Next: <a href="1-2-3-software-development.html">1.2.3 Software development</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-2-2-progress',
+  questions: [
+    { id: 'q1', marks: 3, text: 'A charity keeps records of 2,000 donors and wants to find all donors in a particular town who gave over £100 last year. Justify the type of application software it should use.',
+      points: ['A database (management system)', 'Can store large amounts of structured data / records in tables', 'Queries can search / filter by town and amount quickly; reports / mail merge for letters'],
+      guide: '1 mark for the application, up to 2 for justification linked to the scenario.' },
+    { id: 'q2', marks: 2, text: 'Describe the purpose of two utility programs.',
+      points: ['First utility named with its purpose, e.g. defragmenter reorganises fragmented files to speed up access', 'Second utility named with its purpose, e.g. backup copies data so it can be restored if lost'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 4, text: 'A school is deciding whether to use open source or closed source office software. Discuss the advantages of each for the school.',
+      points: ['Open source is usually free, saving licence costs', 'Open source can be modified / customised by the school', 'Closed source has professional support / regular updates', 'Closed source may be more familiar / polished / compatible with files students use at home or in work'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 4, text: 'Describe what happens during lexical analysis.',
+      points: ['Whitespace and comments are removed', 'The code is split into tokens', 'e.g. keywords, identifiers, operators, literals', 'Identifiers are added to the symbol table', 'Lexical errors (e.g. invalid identifiers) are reported'],
+      guide: 'Any four, 1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Describe what happens during syntax analysis.',
+      points: ['Tokens are checked against the grammar rules of the language', 'An abstract syntax tree is built', 'Syntax errors are reported / the symbol table is updated with further details such as data types'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 3, text: 'Explain the purpose of code optimisation and give one drawback.',
+      points: ['Makes the program run faster / use less memory', 'e.g. removing redundant code / calculating constant expressions at compile time', 'Drawback: increases compilation time / can introduce bugs / makes debugging harder'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'Explain the roles of a linker and a loader, and the difference between static and dynamic linking.',
+      points: ['Linker combines object code with library code / other modules into one executable', 'Loader copies the executable into memory (and relocates addresses) ready to run', 'Static linking copies library code into the executable', 'Dynamic linking stores references, and libraries are loaded at run time'],
+      guide: '1 mark each.' },
+    { id: 'q8', marks: 2, text: 'Give two advantages of using libraries when writing a program.',
+      points: ['Saves time — code does not have to be written from scratch', 'Already tested, so more reliable', 'Written by experts / can use code written in another language'],
+      guide: 'Any two, 1 mark each.' },
+    { id: 'q9', marks: 9, text: 'A small company has written a new image-editing application. Discuss whether it should release the application as open source or closed source.',
+      points: ['Closed source: can charge for licences, generating income to fund development', 'Closed source: protects the company\'s code / ideas from competitors', 'Closed source: the company controls updates and quality, and can sell support', 'Open source: community can find and fix bugs and add features', 'Open source: free, so likely to gain more users / reputation quickly', 'Open source: income must come from elsewhere, e.g. support, donations, premium features', 'Competitors could copy and modify open source code (depending on the licence)', 'Consider the size of the company, its market and existing competition', 'A justified conclusion'],
+      levels: [
+        ['7–9 marks', 'Thorough understanding of both models, applied to a small company and an image editor. Both sides weighed with a well-supported conclusion.'],
+        ['4–6 marks', 'Good understanding with some application to the company. Some evaluation; conclusion partly supported.'],
+        ['1–3 marks', 'Basic points about open or closed source, mostly not applied. Little evaluation.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+  var PRE = ['total = total + price * 2 * 3 // add VAT', 'y = (a + 0) * 1 + b * c', 'area = width * height', 'x = 5 * (2 + 3)', 'z = a + * b', 'z = 2cats + 1'];
+  var input = document.getElementById('cp-in');
+  PRE.forEach(function (s) { var b = document.createElement('button'); b.type = 'button'; b.textContent = s; b.addEventListener('click', function () { input.value = s; run(); }); document.getElementById('cp-presets').appendChild(b); });
+  var STAGES = ['Lexical analysis', 'Syntax analysis', 'Code generation', 'Optimisation'];
+  var current = 0, result = null;
+  var tabs = document.getElementById('cp-tabs');
+  STAGES.forEach(function (s, i) {
+    var b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); b.textContent = (i + 1) + '. ' + s;
+    b.addEventListener('click', function () { current = i; show(); });
+    tabs.appendChild(b);
+  });
+
+  function lex(src) {
+    var tokens = [], i = 0, comment = '';
+    while (i < src.length) {
+      var c = src[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if (src.slice(i, i + 2) === '//') { comment = src.slice(i); break; }
+      var m;
+      if ((m = /^\d+[A-Za-z_]\w*/.exec(src.slice(i)))) throw { stage: 0, msg: 'Lexical error: "' + m[0] + '" is not a valid token — identifiers cannot start with a digit.', tokens: tokens };
+      if ((m = /^\d+/.exec(src.slice(i)))) { tokens.push({ t: 'num', v: m[0], k: 'Literal' }); i += m[0].length; continue; }
+      if ((m = /^[A-Za-z_]\w*/.exec(src.slice(i)))) { tokens.push({ t: 'id', v: m[0], k: 'Identifier' }); i += m[0].length; continue; }
+      if ('+-*/'.indexOf(c) >= 0) { tokens.push({ t: 'op', v: c, k: 'Operator' }); i++; continue; }
+      if (c === '=') { tokens.push({ t: 'op', v: c, k: 'Assignment' }); i++; continue; }
+      if (c === '(' || c === ')') { tokens.push({ t: 'p', v: c, k: 'Bracket' }); i++; continue; }
+      throw { stage: 0, msg: 'Lexical error: unexpected character "' + c + '".', tokens: tokens };
+    }
+    return { tokens: tokens, comment: comment };
+  }
+  function parse(tokens) {
+    var p = 0;
+    function peek() { return tokens[p]; }
+    function expect(v, what) { var t = tokens[p]; if (!t || t.v !== v) throw { stage: 1, msg: 'Syntax error: expected ' + what + (t ? ' but found "' + t.v + '"' : ' but the statement ended') + '.' }; p++; }
+    function expr() { var a = term(); while (peek() && (peek().v === '+' || peek().v === '-')) { var op = tokens[p++].v; a = { op: op, l: a, r: term() }; } return a; }
+    function term() { var a = factor(); while (peek() && (peek().v === '*' || peek().v === '/')) { var op = tokens[p++].v; a = { op: op, l: a, r: factor() }; } return a; }
+    function factor() {
+      var t = tokens[p];
+      if (!t) throw { stage: 1, msg: 'Syntax error: the expression ends too early.' };
+      if (t.t === 'num') { p++; return { num: +t.v }; }
+      if (t.t === 'id') { p++; return { id: t.v }; }
+      if (t.v === '(') { p++; var e = expr(); expect(')', 'a closing bracket )'); return e; }
+      throw { stage: 1, msg: 'Syntax error: "' + t.v + '" cannot appear here — an operand (a variable, number or bracket) was expected.' };
+    }
+    if (!tokens.length || tokens[0].t !== 'id') throw { stage: 1, msg: 'Syntax error: a statement must start with a variable name.' };
+    var target = tokens[p++].v;
+    expect('=', 'an assignment operator =');
+    var e = expr();
+    if (p < tokens.length) throw { stage: 1, msg: 'Syntax error: unexpected "' + tokens[p].v + '" after the end of the expression.' };
+    return { target: target, expr: e };
+  }
+  function treeText(n, prefix, last, out) {
+    var label = n.op ? n.op : n.num != null ? String(n.num) : n.id;
+    out.push(prefix + (prefix ? (last ? '└─ ' : '├─ ') : '') + label);
+    if (n.op) { var np = prefix + (prefix ? (last ? '   ' : '│  ') : ''); treeText(n.l, np || ' ', false, out); treeText(n.r, np || ' ', true, out); }
+    return out;
+  }
+  function gen(ast) {
+    var code = [], tn = 0;
+    function g(n) { if (n.num != null) return String(n.num); if (n.id) return n.id; var a = g(n.l), b = g(n.r), t = 't' + (++tn); code.push(t + ' = ' + a + ' ' + n.op + ' ' + b); return t; }
+    var r = g(ast.expr);
+    code.push(ast.target + ' = ' + r);
+    return code;
+  }
+  function optimise(n, notes) {
+    if (!n.op) return n;
+    var l = optimise(n.l, notes), r = optimise(n.r, notes);
+    if (l.num != null && r.num != null && !(n.op === '/' && r.num === 0)) {
+      var v = n.op === '+' ? l.num + r.num : n.op === '-' ? l.num - r.num : n.op === '*' ? l.num * r.num : l.num / r.num;
+      notes.push('Constant folding: ' + l.num + ' ' + n.op + ' ' + r.num + ' is worked out now, as ' + v + ', instead of every time the program runs.');
+      return { num: v };
+    }
+    if (n.op === '*' && (r.num === 1 || l.num === 1)) { notes.push('Multiplying by 1 has no effect, so it is removed.'); return r.num === 1 ? l : r; }
+    if (n.op === '+' && (r.num === 0 || l.num === 0)) { notes.push('Adding 0 has no effect, so it is removed.'); return r.num === 0 ? l : r; }
+    if (n.op === '*' && (r.num === 0 || l.num === 0)) { notes.push('Anything multiplied by 0 is 0.'); return { num: 0 }; }
+    // reassociate (a * 2) * 3 → a * 6
+    if (n.op === '*' && r.num != null && l.op === '*' && l.r.num != null) { notes.push('Reordered (x × ' + l.r.num + ') × ' + r.num + ' into x × ' + (l.r.num * r.num) + '.'); return { op: '*', l: l.l, r: { num: l.r.num * r.num } }; }
+    return { op: n.op, l: l, r: r };
+  }
+  function run() {
+    result = { error: null };
+    try {
+      var lx = lex(input.value);
+      result.tokens = lx.tokens; result.comment = lx.comment;
+      result.ast = parse(lx.tokens);
+      result.code = gen(result.ast);
+      result.notes = [];
+      var opt = { target: result.ast.target, expr: optimise(result.ast.expr, result.notes) };
+      result.opt = gen(opt);
+    } catch (e) {
+      if (!e.stage && e.stage !== 0) throw e;
+      result.error = e;
+      if (e.tokens && !result.tokens) result.tokens = e.tokens;
+    }
+    if (result.error && current > result.error.stage) current = result.error.stage;
+    show();
+  }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function show() {
+    var errStage = result.error ? result.error.stage : 99;
+    tabs.querySelectorAll('button').forEach(function (b, i) { b.setAttribute('aria-selected', i === current ? 'true' : 'false'); b.disabled = i > errStage; });
+    var out = document.getElementById('cp-out'); out.innerHTML = '';
+    if (current === errStage) { out.appendChild(el('p', 'explain err', result.error.msg)); if (errStage === 0 || !result.tokens) return; }
+    if (current === 0) {
+      out.appendChild(el('p', null, 'Whitespace' + (result.comment ? ' and the comment "' + result.comment + '"' : '') + ' removed. The statement is split into ' + result.tokens.length + ' tokens:'));
+      var tk = el('div', 'tokens');
+      result.tokens.forEach(function (t) { var d = el('span', 'tok ' + t.t); d.appendChild(el('b', null, t.v)); d.appendChild(el('small', null, t.k)); tk.appendChild(d); });
+      out.appendChild(tk);
+      var ids = []; result.tokens.forEach(function (t) { if (t.t === 'id' && ids.indexOf(t.v) < 0) ids.push(t.v); });
+      var tb = el('table', 'sym');
+      tb.innerHTML = '<thead><tr><th scope="col">Symbol table: identifier</th><th scope="col">Token type</th></tr></thead>';
+      var body = el('tbody');
+      ids.forEach(function (id) { var tr = el('tr'); tr.append(el('td', null, id), el('td', null, 'Identifier (variable)')); body.appendChild(tr); });
+      tb.appendChild(body); out.appendChild(tb);
+    } else if (current === 1 && !result.error) {
+      out.appendChild(el('p', null, 'The tokens match the grammar "variable = expression", so this abstract syntax tree is built. Operations lower in the tree are carried out first, which is how the tree records operator precedence and brackets.'));
+      var lines = [result.ast.target + ' ='].concat(treeText(result.ast.expr, ' ', true, []).map(function (l) { return '   ' + l.replace(/^ /, ''); }));
+      out.appendChild(el('pre', 'tree', lines.join('\n')));
+    } else if (current === 2) {
+      out.appendChild(el('p', null, 'The tree is turned into simple instructions, one operation each (three-address code — close to machine code). t1, t2 … are temporary locations.'));
+      out.appendChild(el('pre', 'tree', result.code.join('\n')));
+    } else if (current === 3) {
+      if (result.notes.length) {
+        var ul = el('ul'); result.notes.forEach(function (n) { ul.appendChild(el('li', null, n)); }); out.appendChild(ul);
+        out.appendChild(el('pre', 'tree', result.opt.join('\n')));
+        out.appendChild(el('p', 'explain', result.code.length + ' instructions became ' + result.opt.length + '. The program does exactly the same thing, but faster.'));
+      } else {
+        out.appendChild(el('pre', 'tree', result.opt.join('\n')));
+        out.appendChild(el('p', 'explain', 'No simple optimisations were found for this statement. Try one with constants, like "x = 5 * (2 + 3)".'));
+      }
+    }
+  }
+  input.addEventListener('input', run);
+  run();
+})();
+</script>
+</body>
+</html>
