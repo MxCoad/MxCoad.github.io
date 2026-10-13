@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A-Level revision notes — Mx. Coad</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<meta name="description" content="OCR A-Level Computer Science H446 revision notes for Paper 1, with interactive tools and self-marked exam questions.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; background: var(--ms-bg); color: var(--ms-text); font-family: var(--ms-font-body); font-size: 18px; line-height: 1.55; --stage: var(--ks-alevel); }
+  a { color: var(--ms-accent); }
+  :focus-visible { outline: 3px solid var(--ms-focus); outline-offset: 2px; }
+  main { max-width: 1100px; margin: 0 auto; padding: 48px 20px 96px; }
+  .crumbs { margin: 0 0 14px; font-size: 15px; color: var(--ms-muted); }
+  .crumbs a { color: var(--ms-muted); }
+  .eyebrow { display: inline-block; margin: 0 0 10px; padding: 3px 12px; border-radius: 999px; background: var(--stage); color: var(--ms-on-stage); font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+  h1 { margin: 0 0 12px; font-family: var(--ms-font-head); font-size: clamp(36px, 5vw, 52px); line-height: 1.1; }
+  .intro { margin: 0; max-width: 64ch; font-size: 20px; color: var(--ms-muted); }
+  h3.group { margin: 30px 0 12px; font-family: var(--ms-font-body); font-size: 15px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ms-muted); }
+  h2 { margin: 52px 0 6px; font-family: var(--ms-font-head); font-size: 30px; }
+  .paper-sub { margin: 0 0 18px; color: var(--ms-muted); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
+  .card {
+    display: flex; flex-direction: column; gap: 8px; padding: 20px 22px; border-radius: var(--ms-radius);
+    border: 1px solid var(--ms-line); border-top: 6px solid var(--stage); background: var(--ms-surface);
+    color: var(--ms-text); text-decoration: none; transition: box-shadow .15s, transform .15s;
+  }
+  .card:hover { color: var(--ms-text); box-shadow: var(--ms-shadow); transform: translateY(-2px); }
+  .num { font-family: var(--ms-font-mono); font-weight: 700; color: var(--ms-muted); font-size: 15px; }
+  .title { font-family: var(--ms-font-head); font-size: 22px; font-weight: 700; line-height: 1.25; }
+  .desc { font-size: 16px; color: var(--ms-muted); }
+  .prog { margin-top: auto; padding-top: 8px; font-size: 14px; color: var(--ms-muted); }
+  .bar { height: 8px; border-radius: 999px; background: var(--ms-surface-2); overflow: hidden; margin-top: 6px; }
+  .bar > div { height: 100%; background: var(--ms-good); border-radius: 999px; }
+  .extra { margin-top: 52px; padding: 18px 20px; border-radius: var(--ms-radius); background: var(--ms-surface); border: 1px solid var(--ms-line); }
+  .extra h2 { margin: 0 0 6px; font-size: 22px; }
+  .extra p { margin: 0; }
+  @media (prefers-reduced-motion: reduce) { .card { transition: none; } .card:hover { transform: none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › A-Level revision notes</p>
+  <p class="eyebrow">OCR H446</p>
+  <h1>A-Level Computer Science revision</h1>
+  <p class="intro">Notes, interactive tools and self-marked exam questions for every Paper 1 topic on the OCR H446 specification. Your progress on each topic is saved in this browser.</p>
+
+  <h2>Paper 1: Computer systems</h2>
+  <p class="paper-sub">2 hours 30 minutes · 140 marks · 40% of the A-Level</p>
+  <div id="paper1"></div>
+
+  <div class="extra">
+    <h2>More practice</h2>
+    <p><a href="/Binary_Practice/binary.html">Binary practice tools</a> — negative numbers and normalised floating point. · <a href="/GCSE/">GCSE revision notes</a> — a quick refresher on the basics. Paper 2 (algorithms and programming) notes are not here yet.</p>
+  </div>
+</main>
+<script>
+(function () {
+  var GROUPS = [
+    ['1.1', 'The characteristics of contemporary processors, input, output and storage devices'],
+    ['1.2', 'Software and software development'],
+    ['1.3', 'Exchanging data'],
+    ['1.4', 'Data types, data structures and algorithms'],
+    ['1.5', 'Legal, moral, cultural and ethical issues']
+  ];
+  var TOPICS = [
+    ['1-1-1', '1-1-1-processor.html', 'Structure and function of the processor', 'Registers, buses, the fetch–decode–execute cycle, performance, pipelining, and Von Neumann and Harvard architectures.', 6],
+    ['1-1-2', '1-1-2-types-of-processor.html', 'Types of processor', 'CISC and RISC, GPUs, multicore and parallel systems.', 3],
+    ['1-1-3', '1-1-3-input-output-storage.html', 'Input, output and storage', 'Choosing devices, magnetic, flash and optical storage, RAM, ROM and virtual storage.', 4],
+    ['1-2-1', '1-2-1-systems-software.html', 'Systems software', 'Operating systems, memory management, interrupts, scheduling, the BIOS, drivers and virtual machines.', 6],
+    ['1-2-2', '1-2-2-applications-generation.html', 'Applications generation', 'Applications, utilities, open and closed source, translators, compilation, linkers and loaders.', 6],
+    ['1-2-3', '1-2-3-software-development.html', 'Software development', 'Waterfall, agile, extreme programming, spiral and RAD; writing and following algorithms.', 5],
+    ['1-2-4', '1-2-4-programming-languages.html', 'Types of programming language', 'Paradigms, procedural languages, assembly language with LMC, addressing modes and OOP.', 5],
+    ['1-3-1', '1-3-1-compression-encryption-hashing.html', 'Compression, encryption and hashing', 'Lossy and lossless compression, RLE, dictionary coding, symmetric and asymmetric encryption, hashing.', 4],
+    ['1-3-2', '1-3-2-databases.html', 'Databases', 'Relational databases, keys, ERDs, normalisation, SQL, referential integrity, ACID and record locking.', 5],
+    ['1-3-3', '1-3-3-networks.html', 'Networks', 'Protocols, the TCP/IP stack, DNS, packet switching, security, hardware, client-server and P2P.', 6],
+    ['1-3-4', '1-3-4-web-technologies.html', 'Web technologies', 'HTML, CSS and JavaScript, search engine indexing, PageRank, client- and server-side processing.', 5],
+    ['1-4-1', '1-4-1-data-types.html', 'Data types', 'Two\'s complement, hex, binary arithmetic, floating point, bitwise masks and character sets.', 6],
+    ['1-4-2', '1-4-2-data-structures.html', 'Data structures', 'Arrays, records, tuples, stacks, queues, linked lists, graphs, trees and hash tables.', 6],
+    ['1-4-3', '1-4-3-boolean-algebra.html', 'Boolean algebra', 'Logic gates, Boolean laws, Karnaugh maps, adders and D-type flip-flops.', 5],
+    ['1-5-1', '1-5-1-legislation.html', 'Computing-related legislation', 'The Data Protection Act, Computer Misuse Act, Copyright Act and RIPA.', 5],
+    ['1-5-2', '1-5-2-moral-ethical-issues.html', 'Moral and ethical issues', 'Automation, AI, the environment, censorship, monitoring, piracy and designing for different cultures.', 7]
+  ];
+  var box = document.getElementById('paper1'), cards = {};
+  GROUPS.forEach(function (g) {
+    var h = document.createElement('h3'); h.className = 'group'; h.textContent = g[0] + ' ' + g[1];
+    var c = document.createElement('div'); c.className = 'cards';
+    box.append(h, c); cards[g[0]] = c;
+  });
+  TOPICS.forEach(function (t) {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem('alevel-' + t[0] + '-progress')) || {}; } catch (e) {}
+    var done = Object.keys(state.done || {}).filter(function (k) { return state.done[k]; }).length;
+    var marked = Object.keys(state.marks || {}).length;
+    var a = document.createElement('a');
+    a.className = 'card';
+    a.href = t[1];
+    var num = document.createElement('span'); num.className = 'num'; num.textContent = t[0].replace(/-/g, '.');
+    var title = document.createElement('span'); title.className = 'title'; title.textContent = t[2];
+    var desc = document.createElement('span'); desc.className = 'desc'; desc.textContent = t[3];
+    var prog = document.createElement('span'); prog.className = 'prog';
+    prog.textContent = done || marked ? done + ' of ' + t[4] + ' sections revised' + (marked ? ' · ' + marked + ' question' + (marked === 1 ? '' : 's') + ' marked' : '') : 'Not started yet';
+    var bar = document.createElement('div'); bar.className = 'bar'; bar.setAttribute('aria-hidden', 'true');
+    var fill = document.createElement('div'); fill.style.width = Math.min(100, done / t[4] * 100) + '%'; bar.appendChild(fill);
+    prog.appendChild(bar);
+    a.append(num, title, desc, prog);
+    cards[t[0].slice(0, 3).replace('-', '.')].appendChild(a);
+  });
+})();
+</script>
+</body>
+</html>
