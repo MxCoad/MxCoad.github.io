@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1.1.1 Structure and function of the processor — A-Level revision</title>
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js"></script>
+<link rel="stylesheet" href="/assets/topic.css">
+<meta name="description" content="OCR A-Level Computer Science H446 1.1.1: the ALU, control unit and registers, buses, the fetch-decode-execute cycle, factors affecting performance, pipelining, Von Neumann and Harvard architectures.">
+<style>
+  body { --stage: var(--ks-alevel); }
+
+  /* CPU stepper */
+  .cpu { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 14px; }
+  @media (max-width: 680px) { .cpu { grid-template-columns: 1fr; } }
+  .panel { border: 1px solid var(--ms-line); border-radius: 12px; padding: 12px; background: var(--ms-bg); }
+  .panel h4 { margin: 0 0 10px; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: var(--ms-muted); }
+  .regs { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 8px; }
+  .reg { border: 2px solid var(--ms-line); border-radius: 10px; padding: 6px 8px; background: var(--ms-surface); transition: border-color .2s, background .2s; }
+  .reg.changed { border-color: var(--ms-accent); background: var(--ms-accent-soft); }
+  .reg-name { font-size: 13px; font-weight: 700; color: var(--ms-muted); }
+  .reg-val { font-family: var(--ms-font-mono); font-size: 19px; font-weight: 700; min-height: 1.4em; white-space: nowrap; }
+  .units { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+  .unit { border: 2px dashed var(--ms-line-strong); border-radius: 10px; padding: 6px; font-size: 14px; font-weight: 700; color: var(--ms-muted); text-align: center; }
+  .unit.active { border-style: solid; border-color: var(--ks-alevel); background: color-mix(in srgb, var(--ks-alevel) 22%, var(--ms-surface)); color: var(--ms-text); }
+  .buses { display: grid; gap: 6px; margin-top: 10px; }
+  .bus { display: grid; grid-template-columns: 110px 1fr; gap: 8px; align-items: center; padding: 6px 10px; border-radius: 8px; background: var(--ms-surface); border: 1px solid var(--ms-line); font-size: 15px; }
+  .bus b { font-size: 14px; }
+  .bus span { font-family: var(--ms-font-mono); font-weight: 700; }
+  .bus.active { border-color: var(--ks-alevel); background: color-mix(in srgb, var(--ks-alevel) 18%, var(--ms-surface)); }
+  table.mem { width: 100%; border-collapse: collapse; font-family: var(--ms-font-mono); font-size: 15px; }
+  table.mem th { font-family: var(--ms-font-body); font-size: 13px; text-align: left; color: var(--ms-muted); padding: 4px 8px; }
+  table.mem td { padding: 5px 8px; border-top: 1px solid var(--ms-line); }
+  table.mem tr.at td { background: color-mix(in srgb, var(--ks-alevel) 25%, var(--ms-surface)); font-weight: 700; }
+  table.mem tr.changed td:last-child { color: var(--ms-good); font-weight: 700; }
+  .stage-bar { display: flex; gap: 6px; margin: 14px 0 0; }
+  .stage-pill { flex: 1; text-align: center; padding: 6px 4px; border-radius: 999px; font-size: 14px; font-weight: 700; background: var(--ms-surface-2); color: var(--ms-muted); }
+  .stage-pill.on { background: var(--ms-accent); color: var(--ms-on-accent); }
+  .rtn { font-family: var(--ms-font-mono); font-weight: 700; color: var(--ms-accent); display: block; margin-bottom: 4px; }
+
+  /* Pipeline */
+  .pipe-wrap { overflow-x: auto; margin-top: 12px; }
+  table.pipe { border-collapse: separate; border-spacing: 3px; font-size: 15px; }
+  table.pipe th { font-weight: 700; color: var(--ms-muted); font-size: 13px; padding: 2px 6px; white-space: nowrap; }
+  table.pipe th[scope=row] { text-align: left; font-family: var(--ms-font-mono); color: var(--ms-text); font-size: 14px; }
+  table.pipe td { width: 40px; height: 36px; text-align: center; border-radius: 6px; font-family: var(--ms-font-mono); font-weight: 700; color: #18202B; }
+  table.pipe td.F { background: var(--ks-gcse); }
+  table.pipe td.D { background: var(--ks-alevel); }
+  table.pipe td.E { background: var(--ks-btec); }
+  table.pipe td.X { background: var(--ms-bad-soft); color: var(--ms-bad); text-decoration: line-through; }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 14px; color: var(--ms-muted); margin-top: 8px; }
+  .legend i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 5px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; font-weight: 700; cursor: pointer; }
+  .switch input { width: 22px; height: 22px; accent-color: var(--ms-accent); }
+</style>
+</head>
+<body>
+<main>
+  <p class="crumbs"><a href="/">Home</a> › <a href="/ALevel/">A-Level</a> › 1.1.1 Structure and function of the processor</p>
+  <p class="eyebrow">OCR H446 · Paper 1 · 1.1.1</p>
+  <h1>Structure and function of the processor</h1>
+  <p class="intro">What's inside a CPU, how data moves between it and memory, the fetch–decode–execute cycle in register-transfer detail, what makes a processor faster, pipelining, and the architectures processors are built on.</p>
+
+  <div id="topic-progress"></div>
+  <nav id="topic-toc"></nav>
+
+  <!-- 1 -->
+  <section class="topic" id="components">
+    <div class="sec-head"><span class="sec-num">1.1.1a</span><h2>Components of the processor</h2></div>
+    <table class="def">
+      <tr><th scope="row">ALU<small>Arithmetic logic unit</small></th><td>Performs <strong>arithmetic</strong> (add, subtract, multiply, shifts) and <strong>logical</strong> operations (AND, OR, NOT, XOR, comparisons). Results go to the accumulator, and flags in the status register record things like a zero or negative result, a carry or an overflow.</td></tr>
+      <tr><th scope="row">CU<small>Control unit</small></th><td><strong>Decodes</strong> instructions and <strong>coordinates</strong> the processor, sending <strong>control signals</strong> along the control bus to the other components. It manages the fetch–decode–execute cycle and is driven by the system clock.</td></tr>
+      <tr><th scope="row">Registers</th><td>Very small, very fast memory locations <strong>inside the CPU</strong>, each holding one item being used right now. Some are general-purpose; others have a special purpose (below).</td></tr>
+    </table>
+    <h3>Special-purpose registers</h3>
+    <table class="def">
+      <tr><th scope="row">PC<small>Program counter</small></th><td>Holds the <strong>address of the next instruction</strong> to be fetched. Incremented during each fetch; changed by branch/jump instructions.</td></tr>
+      <tr><th scope="row">MAR<small>Memory address register</small></th><td>Holds the <strong>address</strong> of the memory location to be <strong>read from or written to</strong>.</td></tr>
+      <tr><th scope="row">MDR<small>Memory data register</small></th><td>Holds the <strong>data or instruction</strong> just <strong>fetched from</strong> memory, or waiting to be <strong>written to</strong> memory. It's a buffer between the CPU and memory.</td></tr>
+      <tr><th scope="row">CIR<small>Current instruction register</small></th><td>Holds the <strong>instruction currently being decoded and executed</strong>, split into the <strong>opcode</strong> (what to do) and the <strong>operand</strong> (the data or address to use).</td></tr>
+      <tr><th scope="row">ACC<small>Accumulator</small></th><td>A general-purpose register that holds the <strong>results of calculations</strong> carried out by the ALU, and data being worked on.</td></tr>
+    </table>
+    <div class="box mistake">
+      <p class="box-label">Common mistakes</p>
+      <ul>
+        <li>The PC holds an <strong>address</strong>, not an instruction, and it doesn't "count instructions".</li>
+        <li>The <strong>CIR</strong>, not the MDR, is where the instruction is decoded. The MDR only holds it briefly on the way.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="topic" id="buses">
+    <div class="sec-head"><span class="sec-num">1.1.1a</span><h2>Buses</h2></div>
+    <p>A <span class="term">bus</span> is a set of parallel wires connecting components. Its <strong>width</strong> is the number of wires, which is the number of bits it can carry at once.</p>
+    <table class="def">
+      <tr><th scope="row">Address bus</th><td>Carries <strong>memory addresses</strong> from the MAR to memory (and I/O). <strong>One-directional</strong>. Its width sets how many locations can be addressed: an <em>n</em>-bit address bus can address <strong>2<sup><em>n</em></sup> locations</strong> (32 bits → about 4.3 billion).</td></tr>
+      <tr><th scope="row">Data bus</th><td>Carries <strong>data and instructions</strong> between the CPU, memory and I/O. <strong>Bi-directional</strong>. A wider data bus moves more bits per transfer.</td></tr>
+      <tr><th scope="row">Control bus</th><td>Carries <strong>control signals</strong> such as <em>memory read</em>, <em>memory write</em>, <em>clock</em>, <em>interrupt request</em>, <em>bus request/grant</em> and <em>reset</em>. <strong>Bi-directional</strong>, because components also signal back to the CPU.</td></tr>
+    </table>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>"Increasing the address bus width" → <strong>more memory can be addressed</strong> (each extra wire doubles it). "Increasing the data bus width" → <strong>more data transferred per cycle</strong>, so fewer transfers for large values.</p>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="topic" id="fde">
+    <div class="sec-head"><span class="sec-num">1.1.1a</span><h2>The fetch–decode–execute cycle</h2></div>
+    <p>A-Level answers should describe the cycle in terms of <strong>registers and buses</strong>. Square brackets mean "the contents of".</p>
+    <h3>Fetch</h3>
+    <ol>
+      <li><code>MAR ← [PC]</code> — the address in the PC is copied to the MAR.</li>
+      <li>The address is sent along the <strong>address bus</strong>, and the control unit sends a <strong>memory read</strong> signal on the <strong>control bus</strong>.</li>
+      <li><code>MDR ← [Memory]<sub>[MAR]</sub></code> — the instruction at that address travels along the <strong>data bus</strong> into the MDR.</li>
+      <li><code>PC ← [PC] + 1</code> — the PC is incremented (this can happen at the same time as step 3).</li>
+      <li><code>CIR ← [MDR]</code> — the instruction is copied into the CIR.</li>
+    </ol>
+    <h3>Decode</h3>
+    <p>The <strong>control unit</strong> decodes the instruction in the CIR, splitting it into <strong>opcode</strong> and <strong>operand</strong>.</p>
+    <h3>Execute</h3>
+    <p>The instruction is carried out. For <code>LDA 5</code>: <code>MAR ← 5</code>, then the data at address 5 comes back on the data bus into the MDR, then <code>ACC ← [MDR]</code>. For <code>ADD 6</code>, the ALU adds the fetched value to the ACC. A branch instruction loads a new address into the PC.</p>
+
+    <div class="tool" id="stepper">
+      <p class="tool-title">Try it: step through the cycle with buses</p>
+      <p class="tool-sub">A four-instruction program in Little Man Computer-style code. Each step shows the register transfer and which bus is in use.</p>
+      <div class="cpu">
+        <div class="panel">
+          <h4>Processor</h4>
+          <div class="regs">
+            <div class="reg" data-reg="pc"><div class="reg-name">PC</div><div class="reg-val"></div></div>
+            <div class="reg" data-reg="mar"><div class="reg-name">MAR</div><div class="reg-val"></div></div>
+            <div class="reg" data-reg="mdr"><div class="reg-name">MDR</div><div class="reg-val"></div></div>
+            <div class="reg" data-reg="cir"><div class="reg-name">CIR</div><div class="reg-val"></div></div>
+            <div class="reg" data-reg="acc"><div class="reg-name">ACC</div><div class="reg-val"></div></div>
+          </div>
+          <div class="units"><div class="unit" data-unit="cu">Control unit</div><div class="unit" data-unit="alu">ALU</div></div>
+          <div class="buses">
+            <div class="bus" data-bus="address"><b>Address bus</b><span></span></div>
+            <div class="bus" data-bus="data"><b>Data bus</b><span></span></div>
+            <div class="bus" data-bus="control"><b>Control bus</b><span></span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <h4>Main memory</h4>
+          <table class="mem"><thead><tr><th scope="col">Address</th><th scope="col">Contents</th></tr></thead><tbody id="mem-body"></tbody></table>
+        </div>
+      </div>
+      <div class="stage-bar" aria-hidden="true"><span class="stage-pill" data-stage="Fetch">Fetch</span><span class="stage-pill" data-stage="Decode">Decode</span><span class="stage-pill" data-stage="Execute">Execute</span></div>
+      <p class="explain" id="cpu-explain" aria-live="polite"></p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="cpu-next">Next step</button>
+        <button type="button" class="btn" id="cpu-back">Back</button>
+        <button type="button" class="btn" id="cpu-reset">Start again</button>
+        <span class="small" id="cpu-count" style="margin:0 0 0 auto"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="topic" id="performance">
+    <div class="sec-head"><span class="sec-num">1.1.1b</span><h2>Factors affecting performance</h2></div>
+    <table class="def">
+      <tr><th scope="row">Clock speed</th><td>The number of clock cycles per second (Hz). Each step of the FDE cycle is triggered by a clock pulse, so a higher clock speed means <strong>more instructions executed per second</strong>. Limited by <strong>heat</strong>: higher speeds use more power and need better cooling.</td></tr>
+      <tr><th scope="row">Number of cores</th><td>Each core is an independent processor that can run its own FDE cycle, so <strong>more instructions can be processed in parallel</strong>. The gain depends on the software: tasks must be <strong>split into threads</strong> that can run independently, and coordinating cores (sharing data, keeping caches consistent) has an overhead. Doubling cores never quite doubles performance.</td></tr>
+      <tr><th scope="row">Cache</th><td>Small, very fast memory on the CPU holding <strong>frequently or recently used</strong> instructions and data. A <strong>cache hit</strong> avoids a slow fetch from RAM. More cache means more hits, but it's <strong>expensive</strong>, and bigger caches are slightly slower to search — which is why there are levels: <strong>L1</strong> (smallest, fastest, per core), <strong>L2</strong>, then <strong>L3</strong> (largest, often shared between cores).</td></tr>
+    </table>
+    <div class="box stretch">
+      <p class="box-label">Going further</p>
+      <p>Performance also depends on <strong>word length</strong> (how many bits the CPU processes at once) and the <strong>bus widths</strong>. Clock speed alone can mislead: a CPU that does more work per cycle can beat a faster-clocked one.</p>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="topic" id="pipelining">
+    <div class="sec-head"><span class="sec-num">1.1.1c</span><h2>Pipelining</h2></div>
+    <p><span class="term">Pipelining</span> means <strong>overlapping the stages of different instructions</strong>: while one instruction is being executed, the next is being decoded and the one after that fetched. Each part of the processor stays busy instead of waiting, so <strong>more instructions are completed per unit of time</strong> (higher throughput) — though each single instruction still takes three stages.</p>
+    <p>The problem is <strong>branches</strong>. The processor fetches the <em>next</em> instructions in memory before it knows whether a branch will jump somewhere else. If the branch is taken, those part-processed instructions are wrong and must be thrown away — the pipeline is <strong>flushed</strong> — which wastes cycles.</p>
+
+    <div class="tool" id="pipe">
+      <p class="tool-title">Try it: with and without pipelining</p>
+      <p class="tool-sub">Each column is one clock cycle. Each instruction needs a Fetch, Decode and Execute stage.</p>
+      <div class="opts">
+        <fieldset class="ctl" style="min-width:260px"><legend class="sr">Mode</legend>
+          <div class="seg">
+            <label><input type="radio" name="pp" value="seq"><span>No pipelining</span></label>
+            <label><input type="radio" name="pp" value="pipe" checked><span>Pipelined</span></label>
+          </div>
+        </fieldset>
+        <label class="switch"><input type="checkbox" id="pp-branch">I3 is a branch that jumps to I7</label>
+      </div>
+      <div class="pipe-wrap"><table class="pipe" id="pp-table"></table></div>
+      <div class="legend"><span><i style="background:var(--ks-gcse)"></i>F = Fetch</span><span><i style="background:var(--ks-alevel)"></i>D = Decode</span><span><i style="background:var(--ks-btec)"></i>E = Execute</span><span><i style="background:var(--ms-bad-soft)"></i>Flushed</span></div>
+      <p class="explain" id="pp-say" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="topic" id="architectures">
+    <div class="sec-head"><span class="sec-num">1.1.1d</span><h2>Von Neumann, Harvard and contemporary architectures</h2></div>
+    <div class="two-col">
+      <div class="mini">
+        <h4>Von Neumann</h4>
+        <ul>
+          <li><strong>One memory</strong> holds both instructions and data (the stored program concept)</li>
+          <li><strong>One set of buses</strong> shared by both</li>
+          <li>Instructions are fetched and executed one at a time</li>
+          <li>✓ Simpler and cheaper; memory is used flexibly</li>
+          <li>✗ Instructions and data can't be fetched at the same time — the <strong>Von Neumann bottleneck</strong></li>
+          <li>Used in general-purpose PCs and laptops</li>
+        </ul>
+      </div>
+      <div class="mini">
+        <h4>Harvard</h4>
+        <ul>
+          <li><strong>Separate memories</strong> for instructions and data</li>
+          <li><strong>Separate buses</strong>, so an instruction and data can be fetched <strong>at the same time</strong> — faster</li>
+          <li>The two memories can be different sizes and types (e.g. instructions in ROM)</li>
+          <li>✗ More complex; unused space in one memory can't be used by the other</li>
+          <li>Used in <strong>embedded systems</strong> and digital signal processors</li>
+        </ul>
+      </div>
+    </div>
+    <h3>Contemporary processors</h3>
+    <p>Modern CPUs mix the two. Main memory is shared (Von Neumann), but each core has <strong>separate L1 caches for instructions and data</strong> (Harvard-style), so both can be fetched at once. This is sometimes called a <strong>modified Harvard architecture</strong>. Modern processors also use <strong>pipelining</strong>, <strong>multiple cores</strong> and <strong>SIMD</strong> instructions that apply one operation to several pieces of data at once.</p>
+    <div class="box exam">
+      <p class="box-label">In the exam</p>
+      <p>Comparison questions want <strong>both sides</strong> of each point: "Von Neumann uses one shared bus for data and instructions, <em>whereas</em> Harvard has separate buses, so…"</p>
+    </div>
+  </section>
+
+  <!-- Exam questions -->
+  <section class="topic no-progress" id="exam">
+    <div class="sec-head"><span class="sec-num">Test</span><h2>Exam-style questions</h2></div>
+    <p>Write your answer first, then press <strong>Show mark scheme</strong> and tick the points you got. Your answers are saved as you type.</p>
+    <div id="questions"></div>
+    <p class="small">These questions and mark schemes are written in the style of OCR H446 papers; they are not from real past papers.</p>
+  </section>
+
+  <footer class="page-foot">
+    <p>Next: <a href="1-1-2-types-of-processor.html">1.1.2 Types of processor</a> · <a href="index.html">All A-Level topics</a></p>
+  </footer>
+</main>
+
+<script>
+window.TOPIC = {
+  key: 'alevel-1-1-1-progress',
+  questions: [
+    { id: 'q1', marks: 4, text: 'Describe the purpose of each of these registers: PC, MAR, MDR, CIR.',
+      points: ['PC: holds the address of the next instruction to be fetched', 'MAR: holds the address of the memory location to be read from / written to', 'MDR: holds the data / instruction fetched from or to be written to memory', 'CIR: holds the instruction currently being decoded / executed'],
+      guide: '1 mark each.' },
+    { id: 'q2', marks: 3, text: 'Describe the function of the address bus, the data bus and the control bus.',
+      points: ['Address bus: carries memory addresses from the processor (MAR) to memory / is one-directional', 'Data bus: carries data / instructions between the processor and memory / I/O in both directions', 'Control bus: carries control signals, e.g. read / write / clock / interrupt'],
+      guide: '1 mark each.' },
+    { id: 'q3', marks: 2, text: 'Explain the effect of increasing the width of the address bus from 16 bits to 32 bits.',
+      points: ['More memory locations can be addressed', 'From 2^16 (65,536) to 2^32 (about 4.3 billion) locations / each extra bit doubles the addressable memory'],
+      guide: '1 mark each.' },
+    { id: 'q4', marks: 5, text: 'Describe how an instruction is fetched from memory and prepared for execution, referring to registers and buses.',
+      points: ['The contents of the PC are copied to the MAR', 'The address is sent along the address bus (and a memory read signal on the control bus)', 'The instruction at that address is sent along the data bus to the MDR', 'The PC is incremented', 'The contents of the MDR are copied to the CIR', 'The control unit decodes the instruction (into opcode and operand)'],
+      guide: 'Any five, 1 mark each.' },
+    { id: 'q5', marks: 3, text: 'Explain how pipelining improves the performance of a processor.',
+      points: ['Stages of different instructions are overlapped', 'e.g. while one instruction is executed, the next is decoded and the one after is fetched', 'Parts of the processor are not left idle, so more instructions are completed per unit of time / throughput increases'],
+      guide: '1 mark each.' },
+    { id: 'q6', marks: 2, text: 'Explain why a branch instruction can reduce the benefit of pipelining.',
+      points: ['Instructions after the branch have already been fetched / decoded', 'If the branch is taken they are not needed, so the pipeline is flushed and cycles are wasted'],
+      guide: '1 mark each.' },
+    { id: 'q7', marks: 4, text: 'Compare the Von Neumann and Harvard architectures.',
+      points: ['Von Neumann has one memory for instructions and data; Harvard has separate memories', 'Von Neumann shares one set of buses; Harvard has separate buses', 'Harvard can fetch an instruction and data at the same time, so it can be faster / Von Neumann has a bottleneck', 'Von Neumann is simpler / cheaper / used in general-purpose computers; Harvard is used in embedded systems / DSPs'],
+      guide: '1 mark per comparison point (both sides needed).' },
+    { id: 'q8', marks: 9, text: 'A company is choosing a processor for a new range of smart speakers, which respond to voice commands and stream music. Discuss how clock speed, number of cores, cache and architecture would affect the processor\'s suitability.',
+      points: ['Clock speed: more instructions per second, so faster responses to commands', '…but higher clock speed uses more power / produces more heat, an issue in a small sealed speaker', 'Cores: can handle tasks in parallel, e.g. streaming audio while listening for the wake word', '…but only if the software is written to use multiple threads; extra cores add cost and power use', 'Cache: frequently used instructions (e.g. audio decoding routines) are accessed quickly, reducing slow RAM accesses', 'Architecture: an embedded device might suit Harvard / modified Harvard, fetching instructions and data simultaneously', 'Pipelining increases throughput for continuous audio processing', 'Cost and power constraints of a mass-produced consumer device', 'A justified conclusion recommending a balance of features for this device'],
+      levels: [
+        ['7–9 marks', 'Thorough knowledge of all the factors. Applied clearly to the smart speaker throughout. A well-developed discussion of trade-offs (speed vs power, heat and cost) with a substantiated conclusion.'],
+        ['4–6 marks', 'Good knowledge of most factors, with some application to the smart speaker. Some discussion of trade-offs; the conclusion may be only partly supported.'],
+        ['1–3 marks', 'Basic knowledge of some factors, mostly not applied to the scenario. Little or no discussion; points listed.']
+      ],
+      guide: 'Levels of response: tick the points you made, then choose your mark.' }
+  ]
+};
+</script>
+<script src="/assets/topic.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- CPU stepper with buses ----------
+  var PROGRAM = { 0: 'LDA 5', 1: 'ADD 6', 2: 'STA 7', 3: 'HLT', 4: '', 5: '12', 6: '30', 7: '0' };
+  function buildSteps() {
+    var s = { pc: 0, mar: '', mdr: '', cir: '', acc: '', mem: Object.assign({}, PROGRAM) };
+    var steps = [];
+    function snap(stage, rtn, text, o) {
+      o = o || {};
+      steps.push({ pc: s.pc, mar: s.mar, mdr: s.mdr, cir: s.cir, acc: s.acc, mem: Object.assign({}, s.mem), stage: stage, rtn: rtn, text: text,
+        changed: o.changed || [], unit: o.unit || '', bus: o.bus || {}, at: o.at, memChanged: o.memChanged });
+    }
+    snap('', '', 'The program is at addresses 0–3 and its data at 5–7. The PC holds 0. Press Next step.');
+    for (var g = 0; g < 10; g++) {
+      s.mar = s.pc;
+      snap('Fetch', 'MAR ← [PC]', 'The address in the PC is copied into the MAR.', { changed: ['mar'], unit: 'cu' });
+      var ins = s.mem[s.mar];
+      s.mdr = ins;
+      snap('Fetch', 'MDR ← [Memory]', 'The address goes out on the address bus with a "memory read" signal on the control bus. The instruction at address ' + s.mar + ' comes back along the data bus into the MDR.',
+        { changed: ['mdr'], unit: 'cu', at: s.mar, bus: { address: String(s.mar), data: ins, control: 'memory read' } });
+      s.pc += 1;
+      snap('Fetch', 'PC ← [PC] + 1', 'The PC is incremented to ' + s.pc + ', ready for the next fetch.', { changed: ['pc'], unit: 'cu' });
+      s.cir = ins;
+      snap('Fetch', 'CIR ← [MDR]', 'The instruction is copied from the MDR into the CIR.', { changed: ['cir'], unit: 'cu' });
+      var parts = ins.split(' '), op = parts[0], addr = +parts[1];
+      var meaning = { LDA: 'load the value at address ' + addr + ' into the ACC', ADD: 'add the value at address ' + addr + ' to the ACC', STA: 'store the ACC at address ' + addr, HLT: 'halt' }[op];
+      snap('Decode', 'Decode CIR', 'The control unit decodes the CIR: opcode ' + op + (parts[1] ? ', operand ' + addr : '') + ' — ' + meaning + '.', { unit: 'cu' });
+      if (op === 'HLT') { snap('Execute', 'Halt', 'The program stops. Address 7 holds 42 (12 + 30).', { unit: 'cu' }); break; }
+      s.mar = addr;
+      snap('Execute', 'MAR ← ' + addr, 'The operand (address ' + addr + ') is copied into the MAR.', { changed: ['mar'], unit: 'cu' });
+      if (op === 'STA') {
+        s.mdr = String(s.acc);
+        snap('Execute', 'MDR ← [ACC]', 'The value in the ACC is copied into the MDR.', { changed: ['mdr'], unit: 'cu' });
+        s.mem[addr] = String(s.acc);
+        snap('Execute', 'Memory ← [MDR]', 'The address goes on the address bus, the data on the data bus, and a "memory write" signal on the control bus. Address ' + addr + ' now holds ' + s.acc + '.',
+          { unit: 'cu', at: addr, memChanged: addr, bus: { address: String(addr), data: String(s.acc), control: 'memory write' } });
+        continue;
+      }
+      s.mdr = s.mem[addr];
+      snap('Execute', 'MDR ← [Memory]', 'Memory read: the value at address ' + addr + ' (' + s.mdr + ') arrives on the data bus in the MDR.',
+        { changed: ['mdr'], unit: 'cu', at: addr, bus: { address: String(addr), data: s.mdr, control: 'memory read' } });
+      if (op === 'LDA') { s.acc = +s.mdr; snap('Execute', 'ACC ← [MDR]', 'The value is copied into the ACC.', { changed: ['acc'], unit: 'cu' }); }
+      else { var b = s.acc; s.acc = b + (+s.mdr); snap('Execute', 'ACC ← [ACC] + [MDR]', 'The ALU adds ' + s.mdr + ' to the ACC: ' + b + ' + ' + s.mdr + ' = ' + s.acc + '.', { changed: ['acc'], unit: 'alu' }); }
+    }
+    return steps;
+  }
+  var STEPS = buildSteps(), at = 0;
+  function renderCpu() {
+    var st = STEPS[at];
+    ['pc', 'mar', 'mdr', 'cir', 'acc'].forEach(function (r) {
+      var e = document.querySelector('[data-reg="' + r + '"]');
+      e.querySelector('.reg-val').textContent = st[r] === '' ? '—' : st[r];
+      e.classList.toggle('changed', st.changed.indexOf(r) >= 0);
+    });
+    document.querySelectorAll('[data-unit]').forEach(function (u) { u.classList.toggle('active', u.getAttribute('data-unit') === st.unit); });
+    document.querySelectorAll('.bus').forEach(function (b) {
+      var k = b.getAttribute('data-bus'), v = st.bus[k];
+      b.classList.toggle('active', !!v);
+      b.querySelector('span').textContent = v || '—';
+    });
+    document.querySelectorAll('.stage-pill').forEach(function (p) { p.classList.toggle('on', p.getAttribute('data-stage') === st.stage); });
+    var body = document.getElementById('mem-body'); body.innerHTML = '';
+    Object.keys(st.mem).forEach(function (a) {
+      var tr = document.createElement('tr');
+      if (st.at === +a) tr.className = 'at';
+      if (st.memChanged === +a) tr.className += ' changed';
+      var t1 = document.createElement('td'); t1.textContent = a;
+      var t2 = document.createElement('td'); t2.textContent = st.mem[a] === '' ? '—' : st.mem[a];
+      tr.append(t1, t2); body.appendChild(tr);
+    });
+    var ex = document.getElementById('cpu-explain'); ex.innerHTML = '';
+    if (st.rtn) { var r = document.createElement('span'); r.className = 'rtn'; r.textContent = st.stage + ': ' + st.rtn; ex.appendChild(r); }
+    ex.appendChild(document.createTextNode(st.text));
+    document.getElementById('cpu-count').textContent = 'Step ' + at + ' of ' + (STEPS.length - 1);
+    document.getElementById('cpu-next').disabled = at >= STEPS.length - 1;
+    document.getElementById('cpu-back').disabled = at === 0;
+  }
+  document.getElementById('cpu-next').addEventListener('click', function () { if (at < STEPS.length - 1) { at++; renderCpu(); } });
+  document.getElementById('cpu-back').addEventListener('click', function () { if (at > 0) { at--; renderCpu(); } });
+  document.getElementById('cpu-reset').addEventListener('click', function () { at = 0; renderCpu(); });
+  renderCpu();
+
+  // ---------- Pipeline ----------
+  function schedule(pipelined, branch) {
+    // returns rows: [{ name, cells: {cycle: 'F'|'D'|'E'|'XF'|'XD'} }], total cycles
+    var order = branch ? ['I1', 'I2', 'I3', 'I7', 'I8'] : ['I1', 'I2', 'I3', 'I4', 'I5', 'I6'];
+    var rows = [], c = 1;
+    if (!pipelined) {
+      order.forEach(function (n) { var cells = {}; cells[c] = 'F'; cells[c + 1] = 'D'; cells[c + 2] = 'E'; rows.push({ name: n, cells: cells }); c += 3; });
+      return { rows: rows, total: c - 1 };
+    }
+    if (!branch) {
+      order.forEach(function (n, i) { var cells = {}; cells[i + 1] = 'F'; cells[i + 2] = 'D'; cells[i + 3] = 'E'; rows.push({ name: n, cells: cells }); });
+      return { rows: rows, total: order.length + 2 };
+    }
+    rows.push({ name: 'I1', cells: { 1: 'F', 2: 'D', 3: 'E' } });
+    rows.push({ name: 'I2', cells: { 2: 'F', 3: 'D', 4: 'E' } });
+    rows.push({ name: 'I3 (branch)', cells: { 3: 'F', 4: 'D', 5: 'E' } });
+    rows.push({ name: 'I4', cells: { 4: 'F', 5: 'XD' }, flushed: true });
+    rows.push({ name: 'I5', cells: { 5: 'XF' }, flushed: true });
+    rows.push({ name: 'I7', cells: { 6: 'F', 7: 'D', 8: 'E' } });
+    rows.push({ name: 'I8', cells: { 7: 'F', 8: 'D', 9: 'E' } });
+    return { rows: rows, total: 9 };
+  }
+  function renderPipe() {
+    var pipelined = document.querySelector('input[name="pp"]:checked').value === 'pipe';
+    var branch = document.getElementById('pp-branch').checked;
+    var s = schedule(pipelined, branch);
+    var t = document.getElementById('pp-table'); t.innerHTML = '';
+    var hr = document.createElement('tr'); var c0 = document.createElement('th'); c0.textContent = 'Cycle'; hr.appendChild(c0);
+    for (var c = 1; c <= s.total; c++) { var th = document.createElement('th'); th.scope = 'col'; th.textContent = c; hr.appendChild(th); }
+    var thead = document.createElement('thead'); thead.appendChild(hr); t.appendChild(thead);
+    var tb = document.createElement('tbody');
+    s.rows.forEach(function (r) {
+      var tr = document.createElement('tr');
+      var th = document.createElement('th'); th.scope = 'row'; th.textContent = r.name; tr.appendChild(th);
+      for (var c = 1; c <= s.total; c++) {
+        var td = document.createElement('td'), v = r.cells[c];
+        if (v) { td.className = v.charAt(0) === 'X' ? 'X' : v; td.textContent = v.replace('X', ''); td.setAttribute('aria-label', r.name + ' cycle ' + c + ': ' + ({ F: 'fetch', D: 'decode', E: 'execute' }[v.replace('X', '')]) + (v.charAt(0) === 'X' ? ', flushed' : '')); }
+        tr.appendChild(td);
+      }
+      tb.appendChild(tr);
+    });
+    t.appendChild(tb);
+    var n = branch ? 5 : 6, say;
+    if (!pipelined) say = n + ' instructions × 3 stages = ' + s.total + ' cycles. Each instruction must finish before the next starts, so the fetch and decode hardware sits idle two-thirds of the time.';
+    else if (!branch) say = 'The same 6 instructions take only ' + s.total + ' cycles instead of 18: once the pipeline fills up, one instruction finishes every cycle.';
+    else say = 'I3 is a branch. By the time it executes (cycle 5), I4 has already been fetched and decoded and I5 fetched — but the program jumps to I7, so they are flushed and those cycles are wasted. ' + n + ' useful instructions take ' + s.total + ' cycles, instead of ' + (n + 2) + '.';
+    document.getElementById('pp-say').textContent = say;
+  }
+  document.querySelectorAll('#pipe input').forEach(function (i) { i.addEventListener('change', renderPipe); });
+  renderPipe();
+})();
+</script>
+</body>
+</html>
