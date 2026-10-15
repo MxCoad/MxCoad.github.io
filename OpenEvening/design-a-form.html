@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📋 Design a Database Form</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#38bdf8;--acc2:#fbbf24;--good:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+main{max-width:1200px;margin:16px auto;padding:0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 15px;background:#2b3a57;color:var(--ink);font-weight:600}
+select{font-weight:500}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04202b;font-size:19px;padding:10px 22px}
+button.go:hover{background:#7dd3fc}
+.dots{display:flex;gap:8px;margin-bottom:10px}.dot{height:10px;flex:1;border-radius:6px;background:#2b3a57}.dot.done{background:var(--good)}.dot.cur{background:var(--acc)}
+.lvl{color:var(--acc);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.story{font-size:20px;line-height:1.5;margin:6px 0}
+.msg{min-height:30px;font-size:20px;font-weight:700;margin-top:10px;line-height:1.45}
+.good{color:var(--good)}.bad{color:var(--bad)}.mute{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:17px}
+th{background:#1d2a45;color:var(--mute);font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.win{text-align:center;padding:30px}.win h2{font-size:36px;margin:0 0 10px}
+
+.fr{display:grid;grid-template-columns:200px 190px 1fr;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid #223050}
+.fr .nm{font-weight:700}.fr .nm small{display:block;color:var(--mute);font-weight:400;font-size:14px}
+.vals{display:flex;gap:12px;flex-wrap:wrap}.vals label{display:flex;gap:6px;align-items:center;font-size:16px}
+input[type=checkbox]{width:19px;height:19px;accent-color:#38bdf8}
+@media(max-width:800px){.fr{grid-template-columns:1fr}}
+.tst{display:grid;grid-template-columns:150px 1fr 150px;gap:8px;padding:6px 0;border-bottom:1px solid #223050;font-size:17px}
+code{background:#0b1120;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:16px}
+.tag{font-weight:700}
+</style>
+</head>
+<body>
+<header><h1>📋 Design a Database Form</h1><p>Choose data types and validation to stop bad data getting in.</p></header>
+<main><div id="app"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);
+function armRestart(btn,fn,label){let armed=false,t;btn.onclick=()=>{if(!armed){armed=true;btn.textContent='Sure? Click again to start over';t=setTimeout(()=>{armed=false;btn.textContent=label||'↺ Start again';},4000);}else{clearTimeout(t);armed=false;fn();}};}
+let idleT;function bump(){clearTimeout(idleT);idleT=setTimeout(()=>{startOver();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+
+const TYPES=['Text','Number','Date','Yes/No','Drop-down list'];
+const VALS=['Presence','Range','Format','Length','Lookup'];
+const VHELP={Presence:'something must be entered',Range:'between a min and a max',Format:'matches a pattern',Length:'a number of characters',Lookup:'chosen from a fixed list'};
+/* each field: correct type, sensible validations (silly = would reject good data), bad entries and which checks catch them */
+const F=[
+ {n:'Full name',h:'e.g. Jordan Smith',type:'Text',silly:['Range','Lookup'],bad:[['(left blank)',['Presence'],'Nobody can join without a name.'],['a 90-character name',['Length'],'Names have a sensible maximum length.']]},
+ {n:'Date of birth',h:'e.g. 14/03/2009',type:'Date',silly:['Lookup','Length'],bad:[['(left blank)',['Presence'],'Needed to work out the age group.'],['01/01/2090',['Range'],'Someone born in the future! A range check keeps dates sensible.']]},
+ {n:'Email address',h:'e.g. jordan@mail.com',type:'Text',silly:['Range','Lookup'],bad:[['(left blank)',['Presence'],'We need a way to contact them.'],['jordan.at.mail.com',['Format'],'There is no @ sign. A format check looks for the pattern.']]},
+ {n:'Mobile number',h:'e.g. 07700 900123',type:'Text',silly:['Range','Lookup'],note:'Hint: phone numbers start with 0. What happens to a leading 0 in a number?',bad:[['07123',['Length'],'Too short to be a real mobile number.'],['07abc123456',['Format'],'Letters are not allowed in a phone number.']]},
+ {n:'Membership type',h:'Junior, Adult or Family',type:'Drop-down list',silly:['Range','Length'],bad:[['Platinum Plus',['Lookup'],'Only the real options should be accepted.'],['(left blank)',['Presence','Lookup'],'The member must choose an option.']]},
+ {n:'Number of guests',h:'0 to 5',type:'Number',silly:['Format','Lookup','Length'],bad:[['-3',['Range'],'You cannot bring minus three guests.'],['250',['Range'],'Far too many for the climbing wall.']]}];
+let sel,tested,msg,msgBad,res;
+function startOver(){sel=F.map(()=>({type:'',vals:new Set()}));tested=false;msg='';msgBad=false;res=null;render();}
+function evalAll(){
+  let allOk=true;const out=[];
+  F.forEach((f,i)=>{
+    const s=sel[i];const typeOk=s.type===f.type;const sillyHit=f.silly.filter(v=>s.vals.has(v));
+    const bads=f.bad.map(b=>({val:b[0],why:b[2],caught:b[1].some(v=>s.vals.has(v))}));
+    const ok=typeOk&&sillyHit.length===0&&bads.every(b=>b.caught);if(!ok)allOk=false;
+    out.push({typeOk,sillyHit,bads,ok});
+  });
+  return{allOk,out};
+}
+function render(){
+  const app=$('app');
+  if(tested&&res&&res.allOk&&res.final){
+    app.innerHTML='<div class="card win"><h2>🏆 Form approved!</h2><p style="font-size:22px;line-height:1.5">Your form accepts good data and rejects bad data. That is <b>validation</b>: it stops mistakes getting into the database in the first place.<br>Show a member of staff your screen to claim your prize.</p><button class="go" id="again">Play again</button></div>';
+    $('again').onclick=startOver;return;
+  }
+  let h='<div class="card"><div class="lvl">The brief</div><div class="story">Climb On needs a <b>membership sign-up form</b>. For each field, choose the <b>data type</b> and tick the <b>validation checks</b> that stop bad data. Then press <b>Test my form</b> and the page will try to break it.</div></div><div class="card">';
+  F.forEach((f,i)=>{
+    h+='<div class="fr"><div class="nm">'+f.n+'<small>'+f.h+'</small></div><select data-t="'+i+'"><option value="">Data type…</option>'+TYPES.map(t=>'<option'+(sel[i].type===t?' selected':'')+'>'+t+'</option>').join('')+'</select><div class="vals">'+VALS.map(v=>'<label title="'+VHELP[v]+'"><input type="checkbox" data-v="'+i+'|'+v+'"'+(sel[i].vals.has(v)?' checked':'')+'> '+v+'</label>').join('')+'</div></div>';
+  });
+  h+='<div class="row"><button class="go" id="test">🧪 Test my form</button><button id="restart">↺ Start again</button></div></div>';
+  if(tested&&res){
+    h+='<div class="card"><div class="lvl">Test results</div>';
+    res.out.forEach((o,i)=>{
+      const f=F[i];
+      h+='<div style="margin-top:10px"><b>'+f.n+'</b> '+(o.ok?'<span class="good tag">✔ passed</span>':'<span class="bad tag">✘ needs work</span>')+'</div>';
+      if(!o.typeOk)h+='<div class="bad">• The data type doesn’t suit this field.'+(f.note?' '+f.note:'')+'</div>';
+      o.sillyHit.forEach(v=>h+='<div class="bad">• A '+v.toLowerCase()+' check makes no sense here. It would reject valid data.</div>');
+      o.bads.forEach(b=>h+='<div class="tst"><span class="mute">Test entry</span><span><code>'+b.val+'</code></span><span class="tag '+(b.caught?'good':'bad')+'">'+(b.caught?'✔ blocked':'✘ got through!')+'</span></div>'+(b.caught?'':'<div class="mute" style="font-size:16px;margin-left:8px">'+b.why+'</div>'));
+    });
+    h+='</div>';
+  }
+  h+='<div class="msg '+(msgBad?'bad':'good')+'" id="msg">'+msg+'</div>';
+  app.innerHTML=h;
+  armRestart($('restart'),startOver);
+  app.querySelectorAll('[data-t]').forEach(s=>s.onchange=()=>{sel[+s.dataset.t].type=s.value;});
+  app.querySelectorAll('[data-v]').forEach(c=>c.onchange=()=>{const [i,v]=c.dataset.v.split('|');c.checked?sel[+i].vals.add(v):sel[+i].vals.delete(v);});
+  $('test').onclick=()=>{
+    if(sel.some(s=>!s.type)){tested=false;res=null;msg='Choose a data type for every field first.';msgBad=true;render();return;}
+    res=evalAll();tested=true;
+    if(res.allOk){msg='🎉 Every bad entry was blocked and every good one is accepted!';msgBad=false;render();const r0=res;setTimeout(()=>{if(res===r0){res.final=true;render();}},2200);return;}
+    const n=res.out.filter(o=>o.ok).length;msg=n+' of 6 fields are right. Fix the ones marked ✘ and test again.';msgBad=true;render();
+  };
+}
+startOver();bump();
+
+</script>
+<!--OEB-->
+<script>window.OEB_CFG={id:"form",type:"time"};</script>
+<script>(function(){
+var C=window.OEB_CFG||{};if(!C.id)return;
+var KEY='oeb:'+C.id,BAD=['ASS','SEX','FUK','FCK','FUC','CUM','TIT','WTF','KKK','NZI','SHT','DIK','DCK','PIS','CNT','FAG','JEW'];
+var mem=[];
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(v))return v;}catch(e){}return mem;}
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s;}
+function rank(a){return a.slice().sort(function(x,y){return C.type==='score'?((y.s-x.s)||(x.t-y.t)):(x.t-y.t);});}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var st=document.createElement('style');
+st.textContent='#oeboard{max-width:1200px;margin:6px auto 26px;padding:14px 20px;background:var(--panel,#161f33);border:2px solid var(--acc2,#fbbf24);border-radius:14px;color:var(--ink,#e8eef9);font-family:system-ui,sans-serif}#oeboard h3{margin:0 0 8px;font-size:22px;color:var(--acc2,#fbbf24);user-select:none}#oeboard ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}#oeboard li{background:#0f1a30;border:1px solid var(--line,#2b3a57);border-radius:10px;padding:8px 12px;font-size:20px;font-weight:700;font-family:ui-monospace,Consolas,monospace}#oeboard li small{color:var(--mute,#8fa1c0);font-weight:500;font-size:15px}#oeboard li.me{border-color:var(--good,#34d399);background:#14463a}#oeboard .none{color:var(--mute,#8fa1c0);font-size:18px}#oeboard .clr{margin-top:10px;font-size:14px;opacity:.7;background:#4a1f26;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.oeb-entry{margin:18px auto 4px;max-width:560px;background:#0f1a30;border:2px solid var(--acc2,#fbbf24);border-radius:14px;padding:14px 18px;font-size:20px;line-height:1.5}.oeb-entry input{font:700 28px ui-monospace,Consolas,monospace;width:110px;text-align:center;text-transform:uppercase;letter-spacing:.2em;border-radius:10px;border:2px solid var(--line,#2b3a57);background:#161f33;color:#fff;padding:6px}.oeb-entry button{font:inherit;font-weight:700;background:var(--acc2,#fbbf24);color:#1a1200;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-left:6px}.oeb-entry .err{color:var(--bad,#f87171);font-size:17px;min-height:22px}';
+document.head.appendChild(st);
+var t0=null,saved=false;
+function touch(){if(t0===null)t0=Date.now();}
+['mousedown','keydown','touchstart'].forEach(function(e){document.addEventListener(e,touch,true);});
+document.addEventListener('click',function(e){var b=e.target;if(b&&b.id==='restart'&&/^Sure/.test(b.textContent))t0=null;},true);
+var idle;function idleReset(){clearTimeout(idle);idle=setTimeout(function(){t0=null;},180000);}
+['mousedown','keydown','mousemove','touchstart'].forEach(function(e){document.addEventListener(e,idleReset,{passive:true});});
+var panel=document.createElement('div');panel.id='oeboard';
+var ref=document.querySelector('main');(ref&&ref.parentNode?ref.parentNode:document.body).insertBefore(panel,ref?ref.nextSibling:null);
+var mine=null,clrShown=false,armed=false;
+function renderBoard(){
+  var a=rank(load()).slice(0,5);
+  var h='<h3 id="oebh">🏆 Top 5 on this PC today — can you beat them?</h3>';
+  if(!a.length)h+='<div class="none">No scores yet. Be the first on the board!</div>';
+  else h+='<ol>'+a.map(function(x,i){return '<li'+(mine&&x.id===mine?' class="me"':'')+'>'+(['🥇','🥈','🥉','4.','5.'][i])+' '+esc(x.i)+' <small>'+(C.type==='score'?x.s+'/'+C.max+' · ':'')+fmt(x.t)+'</small></li>';}).join('')+'</ol>';
+  if(clrShown)h+='<button class="clr" id="oebclr">Staff: clear this board</button>';
+  panel.innerHTML=h;
+  var hd=document.getElementById('oebh');if(hd)hd.ondblclick=function(){clrShown=true;renderBoard();};
+  var c=document.getElementById('oebclr');
+  if(c)c.onclick=function(){if(!armed){armed=true;c.textContent='Sure? Click again to delete ALL scores';setTimeout(function(){armed=false;clrShown=false;renderBoard();},4000);}else{save([]);armed=false;clrShown=false;mine=null;renderBoard();}};
+}
+function attach(w){
+  if(w.getAttribute('data-oeb'))return;w.setAttribute('data-oeb','1');
+  if(t0===null)t0=Date.now();
+  var secs=Math.max(1,Math.round((Date.now()-t0)/1000)),sc=0;
+  if(C.type==='score'){try{sc=C.getScore();}catch(e){sc=0;}}
+  saved=false;
+  var d=document.createElement('div');d.className='oeb-entry';
+  d.innerHTML='<div>⏱ Your time: <b>'+fmt(secs)+'</b>'+(C.type==='score'?' · Score: <b>'+sc+'/'+C.max+'</b>':'')+'</div><div style="margin-top:8px">Add your <b>initials</b> to the leaderboard:<br><input id="oebin" maxlength="3" autocomplete="off" spellcheck="false"><button id="oebsave">Save</button></div><div class="err" id="oebe"></div>';
+  w.appendChild(d);
+  var inp=d.querySelector('#oebin'),go=d.querySelector('#oebsave'),er=d.querySelector('#oebe');
+  inp.oninput=function(){inp.value=inp.value.replace(/[^a-zA-Z]/g,'').toUpperCase();};
+  function doSave(){
+    var v=inp.value.toUpperCase();
+    if(!/^[A-Z]{2,3}$/.test(v)){er.textContent='Please enter 2 or 3 letters (initials only).';return;}
+    if(BAD.indexOf(v)>-1){er.textContent='Please choose different initials.';return;}
+    var a=load().slice();var id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    a.push({i:v,s:sc,t:secs,id:id});a=rank(a).slice(0,30);save(a);mine=id;saved=true;
+    var pos=rank(a).findIndex(function(x){return x.id===id;})+1;
+    d.innerHTML='<div style="font-size:24px">✅ Saved! You are <b>#'+pos+'</b> on the board today.</div><div class="mute" style="font-size:17px;margin-top:4px">Tell a friend to come and beat you!</div>';
+    renderBoard();
+  }
+  go.onclick=doSave;inp.onkeydown=function(e){if(e.key==='Enter')doSave();};
+  setTimeout(function(){try{inp.focus();}catch(e){}},50);
+}
+var mo=new MutationObserver(function(){var w=document.querySelector('.win,.end');if(w)attach(w);});
+mo.observe(document.body,{childList:true,subtree:true});
+// when the win screen disappears (play again / reset), start a fresh clock
+var mo2=new MutationObserver(function(){if(!document.querySelector('.win,.end')&&window.__oebWas){window.__oebWas=false;t0=null;mine=null;renderBoard();}else if(document.querySelector('.win,.end'))window.__oebWas=true;});
+mo2.observe(document.body,{childList:true,subtree:true});
+renderBoard();
+})();
+</script>
+<!--/OEB-->
+</body>
+</html>

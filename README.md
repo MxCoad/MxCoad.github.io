@@ -16,6 +16,7 @@ The site is plain HTML, CSS and JavaScript hosted on GitHub Pages. There is no b
 | **Binary practice tools** — binary, hexadecimal, negative binary and floating point | KS3 / GCSE / A-Level | [Binary_Practice/binary.html](https://mxcoad.github.io/Binary_Practice/binary.html) |
 | **GCSE Revision Console** — OCR GCSE Computer Science revision | GCSE | [GCSE/Revision_Console.html](https://mxcoad.github.io/GCSE/Revision_Console.html) |
 | **GCSE revision notes** — every J277 topic (1.1–2.5) with notes, interactive tools and self-marked exam questions | GCSE | [GCSE/](https://mxcoad.github.io/GCSE/) |
+| **Open evening activities** — hands-on stations for Year 7, Sixth Form and BTEC IT visitors (Python art, binary, phishing, ciphers, logic gates, LMC, SQL, databases and more) | Visitors | [OpenEvening/](https://mxcoad.github.io/OpenEvening/) |
 | **Cyber Defence Console** — interactive activity on hacking, DoS and brute-force attacks | KS3 / GCSE | [cyber-defence-console.html](https://mxcoad.github.io/cyber-defence-console.html) |
 | **KS3 Computing curriculum** — current draft | KS3 | [ks3-computing-curriculum.html](https://mxcoad.github.io/ks3-computing-curriculum.html) |
 | **Spreadsheet cover lessons** — Year 7 and Year 9 cover work and revision | KS3 | [Cover Lessons/](Cover%20Lessons/) |
@@ -56,6 +57,7 @@ Binary_Practice/            Number-representation practice tools
 Cover Lessons/              KS3 spreadsheet cover lessons (index.html lists them)
 Defold/                     Defold game-development course
 EcommerceWebsite/           BTEC IT example website
+OpenEvening/                Open evening activities (index.html lists them)
 GCSE/                       Revision notes for every J277 topic (index.html) and the revision console
 ```
 
@@ -73,6 +75,6 @@ GCSE/                       Revision notes for every J277 topic (index.html) and
 
 GCSE and A-Level topic pages also use `assets/topic.css` and `assets/topic.js`, which provide the shared layout, progress tracking and self-marked exam questions. Each page defines its questions in `window.TOPIC`, and saves progress in the browser under its `key` (for example `alevel-1-3-2-progress`), which the GCSE and A-Level index pages read to show progress bars. A-Level pages set `--stage: var(--ks-alevel)` for their colour.
 
-The Defold course and the BTEC example website keep their own designs on purpose.
+The Defold course, the BTEC example website and the open evening activities keep their own designs on purpose. The open evening pages also leave out the site bar, so visitors can't wander off mid-activity.
 
 Links are case-sensitive on GitHub Pages, so `Climbing Stairs/` and `Climbing stairs/` are different folders. Check that a link's capitalisation matches the file or folder name exactly.

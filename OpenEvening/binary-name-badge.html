@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Binary Lab</title>
+<style>
+:root{--bg:#0f172a;--panel:#1e293b;--line:#334155;--ink:#f1f5f9;--mute:#94a3b8;--acc:#22d3ee;--acc2:#f472b6;--ok:#4ade80;--on:#22d3ee}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}
+header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+nav{display:flex;gap:8px;padding:14px 22px 0;flex-wrap:wrap}
+nav button{font:inherit;font-weight:700;font-size:18px;cursor:pointer;border:0;border-radius:12px 12px 0 0;padding:10px 20px;background:#1e293b;color:var(--mute)}
+nav button.on{background:var(--panel);color:var(--acc);box-shadow:inset 0 3px 0 var(--acc)}
+main{background:var(--panel);margin:0 22px 22px;border-radius:0 14px 14px 14px;padding:20px;border:1px solid var(--line);min-height:70vh}
+section{display:none}section.on{display:block}
+button.act{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;background:#334155;color:var(--ink);font-weight:600}
+button.act:hover{background:#475569}
+button.big{background:var(--ok);color:#052e16;font-size:18px}
+.lead{font-size:19px;margin:0 0 14px}
+input[type=text]{font:700 30px system-ui;padding:10px 16px;border-radius:12px;border:2px solid var(--line);background:#0b1220;color:var(--ink);width:min(100%,420px)}
+input[type=text]:focus{outline:none;border-color:var(--acc)}
+.tiles{display:flex;gap:14px;flex-wrap:wrap;margin:18px 0}
+.tile{background:#0b1220;border:1px solid var(--line);border-radius:14px;padding:10px 10px 12px;text-align:center}
+.tile .ch{font:800 44px ui-monospace,Consolas,monospace;line-height:1.1;color:var(--acc2)}
+.tile .dec{color:var(--mute);font-size:15px;margin-bottom:6px}
+.vals,.bits{display:grid;grid-template-columns:repeat(8,34px);gap:4px}
+.vals span{font-size:11px;color:var(--mute)}
+.bit{height:42px;border:0;border-radius:8px;font:800 22px ui-monospace,Consolas,monospace;cursor:pointer;background:#1e293b;color:#64748b}
+.bit.on{background:var(--on);color:#04202a}
+.msg{min-height:28px;font-size:19px;color:var(--ok);font-weight:700}
+#badge{background:#fff;color:#0f172a;border-radius:16px;padding:22px 26px;max-width:620px;border:4px solid var(--acc2)}
+#badge .hello{font-weight:800;letter-spacing:.12em;font-size:15px;color:#be185d}
+#badge .nm{font:800 54px system-ui;margin:4px 0 6px;word-break:break-all}
+#badge .bin{font:600 17px/1.5 ui-monospace,Consolas,monospace;color:#0e7490;word-break:break-word}
+#badge .foot{margin-top:8px;font-size:14px;color:#475569}
+.grid{display:grid;gap:4px;width:max-content;touch-action:manipulation}
+.cell{width:46px;height:46px;border:2px solid #475569;border-radius:6px;cursor:pointer;padding:0}
+.two{display:flex;gap:32px;flex-wrap:wrap;align-items:flex-start}
+.mono{font:700 21px/1.55 ui-monospace,Consolas,monospace;background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:12px 16px;white-space:pre;color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.seg button{font:inherit;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#0b1220;color:var(--ink);padding:8px 14px}
+.seg button:first-child{border-radius:10px 0 0 10px}.seg button:last-child{border-radius:0 10px 10px 0}
+.seg button.on{background:var(--acc);color:#04202a;border-color:var(--acc)}
+.target{font:800 90px ui-monospace,Consolas,monospace;color:var(--acc2);line-height:1}
+.total{font:700 30px ui-monospace,Consolas,monospace}
+.gbits{display:grid;grid-template-columns:repeat(8,76px);gap:8px;margin:14px 0}
+.gbits .bit{height:84px;font-size:38px}
+.gbits .v{text-align:center;color:var(--mute);font-size:17px}
+@media(max-width:700px){.gbits{grid-template-columns:repeat(8,1fr)}}
+@media print{
+  body *{visibility:hidden}
+  #badge,#badge *{visibility:visible}
+  #badge{position:absolute;left:10mm;top:10mm;width:140mm;max-width:none;border:4px solid #be185d;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>💾 Binary Lab</h1>
+  <p>Computers store <b>everything</b> — words, pictures, numbers — as 1s and 0s. Have a go!</p>
+</header>
+<nav id="tabs">
+  <button data-t="name" class="on">1 · Your name</button>
+  <button data-t="pix">2 · Draw a picture</button>
+  <button data-t="game">3 · Binary game</button>
+</nav>
+<main>
+
+<!-- ============ TAB 1 ============ -->
+<section id="name" class="on">
+  <p class="lead">Type your first name. Each letter is stored as <b>8 bits</b> (a byte). <b>Tap the bits</b> to change a letter!</p>
+  <input type="text" id="nameIn" maxlength="10" placeholder="Type your name" autocomplete="off" spellcheck="false">
+  <div class="msg" id="chg"></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="row">
+    <button class="act big" id="printBtn">🖨 Print my name badge</button>
+    <button class="act" id="clearName">Start again</button>
+  </div>
+  <div id="badge">
+    <div class="hello">MY NAME IN BINARY</div>
+    <div class="nm" id="bName">Your name</div>
+    <div class="bin" id="bBin">01011001 01101111 01110101 01110010 …</div>
+    <div class="foot">Each letter = 8 bits = 1 byte. Computer Science open evening.</div>
+  </div>
+</section>
+
+<!-- ============ TAB 2 ============ -->
+<section id="pix">
+  <p class="lead">A picture is a grid of tiny squares called <b>pixels</b>. Tap the squares to draw — and watch the numbers the computer would store.</p>
+  <div class="row">
+    <span class="seg" id="modeSeg"><button data-m="1" class="on">2 colours (1 bit each)</button><button data-m="2">4 colours (2 bits each)</button></span>
+    <button class="act" data-p="smiley">😀 Smiley</button>
+    <button class="act" data-p="heart">❤ Heart</button>
+    <button class="act" data-p="invader">👾 Invader</button>
+    <button class="act" id="pixClear">Clear</button>
+  </div>
+  <div class="two">
+    <div class="grid" id="pgrid"></div>
+    <div>
+      <div class="mono" id="pbits"></div>
+      <p id="psize" style="font-size:19px;margin:12px 0 0"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TAB 3 ============ -->
+<section id="game">
+  <p class="lead">Make the <b>target number</b> by switching bits on. Each bit is worth double the one on its right!</p>
+  <div class="row">
+    <span class="seg" id="lvlSeg"><button data-l="15" class="on">Easy (1–15)</button><button data-l="63">Medium (1–63)</button><button data-l="255">Hard (1–255)</button></span>
+    <button class="act" id="newTarget">New number ➜</button>
+    <span style="margin-left:auto;font-size:20px">Solved: <b id="score">0</b></span>
+  </div>
+  <div class="row"><div>Make this number:</div><div class="target" id="target">?</div></div>
+  <div class="gbits" id="gbits"></div>
+  <div class="total" id="gtotal"></div>
+  <div class="msg" id="gmsg"></div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const W=[128,64,32,16,8,4,2,1];
+const chOf=c=>c===32?'␣':(c>32&&c<127?String.fromCharCode(c):'·');
+const nameOf=c=>c>=32&&c<127?String.fromCharCode(c):'?';
+const bin=(n,w=8)=>n.toString(2).padStart(w,'0');
+
+/* ---- tabs ---- */
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>show(b.dataset.t));
+function show(t){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+  document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===t));
+}
+
+/* ---- tab 1: name ---- */
+let codes=[];
+function renderName(){
+  const tiles=$('tiles');tiles.innerHTML='';
+  codes.forEach((code,i)=>{
+    const t=document.createElement('div');t.className='tile';
+    t.innerHTML='<div class="ch">'+chOf(code).replace('<','&lt;')+'</div><div class="dec">= '+code+'</div>';
+    const vals=document.createElement('div');vals.className='vals';
+    W.forEach(w=>{const s=document.createElement('span');s.textContent=w;vals.appendChild(s);});
+    const bits=document.createElement('div');bits.className='bits';
+    W.forEach((w,k)=>{
+      const b=document.createElement('button');
+      const on=(code&w)!==0;
+      b.className='bit'+(on?' on':'');b.textContent=on?1:0;
+      b.title='This bit is worth '+w;
+      b.onclick=()=>{
+        const before=codes[i];codes[i]=before^w;
+        $('nameIn').value=codes.map(nameOf).join('');
+        $('chg').textContent=(before&w?'Switched off':'Switched on')+' the '+w+' bit: '+chOf(before)+' became '+chOf(codes[i])+'!';
+        renderName();
+      };
+      bits.appendChild(b);
+    });
+    t.appendChild(vals);t.appendChild(bits);tiles.appendChild(t);
+  });
+  $('bName').textContent=codes.length?codes.map(nameOf).join(''):'Your name';
+  $('bBin').textContent=codes.length?codes.map(c=>bin(c)).join(' '):'01011001 01101111 01110101 …';
+}
+$('nameIn').addEventListener('input',e=>{
+  codes=Array.from(e.target.value).map(ch=>{const c=ch.charCodeAt(0);return c<128?c:63;}).slice(0,10);
+  $('chg').textContent='';renderName();
+});
+$('clearName').onclick=()=>{$('nameIn').value='';codes=[];$('chg').textContent='';renderName();};
+$('printBtn').onclick=()=>window.print();
+
+/* ---- tab 2: pixels ---- */
+const N=8;
+const COL1=['#f8fafc','#0f172a'];
+const COL2=['#f8fafc','#f472b6','#22d3ee','#0f172a'];
+const PATTERNS={
+  smiley:['00333300','03000030','30300303','30000003','30300303','30033003','03000030','00333300'],
+  heart:['01100110','11111111','11111111','11111111','01111110','00111100','00011000','00000000'],
+  invader:['00200200','10200201','11111111','11033011','11111111','01111110','00100100','01000010']
+};
+let mode=1,pix=Array.from({length:N},()=>Array(N).fill(0));
+const maxv=()=>mode===1?1:3;
+function buildGrid(){
+  const g=$('pgrid');g.style.gridTemplateColumns='repeat('+N+',46px)';g.innerHTML='';
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const b=document.createElement('button');b.className='cell';b.dataset.r=r;b.dataset.c=c;
+    b.onclick=()=>{pix[r][c]=(pix[r][c]+1)%(maxv()+1);renderPix();};
+    g.appendChild(b);
+  }
+}
+function renderPix(){
+  const pal=mode===1?COL1:COL2;
+  document.querySelectorAll('#pgrid .cell').forEach(b=>{b.style.background=pal[pix[b.dataset.r][b.dataset.c]];});
+  const w=mode===1?1:2;
+  $('pbits').textContent=pix.map(row=>row.map(v=>bin(v,w)).join(mode===1?' ':'  ')).join('\n');
+  const bits=N*N*w;
+  $('psize').innerHTML=N*N+' pixels × '+w+' bit'+(w>1?'s':'')+' each = <b>'+bits+' bits</b> = <b>'+bits/8+' bytes</b>';
+}
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#modeSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.m===m));
+  pix=pix.map(r=>r.map(v=>Math.min(v,maxv())));
+  renderPix();
+}
+document.querySelectorAll('#modeSeg button').forEach(b=>b.onclick=()=>setMode(+b.dataset.m));
+document.querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>{
+  pix=PATTERNS[b.dataset.p].map(row=>Array.from(row).map(ch=>{
+    const v=+ch;
+    return mode===1?(v?1:0):v;
+  }));
+  renderPix();
+});
+$('pixClear').onclick=()=>{pix=Array.from({length:N},()=>Array(N).fill(0));renderPix();};
+
+/* ---- tab 3: game ---- */
+let gmax=15,target=1,gb=Array(8).fill(0),score=0,solved=false;
+function buildGame(){
+  const g=$('gbits');g.innerHTML='';
+  W.forEach(w=>{const d=document.createElement('div');d.className='v';d.textContent=w;g.appendChild(d);});
+  W.forEach((w,i)=>{
+    const b=document.createElement('button');b.className='bit';b.textContent='0';
+    b.onclick=()=>{if(solved)return;gb[i]^=1;checkGame();};
+    g.appendChild(b);
+  });
+  checkGame();
+}
+function total(){return gb.reduce((s,b,i)=>s+b*W[i],0);}
+function checkGame(){
+  const btns=document.querySelectorAll('#gbits .bit');
+  btns.forEach((b,i)=>{b.classList.toggle('on',gb[i]===1);b.textContent=gb[i];});
+  const t=total();
+  const parts=W.filter((w,i)=>gb[i]).join(' + ');
+  $('gtotal').textContent=(parts||'0')+' = '+t;
+  if(t===target&&!solved){solved=true;score++;$('score').textContent=score;$('gmsg').textContent='🎉 Yes! '+target+' in binary is '+gb.join('')+'. Press “New number”.';}
+  else if(!solved)$('gmsg').textContent='';
+}
+function newTarget(){
+  solved=false;gb=Array(8).fill(0);
+  let t;do{t=1+Math.floor(Math.random()*gmax);}while(t===target&&gmax>1);
+  target=t;$('target').textContent=target;checkGame();
+}
+document.querySelectorAll('#lvlSeg button').forEach(b=>b.onclick=()=>{
+  gmax=+b.dataset.l;
+  document.querySelectorAll('#lvlSeg button').forEach(x=>x.classList.toggle('on',x===b));
+  newTarget();
+});
+$('newTarget').onclick=newTarget;
+
+/* ---- reset after 3 idle minutes so the next visitor starts fresh ---- */
+function resetAll(){
+  $('nameIn').value='';codes=[];$('chg').textContent='';renderName();
+  pix=Array.from({length:N},()=>Array(N).fill(0));setMode(1);
+  score=0;$('score').textContent=0;gmax=15;
+  document.querySelectorAll('#lvlSeg button').forEach((x,i)=>x.classList.toggle('on',i===0));
+  newTarget();show('name');
+}
+let idle;
+function bump(){clearTimeout(idle);idle=setTimeout(resetAll,180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+buildGrid();renderName();renderPix();buildGame();newTarget();bump();
+</script>
+</body>
+</html>
