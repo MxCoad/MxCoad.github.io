@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🔒 Breach or Not?</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#38bdf8;--acc2:#fbbf24;--good:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+main{max-width:1200px;margin:16px auto;padding:0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 15px;background:#2b3a57;color:var(--ink);font-weight:600}
+select{font-weight:500}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04202b;font-size:19px;padding:10px 22px}
+button.go:hover{background:#7dd3fc}
+.dots{display:flex;gap:8px;margin-bottom:10px}.dot{height:10px;flex:1;border-radius:6px;background:#2b3a57}.dot.done{background:var(--good)}.dot.cur{background:var(--acc)}
+.lvl{color:var(--acc);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.story{font-size:20px;line-height:1.5;margin:6px 0}
+.msg{min-height:30px;font-size:20px;font-weight:700;margin-top:10px;line-height:1.45}
+.good{color:var(--good)}.bad{color:var(--bad)}.mute{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:17px}
+th{background:#1d2a45;color:var(--mute);font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.win{text-align:center;padding:30px}.win h2{font-size:36px;margin:0 0 10px}
+
+.opts{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.opt{background:#22304d;border:2px solid transparent;padding:10px 16px;border-radius:12px;font-size:18px}
+.opt.on{border-color:var(--acc);background:#1d4a63}
+.opt.right{border-color:var(--good);background:#14463a}.opt.wrong{border-color:var(--bad);background:#4a1f26}
+.scn{font-size:24px;line-height:1.5;margin:8px 0 14px}
+.q{margin-top:14px;font-weight:700}
+.fb{margin-top:14px;padding:12px 16px;border-radius:12px;background:#0f1a30;border:1px solid var(--line);line-height:1.5}
+.def{background:#0f1a30;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--mute);font-size:16px;margin-top:8px}
+</style>
+</head>
+<body>
+<header><h1>🔒 Breach or Not?</h1><p>Real workplace situations: spot the data breach and the UK GDPR principle involved.</p></header>
+<main><div id="app"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);
+function armRestart(btn,fn,label){let armed=false,t;btn.onclick=()=>{if(!armed){armed=true;btn.textContent='Sure? Click again to start over';t=setTimeout(()=>{armed=false;btn.textContent=label||'↺ Start again';},4000);}else{clearTimeout(t);armed=false;fn();}};}
+let idleT;function bump(){clearTimeout(idleT);idleT=setTimeout(()=>{startOver();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+
+const P={1:'Lawfulness, fairness & transparency',2:'Purpose limitation',3:'Data minimisation',4:'Accuracy',5:'Storage limitation',6:'Integrity & confidentiality (security)',0:'No principle broken'};
+const S=[
+ {t:'A trainer leaves a USB stick containing the full customer list on a train. It is not encrypted.',b:true,p:6,e:'Personal data has been lost and could be seen by a stranger, so this is a breach. The data was not kept secure (integrity & confidentiality).'},
+ {t:'A receptionist emails Client A’s invoice, with their address and phone number, to Client B by mistake.',b:true,p:6,e:'Data has been disclosed to someone who should not see it. That is a breach of confidentiality, one of the most common kinds.'},
+ {t:'A member of staff opens a famous customer’s account “just to have a look”. They have no work reason to.',b:true,p:6,e:'Unauthorised access is a breach, even if nothing is copied or shared. Systems should limit and log who can view records.'},
+ {t:'The company still holds the records of customers who left 12 years ago, “just in case”.',b:false,p:5,e:'Nothing has been lost or leaked, so it is not a breach. But personal data should not be kept longer than needed. That is storage limitation.'},
+ {t:'The newsletter sign-up form asks for date of birth, home address and religion.',b:false,p:3,e:'No incident has happened, so no breach. But a newsletter only needs an email address. Collecting more breaks data minimisation.'},
+ {t:'A customer complains that their name is spelt wrongly and their record shows a course they never booked. Nobody ever corrects it.',b:false,p:4,e:'No data has leaked, so it is not a breach. But personal data must be accurate and kept up to date. That is the accuracy principle.'},
+ {t:'Customers gave their email address to receive order updates. The company starts using it to promote another firm’s products.',b:false,p:2,e:'No security incident, so not a breach. But data must only be used for the purpose people were told about. That is purpose limitation.'},
+ {t:'An admin types their password into a fake login page sent in an email. The attacker downloads the customer database.',b:true,p:6,e:'This is a phishing attack, and the data has been stolen: a serious breach. It may need reporting to the ICO within 72 hours.'},
+ {t:'A sticky note with the system password is stuck to a monitor in the public reception area. Nothing has gone missing.',b:false,p:6,e:'No data has been lost yet, so strictly it is not a breach. But the security is poor and a breach is waiting to happen. That is the integrity & confidentiality principle.'},
+ {t:'A customer asks for a copy of their data. The company checks who they are, then sends it within the month.',b:false,p:0,e:'This is exactly what the law requires (a subject access request). No breach and no principle broken: well done to the company!'}];
+let i,bAns,pAns,locked,score,hist;
+function startOver(){i=0;bAns=null;pAns=null;locked=false;score=0;hist=[];render();}
+function render(){
+  const app=$('app');
+  if(i>=S.length){
+    const r=score>=9?'🏅 Data Protection Officer':score>=7?'🛡 Compliance Pro':score>=4?'📋 Trainee Analyst':'🌱 Keep learning';
+    app.innerHTML='<div class="card win"><h2>'+r+'</h2><p style="font-size:24px">You scored <b>'+score+' out of '+S.length+'</b>.</p><div class="def" style="text-align:left;font-size:18px;color:var(--ink);line-height:1.6"><b>If you ever spot a breach:</b><br>1. Tell your manager / Data Protection Officer <b>straight away</b>.<br>2. Record what happened.<br>3. If people could be harmed, the organisation must report it to the <b>ICO within 72 hours</b>.</div><p style="font-size:22px">Show a member of staff your screen to claim your prize.</p><button class="go" id="again">Play again</button></div>';
+    $('again').onclick=startOver;return;
+  }
+  const s=S[i];
+  let dots='';S.forEach((_,k)=>dots+='<div class="dot '+(k<i?'done':k===i?'cur':'')+'"></div>');
+  let h='<div class="card"><div class="dots">'+dots+'</div><div class="lvl">Scenario '+(i+1)+' of '+S.length+' · Score '+score+'</div>';
+  if(i===0)h+='<div class="def"><b>Personal data breach:</b> a security incident where personal data is lost, stolen, changed or seen by someone who should not see it.</div>';
+  h+='<div class="scn">'+s.t+'</div><div class="q">1. Is this a personal data breach?</div><div class="opts">'+
+    [[true,'Yes, a breach'],[false,'No, not a breach']].map(o=>{let c='opt';if(locked){if(o[0]===s.b)c+=' right';else if(bAns===o[0])c+=' wrong';}else if(bAns===o[0])c+=' on';return '<button class="'+c+'" data-b="'+o[0]+'">'+o[1]+'</button>';}).join('')+'</div>'+
+    '<div class="q">2. Which UK GDPR principle is involved?</div><div class="opts">'+
+    [1,2,3,4,5,6,0].map(k=>{let c='opt';if(locked){if(k===s.p)c+=' right';else if(pAns===k)c+=' wrong';}else if(pAns===k)c+=' on';return '<button class="'+c+'" data-p="'+k+'">'+P[k]+'</button>';}).join('')+'</div>';
+  if(!locked)h+='<div class="row"><button class="go" id="lock"'+(bAns===null||pAns===null?' disabled':'')+'>Lock in my answer</button></div>';
+  else{
+    const ok=bAns===s.b&&pAns===s.p;
+    h+='<div class="fb"><b class="'+(ok?'good':'bad')+'">'+(ok?'✔ Both right!':(bAns===s.b||pAns===s.p?'◐ Half right.':'✘ Not quite.'))+'</b> '+s.e+'</div><div class="row"><button class="go" id="next">'+(i===S.length-1?'See my result':'Next scenario →')+'</button></div>';
+  }
+  h+='<div class="row"><button id="restart">↺ Start again</button></div></div>';
+  app.innerHTML=h;
+  armRestart($('restart'),startOver);
+  if(!locked){
+    app.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bAns=b.dataset.b==='true';render();});
+    app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{pAns=+b.dataset.p;render();});
+    $('lock').onclick=()=>{if(bAns===null||pAns===null)return;locked=true;if(bAns===s.b&&pAns===s.p)score++;render();};
+  }else $('next').onclick=()=>{i++;bAns=null;pAns=null;locked=false;render();window.scrollTo&&window.scrollTo(0,0);};
+}
+startOver();bump();
+
+</script>
+<!--OEB-->
+<script>window.OEB_CFG={id:"gdpr",type:"score",get max(){return S.length},getScore:function(){return score}};</script>
+<script>(function(){
+var C=window.OEB_CFG||{};if(!C.id)return;
+var KEY='oeb:'+C.id,BAD=['ASS','SEX','FUK','FCK','FUC','CUM','TIT','WTF','KKK','NZI','SHT','DIK','DCK','PIS','CNT','FAG','JEW'];
+var mem=[];
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(v))return v;}catch(e){}return mem;}
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s;}
+function rank(a){return a.slice().sort(function(x,y){return C.type==='score'?((y.s-x.s)||(x.t-y.t)):(x.t-y.t);});}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var st=document.createElement('style');
+st.textContent='#oeboard{max-width:1200px;margin:6px auto 26px;padding:14px 20px;background:var(--panel,#161f33);border:2px solid var(--acc2,#fbbf24);border-radius:14px;color:var(--ink,#e8eef9);font-family:system-ui,sans-serif}#oeboard h3{margin:0 0 8px;font-size:22px;color:var(--acc2,#fbbf24);user-select:none}#oeboard ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}#oeboard li{background:#0f1a30;border:1px solid var(--line,#2b3a57);border-radius:10px;padding:8px 12px;font-size:20px;font-weight:700;font-family:ui-monospace,Consolas,monospace}#oeboard li small{color:var(--mute,#8fa1c0);font-weight:500;font-size:15px}#oeboard li.me{border-color:var(--good,#34d399);background:#14463a}#oeboard .none{color:var(--mute,#8fa1c0);font-size:18px}#oeboard .clr{margin-top:10px;font-size:14px;opacity:.7;background:#4a1f26;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.oeb-entry{margin:18px auto 4px;max-width:560px;background:#0f1a30;border:2px solid var(--acc2,#fbbf24);border-radius:14px;padding:14px 18px;font-size:20px;line-height:1.5}.oeb-entry input{font:700 28px ui-monospace,Consolas,monospace;width:110px;text-align:center;text-transform:uppercase;letter-spacing:.2em;border-radius:10px;border:2px solid var(--line,#2b3a57);background:#161f33;color:#fff;padding:6px}.oeb-entry button{font:inherit;font-weight:700;background:var(--acc2,#fbbf24);color:#1a1200;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-left:6px}.oeb-entry .err{color:var(--bad,#f87171);font-size:17px;min-height:22px}';
+document.head.appendChild(st);
+var t0=null,saved=false;
+function touch(){if(t0===null)t0=Date.now();}
+['mousedown','keydown','touchstart'].forEach(function(e){document.addEventListener(e,touch,true);});
+document.addEventListener('click',function(e){var b=e.target;if(b&&b.id==='restart'&&/^Sure/.test(b.textContent))t0=null;},true);
+var idle;function idleReset(){clearTimeout(idle);idle=setTimeout(function(){t0=null;},180000);}
+['mousedown','keydown','mousemove','touchstart'].forEach(function(e){document.addEventListener(e,idleReset,{passive:true});});
+var panel=document.createElement('div');panel.id='oeboard';
+var ref=document.querySelector('main');(ref&&ref.parentNode?ref.parentNode:document.body).insertBefore(panel,ref?ref.nextSibling:null);
+var mine=null,clrShown=false,armed=false;
+function renderBoard(){
+  var a=rank(load()).slice(0,5);
+  var h='<h3 id="oebh">🏆 Top 5 on this PC today — can you beat them?</h3>';
+  if(!a.length)h+='<div class="none">No scores yet. Be the first on the board!</div>';
+  else h+='<ol>'+a.map(function(x,i){return '<li'+(mine&&x.id===mine?' class="me"':'')+'>'+(['🥇','🥈','🥉','4.','5.'][i])+' '+esc(x.i)+' <small>'+(C.type==='score'?x.s+'/'+C.max+' · ':'')+fmt(x.t)+'</small></li>';}).join('')+'</ol>';
+  if(clrShown)h+='<button class="clr" id="oebclr">Staff: clear this board</button>';
+  panel.innerHTML=h;
+  var hd=document.getElementById('oebh');if(hd)hd.ondblclick=function(){clrShown=true;renderBoard();};
+  var c=document.getElementById('oebclr');
+  if(c)c.onclick=function(){if(!armed){armed=true;c.textContent='Sure? Click again to delete ALL scores';setTimeout(function(){armed=false;clrShown=false;renderBoard();},4000);}else{save([]);armed=false;clrShown=false;mine=null;renderBoard();}};
+}
+function attach(w){
+  if(w.getAttribute('data-oeb'))return;w.setAttribute('data-oeb','1');
+  if(t0===null)t0=Date.now();
+  var secs=Math.max(1,Math.round((Date.now()-t0)/1000)),sc=0;
+  if(C.type==='score'){try{sc=C.getScore();}catch(e){sc=0;}}
+  saved=false;
+  var d=document.createElement('div');d.className='oeb-entry';
+  d.innerHTML='<div>⏱ Your time: <b>'+fmt(secs)+'</b>'+(C.type==='score'?' · Score: <b>'+sc+'/'+C.max+'</b>':'')+'</div><div style="margin-top:8px">Add your <b>initials</b> to the leaderboard:<br><input id="oebin" maxlength="3" autocomplete="off" spellcheck="false"><button id="oebsave">Save</button></div><div class="err" id="oebe"></div>';
+  w.appendChild(d);
+  var inp=d.querySelector('#oebin'),go=d.querySelector('#oebsave'),er=d.querySelector('#oebe');
+  inp.oninput=function(){inp.value=inp.value.replace(/[^a-zA-Z]/g,'').toUpperCase();};
+  function doSave(){
+    var v=inp.value.toUpperCase();
+    if(!/^[A-Z]{2,3}$/.test(v)){er.textContent='Please enter 2 or 3 letters (initials only).';return;}
+    if(BAD.indexOf(v)>-1){er.textContent='Please choose different initials.';return;}
+    var a=load().slice();var id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    a.push({i:v,s:sc,t:secs,id:id});a=rank(a).slice(0,30);save(a);mine=id;saved=true;
+    var pos=rank(a).findIndex(function(x){return x.id===id;})+1;
+    d.innerHTML='<div style="font-size:24px">✅ Saved! You are <b>#'+pos+'</b> on the board today.</div><div class="mute" style="font-size:17px;margin-top:4px">Tell a friend to come and beat you!</div>';
+    renderBoard();
+  }
+  go.onclick=doSave;inp.onkeydown=function(e){if(e.key==='Enter')doSave();};
+  setTimeout(function(){try{inp.focus();}catch(e){}},50);
+}
+var mo=new MutationObserver(function(){var w=document.querySelector('.win,.end');if(w)attach(w);});
+mo.observe(document.body,{childList:true,subtree:true});
+// when the win screen disappears (play again / reset), start a fresh clock
+var mo2=new MutationObserver(function(){if(!document.querySelector('.win,.end')&&window.__oebWas){window.__oebWas=false;t0=null;mine=null;renderBoard();}else if(document.querySelector('.win,.end'))window.__oebWas=true;});
+mo2.observe(document.body,{childList:true,subtree:true});
+renderBoard();
+})();
+</script>
+<!--/OEB-->
+</body>
+</html>

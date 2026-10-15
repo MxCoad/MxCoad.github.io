@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build a Web Page</title>
+<style>
+:root{--bg:#0f172a;--panel:#1e293b;--line:#334155;--ink:#f1f5f9;--mute:#94a3b8;--acc:#22d3ee;--acc2:#f472b6;--ok:#4ade80}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}
+header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+.wrap{display:grid;grid-template-columns:minmax(340px,1fr) minmax(340px,1fr);gap:18px;padding:18px;max-width:1500px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:8px 13px;background:#334155;color:var(--ink);font-weight:600}
+button:hover{background:#475569}
+button.go{background:var(--ok);color:#052e16}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+textarea{width:100%;height:380px;background:#0b1220;color:#e2e8f0;border:1px solid var(--line);border-radius:10px;padding:12px;font:17px/1.5 ui-monospace,Consolas,"Courier New",monospace;resize:vertical;tab-size:2;margin-top:10px}
+textarea:focus{outline:2px solid var(--acc)}
+.tasks{list-style:none;margin:8px 0 0;padding:0;font-size:18px}
+.tasks li{padding:5px 0;display:flex;gap:10px;align-items:flex-start}
+.tasks .box{width:26px;height:26px;border-radius:7px;border:2px solid var(--line);flex:none;text-align:center;line-height:22px;font-size:18px}
+.tasks li.done .box{background:var(--ok);border-color:var(--ok);color:#052e16}
+.tasks li.done span.t{color:var(--mute);text-decoration:line-through}
+.tasks li.bonus span.t::after{content:'  ⭐ bonus';color:var(--acc2);font-size:14px}
+h3{margin:0;font-size:20px}
+.bar{height:10px;background:#0b1220;border-radius:6px;margin:8px 0;overflow:hidden}
+.bar div{height:100%;background:var(--ok);width:0;transition:width .3s}
+#win{display:none;margin-top:8px;font-size:20px;font-weight:700;color:var(--ok)}
+iframe{width:100%;height:560px;background:#fff;border:0;border-radius:10px}
+.colours{font-size:15px;color:var(--mute);margin-top:6px}
+.colours code{color:#fde68a}
+#frameCard{position:sticky;top:10px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌐 Build a Web Page</h1>
+  <p>This is the real code behind a web page (HTML and CSS). Change it and watch your page update — then complete the missions!</p>
+</header>
+<div class="wrap">
+  <section>
+    <div class="card">
+      <h3>🎯 Missions <span id="count" style="color:var(--mute);font-weight:400"></span></h3>
+      <div class="bar"><div id="fill"></div></div>
+      <ul class="tasks" id="tasks"></ul>
+      <div id="win">🎉 All missions complete! Press “Save my page” to take it home.</div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <span style="color:var(--mute)">Add:</span>
+        <button data-s="h2">Heading</button>
+        <button data-s="p">Paragraph</button>
+        <button data-s="ul">List</button>
+        <button data-s="link">Link</button>
+        <button data-s="button">Button</button>
+        <button data-s="img">Picture</button>
+        <span style="flex:1"></span>
+        <button id="reset">↺ Start again</button>
+        <button class="go" id="save">💾 Save my page</button>
+      </div>
+      <textarea id="code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="colours">Try colour names like <code>tomato</code> <code>gold</code> <code>hotpink</code> <code>limegreen</code> <code>navy</code> <code>orange</code> <code>purple</code> or codes like <code>#33ccff</code></div>
+    </div>
+  </section>
+  <section id="frameCard">
+    <div class="card"><h3 style="margin-bottom:10px">👀 Your page</h3><iframe id="view" sandbox="" title="Preview of your web page"></iframe></div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const START=`<!DOCTYPE html>
+<html>
+<head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: lightblue;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    color: darkblue;
+  }
+</style>
+</head>
+<body>
+
+  <h1>Hello, I am ______</h1>
+
+  <p>Welcome to my web page.</p>
+
+</body>
+</html>
+`;
+const SNIP={
+  h2:'\n  <h2>My new heading</h2>\n',
+  p:'\n  <p>Write something about yourself here.</p>\n',
+  ul:'\n  <ul>\n    <li>My favourite game</li>\n    <li>My favourite food</li>\n  </ul>\n',
+  link:'\n  <p><a href="https://www.bbc.co.uk/bitesize">My favourite website</a></p>\n',
+  button:'\n  <p><button>Click me!</button></p>\n',
+  img:'\n  <img src="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ccircle cx=%2750%27 cy=%2750%27 r=%2745%27 fill=%27gold%27 stroke=%27orange%27 stroke-width=%273%27/%3E%3Ccircle cx=%2735%27 cy=%2742%27 r=%276%27/%3E%3Ccircle cx=%2765%27 cy=%2742%27 r=%276%27/%3E%3Cpath d=%27M30 62 Q50 82 70 62%27 fill=%27none%27 stroke=%27black%27 stroke-width=%274%27/%3E%3C/svg%3E" width="120" alt="A smiley face">\n'
+};
+const TASKS=[
+  {t:'Change the heading so it says your own name',ok:d=>{const h=d.querySelector('h1');const x=h?h.textContent.trim():'';return x.length>0&&!/_{3,}/.test(x)&&x!=='Hello, I am ______';}},
+  {t:'Change the background colour',ok:(d,css)=>{const v=prop(css,'body',/background(?:-color)?/);return !!v&&v.toLowerCase()!=='lightblue';}},
+  {t:'Add another paragraph (<p>…</p>)',ok:d=>d.querySelectorAll('p').length>=2},
+  {t:'Add a list with at least two items',ok:d=>d.querySelectorAll('ul li, ol li').length>=2},
+  {t:'Add a link or a button',ok:d=>!!d.querySelector('a[href], button')},
+  {t:'Change the colour or size of the heading in the CSS',ok:(d,css)=>{const c=prop(css,'h1',/color/);const s=prop(css,'h1',/font-size/);return (!!c&&c.toLowerCase()!=='darkblue')||!!s;}},
+  {t:'Add a picture',bonus:true,ok:d=>!!d.querySelector('img[src]')}
+];
+function prop(css,sel,re){
+  const rule=new RegExp('(?:^|[}\\s,])'+sel+'\\s*\\{([^}]*)\\}','i').exec(css);
+  if(!rule)return null;
+  const m=new RegExp('(?:^|[;\\s])('+re.source+')\\s*:\\s*([^;}]+)','i').exec(rule[1]);
+  return m?m[m.length-1].trim():null;
+}
+function check(){
+  const code=$('code').value;
+  const d=new DOMParser().parseFromString(code,'text/html');
+  const css=[...d.querySelectorAll('style')].map(s=>s.textContent).join('\n');
+  let done=0,core=0,coreDone=0;
+  $('tasks').innerHTML='';
+  TASKS.forEach(t=>{
+    let ok=false;try{ok=!!t.ok(d,css);}catch(e){}
+    if(ok)done++;
+    if(!t.bonus){core++;if(ok)coreDone++;}
+    const li=document.createElement('li');li.className=(ok?'done ':'')+(t.bonus?'bonus':'');
+    li.innerHTML='<div class="box">'+(ok?'✓':'')+'</div><span class="t"></span>';
+    li.querySelector('.t').textContent=t.t;
+    $('tasks').appendChild(li);
+  });
+  $('count').textContent='('+coreDone+' of '+core+')';
+  $('fill').style.width=(coreDone/core*100)+'%';
+  $('win').style.display=coreDone===core?'block':'none';
+}
+let timer;
+function render(){$('view').srcdoc=$('code').value;check();}
+$('code').addEventListener('input',()=>{clearTimeout(timer);timer=setTimeout(render,200);});
+$('code').addEventListener('keydown',e=>{
+  if(e.key==='Tab'){e.preventDefault();const t=e.target,s=t.selectionStart;t.value=t.value.slice(0,s)+'  '+t.value.slice(t.selectionEnd);t.selectionStart=t.selectionEnd=s+2;}
+});
+document.querySelectorAll('button[data-s]').forEach(b=>b.onclick=()=>{
+  const t=$('code');const full=t.value;
+  let pos=full.toLowerCase().lastIndexOf('</body>');if(pos<0)pos=full.length;
+  const caret=t.selectionStart;
+  // insert at the caret if it is inside the body, otherwise just before </body>
+  const bodyStart=full.toLowerCase().indexOf('<body');
+  const at=(caret>bodyStart&&caret<=pos&&document.activeElement===t)?caret:pos;
+  t.value=full.slice(0,at)+SNIP[b.dataset.s]+full.slice(at);
+  render();
+});
+$('reset').onclick=()=>{$('code').value=START;render();};
+$('save').onclick=()=>{
+  const blob=new Blob([$('code').value],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='my-web-page.html';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+
+/* reset after 3 idle minutes so the next visitor starts fresh */
+let idle;function bump(){clearTimeout(idle);idle=setTimeout(()=>{$('code').value=START;render();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+$('code').value=START;render();bump();
+</script>
+</body>
+</html>

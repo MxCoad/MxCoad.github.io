@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python Art Studio</title>
+<style>
+:root{--bg:#0f172a;--panel:#1e293b;--line:#334155;--ink:#f1f5f9;--mute:#94a3b8;--acc:#22d3ee;--acc2:#f472b6;--ok:#4ade80;--err:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+h1{margin:0;font-size:28px}
+header p{margin:0;color:var(--mute);font-size:17px}
+.wrap{display:grid;grid-template-columns:minmax(340px,1fr) minmax(340px,1fr);gap:18px;padding:18px;max-width:1500px;margin:auto}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 14px;background:#334155;color:var(--ink);font-weight:600}
+button:hover{background:#475569}
+button.go{background:var(--ok);color:#052e16;font-size:19px;padding:10px 22px}
+button.go:hover{background:#86efac}
+button.pre{background:#0b1220;border:1px solid var(--line)}
+button.pre.on{border-color:var(--acc);color:var(--acc)}
+label.small{color:var(--mute);font-size:14px}
+textarea{width:100%;height:340px;margin-top:10px;background:#0b1220;color:#e2e8f0;border:1px solid var(--line);border-radius:10px;padding:12px;font:18px/1.45 ui-monospace,Consolas,"Courier New",monospace;resize:vertical;tab-size:4}
+textarea:focus{outline:2px solid var(--acc)}
+#msg{min-height:24px;margin-top:8px;font-size:16px;color:var(--err);font-weight:600}
+#out{margin-top:4px;font:14px ui-monospace,Consolas,monospace;color:var(--mute);white-space:pre-wrap}
+#try{display:flex;gap:10px;align-items:center;margin-top:12px;background:#0b1220;border:1px dashed var(--acc2);border-radius:10px;padding:10px 12px}
+#try span{flex:1;font-size:17px}
+#stageBox{position:sticky;top:10px}
+#stage{position:relative;width:100%;max-width:min(100%,80vh);aspect-ratio:1;background:#fff;border-radius:12px;overflow:hidden;margin:auto}
+#stage canvas{position:absolute;inset:0;width:100%;height:100%}
+details{margin-top:12px}
+summary{cursor:pointer;color:var(--acc);font-weight:600}
+table{border-collapse:collapse;margin-top:8px;font-size:15px}
+td{padding:3px 12px 3px 0;vertical-align:top}
+code{font-family:ui-monospace,Consolas,monospace;color:#fde68a}
+input[type=range]{accent-color:var(--acc)}
+</style>
+</head>
+<body>
+<header>
+  <h1>🐢 Python Art Studio</h1>
+  <p>Edit the code on the left, press <b>Run</b>, and watch Python draw. Then change a number and run it again!</p>
+</header>
+
+<div class="wrap">
+  <section>
+    <div class="card">
+      <div class="row" id="presets"></div>
+      <textarea id="code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="row" style="margin-top:10px">
+        <button class="go" id="run">▶ Run</button>
+        <button id="reset">↺ Start again</button>
+        <button id="clear">Clear drawing</button>
+        <button id="save">💾 Save picture</button>
+        <label class="small" style="margin-left:auto">Drawing speed&nbsp;<input type="range" id="speed" min="1" max="5" value="3"></label>
+      </div>
+      <div id="msg"></div>
+      <div id="out"></div>
+      <div id="try"><span id="trytext"></span><button id="trynext">Next idea ➜</button></div>
+      <details>
+        <summary>Commands you can use</summary>
+        <table>
+          <tr><td><code>t.forward(100)</code></td><td>move forwards 100 steps</td></tr>
+          <tr><td><code>t.left(90)</code> / <code>t.right(90)</code></td><td>turn by an angle in degrees</td></tr>
+          <tr><td><code>t.color("red")</code></td><td>change colour (<code>"gold"</code>, <code>"hotpink"</code>, <code>"#33ccff"</code>…)</td></tr>
+          <tr><td><code>t.pensize(5)</code></td><td>thicker line</td></tr>
+          <tr><td><code>t.penup()</code> / <code>t.pendown()</code></td><td>lift the pen / put it down</td></tr>
+          <tr><td><code>t.goto(x, y)</code></td><td>jump to a position (0, 0 is the middle)</td></tr>
+          <tr><td><code>t.circle(50)</code></td><td>draw a circle with radius 50</td></tr>
+          <tr><td><code>t.begin_fill()</code> … <code>t.end_fill()</code></td><td>fill a shape with colour</td></tr>
+          <tr><td><code>t.dot(20, "red")</code></td><td>a coloured dot</td></tr>
+          <tr><td><code>turtle.bgcolor("black")</code></td><td>background colour</td></tr>
+          <tr><td><code>for i in range(10):</code></td><td>repeat the indented lines 10 times</td></tr>
+          <tr><td><code>def name(a, b):</code></td><td>make your own command</td></tr>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <section id="stageBox">
+    <div class="card">
+      <div id="stage"><canvas id="draw"></canvas><canvas id="over"></canvas></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/*INTERP-START*/
+class PyError extends Error{constructor(msg,line){super(msg);this.line=line;}}
+
+function stripComment(s){
+  let q=null;
+  for(let i=0;i<s.length;i++){
+    const c=s[i];
+    if(q){if(c==='\\')i++;else if(c===q)q=null;}
+    else if(c==='"'||c==="'")q=c;
+    else if(c==='#')return s.slice(0,i);
+  }
+  return s;
+}
+
+function toJS(expr){
+  return expr.split(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/).map((p,i)=>{
+    if(i%2)return p;
+    if(p.includes('//'))throw new Error('FLOORDIV');
+    return p.replace(/\bTrue\b/g,'true').replace(/\bFalse\b/g,'false').replace(/\bNone\b/g,'null')
+            .replace(/\band\b/g,'&&').replace(/\bor\b/g,'||').replace(/\bnot\b/g,'!');
+  }).join('');
+}
+
+function parseProgram(src){
+  const items=[];
+  src.replace(/\t/g,'    ').split('\n').forEach((l,i)=>{
+    const raw=stripComment(l).replace(/\s+$/,'');
+    if(!raw.trim())return;
+    items.push({ind:raw.match(/^ */)[0].length,text:raw.trim(),no:i+1});
+  });
+  let pos=0;
+  function block(ind){
+    const out=[];
+    while(pos<items.length){
+      const it=items[pos];
+      if(it.ind<ind)break;
+      if(it.ind>ind)throw new PyError('Indentation problem — this line is indented more than the line above it',it.no);
+      pos++;
+      if(it.text.endsWith(':')){
+        const nx=items[pos];
+        if(!nx||nx.ind<=ind)throw new PyError('This line ends with a colon (:) so the next line needs to be indented',it.no);
+        it.body=block(nx.ind);
+      }
+      out.push(it);
+    }
+    return out;
+  }
+  const prog=block(items.length?items[0].ind:0);
+  if(pos<items.length)throw new PyError('Indentation problem — check the spaces at the start of this line',items[pos].no);
+  return prog;
+}
+
+function makeTurtle(isColour){
+  const ops=[];
+  const S={x:0,y:0,h:0,pd:true,pen:'black',fill:'black',w:1,vis:true,filling:null};
+  const num=(v,n)=>{if(typeof v!=='number'||isNaN(v))throw new PyError(n+'() needs a number, for example '+n+'(100)');return v;};
+  const col=(args,n)=>{
+    let c;
+    if(args.length===3){
+      let [r,g,b]=args.map(Number);
+      if(r<=1&&g<=1&&b<=1){r*=255;g*=255;b*=255;}
+      c='rgb('+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(',')+')';
+    }else c=args[0];
+    if(!isColour(c))throw new PyError('Python doesn\'t know the colour '+JSON.stringify(c)+' — try a name like "red" or a code like "#ff8800"');
+    return c;
+  };
+  function move(nx,ny){
+    if(S.pd)ops.push({k:'l',x1:S.x,y1:S.y,x2:nx,y2:ny,c:S.pen,w:S.w,h:S.h});
+    else ops.push({k:'m',x:nx,y:ny,h:S.h});
+    S.x=nx;S.y=ny;
+    if(S.filling)S.filling.pts.push([nx,ny]);
+  }
+  const fd=d=>{num(d,'forward');const r=S.h*Math.PI/180;move(S.x+d*Math.cos(r),S.y+d*Math.sin(r));};
+  const api={};
+  const def=(names,fn)=>names.forEach(n=>api[n]=fn);
+  def(['forward','fd'],fd);
+  def(['backward','back','bk'],d=>fd(-num(d,'backward')));
+  def(['left','lt'],a=>{S.h=(S.h+num(a,'left'))%360;});
+  def(['right','rt'],a=>{S.h=(S.h-num(a,'right'))%360;});
+  def(['goto','setpos','setposition'],(x,y)=>{
+    if(Array.isArray(x)){y=x[1];x=x[0];}
+    move(num(x,'goto'),num(y,'goto'));
+  });
+  def(['setx'],x=>move(num(x,'setx'),S.y));
+  def(['sety'],y=>move(S.x,num(y,'sety')));
+  def(['setheading','seth'],a=>{S.h=num(a,'setheading')%360;});
+  def(['home'],()=>{move(0,0);S.h=0;});
+  def(['penup','pu','up'],()=>{S.pd=false;});
+  def(['pendown','pd','down'],()=>{S.pd=true;});
+  def(['pensize','width'],w=>{S.w=Math.max(0.5,num(w,'pensize'));});
+  def(['pencolor'],(...a)=>{S.pen=col(a);});
+  def(['fillcolor'],(...a)=>{S.fill=col(a);});
+  def(['color'],(...a)=>{
+    if(a.length===2){S.pen=col([a[0]]);S.fill=col([a[1]]);}
+    else{const c=col(a);S.pen=c;S.fill=c;}
+  });
+  def(['begin_fill'],()=>{S.filling={pts:[[S.x,S.y]],at:ops.length};});
+  def(['end_fill'],()=>{
+    if(S.filling&&S.filling.pts.length>2)ops.splice(S.filling.at,0,{k:'f',pts:S.filling.pts,c:S.fill});
+    S.filling=null;
+  });
+  def(['circle'],(r,extent,steps)=>{
+    num(r,'circle');if(extent===undefined)extent=360;
+    const n=steps||Math.max(4,Math.ceil(Math.abs(extent)/6));
+    const sgn=r>0?1:-1,a=sgn*extent/n;
+    const chord=2*Math.abs(r)*Math.sin(Math.abs(a)*Math.PI/360);
+    S.h+=a/2;
+    for(let i=0;i<n;i++){fd(chord);S.h+=a;}
+    S.h-=a/2;S.h%=360;
+  });
+  def(['dot'],(size,c)=>{
+    if(size===undefined)size=Math.max(S.w+4,S.w*2);
+    ops.push({k:'d',x:S.x,y:S.y,r:num(size,'dot')/2,c:c===undefined?S.pen:col([c]),h:S.h});
+  });
+  def(['write'],text=>{ops.push({k:'t',x:S.x,y:S.y,text:String(text),c:S.pen,h:S.h});});
+  def(['bgcolor'],(...a)=>{ops.push({k:'bg',c:col(a)});});
+  def(['hideturtle','ht'],()=>{S.vis=false;});
+  def(['showturtle','st'],()=>{S.vis=true;});
+  def(['xcor'],()=>S.x);
+  def(['ycor'],()=>S.y);
+  def(['heading'],()=>((S.h%360)+360)%360);
+  def(['pos','position'],()=>[S.x,S.y]);
+  def(['Turtle','Screen'],()=>api);
+  def(['speed','tracer','update','delay','title','setup','colormode','mainloop','done','exitonclick','bye','listen','mode','getscreen'],()=>{});
+  Object.defineProperty(api,'__ops',{value:ops});
+  Object.defineProperty(api,'__state',{value:S});
+  return api;
+}
+
+function runProgram(src,api,print){
+  const prog=parseProgram(src);
+  const rnd=()=>Math.random();
+  const builtins={
+    range:(a,b,c)=>{
+      let s=0,e=a,st=1;
+      if(b!==undefined){s=a;e=b;}
+      if(c!==undefined)st=c;
+      if(!st)throw new PyError('range() step cannot be zero');
+      const out=[];
+      if(st>0){for(let i=s;i<e;i+=st){out.push(i);if(out.length>100000)throw new PyError('That range is far too big');}}
+      else{for(let i=s;i>e;i+=st){out.push(i);if(out.length>100000)throw new PyError('That range is far too big');}}
+      return out;
+    },
+    len:x=>x.length,abs:Math.abs,int:x=>Math.trunc(Number(x)),float:Number,str:String,
+    round:(x,n)=>{const f=Math.pow(10,n||0);return Math.round(x*f)/f;},
+    min:(...a)=>Math.min(...(a.length===1?a[0]:a)),
+    max:(...a)=>Math.max(...(a.length===1?a[0]:a)),
+    sum:a=>a.reduce((x,y)=>x+y,0),
+    print:(...a)=>print(a.join(' ')),
+    math:{pi:Math.PI,e:Math.E,sqrt:Math.sqrt,sin:Math.sin,cos:Math.cos,tan:Math.tan,floor:Math.floor,ceil:Math.ceil,pow:Math.pow,
+          radians:d=>d*Math.PI/180,degrees:r=>r*180/Math.PI},
+    random:{random:rnd,randint:(a,b)=>a+Math.floor(rnd()*(b-a+1)),uniform:(a,b)=>a+rnd()*(b-a),choice:a=>a[Math.floor(rnd()*a.length)]}
+  };
+  const base=Object.assign({},builtins,api,{turtle:api});
+  const globalScope=Object.create(base);
+  let steps=0;
+  const tick=st=>{if(++steps>400000)throw new PyError('This program has been running for too long — is there a loop that never ends?',st.no);};
+  const cache=new Map();
+
+  function friendly(e,st){
+    if(e instanceof PyError){if(!e.line)e.line=st.no;return e;}
+    let msg=e&&e.message?e.message:String(e),m;
+    if(e instanceof RangeError)msg='Too many things are happening at once — is something calling itself forever?';
+    else if(e instanceof ReferenceError&&(m=msg.match(/^(.+?) is not defined/)))msg='Python doesn\'t know the name "'+m[1]+'" — check the spelling and capital letters';
+    else if(e instanceof TypeError&&(m=msg.match(/^(.+?) is not a function/)))msg='"'+m[1]+'" isn\'t a command Python knows — check the spelling';
+    else msg='Python couldn\'t do this: '+msg;
+    return new PyError(msg,st.no);
+  }
+  function ev(expr,scope,st){
+    let fn=cache.get(expr);
+    if(!fn){
+      let js;
+      try{js=toJS(expr);}catch(e){throw new PyError('Floor division (//) isn\'t available here — try int(a / b) instead',st.no);}
+      try{fn=new Function('__s','with(__s){return ('+js+'\n);}');}
+      catch(e){throw new PyError('Something isn\'t quite right in this line — check your brackets, quotes and commas',st.no);}
+      cache.set(expr,fn);
+    }
+    try{return fn(scope);}catch(e){throw friendly(e,st);}
+  }
+  function setVars(names,val,scope){
+    if(names.length===1){scope[names[0]]=val;return;}
+    const a=Array.from(val);
+    names.forEach((n,i)=>{scope[n]=a[i];});
+  }
+  function execOne(block,i,scope,st){
+    const t=st.text;let m;
+    if(/^(import|from)\s/.test(t)||t==='pass')return{};
+    if(t==='break')return{sig:{k:'break'}};
+    if(t==='continue')return{sig:{k:'continue'}};
+    if(m=t.match(/^return(?:\s+(.*))?$/))return{sig:{k:'return',v:m[1]?ev(m[1],scope,st):undefined}};
+    if(m=t.match(/^for\s+(.+?)\s+in\s+(.+):$/)){
+      const names=m[1].split(',').map(s=>s.trim());
+      const seq=ev(m[2],scope,st);
+      for(const v of seq){
+        tick(st);setVars(names,v,scope);
+        const r=exec(st.body,scope);
+        if(r){if(r.k==='break')break;if(r.k==='continue')continue;return{sig:r};}
+      }
+      return{};
+    }
+    if(m=t.match(/^while\s+(.+):$/)){
+      while(ev(m[1],scope,st)){
+        tick(st);
+        const r=exec(st.body,scope);
+        if(r){if(r.k==='break')break;if(r.k==='continue')continue;return{sig:r};}
+      }
+      return{};
+    }
+    if(m=t.match(/^if\s+(.+):$/)){
+      let taken=false,r,j=i;
+      if(ev(m[1],scope,st)){taken=true;r=exec(st.body,scope);}
+      while(j+1<block.length){
+        const nx=block[j+1];let mm;
+        if(mm=nx.text.match(/^elif\s+(.+):$/)){j++;if(!taken&&ev(mm[1],scope,nx)){taken=true;r=exec(nx.body,scope);}}
+        else if(nx.text==='else:'){j++;if(!taken){taken=true;r=exec(nx.body,scope);}}
+        else break;
+      }
+      return{skip:j-i,sig:r};
+    }
+    if(m=t.match(/^def\s+(\w+)\s*\((.*)\)\s*:$/)){
+      const params=m[2].split(',').map(s=>s.trim()).filter(Boolean).map(p=>{const a=p.split('=');return{n:a[0].trim(),d:a[1]};});
+      const body=st.body,home=scope;
+      scope[m[1]]=function(...args){
+        const local=Object.create(home);
+        params.forEach((p,j)=>{local[p.n]=args[j]!==undefined?args[j]:(p.d!==undefined?ev(p.d,home,st):undefined);});
+        const r=exec(body,local);
+        return r&&r.k==='return'?r.v:undefined;
+      };
+      return{};
+    }
+    if(m=t.match(/^([A-Za-z_]\w*)\s*(\[.+\])\s*([-+*\/%]?)=(?!=)\s*(.+)$/)){
+      const f=new Function('__s','__v','with(__s){'+toJS(m[1]+m[2])+' '+m[3]+'= __v;}');
+      const val=ev(m[4],scope,st);
+      try{f(scope,val);}catch(e){throw friendly(e,st);}
+      return{};
+    }
+    if(m=t.match(/^([A-Za-z_]\w*(?:\s*,\s*[A-Za-z_]\w*)*)\s*([-+*\/%]|\*\*)?=(?!=)\s*(.+)$/)){
+      const names=m[1].split(',').map(s=>s.trim());
+      let rhs=m[3];
+      if(names.length>1)rhs='['+rhs+']';
+      const val=m[2]?ev(names[0]+m[2]+'('+rhs+')',scope,st):ev(rhs,scope,st);
+      setVars(names,val,scope);
+      return{};
+    }
+    if(t.endsWith(':'))throw new PyError('Python doesn\'t understand this line — check it starts with for, while, if or def',st.no);
+    ev(t,scope,st);
+    return{};
+  }
+  function exec(block,scope){
+    for(let i=0;i<block.length;i++){
+      const st=block[i];
+      tick(st);
+      let res;
+      try{res=execOne(block,i,scope,st);}catch(e){throw friendly(e,st);}
+      if(res.skip)i+=res.skip;
+      if(res.sig)return res.sig;
+    }
+    return null;
+  }
+  exec(prog,globalScope);
+}
+/*INTERP-END*/
+
+/* ---------- user interface ---------- */
+const PRESETS=[
+{name:'Rainbow spiral',code:`import turtle
+t = turtle.Turtle()
+turtle.bgcolor("black")
+t.speed(0)
+
+colors = ["red", "orange", "yellow", "green", "cyan", "magenta"]
+
+for i in range(120):
+    t.pencolor(colors[i % 6])
+    t.pensize(2)
+    t.forward(i * 2)
+    t.right(59)
+`},
+{name:'Square spiral',code:`import turtle
+t = turtle.Turtle()
+t.speed(0)
+t.pensize(3)
+t.color("royalblue")
+
+for i in range(70):
+    t.forward(i * 6)
+    t.right(90)
+`},
+{name:'Flower',code:`import turtle
+t = turtle.Turtle()
+t.speed(0)
+t.pensize(2)
+
+colors = ["deeppink", "orange", "violet"]
+
+for i in range(12):
+    t.color("black", colors[i % 3])
+    t.begin_fill()
+    for j in range(2):
+        t.circle(120, 60)
+        t.left(120)
+    t.end_fill()
+    t.right(30)
+
+t.dot(40, "gold")
+`},
+{name:'Star',code:`import turtle
+t = turtle.Turtle()
+t.speed(0)
+t.pensize(4)
+t.color("darkorange", "gold")
+
+t.penup()
+t.goto(-130, 80)
+t.pendown()
+
+t.begin_fill()
+for i in range(5):
+    t.forward(260)
+    t.right(144)
+t.end_fill()
+`},
+{name:'Make your own command',code:`import turtle
+t = turtle.Turtle()
+t.speed(0)
+
+def square(size, colour):
+    t.color(colour)
+    t.begin_fill()
+    for i in range(4):
+        t.forward(size)
+        t.left(90)
+    t.end_fill()
+
+colours = ["tomato", "gold", "limegreen", "dodgerblue", "violet"]
+
+for n in range(18):
+    square(150, colours[n % 5])
+    t.right(20)
+`},
+{name:'Blank page',code:`import turtle
+t = turtle.Turtle()
+
+# Type your own code here!
+`}
+];
+const IDEAS=[
+ 'Change the number inside t.right( ) — what happens to the shape?',
+ 'Change the colours in the list to your favourite colours.',
+ 'Make the loop bigger: change range(60) to range(120). Does it still fit?',
+ 'Change the t.pensize( ) number to make the line thicker.',
+ 'Try a different background: turtle.bgcolor("navy")',
+ 'Add a new colour to the colours list. What do you need to change so it gets used?',
+ 'Challenge: can you make the drawing spiral inwards instead of outwards?',
+ 'Challenge: can you draw a triangle? (Hint: the turning angles add up to 360.)'
+];
+
+const $=id=>document.getElementById(id);
+const stage=$('stage'),cv=$('draw'),ov=$('over'),cx=cv.getContext('2d'),ox=ov.getContext('2d');
+const probe=document.createElement('canvas').getContext('2d');
+function isColour(c){
+  if(typeof c!=='string')return false;
+  probe.fillStyle='#010203';probe.fillStyle=c;const a=probe.fillStyle;
+  probe.fillStyle='#030201';probe.fillStyle=c;return a===probe.fillStyle;
+}
+const LOGICAL=700,SPEEDS=[1,4,15,60,1e9];
+let size=700,dpr=1,ops=[],idx=0,raf=0,finalState=null,lastPos=null,curPreset=0,ideaNo=0;
+
+function tf(c){const s=size*dpr/LOGICAL;c.setTransform(s,0,0,s,size*dpr/2,size*dpr/2);}
+function fit(){
+  size=stage.clientWidth||700;dpr=window.devicePixelRatio||1;
+  for(const c of[cv,ov]){c.width=Math.round(size*dpr);c.height=Math.round(size*dpr);}
+  redraw(idx);
+}
+function drawOp(o){
+  tf(cx);
+  if(o.k==='l'){cx.strokeStyle=o.c;cx.lineWidth=o.w;cx.lineCap='round';cx.beginPath();cx.moveTo(o.x1,-o.y1);cx.lineTo(o.x2,-o.y2);cx.stroke();lastPos={x:o.x2,y:o.y2,h:o.h};}
+  else if(o.k==='m'){lastPos={x:o.x,y:o.y,h:o.h};}
+  else if(o.k==='f'){cx.fillStyle=o.c;cx.beginPath();o.pts.forEach((p,i)=>i?cx.lineTo(p[0],-p[1]):cx.moveTo(p[0],-p[1]));cx.closePath();cx.fill();}
+  else if(o.k==='d'){cx.fillStyle=o.c;cx.beginPath();cx.arc(o.x,-o.y,o.r,0,7);cx.fill();}
+  else if(o.k==='t'){cx.fillStyle=o.c;cx.font='bold 22px system-ui,sans-serif';cx.fillText(o.text,o.x,-o.y);}
+  else if(o.k==='bg'){stage.style.background=o.c;}
+}
+function icon(){
+  ox.setTransform(1,0,0,1,0,0);ox.clearRect(0,0,ov.width,ov.height);
+  if(finalState&&!finalState.vis)return;
+  let p=lastPos;
+  if(idx>=ops.length&&finalState)p={x:finalState.x,y:finalState.y,h:finalState.h};
+  if(!p)p={x:0,y:0,h:0};
+  tf(ox);ox.translate(p.x,-p.y);ox.rotate(-p.h*Math.PI/180);
+  ox.beginPath();ox.moveTo(16,0);ox.lineTo(-10,9);ox.lineTo(-10,-9);ox.closePath();
+  ox.fillStyle='#16a34a';ox.fill();ox.lineWidth=2;ox.strokeStyle='#052e16';ox.stroke();
+}
+function redraw(upTo){
+  cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);
+  stage.style.background='#fff';lastPos=null;
+  for(let i=0;i<upTo&&i<ops.length;i++)drawOp(ops[i]);
+  icon();
+}
+function play(){
+  cancelAnimationFrame(raf);
+  const step=()=>{
+    const per=SPEEDS[$('speed').value-1];let n=0;
+    while(idx<ops.length&&n<per){drawOp(ops[idx]);idx++;n++;}
+    icon();
+    if(idx<ops.length)raf=requestAnimationFrame(step);
+  };
+  step();
+}
+function run(){
+  cancelAnimationFrame(raf);
+  $('msg').textContent='';$('out').textContent='';
+  const api=makeTurtle(isColour);
+  let printed=[];
+  try{runProgram($('code').value,api,s=>printed.push(s));}
+  catch(e){
+    const line=e.line?'Line '+e.line+': ':'';
+    $('msg').textContent='⚠ '+line+(e instanceof PyError?e.message:'Something went wrong: '+e.message);
+  }
+  if(printed.length)$('out').textContent=printed.join('\n');
+  ops=api.__ops;finalState=api.__state;idx=0;lastPos=null;
+  cx.setTransform(1,0,0,1,0,0);cx.clearRect(0,0,cv.width,cv.height);
+  stage.style.background='#fff';
+  play();
+}
+function loadPreset(i,andRun){
+  curPreset=i;$('code').value=PRESETS[i].code;
+  document.querySelectorAll('#presets .pre').forEach((b,j)=>b.classList.toggle('on',j===i));
+  if(andRun)run();
+}
+function nextIdea(){$('trytext').textContent='💡 '+IDEAS[ideaNo%IDEAS.length];ideaNo++;}
+
+PRESETS.forEach((p,i)=>{
+  const b=document.createElement('button');b.className='pre';b.textContent=p.name;
+  b.onclick=()=>loadPreset(i,true);$('presets').appendChild(b);
+});
+$('run').onclick=run;
+$('reset').onclick=()=>loadPreset(curPreset,true);
+$('clear').onclick=()=>{cancelAnimationFrame(raf);ops=[];idx=0;finalState=null;lastPos=null;redraw(0);};
+$('trynext').onclick=nextIdea;
+$('save').onclick=()=>{
+  const c=document.createElement('canvas');c.width=cv.width;c.height=cv.height;
+  const g=c.getContext('2d');g.fillStyle=stage.style.background||'#fff';g.fillRect(0,0,c.width,c.height);
+  g.drawImage(cv,0,0);
+  const a=document.createElement('a');a.download='my-python-art.png';a.href=c.toDataURL('image/png');a.click();
+};
+$('code').addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();const t=e.target,s=t.selectionStart;
+    t.value=t.value.slice(0,s)+'    '+t.value.slice(t.selectionEnd);
+    t.selectionStart=t.selectionEnd=s+4;
+  }else if(e.key==='Enter'&&(e.ctrlKey||e.shiftKey)){e.preventDefault();run();}
+});
+window.addEventListener('resize',fit);
+
+/* put the studio back to its starting state if nobody has used it for 3 minutes */
+let idle;
+function bump(){clearTimeout(idle);idle=setTimeout(()=>{loadPreset(0,true);nextIdea();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+nextIdea();loadPreset(0,false);fit();run();bump();
+</script>
+</body>
+</html>

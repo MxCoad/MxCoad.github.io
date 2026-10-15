@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Little Man Computer</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#34d399;--acc2:#fbbf24;--bad:#f87171;--cy:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}
+header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+.wrap{display:grid;grid-template-columns:minmax(300px,1fr) minmax(330px,1fr) minmax(360px,1.1fr);gap:16px;padding:16px;max-width:1700px;margin:auto}
+@media(max-width:1200px){.wrap{grid-template-columns:1fr 1fr}}
+@media(max-width:800px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+h3{margin:0 0 8px;font-size:19px}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:8px 13px;background:#2b3a57;color:var(--ink);font-weight:600}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04261b}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+textarea,input[type=text]{width:100%;background:#0b1120;color:#e2e8f0;border:1px solid var(--line);border-radius:10px;padding:10px;font:17px/1.45 ui-monospace,Consolas,monospace}
+textarea{height:300px;resize:vertical;tab-size:8}
+textarea:focus,input:focus{outline:2px solid var(--acc)}
+.regs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.reg{background:#0b1120;border:2px solid var(--line);border-radius:10px;text-align:center;padding:6px 2px}
+.reg small{display:block;color:var(--mute);font-size:13px;font-weight:700}
+.reg b{font:800 26px ui-monospace,Consolas,monospace}
+.reg.flash{border-color:var(--acc2);background:#2a2208}
+.phase{display:flex;gap:8px;margin:10px 0}
+.phase span{flex:1;text-align:center;border-radius:8px;padding:6px;background:#0b1120;border:1px solid var(--line);font-weight:800;color:var(--mute);letter-spacing:.06em}
+.phase span.on{background:var(--cy);color:#04202a;border-color:var(--cy)}
+.log{background:#0b1120;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:15px/1.5 ui-monospace,Consolas,monospace;min-height:150px;color:var(--mute)}
+.log div:last-child{color:var(--acc2);font-weight:700}
+.out{background:#0b1120;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font:800 24px ui-monospace,Consolas,monospace;color:var(--acc);min-height:48px;word-break:break-all}
+.mem{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.cell{background:#0b1120;border:2px solid #1d2a44;border-radius:7px;text-align:center;padding:2px 0 3px;line-height:1.1;min-width:0}
+.cell i{display:block;font:600 10px ui-monospace,monospace;color:#5d7094;font-style:normal}
+.cell b{font:700 16px ui-monospace,Consolas,monospace}
+.cell u{display:block;text-decoration:none;font:600 9px ui-monospace,monospace;color:var(--mute);height:11px;overflow:hidden;white-space:nowrap}
+.cell.pc{border-color:var(--cy);background:#0c2a3a}
+.cell.mar{border-color:var(--acc2)}
+.cell.w{background:#0f3a2c}
+.msg{min-height:24px;font-size:17px;font-weight:700;margin-top:6px}
+.good{color:var(--acc)}.bad{color:var(--bad)}
+details{margin-top:8px;color:var(--mute)}summary{cursor:pointer;color:var(--cy);font-weight:700}
+table{border-collapse:collapse;font-size:15px;margin-top:6px}td{padding:2px 12px 2px 0;vertical-align:top}
+code{font-family:ui-monospace,Consolas,monospace;color:#fde68a}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧠 Little Man Computer</h1>
+  <p>Write a program, load it into memory, then watch the <b>fetch–decode–execute</b> cycle run one step at a time.</p>
+</header>
+<div class="wrap">
+
+  <section>
+    <div class="card">
+      <h3>1 · Program</h3>
+      <select id="preset"></select>
+      <textarea id="src" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+      <div class="row"><button class="go" id="asm">⬇ Assemble &amp; load</button></div>
+      <div class="msg" id="amsg"></div>
+      <details><summary>Instruction set</summary>
+        <table>
+          <tr><td><code>LDA x</code></td><td>load the value at address x into ACC</td></tr>
+          <tr><td><code>STA x</code></td><td>store ACC at address x</td></tr>
+          <tr><td><code>ADD x</code> / <code>SUB x</code></td><td>add / subtract the value at x to / from ACC</td></tr>
+          <tr><td><code>INP</code> / <code>OUT</code></td><td>input to ACC / output ACC</td></tr>
+          <tr><td><code>BRA x</code></td><td>branch always to x</td></tr>
+          <tr><td><code>BRZ x</code></td><td>branch to x if ACC = 0</td></tr>
+          <tr><td><code>BRP x</code></td><td>branch to x if ACC ≥ 0</td></tr>
+          <tr><td><code>HLT</code></td><td>stop</td></tr>
+          <tr><td><code>name DAT n</code></td><td>reserve a memory location called <i>name</i> holding n</td></tr>
+        </table>
+        <div style="margin-top:6px">Start a line with a label to name an address, e.g. <code>loop LDA count</code>. Comments start with <code>//</code>.</div>
+      </details>
+    </div>
+    <div class="card">
+      <h3>Input numbers</h3>
+      <input type="text" id="inp" placeholder="e.g. 5 7" autocomplete="off">
+      <div class="mute" style="color:var(--mute);font-size:14px;margin-top:4px">Each <code>INP</code> takes the next number from this list.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h3>2 · CPU</h3>
+      <div class="regs">
+        <div class="reg" id="rPC"><small>PC</small><b>0</b></div>
+        <div class="reg" id="rMAR"><small>MAR</small><b>0</b></div>
+        <div class="reg" id="rMDR"><small>MDR</small><b>0</b></div>
+        <div class="reg" id="rCIR"><small>CIR</small><b>0</b></div>
+        <div class="reg" id="rACC"><small>ACC</small><b>0</b></div>
+      </div>
+      <div class="phase" id="phase"><span>FETCH</span><span>DECODE</span><span>EXECUTE</span></div>
+      <div class="log" id="log"></div>
+      <div class="row">
+        <button id="micro">⏯ Micro-step</button>
+        <button id="step">⏭ Step instruction</button>
+        <button class="go" id="run">▶ Run</button>
+        <button id="pause">⏸ Pause</button>
+        <button id="reset">↺ Reset</button>
+      </div>
+      <div class="row"><span style="color:var(--mute)">Speed</span><select id="speed"><option value="700">Slow</option><option value="250" selected>Medium</option><option value="40">Fast</option></select>
+        <span style="margin-left:auto;color:var(--mute)">Instructions run: <b id="count" style="color:var(--ink)">0</b></span></div>
+      <div class="msg" id="rmsg"></div>
+    </div>
+    <div class="card"><h3>Output</h3><div class="out" id="out"></div></div>
+  </section>
+
+  <section>
+    <div class="card">
+      <h3>3 · Memory <span style="font-weight:400;color:var(--mute);font-size:14px">(100 mailboxes)</span></h3>
+      <div class="mem" id="mem"></div>
+      <div style="color:var(--mute);font-size:13px;margin-top:8px"><span style="color:var(--cy)">■</span> next instruction (PC) &nbsp; <span style="color:var(--acc2)">■</span> last address used (MAR) &nbsp; <span style="color:var(--acc)">■</span> just written</div>
+    </div>
+  </section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+/* ---------------- assembler ---------------- */
+const OPC={ADD:100,SUB:200,STA:300,LDA:500,BRA:600,BRZ:700,BRP:800,INP:901,OUT:902,HLT:0,COB:0,DAT:null};
+const ARGOPS=['ADD','SUB','STA','LDA','BRA','BRZ','BRP'];
+function assemble(src){
+  const items=[],labels={},errors=[];let pending=null;
+  src.split('\n').forEach((raw,li)=>{
+    const t=raw.replace(/(\/\/|;|#).*$/,'').trim();
+    if(!t)return;
+    const tok=t.split(/\s+/);let label=null;
+    if(!(tok[0].toUpperCase() in OPC))label=tok.shift();
+    if(!tok.length){if(label)pending=label;return;}
+    const op=tok[0].toUpperCase();
+    if(!(op in OPC)){
+      const bad=(label&&/^-?\d+$/.test(tok[0]))?label:tok[0];
+      errors.push({line:li+1,msg:'Unknown instruction “'+bad+'”. The instructions are LDA, STA, ADD, SUB, INP, OUT, BRA, BRZ, BRP, HLT and DAT.'});return;}
+    items.push({label:label||pending,op,arg:tok[1],line:li+1,text:tok.join(' ')});pending=null;
+  });
+  if(items.length>100)errors.push({line:0,msg:'Too many instructions — memory only has 100 mailboxes'});
+  items.forEach((it,i)=>{
+    if(it.label){
+      const k=it.label.toLowerCase();
+      if(k in labels)errors.push({line:it.line,msg:'The label “'+it.label+'” is used twice'});
+      labels[k]=i;
+    }
+  });
+  const mem=Array(100).fill(0),listing=Array(100).fill('');
+  items.forEach((it,i)=>{
+    if(i>99)return;
+    listing[i]=it.text;
+    if(it.op==='DAT'){
+      const v=it.arg===undefined?0:Number(it.arg);
+      if(!Number.isInteger(v)||Math.abs(v)>999)errors.push({line:it.line,msg:'DAT needs a whole number between -999 and 999'});
+      else mem[i]=v;
+    }else if(ARGOPS.includes(it.op)){
+      if(it.arg===undefined){errors.push({line:it.line,msg:it.op+' needs an address or a label'});return;}
+      let a;
+      if(/^\d+$/.test(it.arg))a=Number(it.arg);
+      else if(it.arg.toLowerCase() in labels)a=labels[it.arg.toLowerCase()];
+      else{errors.push({line:it.line,msg:'Unknown label “'+it.arg+'”'});return;}
+      if(a<0||a>99){errors.push({line:it.line,msg:'Address '+a+' is outside memory (0–99)'});return;}
+      mem[i]=OPC[it.op]+a;
+    }else mem[i]=OPC[it.op];
+  });
+  return{mem,listing,errors,count:items.length};
+}
+
+/* ---------------- CPU ---------------- */
+function opName(c){
+  if(c===0)return 'HLT';if(c===901)return 'INP';if(c===902)return 'OUT';
+  return {1:'ADD',2:'SUB',3:'STA',5:'LDA',6:'BRA',7:'BRZ',8:'BRP'}[Math.floor(c/100)]||'???';
+}
+function* cycle(st){
+  st.phase=0;st.touched=-1;
+  st.mar=st.pc;yield 'MAR ← PC   (copy the program counter into the address register)';
+  st.pc=st.pc+1;yield 'PC ← PC + 1   (point at the next instruction)';
+  st.mdr=st.mem[st.mar];yield 'MDR ← memory['+st.mar+']   (fetch the instruction)';
+  st.cir=st.mdr;yield 'CIR ← MDR   (hold it in the current instruction register)';
+  st.phase=1;
+  const code=st.cir,op=Math.floor(code/100),arg=code%100,name=opName(code);
+  yield 'Decode: '+name+(ARGOPS.includes(name)?'  address '+arg:'');
+  st.phase=2;
+  if(code===0){st.halted=true;yield 'HLT: the program stops';return;}
+  if(code===901){
+    if(!st.input.length){st.halted=true;st.error='The program asked for an input but there are no numbers left in the Input box.';yield 'INP: no numbers left!';return;}
+    st.acc=st.input.shift();yield 'ACC ← input ('+st.acc+')';return;
+  }
+  if(code===902){st.output.push(st.acc);yield 'Output ← ACC ('+st.acc+')';return;}
+  switch(op){
+    case 5:st.mar=arg;yield 'MAR ← '+arg;st.mdr=st.mem[st.mar];yield 'MDR ← memory['+arg+']  ('+st.mdr+')';st.acc=st.mdr;yield 'ACC ← MDR';return;
+    case 3:st.mar=arg;yield 'MAR ← '+arg;st.mdr=st.acc;yield 'MDR ← ACC';st.mem[st.mar]=st.mdr;st.touched=st.mar;yield 'memory['+arg+'] ← MDR';return;
+    case 1:case 2:{
+      st.mar=arg;yield 'MAR ← '+arg;st.mdr=st.mem[st.mar];yield 'MDR ← memory['+arg+']  ('+st.mdr+')';
+      st.acc=op===1?st.acc+st.mdr:st.acc-st.mdr;
+      if(Math.abs(st.acc)>999){st.halted=true;st.error='Overflow: the accumulator can only hold numbers from -999 to 999.';}
+      yield 'ACC ← ACC '+(op===1?'+':'−')+' MDR  ('+st.acc+')';return;}
+    case 6:st.pc=arg;yield 'PC ← '+arg+'   (jump)';return;
+    case 7:if(st.acc===0){st.pc=arg;yield 'ACC is 0, so PC ← '+arg;}else yield 'ACC is not 0, so carry on';return;
+    case 8:if(st.acc>=0){st.pc=arg;yield 'ACC ≥ 0, so PC ← '+arg;}else yield 'ACC is negative, so carry on';return;
+    default:st.halted=true;st.error='“'+code+'” is not a valid instruction. Did the program run on into its data? (Add an HLT.)';yield 'Invalid instruction';return;
+  }
+}
+const PRESETS=[
+ {name:'Add two numbers',inp:'5 7',code:`        INP             // read the first number
+        STA first       // store it
+        INP             // read the second number
+        ADD first       // add the first number
+        OUT             // show the answer
+        HLT
+first   DAT 0
+`},
+ {name:'Countdown from 10',inp:'',code:`        LDA ten
+loop    OUT             // show the number
+        SUB one         // take one away
+        BRP loop        // keep going while ACC >= 0
+        HLT
+ten     DAT 10
+one     DAT 1
+`},
+ {name:'Largest of two numbers',inp:'8 3',code:`        INP
+        STA a
+        INP
+        STA b
+        SUB a           // b - a
+        BRP bigger      // if b - a >= 0 then b is the larger
+        LDA a
+        OUT
+        HLT
+bigger  LDA b
+        OUT
+        HLT
+a       DAT 0
+b       DAT 0
+`},
+ {name:'Multiply (repeated addition)',inp:'6 7',code:`        INP
+        STA x
+        INP
+        STA count
+        LDA zero
+        STA total
+loop    LDA count
+        BRZ done        // finished when count reaches 0
+        SUB one
+        STA count
+        LDA total
+        ADD x
+        STA total
+        BRA loop
+done    LDA total
+        OUT
+        HLT
+x       DAT 0
+count   DAT 0
+total   DAT 0
+zero    DAT 0
+one     DAT 1
+`},
+ {name:'Blank program',inp:'',code:`        // write your own program here
+        HLT
+`}
+];
+
+/* ---------------- UI state ---------------- */
+let prog=null,st=null,gen=null,timer=null,log=[],instrCount=0;
+function parseInput(){return (($('inp').value.match(/-?\d+/g))||[]).map(Number);}
+function resetCPU(){
+  clearInterval(timer);timer=null;gen=null;
+  const mem=prog?prog.mem.slice():Array(100).fill(0);
+  st={pc:0,acc:0,mar:0,mdr:0,cir:0,mem,input:parseInput(),output:[],halted:false,phase:-1,error:'',touched:-1};
+  log=[];instrCount=0;$('rmsg').textContent='';$('rmsg').className='msg';
+  draw();
+}
+function load(){
+  const r=assemble($('src').value);
+  if(r.errors.length){
+    $('amsg').className='msg bad';$('amsg').textContent='⚠ '+(r.errors[0].line?'Line '+r.errors[0].line+': ':'')+r.errors[0].msg;
+    return false;
+  }
+  prog=r;$('amsg').className='msg good';$('amsg').textContent='✔ Loaded '+r.count+' instruction'+(r.count===1?'':'s')+' into memory.';
+  resetCPU();return true;
+}
+function draw(){
+  const set=(id,v,flash)=>{const e=$(id);e.querySelector('b').textContent=v;};
+  set('rPC',st.pc);set('rMAR',st.mar);set('rMDR',st.mdr);set('rCIR',st.cir);set('rACC',st.acc);
+  [...$('phase').children].forEach((s,i)=>s.classList.toggle('on',i===st.phase));
+  $('count').textContent=instrCount;
+  $('log').innerHTML=log.slice(-8).map(l=>'<div>'+l.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</div>').join('');
+  $('out').textContent=st.output.join('  ');
+  const m=$('mem');
+  if(!m.children.length){
+    for(let i=0;i<100;i++){const c=document.createElement('div');c.className='cell';c.innerHTML='<i>'+String(i).padStart(2,'0')+'</i><b></b><u></u>';m.appendChild(c);}
+  }
+  for(let i=0;i<100;i++){
+    const c=m.children[i];
+    c.children[1].textContent=st.mem[i];
+    c.children[2].textContent=prog?prog.listing[i]:'';
+    c.className='cell'+(i===st.pc&&!st.halted?' pc':'')+(i===st.mar&&st.phase>=0?' mar':'')+(i===st.touched?' w':'');
+  }
+  if(st.halted){
+    $('rmsg').className='msg '+(st.error?'bad':'good');
+    $('rmsg').textContent=st.error?'⚠ '+st.error:'✔ Program finished (HLT).';
+  }
+}
+function micro(){
+  if(!prog)return false;
+  if(st.halted)return false;
+  if(!gen)gen=cycle(st);
+  const r=gen.next();
+  if(r.done){gen=null;instrCount++;return micro();}
+  log.push(r.value);
+  if(gen&&st.halted){gen=null;instrCount++;}
+  draw();return true;
+}
+function stepInstr(){
+  if(!prog||st.halted)return false;
+  if(!gen)gen=cycle(st);
+  let last=null;
+  for(;;){
+    const r=gen.next();
+    if(r.done){gen=null;break;}
+    last=r.value;log.push(r.value);
+    if(st.halted){gen=null;break;}
+  }
+  instrCount++;draw();return !st.halted;
+}
+function runLoop(){
+  if(timer)return;
+  const ms=+$('speed').value;
+  timer=setInterval(()=>{
+    if(!stepInstr()||instrCount>=100000){
+      clearInterval(timer);timer=null;
+      if(!st.halted){$('rmsg').className='msg bad';$('rmsg').textContent='⚠ Stopped after 100,000 instructions — is there an infinite loop?';}
+    }
+  },ms);
+}
+$('asm').onclick=load;
+$('micro').onclick=()=>{if(!prog&&!load())return;clearInterval(timer);timer=null;micro();};
+$('step').onclick=()=>{if(!prog&&!load())return;clearInterval(timer);timer=null;stepInstr();};
+$('run').onclick=()=>{if(!prog&&!load())return;if(st.halted)resetCPU();runLoop();};
+$('pause').onclick=()=>{clearInterval(timer);timer=null;};
+$('reset').onclick=resetCPU;
+$('speed').onchange=()=>{if(timer){clearInterval(timer);timer=null;runLoop();}};
+$('inp').addEventListener('change',()=>{if(prog)resetCPU();});
+$('src').addEventListener('input',()=>{$('amsg').textContent='';});
+PRESETS.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=p.name;$('preset').appendChild(o);});
+function usePreset(i){clearInterval(timer);timer=null;$('src').value=PRESETS[i].code;$('inp').value=PRESETS[i].inp;load();}
+$('preset').onchange=()=>usePreset(+$('preset').value);
+
+/* reset after 5 idle minutes so the next visitor starts fresh */
+let idle;function bump(){clearTimeout(idle);idle=setTimeout(()=>{$('preset').value=0;usePreset(0);},300000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+usePreset(0);bump();
+</script>
+</body>
+</html>

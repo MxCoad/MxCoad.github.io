@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sorting Race</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#34d399;--acc2:#fbbf24;--bad:#f87171;--cy:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}
+header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+main{max-width:1500px;margin:16px auto;padding:0 16px}
+.ctrl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin-bottom:14px}
+.ctrl label{color:var(--mute);font-size:15px;display:flex;gap:8px;align-items:center}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 15px;background:#2b3a57;color:var(--ink);font-weight:600}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04261b;font-size:19px;padding:10px 22px}
+input[type=range]{accent-color:var(--acc)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1100px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.lane{background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:12px}
+.lane.done{border-color:var(--acc)}
+.lane h3{margin:0;font-size:22px;display:flex;justify-content:space-between;align-items:center}
+.medal{font-size:28px}
+.big{color:var(--cy);font:700 15px ui-monospace,Consolas,monospace;margin:2px 0 8px}
+canvas{width:100%;height:190px;background:#0b1120;border-radius:10px;display:block}
+.stats{display:flex;gap:16px;margin-top:8px;font:600 16px ui-monospace,Consolas,monospace;color:var(--mute)}
+.stats b{color:var(--ink)}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-top:14px;font-size:18px;line-height:1.55;display:none}
+.note.on{display:block}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏁 Sorting Race</h1>
+  <p>Four sorting algorithms race to sort the <b>same</b> list. Watch how the work they do grows as the list gets bigger — that’s Big-O in action.</p>
+</header>
+<main>
+  <div class="ctrl">
+    <button class="go" id="start">▶ Start race</button>
+    <button id="reset">↺ New list</button>
+    <label>Starting order <select id="pattern"><option value="random">Random</option><option value="nearly">Nearly sorted</option><option value="reversed">Reversed</option><option value="few">Few unique values</option></select></label>
+    <label>List size <input type="range" id="size" min="10" max="80" value="40"><b id="sizeN">40</b></label>
+    <label>Speed <input type="range" id="speed" min="1" max="6" value="3"></label>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="note" id="note"></div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+
+/* ---------- algorithms: generators that yield after every comparison or write ---------- */
+function* bubble(a,S){
+  const n=a.length;
+  for(let i=0;i<n-1;i++){
+    let swapped=false;
+    for(let j=0;j<n-1-i;j++){
+      S.c++;yield [j,j+1];
+      if(a[j]>a[j+1]){const t=a[j];a[j]=a[j+1];a[j+1]=t;S.w++;swapped=true;yield [j,j+1];}
+    }
+    if(!swapped)break;
+  }
+}
+function* insertion(a,S){
+  for(let i=1;i<a.length;i++){
+    const key=a[i];let j=i-1;
+    while(j>=0){
+      S.c++;yield [j,j+1];
+      if(a[j]>key){a[j+1]=a[j];S.w++;yield [j+1];j--;}else break;
+    }
+    a[j+1]=key;S.w++;yield [j+1];
+  }
+}
+function* merge(a,S){const aux=a.slice();yield* ms(a,aux,0,a.length-1,S);}
+function* ms(a,aux,lo,hi,S){
+  if(lo>=hi)return;
+  const mid=(lo+hi)>>1;
+  yield* ms(a,aux,lo,mid,S);yield* ms(a,aux,mid+1,hi,S);
+  for(let k=lo;k<=hi;k++)aux[k]=a[k];
+  let i=lo,j=mid+1;
+  for(let k=lo;k<=hi;k++){
+    if(i>mid)a[k]=aux[j++];
+    else if(j>hi)a[k]=aux[i++];
+    else{S.c++;if(aux[j]<aux[i])a[k]=aux[j++];else a[k]=aux[i++];}
+    S.w++;yield [k];
+  }
+}
+function* quick(a,S){yield* qs(a,0,a.length-1,S);}
+function* qs(a,lo,hi,S){
+  if(lo>=hi)return;
+  const p=a[hi];let i=lo;
+  for(let j=lo;j<hi;j++){
+    S.c++;yield [j,hi];
+    if(a[j]<p){const t=a[i];a[i]=a[j];a[j]=t;S.w++;i++;yield [i-1,j];}
+  }
+  const t=a[i];a[i]=a[hi];a[hi]=t;S.w++;yield [i,hi];
+  yield* qs(a,lo,i-1,S);yield* qs(a,i+1,hi,S);
+}
+const ALGOS=[
+  {name:'Bubble sort',fn:bubble,big:'O(n²)',desc:'compares neighbours and swaps'},
+  {name:'Insertion sort',fn:insertion,big:'O(n²)  (O(n) if nearly sorted)',desc:'inserts each item into place'},
+  {name:'Merge sort',fn:merge,big:'O(n log n)',desc:'splits, sorts, then merges'},
+  {name:'Quick sort',fn:quick,big:'O(n log n) average · O(n²) worst',desc:'partitions around a pivot'}
+];
+
+/* ---------- list generation ---------- */
+function makeList(n,pattern){
+  let a=Array.from({length:n},(_,i)=>i+1);
+  const shuffle=x=>{for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];}return x;};
+  if(pattern==='random')shuffle(a);
+  else if(pattern==='reversed')a.reverse();
+  else if(pattern==='nearly'){for(let k=0;k<Math.max(2,Math.floor(n/10));k++){const i=Math.floor(Math.random()*n),j=Math.floor(Math.random()*n);[a[i],a[j]]=[a[j],a[i]];}}
+  else if(pattern==='few'){a=shuffle(Array.from({length:n},()=>1+Math.floor(Math.random()*4)*Math.ceil(n/4)));}
+  return a;
+}
+
+/* ---------- race state ---------- */
+let base=[],lanes=[],running=false,raf=0,finished=0,tickN=0;
+function build(){
+  cancelAnimationFrame(raf);running=false;finished=0;
+  $('start').disabled=false;$('start').textContent='▶ Start race';
+  $('note').className='note';
+  const n=+$('size').value;
+  base=makeList(n,$('pattern').value);
+  lanes=ALGOS.map(al=>{
+    const a=base.slice(),S={c:0,w:0};
+    return{al,a,S,gen:al.fn(a,S),hl:[],done:false,place:0,el:null};
+  });
+  const g=$('grid');g.innerHTML='';
+  lanes.forEach(l=>{
+    const d=document.createElement('div');d.className='lane';
+    d.innerHTML='<h3><span>'+l.al.name+'</span><span class="medal"></span></h3><div class="big">'+l.al.big+'</div><canvas></canvas><div class="stats"><span>Comparisons <b class="c">0</b></span><span>Writes <b class="w">0</b></span></div>';
+    g.appendChild(d);
+    l.el=d;l.cv=d.querySelector('canvas');
+  });
+  fit();lanes.forEach(draw);
+}
+function fit(){
+  lanes.forEach(l=>{
+    const r=l.cv.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+    l.cv.width=Math.max(100,Math.round((r.width||300)*dpr));l.cv.height=Math.round(190*dpr);
+  });
+}
+function draw(l){
+  const cv=l.cv,cx=cv.getContext('2d'),W=cv.width,H=cv.height,n=l.a.length;
+  cx.clearRect(0,0,W,H);
+  const mx=Math.max(...base),bw=W/n;
+  for(let i=0;i<n;i++){
+    const h=Math.max(2,(l.a[i]/mx)*(H-6));
+    cx.fillStyle=l.done?'#34d399':(l.hl.includes(i)?'#f472b6':'#38bdf8');
+    cx.fillRect(i*bw+1,H-h,Math.max(1,bw-2),h);
+  }
+}
+const OPS=[1,3,8,25,80,300];
+function tick(){
+  const per=OPS[+$('speed').value-1];
+  let any=false;
+  lanes.forEach(l=>{
+    if(l.done)return;
+    for(let k=0;k<per;k++){
+      const r=l.gen.next();
+      if(r.done){l.done=true;l.hl=[];finished++;l.place=finished;break;}
+      l.hl=r.value;
+    }
+    if(!l.done)any=true;
+    draw(l);
+    l.el.querySelector('.c').textContent=l.S.c;l.el.querySelector('.w').textContent=l.S.w;
+    if(l.done){
+      l.el.classList.add('done');
+      l.el.querySelector('.medal').textContent=['','🥇','🥈','🥉','4th'][l.place];
+    }
+  });
+  if(any){raf=requestAnimationFrame(tick);}
+  else{running=false;$('start').textContent='▶ Race again';$('start').disabled=false;explain();}
+}
+function explain(){
+  const sorted=lanes.slice().sort((a,b)=>a.place-b.place);
+  const n=base.length;
+  let txt='<b>Result:</b> '+sorted.map(l=>l.al.name+' ('+l.S.c+' comparisons, '+l.S.w+' writes)').join(' · ')+'.<br>';
+  const pat=$('pattern').value;
+  if(pat==='reversed')txt+='💡 On a <b>reversed</b> list, quick sort (with the last item as its pivot) hits its <b>worst case</b>, O(n²) — compare its numbers with merge sort.';
+  else if(pat==='nearly')txt+='💡 On a <b>nearly sorted</b> list, insertion sort has almost nothing to fix, so it’s close to O(n). Bubble sort stops early too.';
+  else if(pat==='few')txt+='💡 Lists with lots of repeated values still sort fine — try changing the starting order to see which algorithm copes best.';
+  else txt+='💡 Now double the list size and race again. The O(n²) sorts do roughly <b>four times</b> the work; merge and quick sort only a little more than double.';
+  $('note').innerHTML=txt;$('note').className='note on';
+}
+$('start').onclick=()=>{
+  if(running)return;
+  if(lanes.every(l=>l.done))build();
+  running=true;$('start').disabled=true;$('start').textContent='Racing…';
+  raf=requestAnimationFrame(tick);
+};
+$('reset').onclick=build;
+$('pattern').onchange=build;
+$('size').oninput=()=>{$('sizeN').textContent=$('size').value;build();};
+window.addEventListener('resize',()=>{fit();lanes.forEach(draw);});
+
+/* reset after 3 idle minutes so the next visitor starts fresh */
+let idle;function bump(){clearTimeout(idle);idle=setTimeout(()=>{$('pattern').value='random';$('size').value=40;$('sizeN').textContent=40;build();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+build();bump();
+</script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🛠 Fix the Database</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#38bdf8;--acc2:#fbbf24;--good:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+main{max-width:1200px;margin:16px auto;padding:0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 15px;background:#2b3a57;color:var(--ink);font-weight:600}
+select{font-weight:500}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04202b;font-size:19px;padding:10px 22px}
+button.go:hover{background:#7dd3fc}
+.dots{display:flex;gap:8px;margin-bottom:10px}.dot{height:10px;flex:1;border-radius:6px;background:#2b3a57}.dot.done{background:var(--good)}.dot.cur{background:var(--acc)}
+.lvl{color:var(--acc);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.story{font-size:20px;line-height:1.5;margin:6px 0}
+.msg{min-height:30px;font-size:20px;font-weight:700;margin-top:10px;line-height:1.45}
+.good{color:var(--good)}.bad{color:var(--bad)}.mute{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:17px}
+th{background:#1d2a45;color:var(--mute);font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.win{text-align:center;padding:30px}.win h2{font-size:36px;margin:0 0 10px}
+
+td.cl{cursor:pointer}td.cl:hover{background:#25365a}
+td.found{background:#5b2230;color:#fecaca;font-weight:700}
+td.sel{background:#1e4a63}tr.rowclick{cursor:pointer}tr.rowclick:hover td{background:#25365a}
+.tbls{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.tb{border:2px solid var(--line);border-radius:12px;padding:12px}.tb h3{margin:0 0 8px;color:var(--acc);font-size:20px}
+.fld{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #223050}
+label.ck{display:flex;gap:8px;align-items:center;padding:4px 0}
+input[type=checkbox]{width:20px;height:20px;accent-color:#38bdf8}
+.sm td{padding:4px 8px;font-size:15px}.pk{color:var(--acc2);font-weight:700}.fkc{color:#c4b5fd;font-weight:700}
+</style>
+</head>
+<body>
+<header><h1>🛠 Fix the Database</h1><p>Turn one messy spreadsheet into a proper relational database.</p></header>
+<main><div id="app"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);
+function armRestart(btn,fn,label){let armed=false,t;btn.onclick=()=>{if(!armed){armed=true;btn.textContent='Sure? Click again to start over';t=setTimeout(()=>{armed=false;btn.textContent=label||'↺ Start again';},4000);}else{clearTimeout(t);armed=false;fn();}};}
+let idleT;function bump(){clearTimeout(idleT);idleT=setTimeout(()=>{startOver();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+
+const FLAT=[
+ [1,'Aisha Khan','aisha.khan@mail.com','Leeds','Intro to Bouldering','£8.50','03/11'],
+ [2,'Tom O,Brien','tom.ob@mail.com','Leeds','Top Rope Taster','£12.00','03/11'],
+ [3,'Aisha Khan','aisha.khan@mail.com','Leeds','Top Rope Taster','£12.00','04/11'],
+ [4,'Priya Shah','priya.shah.mail.com','Leds','Intro to Bouldering','8.5','04/11'],
+ [5,'Aisha Kahn','aisha.khan@mail.com','Leeds','Kids Climb Club','£6.00','05/11'],
+ [6,"Tom O'Brien",'tom.ob@mail.com','Leeds','Intro to Bouldering','£8.50','06/11'],
+ [7,'Sam Taylor','sam.t@mail.com','York','Kids Climb Club','£6.00','06/11']];
+const HEAD=['Booking','Customer name','Email','Town','Session','Price','Date'];
+const ERR={'1,1':'A comma instead of an apostrophe in “O,Brien” (it is O’Brien in row 6). Inconsistent data!','3,2':'This email has no @ symbol, so it is not a valid address.','3,3':'“Leds” is misspelt. It should be Leeds.','3,5':'The price has no £ sign and no pence. Every other price looks like £8.50.','4,1':'“Aisha Kahn” is a different spelling of Aisha Khan. Is it the same person?'};
+const FIELDS=[['Customer name','C'],['Customer email','C'],['Town','C'],['Session name','S'],['Price','S'],['Booking date','B']];
+const TNAME={C:'tblCustomer',S:'tblSession',B:'tblBooking'};
+const TABLES={tblCustomer:['CustomerID','Name','Email','Town'],tblSession:['SessionID','SessionName','Price'],tblBooking:['BookingID','CustomerID','SessionID','Date']};
+const PKS={tblCustomer:'CustomerID',tblSession:'SessionID',tblBooking:'BookingID'};
+const STEPS=['Spot the mess','Split into tables','Add keys','Prove it works'];
+let step,found,alloc,pk,fk,sel,passed,msg,msgBad,part,lastClick;
+function startOver(){step=0;found=new Set();alloc={};pk={};fk=new Set();sel=new Set();passed=[false,false,false,false];msg='';msgBad=false;part=0;render();}
+function setMsg(m,bad){msg=m;msgBad=!!bad;}
+function head(){
+  let dots='';STEPS.forEach((_,i)=>dots+='<div class="dot '+(i<step?'done':i===step?'cur':'')+'"></div>');
+  return '<div class="dots">'+dots+'</div><div class="lvl">Step '+(step+1)+' of 4 · '+STEPS[step]+'</div>';
+}
+function flatTable(opts){
+  let h='<div style="overflow-x:auto"><table><tr>'+HEAD.map(x=>'<th>'+x+'</th>').join('')+'</tr>';
+  FLAT.forEach((r,ri)=>{
+    h+='<tr'+(opts.rows?' class="rowclick" data-row="'+ri+'"':'')+'>'+r.map((v,ci)=>{
+      const k=ri+','+ci;let c='';
+      if(opts.cells){c='cl';if(found.has(k))c+=' found';}
+      if(opts.rows&&sel.has(ri))c+=' sel';
+      return '<td class="'+c+'" data-k="'+k+'">'+v+'</td>';}).join('')+'</tr>';
+  });
+  return h+'</table></div>';
+}
+function render(){
+  const app=$('app');
+  if(step>=4){
+    app.innerHTML='<div class="card win"><h2>🏆 Database fixed!</h2><p style="font-size:22px;line-height:1.5">You found the errors, split the data into tables, linked them with keys and saw why it matters. That is what a <b>relational database</b> is for.<br>Show a member of staff your screen to claim your prize.</p><button class="go" id="again">Play again</button></div>';
+    $('again').onclick=startOver;return;
+  }
+  let h='<div class="card">'+head();
+  if(step===0){
+    h+='<div class="story">Climb On, a climbing wall, keeps every booking in <b>one big spreadsheet</b>. Something is wrong with it. <b>Click every cell that contains an error.</b> There are 5.</div>'+flatTable({cells:true})+
+       '<div class="mute" style="margin-top:8px">Found <b>'+found.size+'</b> of 5</div>';
+  }else if(step===1){
+    h+='<div class="story">Aisha’s name, email and town are typed again for <i>every</i> booking. A database stores each fact <b>once</b>. For each field, decide which table it belongs in.</div><div class="tbls" style="margin-top:8px">';
+    ['C','S','B'].forEach(t=>h+='<div class="tb"><h3>'+TNAME[t]+'</h3><div class="mute">'+({C:'Facts about a person',S:'Facts about an activity you can book',B:'One row for each booking made'})[t]+'</div></div>');
+    h+='</div><div class="card" style="margin:12px 0 0">'+FIELDS.map((f,i)=>'<div class="fld"><span>'+f[0]+'</span><select data-f="'+i+'"><option value="">Choose a table…</option>'+['C','S','B'].map(t=>'<option value="'+t+'"'+(alloc[i]===t?' selected':'')+'>'+TNAME[t]+'</option>').join('')+'</select></div>').join('')+'</div>'+
+       '<div class="row"><button class="go" id="check">✔ Check my answer</button></div>';
+  }else if(step===2){
+    h+='<div class="story">Each table needs a <b class="pk">primary key</b>, a field that is <b>unique for every row</b> and never changes. The tables are linked by <b style="color:#c4b5fd">foreign keys</b>: fields that hold another table’s primary key.</div><div class="tbls" style="margin-top:8px">';
+    Object.keys(TABLES).forEach(t=>{
+      h+='<div class="tb"><h3>'+t+'</h3><div class="mute">'+TABLES[t].join(' · ')+'</div><div style="margin-top:8px">Primary key: <select data-pk="'+t+'"><option value="">Choose…</option>'+TABLES[t].map(f=>'<option'+(pk[t]===f?' selected':'')+'>'+f+'</option>').join('')+'</select></div>';
+      if(t==='tblBooking')h+='<div style="margin-top:8px">Tick the <b>foreign keys</b>:'+TABLES[t].map(f=>'<label class="ck"><input type="checkbox" data-fk="'+f+'"'+(fk.has(f)?' checked':'')+'> '+f+'</label>').join('')+'</div>';
+      h+='</div>';
+    });
+    h+='</div><div class="row"><button class="go" id="check">✔ Check my answer</button></div>';
+  }else{
+    if(part===0){
+      h+='<div class="story"><b>Test it.</b> Aisha has a new email address: <b>aisha.k@newmail.com</b>. In the one-big-spreadsheet, <b>click every row you would have to change</b>, then press Update.</div>'+flatTable({rows:true})+'<div class="row"><button class="go" id="upd">Update selected rows</button></div>';
+    }else{
+      h+='<div class="story">Now the same job in your database. Aisha is stored <b>once</b> in tblCustomer. <b>Click her email to change it.</b></div><table class="sm"><tr><th>CustomerID</th><th>Name</th><th>Email</th><th>Town</th></tr><tr><td>1</td><td>Aisha Khan</td><td class="cl'+(passed[3]?' sel':'')+'" id="aem" style="cursor:pointer">'+(passed[3]?'aisha.k@newmail.com':'aisha.khan@mail.com')+'</td><td>Leeds</td></tr><tr><td>2</td><td>Tom O’Brien</td><td>tom.ob@mail.com</td><td>Leeds</td></tr><tr><td>3</td><td>Priya Shah</td><td>priya.shah@mail.com</td><td>Leeds</td></tr></table>';
+    }
+  }
+  h+='<div class="msg '+(msgBad?'bad':'good')+'" id="msg">'+msg+'</div>';
+  const canNext=(step<3&&passed[step])||(step===3&&passed[3]);
+  h+='<div class="row">'+(canNext?'<button class="go" id="next">'+(step===3?'Finish 🏁':'Next →')+'</button>':'')+'<button id="restart">↺ Start again</button></div></div>';
+  app.innerHTML=h;
+  armRestart($('restart'),startOver);
+  if($('next'))$('next').onclick=()=>{step++;setMsg('');part=0;render();};
+  if(step===0)app.querySelectorAll('td.cl').forEach(td=>td.onclick=()=>{
+    const k=td.dataset.k;
+    if(ERR[k]){found.add(k);setMsg('✔ '+ERR[k]);}else setMsg('That one looks fine. Keep looking.',true);
+    if(found.size===5){passed[0]=true;setMsg('✔ All 5 found! '+(ERR[k]||'')+' And notice Aisha’s details are typed three times. That’s the real problem.');}
+    render();
+  });
+  if(step===1){
+    app.querySelectorAll('[data-f]').forEach(s=>s.onchange=()=>{alloc[s.dataset.f]=s.value;});
+    $('check').onclick=()=>{
+      if(FIELDS.some((_,i)=>!alloc[i])){setMsg('Choose a table for every field first.',true);render();return;}
+      const wrong=FIELDS.filter((f,i)=>alloc[i]!==f[1]).length;
+      if(wrong===0){passed[1]=true;setMsg('✔ Perfect. Each fact is stored once, and the booking table will link the others together.');}
+      else setMsg(wrong+' of 6 fields are in the wrong table. Ask: does this describe the person, the activity, or the booking itself?',true);
+      render();
+    };
+  }
+  if(step===2){
+    app.querySelectorAll('[data-pk]').forEach(s=>s.onchange=()=>{pk[s.dataset.pk]=s.value;});
+    app.querySelectorAll('[data-fk]').forEach(c=>c.onchange=()=>{c.checked?fk.add(c.dataset.fk):fk.delete(c.dataset.fk);});
+    $('check').onclick=()=>{
+      const okPk=Object.keys(PKS).filter(t=>pk[t]===PKS[t]).length;
+      const fkOk=fk.size===2&&fk.has('CustomerID')&&fk.has('SessionID');
+      if(okPk===3&&fkOk){passed[2]=true;setMsg('✔ Correct! tblBooking holds CustomerID and SessionID, so each booking points to one customer and one session.');}
+      else{
+        let m=[];
+        if(okPk<3)m.push(okPk+' of 3 primary keys right. A primary key must be unique and never change. Names, towns and dates can repeat.');
+        if(!fkOk)m.push('Foreign keys: look for the fields in tblBooking that are another table’s primary key.');
+        setMsg(m.join(' '),true);
+      }
+      render();
+    };
+  }
+  if(step===3){
+    if(part===0){
+      app.querySelectorAll('tr.rowclick').forEach(tr=>tr.onclick=()=>{const r=+tr.dataset.row;sel.has(r)?sel.delete(r):sel.add(r);render();});
+      $('upd').onclick=()=>{
+        const need=[0,2,4];
+        const ok=sel.size===3&&need.every(r=>sel.has(r));
+        if(ok){part=1;setMsg('');}
+        else if(sel.size===0)setMsg('Click the rows first.',true);
+        else setMsg('Not quite. You must change every row with Aisha’s old email, and only those rows. Miss one and the data disagrees with itself (an update anomaly).',true);
+        render();
+      };
+    }else{
+      $('aem').onclick=()=>{passed[3]=true;setMsg('✔ One edit instead of three! Every booking that links to Aisha now shows the new email, and nothing can get out of step.');render();};
+    }
+  }
+}
+startOver();bump();
+
+</script>
+<!--OEB-->
+<script>window.OEB_CFG={id:"db",type:"time"};</script>
+<script>(function(){
+var C=window.OEB_CFG||{};if(!C.id)return;
+var KEY='oeb:'+C.id,BAD=['ASS','SEX','FUK','FCK','FUC','CUM','TIT','WTF','KKK','NZI','SHT','DIK','DCK','PIS','CNT','FAG','JEW'];
+var mem=[];
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(v))return v;}catch(e){}return mem;}
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s;}
+function rank(a){return a.slice().sort(function(x,y){return C.type==='score'?((y.s-x.s)||(x.t-y.t)):(x.t-y.t);});}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var st=document.createElement('style');
+st.textContent='#oeboard{max-width:1200px;margin:6px auto 26px;padding:14px 20px;background:var(--panel,#161f33);border:2px solid var(--acc2,#fbbf24);border-radius:14px;color:var(--ink,#e8eef9);font-family:system-ui,sans-serif}#oeboard h3{margin:0 0 8px;font-size:22px;color:var(--acc2,#fbbf24);user-select:none}#oeboard ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}#oeboard li{background:#0f1a30;border:1px solid var(--line,#2b3a57);border-radius:10px;padding:8px 12px;font-size:20px;font-weight:700;font-family:ui-monospace,Consolas,monospace}#oeboard li small{color:var(--mute,#8fa1c0);font-weight:500;font-size:15px}#oeboard li.me{border-color:var(--good,#34d399);background:#14463a}#oeboard .none{color:var(--mute,#8fa1c0);font-size:18px}#oeboard .clr{margin-top:10px;font-size:14px;opacity:.7;background:#4a1f26;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.oeb-entry{margin:18px auto 4px;max-width:560px;background:#0f1a30;border:2px solid var(--acc2,#fbbf24);border-radius:14px;padding:14px 18px;font-size:20px;line-height:1.5}.oeb-entry input{font:700 28px ui-monospace,Consolas,monospace;width:110px;text-align:center;text-transform:uppercase;letter-spacing:.2em;border-radius:10px;border:2px solid var(--line,#2b3a57);background:#161f33;color:#fff;padding:6px}.oeb-entry button{font:inherit;font-weight:700;background:var(--acc2,#fbbf24);color:#1a1200;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-left:6px}.oeb-entry .err{color:var(--bad,#f87171);font-size:17px;min-height:22px}';
+document.head.appendChild(st);
+var t0=null,saved=false;
+function touch(){if(t0===null)t0=Date.now();}
+['mousedown','keydown','touchstart'].forEach(function(e){document.addEventListener(e,touch,true);});
+document.addEventListener('click',function(e){var b=e.target;if(b&&b.id==='restart'&&/^Sure/.test(b.textContent))t0=null;},true);
+var idle;function idleReset(){clearTimeout(idle);idle=setTimeout(function(){t0=null;},180000);}
+['mousedown','keydown','mousemove','touchstart'].forEach(function(e){document.addEventListener(e,idleReset,{passive:true});});
+var panel=document.createElement('div');panel.id='oeboard';
+var ref=document.querySelector('main');(ref&&ref.parentNode?ref.parentNode:document.body).insertBefore(panel,ref?ref.nextSibling:null);
+var mine=null,clrShown=false,armed=false;
+function renderBoard(){
+  var a=rank(load()).slice(0,5);
+  var h='<h3 id="oebh">🏆 Top 5 on this PC today — can you beat them?</h3>';
+  if(!a.length)h+='<div class="none">No scores yet. Be the first on the board!</div>';
+  else h+='<ol>'+a.map(function(x,i){return '<li'+(mine&&x.id===mine?' class="me"':'')+'>'+(['🥇','🥈','🥉','4.','5.'][i])+' '+esc(x.i)+' <small>'+(C.type==='score'?x.s+'/'+C.max+' · ':'')+fmt(x.t)+'</small></li>';}).join('')+'</ol>';
+  if(clrShown)h+='<button class="clr" id="oebclr">Staff: clear this board</button>';
+  panel.innerHTML=h;
+  var hd=document.getElementById('oebh');if(hd)hd.ondblclick=function(){clrShown=true;renderBoard();};
+  var c=document.getElementById('oebclr');
+  if(c)c.onclick=function(){if(!armed){armed=true;c.textContent='Sure? Click again to delete ALL scores';setTimeout(function(){armed=false;clrShown=false;renderBoard();},4000);}else{save([]);armed=false;clrShown=false;mine=null;renderBoard();}};
+}
+function attach(w){
+  if(w.getAttribute('data-oeb'))return;w.setAttribute('data-oeb','1');
+  if(t0===null)t0=Date.now();
+  var secs=Math.max(1,Math.round((Date.now()-t0)/1000)),sc=0;
+  if(C.type==='score'){try{sc=C.getScore();}catch(e){sc=0;}}
+  saved=false;
+  var d=document.createElement('div');d.className='oeb-entry';
+  d.innerHTML='<div>⏱ Your time: <b>'+fmt(secs)+'</b>'+(C.type==='score'?' · Score: <b>'+sc+'/'+C.max+'</b>':'')+'</div><div style="margin-top:8px">Add your <b>initials</b> to the leaderboard:<br><input id="oebin" maxlength="3" autocomplete="off" spellcheck="false"><button id="oebsave">Save</button></div><div class="err" id="oebe"></div>';
+  w.appendChild(d);
+  var inp=d.querySelector('#oebin'),go=d.querySelector('#oebsave'),er=d.querySelector('#oebe');
+  inp.oninput=function(){inp.value=inp.value.replace(/[^a-zA-Z]/g,'').toUpperCase();};
+  function doSave(){
+    var v=inp.value.toUpperCase();
+    if(!/^[A-Z]{2,3}$/.test(v)){er.textContent='Please enter 2 or 3 letters (initials only).';return;}
+    if(BAD.indexOf(v)>-1){er.textContent='Please choose different initials.';return;}
+    var a=load().slice();var id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    a.push({i:v,s:sc,t:secs,id:id});a=rank(a).slice(0,30);save(a);mine=id;saved=true;
+    var pos=rank(a).findIndex(function(x){return x.id===id;})+1;
+    d.innerHTML='<div style="font-size:24px">✅ Saved! You are <b>#'+pos+'</b> on the board today.</div><div class="mute" style="font-size:17px;margin-top:4px">Tell a friend to come and beat you!</div>';
+    renderBoard();
+  }
+  go.onclick=doSave;inp.onkeydown=function(e){if(e.key==='Enter')doSave();};
+  setTimeout(function(){try{inp.focus();}catch(e){}},50);
+}
+var mo=new MutationObserver(function(){var w=document.querySelector('.win,.end');if(w)attach(w);});
+mo.observe(document.body,{childList:true,subtree:true});
+// when the win screen disappears (play again / reset), start a fresh clock
+var mo2=new MutationObserver(function(){if(!document.querySelector('.win,.end')&&window.__oebWas){window.__oebWas=false;t0=null;mine=null;renderBoard();}else if(document.querySelector('.win,.end'))window.__oebWas=true;});
+mo2.observe(document.body,{childList:true,subtree:true});
+renderBoard();
+})();
+</script>
+<!--/OEB-->
+</body>
+</html>
