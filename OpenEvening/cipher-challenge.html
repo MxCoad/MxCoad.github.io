@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code-Breaker Challenge</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#34d399;--acc2:#fbbf24;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}
+header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+nav{display:flex;gap:8px;padding:14px 22px 0}
+nav button{font:inherit;font-weight:700;font-size:18px;cursor:pointer;border:0;border-radius:12px 12px 0 0;padding:10px 20px;background:#111a2c;color:var(--mute)}
+nav button.on{background:var(--panel);color:var(--acc);box-shadow:inset 0 3px 0 var(--acc)}
+main{background:var(--panel);margin:0 22px 22px;border-radius:0 14px 14px 14px;padding:20px;border:1px solid var(--line);min-height:70vh}
+section{display:none}section.on{display:block}
+button.act{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:10px 16px;background:#2b3a57;color:var(--ink);font-weight:600}
+button.act:hover{background:#3b4f75}
+button.go{background:var(--acc);color:#052e22}
+button.go:hover{background:#6ee7b7}
+.dots{display:flex;gap:8px;margin-bottom:14px}
+.dot{width:36px;height:10px;border-radius:5px;background:#2b3a57}
+.dot.done{background:var(--acc)}.dot.cur{background:var(--acc2)}
+.lvl{font-size:20px;color:var(--acc2);font-weight:700}
+.intro{font-size:19px;margin:6px 0 14px}
+.cipher{font:700 30px/1.5 ui-monospace,Consolas,"Courier New",monospace;letter-spacing:.08em;background:#0b1120;border:1px solid var(--line);border-radius:12px;padding:16px 18px;word-break:break-word;color:var(--acc2)}
+label.l{display:block;color:var(--mute);margin:16px 0 6px;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+textarea,input[type=text],select{font:600 22px ui-monospace,Consolas,monospace;background:#0b1120;color:var(--ink);border:2px solid var(--line);border-radius:10px;padding:10px 14px;width:100%}
+select{font-family:system-ui;width:auto}
+textarea:focus,input:focus,select:focus{outline:none;border-color:var(--acc)}
+.helper{background:#101a2e;border:1px dashed var(--line);border-radius:12px;padding:14px 16px;margin-top:16px}
+.out{font:700 26px/1.5 ui-monospace,Consolas,monospace;color:var(--acc);word-break:break-word;min-height:42px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.msg{min-height:30px;font-size:20px;font-weight:700;margin-top:6px}
+.good{color:var(--acc)}.bad{color:var(--bad)}.hint{color:var(--acc2);font-size:18px}
+input[type=range]{accent-color:var(--acc);width:min(100%,420px)}
+.shift{font:800 34px ui-monospace,Consolas,monospace;min-width:2.2em;text-align:center}
+.align{font:600 20px/1.5 ui-monospace,Consolas,monospace;white-space:pre;overflow-x:auto;background:#0b1120;border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.align .a{color:var(--mute)}.align .b{color:var(--acc)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+@media(max-width:1000px){.cols{grid-template-columns:1fr}}
+h3{margin:0 0 6px;font-size:22px}
+p.note{color:var(--mute);margin:4px 0 10px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:170px;margin:10px 0 2px;padding:0 2px}
+.bar{flex:1;background:var(--acc);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bar.e{background:var(--acc2)}
+.bl{display:flex;gap:4px}.bl span{flex:1;text-align:center;font:600 13px ui-monospace,monospace;color:var(--mute)}
+.list{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.list div{font:600 17px ui-monospace,Consolas,monospace;padding:6px 12px;border-bottom:1px solid #1d2a44;display:flex;gap:12px;cursor:pointer}
+.list div:hover{background:#1d2a44}
+.list div b{color:var(--mute);min-width:64px}
+.list div.best{background:#0f3a2c;color:var(--acc)}
+.win{text-align:center;padding:40px 10px}
+.win h2{font-size:44px;margin:0 0 10px}
+.strip{display:grid;grid-template-columns:repeat(26,minmax(30px,1fr));gap:3px;margin-top:8px;min-width:820px}
+.strip span{font:700 18px ui-monospace,Consolas,monospace;text-align:center;background:#0b1120;border:1px solid var(--line);border-radius:6px;padding:4px 0}
+.strip span:nth-child(-n+26){color:var(--acc2)}
+.strip span:nth-child(n+27){color:var(--acc)}
+.hn{color:var(--mute);font-size:15px}
+.mini{font:800 26px ui-monospace,Consolas,monospace;width:64px;text-align:center;padding:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔐 Code-Breaker Challenge</h1>
+  <p>Five secret messages. Can you crack them all?</p>
+</header>
+<nav id="tabs">
+  <button data-t="chal" class="on">Challenges</button>
+  <button data-t="tool">Toolkit</button>
+</nav>
+<main>
+
+<!-- ================= CHALLENGES ================= -->
+<section id="chal" class="on">
+  <div id="game"></div>
+</section>
+
+<!-- ================= TOOLKIT ================= -->
+<section id="tool">
+  <div class="cols">
+    <div>
+      <h3>Encrypt &amp; decrypt</h3>
+      <p class="note">Try your own messages — then swap with a friend and crack each other’s!</p>
+      <div class="row">
+        <select id="tCipher"><option value="caesar">Caesar cipher</option><option value="atbash">Atbash cipher</option><option value="vig">Vigenère cipher</option></select>
+        <select id="tDir"><option value="enc">Encrypt</option><option value="dec">Decrypt</option></select>
+      </div>
+      <div class="row" id="tShiftRow"><span>Shift</span><input type="range" id="tShift" min="1" max="25" value="3"><span class="shift" id="tShiftN">3</span></div>
+      <div class="row" id="tKeyRow" style="display:none"><span>Key</span><input type="text" id="tKey" value="CODE" maxlength="12" style="width:240px"></div>
+      <label class="l">Your message</label>
+      <textarea id="tIn" rows="3">MEET ME AT THE LIBRARY AFTER SCHOOL</textarea>
+      <label class="l">Result</label>
+      <div class="out" id="tOut"></div>
+      <label class="l" id="tAlignLabel">How it works</label>
+      <div class="align" id="tAlign"></div>
+    </div>
+    <div>
+      <h3>Code-cracker</h3>
+      <p class="note">Paste a Caesar-encrypted message to see its letter frequencies and every possible shift.</p>
+      <textarea id="cIn" rows="3"></textarea>
+      <div class="row"><button class="act go" id="cGo">🔎 Analyse</button></div>
+      <label class="l">Letter frequency <span style="text-transform:none">(gold = E, the most common English letter)</span></label>
+      <div class="bars" id="bars"></div><div class="bl" id="barL"></div>
+      <label class="l">All 25 shifts — the likeliest English is highlighted</label>
+      <div class="list" id="shifts"></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const mod=(n,m)=>((n%m)+m)%m;
+const caesar=(t,k)=>t.toUpperCase().replace(/[A-Z]/g,c=>A[mod(A.indexOf(c)+k,26)]);
+const atbash=t=>t.toUpperCase().replace(/[A-Z]/g,c=>A[25-A.indexOf(c)]);
+function vig(t,key,dec){
+  key=key.toUpperCase().replace(/[^A-Z]/g,'');
+  if(!key)return t.toUpperCase();
+  let j=0;
+  return t.toUpperCase().replace(/[A-Z]/g,c=>{const k=A.indexOf(key[j++%key.length]);return A[mod(A.indexOf(c)+(dec?-k:k),26)];});
+}
+const letters=s=>s.toUpperCase().replace(/[^A-Z]/g,'');
+
+/* ---- tabs ---- */
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));
+});
+
+/* ================= CHALLENGES ================= */
+const LEVELS=[
+ {name:'Caesar cipher',type:'caesar',aid:'slider',secret:3,plain:'WELCOME TO COMPUTER SCIENCE',
+  intro:'Every letter has been moved <b>3 places forward</b> in the alphabet. Move them back to read the message.',
+  hints:['Use the shift slider in the decoder below.','Shifting back by 3 means D becomes A, E becomes B, F becomes C…','The first word is WELCOME.']},
+ {name:'Caesar cipher — secret shift',type:'caesar',aid:'slider',secret:11,plain:'THE BEST PROGRAMMERS NEVER STOP DEBUGGING',
+  intro:'Another Caesar cipher — but this time nobody has told you the shift!',
+  hints:['There are only 25 possible shifts. Slide until it reads like English.','Look for short words like THE or AND to spot the right shift.','The first word is THE.']},
+ {name:'Atbash cipher',type:'atbash',aid:'table',secret:null,plain:'EVERY BIT COUNTS',
+  intro:'The alphabet has been <b>flipped</b>: A becomes Z, B becomes Y, C becomes X… Use the table to decode it by hand, then type the message.',
+  hints:['Find each cipher letter in the top row of the table, then read off the letter underneath it.','The first cipher letter is V. In the table, V sits above E.','The first word is EVERY.']},
+ {name:'Vigenère cipher — key given',type:'vig',aid:'vigaid',secret:'CODE',plain:'ENCRYPTION KEEPS OUR DATA SAFE',
+  intro:'Now each letter is shifted by a <i>different</i> amount, set by a repeating keyword. The key is <b>CODE</b>. Decode it letter by letter, then type the message.',
+  hints:['C = 2, O = 14, D = 3, E = 4 — then the pattern repeats along the message.','To decode, move each cipher letter BACK by its key letter’s number. The first letter, G, moved back 2 is E.','The first word is ENCRYPTION.']},
+ {name:'Vigenère cipher — secret key',type:'vig',aid:'vigkey',secret:'BYTE',plain:'THE ENIGMA CODE WAS BROKEN AT BLETCHLEY PARK',
+  intro:'The final boss. A Vigenère cipher where you must <b>find the key</b> yourself.',
+  hints:['The key is a 4-letter word: a unit of computer storage made of 8 bits.','The key starts with B.','The first word is THE, which appears as UFX in the cipher. Work out which key letters turn T, H, E into U, F, X.']}
+];
+LEVELS.forEach(l=>{
+  l.cipher=l.type==='caesar'?caesar(l.plain,l.secret):l.type==='atbash'?atbash(l.plain):vig(l.plain,l.secret,false);
+});
+let lv=0,hintsShown=0,hShift=0,hKey='',locked=false;
+const AL=A.split('');
+const strip=rows=>'<div style="overflow-x:auto"><div class="strip">'+rows.map(r=>r.map(c=>'<span>'+c+'</span>').join('')).join('')+'</div></div>';
+
+function aidHTML(L){
+  if(L.aid==='slider')return '<div class="helper"><b>Decoder</b><div class="row"><span>Shift back by</span><input type="range" id="hShift" min="0" max="25" value="0"><span class="shift" id="hShiftN">0</span></div><div class="out" id="hOut"></div><div class="row"><button class="act go" id="useIt">Submit this result ✔</button></div></div>';
+  if(L.aid==='vigkey')return '<div class="helper"><b>Decoder</b><div class="row"><span>Try a key</span><input type="text" id="hKey" maxlength="12" placeholder="type a key" style="width:260px" autocomplete="off" spellcheck="false"></div><div class="out" id="hOut"></div><div class="row"><button class="act go" id="useIt">Submit this result ✔</button></div></div>';
+  if(L.aid==='table')return '<div class="helper"><b>Atbash table</b> <span class="hn">— a cipher letter on the top row becomes the letter underneath it</span>'+strip([AL,AL.slice().reverse()])+'</div>';
+  if(L.aid==='vigaid'){
+    let j=0;const kr=L.cipher.replace(/[A-Z]/g,()=>L.secret[j++%L.secret.length]);
+    return '<div class="helper"><b>Vigenère worksheet</b>'+
+      '<div class="align" style="margin-top:10px"><span class="a">cipher  </span><span style="color:var(--acc2)">'+L.cipher+'</span>\n<span class="a">key     </span><span class="b">'+kr+'</span></div>'+
+      '<div class="hn" style="margin-top:12px">Letter values (A = 0, B = 1 … Z = 25)</div>'+strip([AL,AL.map((_,i)=>i)])+
+      '<div class="row" style="margin-top:12px"><b>Decode one letter:</b><span>cipher letter</span><input class="mini" id="lc1" maxlength="1" autocomplete="off" spellcheck="false"><span>key letter</span><input class="mini" id="lc2" maxlength="1" autocomplete="off" spellcheck="false"><span>→ plain letter</span><span class="out" id="lcOut" style="min-height:0;min-width:1.2em">?</span></div></div>';
+  }
+  return '';
+}
+
+function renderGame(){
+  const g=$('game');
+  locked=false;
+  if(lv>=LEVELS.length){
+    g.innerHTML='<div class="win"><h2>🏆 All five cracked!</h2><p style="font-size:22px">You think like a cryptanalyst. Show a member of staff your screen to claim your prize.</p><button class="act go" id="again">Play again</button></div>';
+    $('again').onclick=resetGame;return;
+  }
+  const L=LEVELS[lv];
+  hintsShown=0;hShift=0;hKey='';
+  let dots='';LEVELS.forEach((_,i)=>dots+='<div class="dot '+(i<lv?'done':i===lv?'cur':'')+'"></div>');
+  const decoder=L.aid==='slider'||L.aid==='vigkey';
+  g.innerHTML=
+   '<div class="dots">'+dots+'</div>'+
+   '<div class="lvl">Level '+(lv+1)+' of '+LEVELS.length+' · '+L.name+'</div>'+
+   '<p class="intro">'+L.intro+'</p>'+
+   '<div class="cipher">'+L.cipher+'</div>'+
+   aidHTML(L)+
+   '<label class="l">'+(decoder?'…or type the message yourself':'Type the decoded message')+'</label>'+
+   '<div class="row"><input type="text" id="ans" placeholder="Type the decoded message" style="flex:1;min-width:260px" autocomplete="off" spellcheck="false"><button class="act go" id="check">Check ✔</button></div>'+
+   '<div class="msg" id="gmsg"></div>'+
+   '<div class="row"><button class="act" id="hintBtn">💡 Hint</button><button class="act" id="restart">↺ Start again</button></div>'+
+   '<div id="hints"></div>';
+  if($('hShift'))$('hShift').oninput=e=>{hShift=+e.target.value;$('hShiftN').textContent=hShift;updHelper();};
+  if($('hKey'))$('hKey').oninput=e=>{hKey=e.target.value;updHelper();};
+  if($('useIt'))$('useIt').onclick=()=>submit(helperOut());
+  if($('lc1')){
+    const f=()=>{
+      const x=$('lc1').value.toUpperCase(),y=$('lc2').value.toUpperCase();
+      $('lcOut').textContent=(x&&y&&A.includes(x)&&A.includes(y))?A[mod(A.indexOf(x)-A.indexOf(y),26)]:'?';
+    };
+    $('lc1').oninput=f;$('lc2').oninput=f;
+  }
+  $('check').onclick=()=>submit($('ans').value);
+  $('ans').onkeydown=e=>{if(e.key==='Enter')submit($('ans').value);};
+  $('hintBtn').onclick=()=>{
+    if(hintsShown<L.hints.length)hintsShown++;
+    $('hints').innerHTML=L.hints.slice(0,hintsShown).map(h=>'<p class="hint">💡 '+h+'</p>').join('');
+    if(hintsShown>=L.hints.length)$('hintBtn').textContent='No more hints!';
+  };
+  let armed=false,armT;
+  $('restart').onclick=()=>{
+    if(!armed){
+      armed=true;$('restart').textContent='Sure? Click again to restart from Level 1';
+      armT=setTimeout(()=>{armed=false;const r=$('restart');if(r)r.textContent='↺ Start again';},4000);
+    }else{clearTimeout(armT);resetGame();}
+  };
+  if($('hOut'))updHelper();
+}
+function helperOut(){
+  const L=LEVELS[lv];
+  if(L.type==='caesar')return caesar(L.cipher,-hShift);
+  return vig(L.cipher,hKey,true);
+}
+function updHelper(){$('hOut').textContent=helperOut();}
+function submit(txt){
+  if(locked)return;
+  const L=LEVELS[lv];
+  if(letters(txt)===letters(L.plain)){
+    locked=true;
+    $('gmsg').className='msg good';$('gmsg').textContent='🎉 Cracked it! “'+L.plain+'”';
+    setTimeout(()=>{lv++;renderGame();},1800);
+  }else{
+    $('gmsg').className='msg bad';$('gmsg').textContent='Not quite — have another look.';
+  }
+}
+function resetGame(){lv=0;renderGame();}
+
+/* ================= TOOLKIT ================= */
+function tUpdate(){
+  const type=$('tCipher').value,dec=$('tDir').value==='dec';
+  const shift=+$('tShift').value,key=$('tKey').value;
+  $('tShiftRow').style.display=type==='caesar'?'flex':'none';
+  $('tKeyRow').style.display=type==='vig'?'flex':'none';
+  $('tShiftN').textContent=shift;
+  const inp=$('tIn').value;let out,align='';
+  if(type==='caesar'){
+    const k=dec?-shift:shift;out=caesar(inp,k);
+    align='<span class="a">'+A+'</span>\n<span class="b">'+caesar(A,k)+'</span>\n<span class="a">top row: the letter you type · bottom row: what it becomes</span>';
+    $('tAlignLabel').textContent='The alphabet, shifted';
+  }else if(type==='atbash'){
+    out=atbash(inp);
+    align='<span class="a">'+A+'</span>\n<span class="b">'+atbash(A)+'</span>\n<span class="a">top row: the letter you type · bottom row: what it becomes</span>';
+    $('tAlignLabel').textContent='The alphabet, flipped';
+  }else{
+    out=vig(inp,key,dec);
+    const k=key.toUpperCase().replace(/[^A-Z]/g,'');
+    let j=0;
+    const rep=inp.toUpperCase().replace(/[A-Z]/g,()=>k?k[j++%k.length]:'?').replace(/[^A-Z?]/g,' ');
+    align='<span class="a">message  '+inp.toUpperCase()+'</span>\n<span class="a">key      </span><span class="b">'+rep+'</span>\n<span class="a">result   </span><span class="b">'+out+'</span>';
+    $('tAlignLabel').textContent='Key repeated under the message';
+  }
+  $('tOut').textContent=out;
+  $('tAlign').innerHTML=align;
+}
+['tCipher','tDir','tShift','tKey','tIn'].forEach(id=>$(id).addEventListener('input',tUpdate));
+
+const ENG=[8.2,1.5,2.8,4.3,12.7,2.2,2.0,6.1,7.0,0.15,0.77,4.0,2.4,6.7,7.5,1.9,0.095,6.0,6.3,9.1,2.8,0.98,2.4,0.15,2.0,0.074];
+function chi(text){
+  const t=letters(text);if(!t.length)return Infinity;
+  const cnt=Array(26).fill(0);for(const c of t)cnt[A.indexOf(c)]++;
+  let x=0;for(let i=0;i<26;i++){const e=ENG[i]*t.length/100;x+=(cnt[i]-e)*(cnt[i]-e)/e;}
+  return x;
+}
+function analyse(){
+  const txt=$('cIn').value;const t=letters(txt);
+  const cnt=Array(26).fill(0);for(const c of t)cnt[A.indexOf(c)]++;
+  const mx=Math.max(1,...cnt);
+  $('bars').innerHTML=cnt.map((n,i)=>'<div class="bar'+(i===4?' e':'')+'" title="'+A[i]+': '+n+'" style="height:'+(n/mx*100)+'%"></div>').join('');
+  $('barL').innerHTML=A.split('').map(c=>'<span>'+c+'</span>').join('');
+  const rows=[];
+  for(let k=1;k<=25;k++){const d=caesar(txt,-k);rows.push({k,d,s:chi(d)});}
+  const best=Math.min(...rows.map(r=>r.s));
+  $('shifts').innerHTML=rows.map(r=>'<div class="'+(r.s===best&&t.length?'best':'')+'" data-d="'+r.d.replace(/"/g,'')+'"><b>shift '+r.k+'</b><span>'+r.d.replace(/</g,'&lt;')+'</span></div>').join('');
+}
+$('cGo').onclick=analyse;
+$('cIn').value=caesar('MEET ME AT THE LIBRARY AFTER SCHOOL',4);
+
+/* ---- reset after 3 idle minutes so the next visitor starts fresh ---- */
+let idle;
+function bump(){clearTimeout(idle);idle=setTimeout(()=>{resetGame();document.querySelector('#tabs button[data-t=chal]').click();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+renderGame();tUpdate();analyse();bump();
+</script>
+<!--OEB-->
+<script>window.OEB_CFG={id:"cipher",type:"time"};</script>
+<script>(function(){
+var C=window.OEB_CFG||{};if(!C.id)return;
+var KEY='oeb:'+C.id,BAD=['ASS','SEX','FUK','FCK','FUC','CUM','TIT','WTF','KKK','NZI','SHT','DIK','DCK','PIS','CNT','FAG','JEW'];
+var mem=[];
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(v))return v;}catch(e){}return mem;}
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s;}
+function rank(a){return a.slice().sort(function(x,y){return C.type==='score'?((y.s-x.s)||(x.t-y.t)):(x.t-y.t);});}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var st=document.createElement('style');
+st.textContent='#oeboard{max-width:1200px;margin:6px auto 26px;padding:14px 20px;background:var(--panel,#161f33);border:2px solid var(--acc2,#fbbf24);border-radius:14px;color:var(--ink,#e8eef9);font-family:system-ui,sans-serif}#oeboard h3{margin:0 0 8px;font-size:22px;color:var(--acc2,#fbbf24);user-select:none}#oeboard ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}#oeboard li{background:#0f1a30;border:1px solid var(--line,#2b3a57);border-radius:10px;padding:8px 12px;font-size:20px;font-weight:700;font-family:ui-monospace,Consolas,monospace}#oeboard li small{color:var(--mute,#8fa1c0);font-weight:500;font-size:15px}#oeboard li.me{border-color:var(--good,#34d399);background:#14463a}#oeboard .none{color:var(--mute,#8fa1c0);font-size:18px}#oeboard .clr{margin-top:10px;font-size:14px;opacity:.7;background:#4a1f26;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.oeb-entry{margin:18px auto 4px;max-width:560px;background:#0f1a30;border:2px solid var(--acc2,#fbbf24);border-radius:14px;padding:14px 18px;font-size:20px;line-height:1.5}.oeb-entry input{font:700 28px ui-monospace,Consolas,monospace;width:110px;text-align:center;text-transform:uppercase;letter-spacing:.2em;border-radius:10px;border:2px solid var(--line,#2b3a57);background:#161f33;color:#fff;padding:6px}.oeb-entry button{font:inherit;font-weight:700;background:var(--acc2,#fbbf24);color:#1a1200;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-left:6px}.oeb-entry .err{color:var(--bad,#f87171);font-size:17px;min-height:22px}';
+document.head.appendChild(st);
+var t0=null,saved=false;
+function touch(){if(t0===null)t0=Date.now();}
+['mousedown','keydown','touchstart'].forEach(function(e){document.addEventListener(e,touch,true);});
+document.addEventListener('click',function(e){var b=e.target;if(b&&b.id==='restart'&&/^Sure/.test(b.textContent))t0=null;},true);
+var idle;function idleReset(){clearTimeout(idle);idle=setTimeout(function(){t0=null;},180000);}
+['mousedown','keydown','mousemove','touchstart'].forEach(function(e){document.addEventListener(e,idleReset,{passive:true});});
+var panel=document.createElement('div');panel.id='oeboard';
+var ref=document.querySelector('main');(ref&&ref.parentNode?ref.parentNode:document.body).insertBefore(panel,ref?ref.nextSibling:null);
+var mine=null,clrShown=false,armed=false;
+function renderBoard(){
+  var a=rank(load()).slice(0,5);
+  var h='<h3 id="oebh">🏆 Top 5 on this PC today — can you beat them?</h3>';
+  if(!a.length)h+='<div class="none">No scores yet. Be the first on the board!</div>';
+  else h+='<ol>'+a.map(function(x,i){return '<li'+(mine&&x.id===mine?' class="me"':'')+'>'+(['🥇','🥈','🥉','4.','5.'][i])+' '+esc(x.i)+' <small>'+(C.type==='score'?x.s+'/'+C.max+' · ':'')+fmt(x.t)+'</small></li>';}).join('')+'</ol>';
+  if(clrShown)h+='<button class="clr" id="oebclr">Staff: clear this board</button>';
+  panel.innerHTML=h;
+  var hd=document.getElementById('oebh');if(hd)hd.ondblclick=function(){clrShown=true;renderBoard();};
+  var c=document.getElementById('oebclr');
+  if(c)c.onclick=function(){if(!armed){armed=true;c.textContent='Sure? Click again to delete ALL scores';setTimeout(function(){armed=false;clrShown=false;renderBoard();},4000);}else{save([]);armed=false;clrShown=false;mine=null;renderBoard();}};
+}
+function attach(w){
+  if(w.getAttribute('data-oeb'))return;w.setAttribute('data-oeb','1');
+  if(t0===null)t0=Date.now();
+  var secs=Math.max(1,Math.round((Date.now()-t0)/1000)),sc=0;
+  if(C.type==='score'){try{sc=C.getScore();}catch(e){sc=0;}}
+  saved=false;
+  var d=document.createElement('div');d.className='oeb-entry';
+  d.innerHTML='<div>⏱ Your time: <b>'+fmt(secs)+'</b>'+(C.type==='score'?' · Score: <b>'+sc+'/'+C.max+'</b>':'')+'</div><div style="margin-top:8px">Add your <b>initials</b> to the leaderboard:<br><input id="oebin" maxlength="3" autocomplete="off" spellcheck="false"><button id="oebsave">Save</button></div><div class="err" id="oebe"></div>';
+  w.appendChild(d);
+  var inp=d.querySelector('#oebin'),go=d.querySelector('#oebsave'),er=d.querySelector('#oebe');
+  inp.oninput=function(){inp.value=inp.value.replace(/[^a-zA-Z]/g,'').toUpperCase();};
+  function doSave(){
+    var v=inp.value.toUpperCase();
+    if(!/^[A-Z]{2,3}$/.test(v)){er.textContent='Please enter 2 or 3 letters (initials only).';return;}
+    if(BAD.indexOf(v)>-1){er.textContent='Please choose different initials.';return;}
+    var a=load().slice();var id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    a.push({i:v,s:sc,t:secs,id:id});a=rank(a).slice(0,30);save(a);mine=id;saved=true;
+    var pos=rank(a).findIndex(function(x){return x.id===id;})+1;
+    d.innerHTML='<div style="font-size:24px">✅ Saved! You are <b>#'+pos+'</b> on the board today.</div><div class="mute" style="font-size:17px;margin-top:4px">Tell a friend to come and beat you!</div>';
+    renderBoard();
+  }
+  go.onclick=doSave;inp.onkeydown=function(e){if(e.key==='Enter')doSave();};
+  setTimeout(function(){try{inp.focus();}catch(e){}},50);
+}
+var mo=new MutationObserver(function(){var w=document.querySelector('.win,.end');if(w)attach(w);});
+mo.observe(document.body,{childList:true,subtree:true});
+// when the win screen disappears (play again / reset), start a fresh clock
+var mo2=new MutationObserver(function(){if(!document.querySelector('.win,.end')&&window.__oebWas){window.__oebWas=false;t0=null;mine=null;renderBoard();}else if(document.querySelector('.win,.end'))window.__oebWas=true;});
+mo2.observe(document.body,{childList:true,subtree:true});
+renderBoard();
+})();
+</script>
+<!--/OEB-->
+</body>
+</html>

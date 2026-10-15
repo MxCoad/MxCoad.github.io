@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🌐 Client Brief: Design a Web Page</title>
+<style>
+:root{--bg:#0b1120;--panel:#161f33;--line:#2b3a57;--ink:#e8eef9;--mute:#8fa1c0;--acc:#38bdf8;--acc2:#fbbf24;--good:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:18px}
+header{padding:14px 22px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:28px}header p{margin:4px 0 0;color:var(--mute);font-size:17px}
+main{max-width:1200px;margin:16px auto;padding:0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:14px}
+button,select{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:9px 15px;background:#2b3a57;color:var(--ink);font-weight:600}
+select{font-weight:500}
+button:hover{background:#3b4f75}button:disabled{opacity:.4;cursor:default}
+button.go{background:var(--acc);color:#04202b;font-size:19px;padding:10px 22px}
+button.go:hover{background:#7dd3fc}
+.dots{display:flex;gap:8px;margin-bottom:10px}.dot{height:10px;flex:1;border-radius:6px;background:#2b3a57}.dot.done{background:var(--good)}.dot.cur{background:var(--acc)}
+.lvl{color:var(--acc);font-weight:700;font-size:15px;text-transform:uppercase;letter-spacing:.06em}
+.story{font-size:20px;line-height:1.5;margin:6px 0}
+.msg{min-height:30px;font-size:20px;font-weight:700;margin-top:10px;line-height:1.45}
+.good{color:var(--good)}.bad{color:var(--bad)}.mute{color:var(--mute)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;font-size:17px}
+th{background:#1d2a45;color:var(--mute);font-size:14px;text-transform:uppercase;letter-spacing:.04em}
+.win{text-align:center;padding:30px}.win h2{font-size:36px;margin:0 0 10px}
+
+.wrap{display:grid;grid-template-columns:340px 1fr;gap:16px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.ctl label.t{display:block;font-weight:700;margin:12px 0 4px;color:var(--acc);font-size:15px;text-transform:uppercase;letter-spacing:.05em}
+.sw{display:flex;gap:6px;flex-wrap:wrap}.sw button{padding:6px;border:3px solid transparent;border-radius:12px;background:#22304d}
+.sw button.on{border-color:var(--acc)}
+.sw span{display:block;width:110px;height:44px;border-radius:8px;font-size:13px;font-weight:700;line-height:44px;text-align:center}
+.seg{display:flex;gap:6px;flex-wrap:wrap}.seg button{padding:7px 12px}.seg button.on{background:#1d4a63;outline:2px solid var(--acc)}
+.pv{background:#0f1a30;border:1px solid var(--line);border-radius:14px;padding:14px;overflow:auto}
+.dev{margin:0 auto;border:3px solid #475a80;border-radius:12px;overflow-x:auto;background:#fff}
+.chk{list-style:none;padding:0;margin:0}.chk li{padding:8px 0;border-bottom:1px solid #223050;line-height:1.4;font-size:17px}
+.chk .why{display:block;color:var(--mute);font-size:15px}
+input[type=range]{width:100%;accent-color:#38bdf8}
+</style>
+</head>
+<body>
+<header><h1>🌐 Client Brief: Design a Web Page</h1><p>A café wants a new home page. Design it to meet their needs.</p></header>
+<main><div id="app"></div></main>
+<script>
+
+const $=id=>document.getElementById(id);
+function armRestart(btn,fn,label){let armed=false,t;btn.onclick=()=>{if(!armed){armed=true;btn.textContent='Sure? Click again to start over';t=setTimeout(()=>{armed=false;btn.textContent=label||'↺ Start again';},4000);}else{clearTimeout(t);armed=false;fn();}};}
+let idleT;function bump(){clearTimeout(idleT);idleT=setTimeout(()=>{startOver();},180000);}
+['keydown','mousedown','mousemove','touchstart'].forEach(ev=>document.addEventListener(ev,bump,{passive:true}));
+
+
+const PAL=[
+ {n:'Cream & Chocolate',bg:'#fff8ec',tx:'#3b2a1a',ac:'#b4531f',bt:'#ffffff',warm:true},
+ {n:'Sunshine Pastel',bg:'#fffbe0',tx:'#e6d36f',ac:'#ffe066',bt:'#ffffff',warm:true},
+ {n:'Midnight Neon',bg:'#0a0a0a',tx:'#39ff14',ac:'#ff00ff',bt:'#000000',warm:false},
+ {n:'Sage & Linen',bg:'#f4f1e6',tx:'#2f3e2f',ac:'#4a7c3a',bt:'#ffffff',warm:true},
+ {n:'Soft Grey',bg:'#ffffff',tx:'#b8b8b8',ac:'#cccccc',bt:'#ffffff',warm:false}];
+const FONTS={Serif:'Georgia,"Times New Roman",serif',Sans:'Arial,Helvetica,sans-serif',Handwriting:'"Comic Sans MS","Segoe Print","Bradley Hand",cursive',Monospace:'"Courier New",monospace'};
+function lum(h){const c=[1,3,5].map(k=>parseInt(h.slice(k,k+2),16)/255).map(v=>v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2];}
+function ratio(a,b){const l1=lum(a),l2=lum(b),hi=Math.max(l1,l2),lo=Math.min(l1,l2);return (hi+.05)/(lo+.05);}
+let st,msg,done;
+function startOver(){st={pal:null,hf:null,bf:null,size:14,lay:null,btn:null,dev:'desktop'};msg='';done=false;render();}
+function checks(){
+  const p=st.pal===null?null:PAL[st.pal];
+  const list=[];
+  const cr=p?ratio(p.bg,p.tx):0;
+  const ok1=!!p&&cr>=4.5&&st.size>=18&&(st.bf==='Serif'||st.bf==='Sans');
+  list.push([ok1,'Easy to read for older customers','Text contrast '+(p?cr.toFixed(1)+':1 (needs 4.5:1 or more)':'—')+' · size '+st.size+'px (needs 18px+) · body font '+(st.bf||'—')+' (Serif or Sans)']);
+  const ok2=!!p&&p.warm&&!!st.hf&&st.hf!=='Monospace';
+  list.push([ok2,'Warm and friendly look',(p?(p.warm?'Warm colours ✓':'These colours feel cold or harsh'):'Pick a colour scheme')+' · heading font '+(st.hf||'—')+' (monospace looks techy)']);
+  const ok3=st.lay==='flex';
+  list.push([ok3,'Menu works on a phone',st.lay===null?'Choose a layout, then try the Phone view':(ok3?'Cards stack neatly on a small screen':'Fixed-width columns make phone users scroll sideways')]);
+  const bc=p?ratio(p.ac,p.bt):0;
+  const ok4=!!p&&st.btn==='L'&&bc>=4.5;
+  list.push([ok4,'Obvious “Book a table” button','Button '+(st.btn==='L'?'large ✓':'needs to be Large')+' · button text contrast '+(p?bc.toFixed(1)+':1 (needs 4.5:1)':'—')]);
+  return list;
+}
+function preview(){
+  const p=PAL[st.pal===null?0:st.pal];
+  const unset=st.pal===null;
+  const bg=unset?'#ffffff':p.bg,tx=unset?'#000000':p.tx,ac=unset?'#999999':p.ac,bt=unset?'#ffffff':p.bt;
+  const hf=FONTS[st.hf||'Sans'],bf=FONTS[st.bf||'Sans'];
+  const fixed=st.lay==='fixed',phone=st.dev==='phone';
+  const btnPad={S:'6px 12px',M:'10px 20px',L:'16px 34px'}[st.btn||'S'],btnFs={S:14,M:18,L:24}[st.btn||'S'];
+  const card=(n,d,pr)=>'<div style="flex:1;min-width:'+(fixed?'260px':'200px')+';background:rgba(128,128,128,.12);border-radius:12px;padding:14px"><div style="font-family:'+hf+';font-size:'+(st.size+4)+'px;font-weight:700">'+n+'</div><div>'+d+'</div><div style="font-weight:700;margin-top:6px">'+pr+'</div></div>';
+  const inner='<div style="'+(fixed?'width:900px;':'')+'padding:18px;background:'+bg+';color:'+tx+';font-family:'+bf+';font-size:'+st.size+'px;line-height:1.5">'+
+   '<div style="font-family:'+hf+';font-size:'+(st.size+16)+'px;font-weight:700">Willow Café</div>'+
+   '<p style="margin:6px 0 12px">Homemade cakes, soup and a warm welcome since 1998.</p>'+
+   '<div style="display:flex;gap:12px;'+(fixed?'':'flex-wrap:wrap')+'">'+card('Soup of the day','Served with fresh bread.','£5.50')+card('Victoria sponge','Baked every morning.','£3.95')+card('Pot of tea','Loose leaf, for one.','£2.80')+'</div>'+
+   '<div style="margin-top:16px"><span style="display:inline-block;background:'+ac+';color:'+bt+';padding:'+btnPad+';font-size:'+btnFs+'px;font-weight:700;border-radius:10px;font-family:'+bf+'">Book a table</span></div></div>';
+  return '<div class="dev" style="width:'+(phone?'360px':'100%')+'">'+inner+'</div>'+(fixed&&phone?'<div class="bad" style="text-align:center;margin-top:8px;font-weight:700">↔ Phone users have to scroll sideways!</div>':'');
+}
+function render(){
+  const app=$('app');
+  if(done){
+    app.innerHTML='<div class="card win"><h2>🏆 Client approved!</h2><p style="font-size:22px;line-height:1.5">“Wonderful. Easy to read, warm and friendly, works on my phone, and I can’t miss the button!”<br><br>You balanced <b>accessibility</b>, <b>brand</b> and <b>usability</b> like a real web designer.<br>Show a member of staff your screen to claim your prize.</p><button class="go" id="again">Play again</button></div>';
+    $('again').onclick=startOver;return;
+  }
+  const cs=checks(),all=cs.every(c=>c[0]);
+  const seg=(key,opts)=>'<div class="seg">'+opts.map(o=>'<button class="'+(st[key]===o[0]?'on':'')+'" data-k="'+key+'" data-v="'+o[0]+'">'+o[1]+'</button>').join('')+'</div>';
+  let h='<div class="card"><div class="lvl">The client brief</div><div class="story"><b>Willow Café</b> wants a new home page. <i>“Many of my customers are older and read on their phones. I want it warm and friendly, easy to read, with the menu clear on a phone and a big obvious ‘Book a table’ button.”</i> Design it, then check it against the brief.</div></div>';
+  h+='<div class="wrap"><div class="card ctl"><label class="t">Colour scheme</label><div class="sw">'+PAL.map((p,k)=>'<button class="'+(st.pal===k?'on':'')+'" data-pal="'+k+'" title="'+p.n+'"><span style="background:'+p.bg+';color:'+p.tx+';border:2px solid '+p.ac+'">'+p.n+'</span></button>').join('')+'</div>'+
+   '<label class="t">Heading font</label>'+seg('hf',Object.keys(FONTS).map(f=>[f,f]))+
+   '<label class="t">Body font</label>'+seg('bf',Object.keys(FONTS).map(f=>[f,f]))+
+   '<label class="t">Text size: <b id="sz">'+st.size+'px</b></label><input type="range" id="size" min="12" max="28" value="'+st.size+'">'+
+   '<label class="t">Layout</label>'+seg('lay',[['fixed','3 fixed columns'],['flex','Flexible cards']])+
+   '<label class="t">“Book a table” button</label>'+seg('btn',[['S','Small'],['M','Medium'],['L','Large']])+
+   '<div class="row"><button id="restart">↺ Start again</button></div></div>'+
+   '<div><div class="card"><div class="row" style="margin:0 0 10px"><b>Preview:</b>'+seg('dev',[['desktop','🖥 Desktop'],['phone','📱 Phone']])+'</div><div class="pv">'+preview()+'</div></div>'+
+   '<div class="card"><b>Brief checklist</b><ul class="chk">'+cs.map(c=>'<li><span class="'+(c[0]?'good':'bad')+'">'+(c[0]?'✔':'✘')+'</span> <b>'+c[1]+'</b><span class="why">'+c[2]+'</span></li>').join('')+'</ul>'+
+   '<div class="row"><button class="go" id="send"'+(all?'':' disabled')+'>✉ Send to the client</button></div><div class="msg bad">'+(all?'':'The client will not approve until every item has a ✔.')+'</div></div></div></div>';
+  app.innerHTML=h;
+  armRestart($('restart'),startOver);
+  app.querySelectorAll('[data-pal]').forEach(b=>b.onclick=()=>{st.pal=+b.dataset.pal;render();});
+  app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{st[b.dataset.k]=b.dataset.v;render();});
+  $('size').oninput=e=>{st.size=+e.target.value;$('sz').textContent=st.size+'px';};$('size').onchange=()=>render();
+  $('send').onclick=()=>{if(checks().every(c=>c[0])){done=true;render();}};
+}
+startOver();bump();
+
+</script>
+<!--OEB-->
+<script>window.OEB_CFG={id:"brief",type:"time"};</script>
+<script>(function(){
+var C=window.OEB_CFG||{};if(!C.id)return;
+var KEY='oeb:'+C.id,BAD=['ASS','SEX','FUK','FCK','FUC','CUM','TIT','WTF','KKK','NZI','SHT','DIK','DCK','PIS','CNT','FAG','JEW'];
+var mem=[];
+function load(){try{var v=JSON.parse(localStorage.getItem(KEY)||'null');if(Array.isArray(v))return v;}catch(e){}return mem;}
+function save(a){mem=a;try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){}}
+function fmt(t){var m=Math.floor(t/60),s=t%60;return m+':'+(s<10?'0':'')+s;}
+function rank(a){return a.slice().sort(function(x,y){return C.type==='score'?((y.s-x.s)||(x.t-y.t)):(x.t-y.t);});}
+function esc(s){return String(s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+var st=document.createElement('style');
+st.textContent='#oeboard{max-width:1200px;margin:6px auto 26px;padding:14px 20px;background:var(--panel,#161f33);border:2px solid var(--acc2,#fbbf24);border-radius:14px;color:var(--ink,#e8eef9);font-family:system-ui,sans-serif}#oeboard h3{margin:0 0 8px;font-size:22px;color:var(--acc2,#fbbf24);user-select:none}#oeboard ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}#oeboard li{background:#0f1a30;border:1px solid var(--line,#2b3a57);border-radius:10px;padding:8px 12px;font-size:20px;font-weight:700;font-family:ui-monospace,Consolas,monospace}#oeboard li small{color:var(--mute,#8fa1c0);font-weight:500;font-size:15px}#oeboard li.me{border-color:var(--good,#34d399);background:#14463a}#oeboard .none{color:var(--mute,#8fa1c0);font-size:18px}#oeboard .clr{margin-top:10px;font-size:14px;opacity:.7;background:#4a1f26;color:#fff;border:0;border-radius:8px;padding:6px 12px;cursor:pointer}.oeb-entry{margin:18px auto 4px;max-width:560px;background:#0f1a30;border:2px solid var(--acc2,#fbbf24);border-radius:14px;padding:14px 18px;font-size:20px;line-height:1.5}.oeb-entry input{font:700 28px ui-monospace,Consolas,monospace;width:110px;text-align:center;text-transform:uppercase;letter-spacing:.2em;border-radius:10px;border:2px solid var(--line,#2b3a57);background:#161f33;color:#fff;padding:6px}.oeb-entry button{font:inherit;font-weight:700;background:var(--acc2,#fbbf24);color:#1a1200;border:0;border-radius:10px;padding:10px 18px;cursor:pointer;margin-left:6px}.oeb-entry .err{color:var(--bad,#f87171);font-size:17px;min-height:22px}';
+document.head.appendChild(st);
+var t0=null,saved=false;
+function touch(){if(t0===null)t0=Date.now();}
+['mousedown','keydown','touchstart'].forEach(function(e){document.addEventListener(e,touch,true);});
+document.addEventListener('click',function(e){var b=e.target;if(b&&b.id==='restart'&&/^Sure/.test(b.textContent))t0=null;},true);
+var idle;function idleReset(){clearTimeout(idle);idle=setTimeout(function(){t0=null;},180000);}
+['mousedown','keydown','mousemove','touchstart'].forEach(function(e){document.addEventListener(e,idleReset,{passive:true});});
+var panel=document.createElement('div');panel.id='oeboard';
+var ref=document.querySelector('main');(ref&&ref.parentNode?ref.parentNode:document.body).insertBefore(panel,ref?ref.nextSibling:null);
+var mine=null,clrShown=false,armed=false;
+function renderBoard(){
+  var a=rank(load()).slice(0,5);
+  var h='<h3 id="oebh">🏆 Top 5 on this PC today — can you beat them?</h3>';
+  if(!a.length)h+='<div class="none">No scores yet. Be the first on the board!</div>';
+  else h+='<ol>'+a.map(function(x,i){return '<li'+(mine&&x.id===mine?' class="me"':'')+'>'+(['🥇','🥈','🥉','4.','5.'][i])+' '+esc(x.i)+' <small>'+(C.type==='score'?x.s+'/'+C.max+' · ':'')+fmt(x.t)+'</small></li>';}).join('')+'</ol>';
+  if(clrShown)h+='<button class="clr" id="oebclr">Staff: clear this board</button>';
+  panel.innerHTML=h;
+  var hd=document.getElementById('oebh');if(hd)hd.ondblclick=function(){clrShown=true;renderBoard();};
+  var c=document.getElementById('oebclr');
+  if(c)c.onclick=function(){if(!armed){armed=true;c.textContent='Sure? Click again to delete ALL scores';setTimeout(function(){armed=false;clrShown=false;renderBoard();},4000);}else{save([]);armed=false;clrShown=false;mine=null;renderBoard();}};
+}
+function attach(w){
+  if(w.getAttribute('data-oeb'))return;w.setAttribute('data-oeb','1');
+  if(t0===null)t0=Date.now();
+  var secs=Math.max(1,Math.round((Date.now()-t0)/1000)),sc=0;
+  if(C.type==='score'){try{sc=C.getScore();}catch(e){sc=0;}}
+  saved=false;
+  var d=document.createElement('div');d.className='oeb-entry';
+  d.innerHTML='<div>⏱ Your time: <b>'+fmt(secs)+'</b>'+(C.type==='score'?' · Score: <b>'+sc+'/'+C.max+'</b>':'')+'</div><div style="margin-top:8px">Add your <b>initials</b> to the leaderboard:<br><input id="oebin" maxlength="3" autocomplete="off" spellcheck="false"><button id="oebsave">Save</button></div><div class="err" id="oebe"></div>';
+  w.appendChild(d);
+  var inp=d.querySelector('#oebin'),go=d.querySelector('#oebsave'),er=d.querySelector('#oebe');
+  inp.oninput=function(){inp.value=inp.value.replace(/[^a-zA-Z]/g,'').toUpperCase();};
+  function doSave(){
+    var v=inp.value.toUpperCase();
+    if(!/^[A-Z]{2,3}$/.test(v)){er.textContent='Please enter 2 or 3 letters (initials only).';return;}
+    if(BAD.indexOf(v)>-1){er.textContent='Please choose different initials.';return;}
+    var a=load().slice();var id=Date.now()+'-'+Math.random().toString(36).slice(2,6);
+    a.push({i:v,s:sc,t:secs,id:id});a=rank(a).slice(0,30);save(a);mine=id;saved=true;
+    var pos=rank(a).findIndex(function(x){return x.id===id;})+1;
+    d.innerHTML='<div style="font-size:24px">✅ Saved! You are <b>#'+pos+'</b> on the board today.</div><div class="mute" style="font-size:17px;margin-top:4px">Tell a friend to come and beat you!</div>';
+    renderBoard();
+  }
+  go.onclick=doSave;inp.onkeydown=function(e){if(e.key==='Enter')doSave();};
+  setTimeout(function(){try{inp.focus();}catch(e){}},50);
+}
+var mo=new MutationObserver(function(){var w=document.querySelector('.win,.end');if(w)attach(w);});
+mo.observe(document.body,{childList:true,subtree:true});
+// when the win screen disappears (play again / reset), start a fresh clock
+var mo2=new MutationObserver(function(){if(!document.querySelector('.win,.end')&&window.__oebWas){window.__oebWas=false;t0=null;mine=null;renderBoard();}else if(document.querySelector('.win,.end'))window.__oebWas=true;});
+mo2.observe(document.body,{childList:true,subtree:true});
+renderBoard();
+})();
+</script>
+<!--/OEB-->
+</body>
+</html>
